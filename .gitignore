@@ -1,0 +1,10 @@
+#folders 
+*-debug/
+*-release/
+/.project
+
+#files
+*~
+*.pro.user
+
+
