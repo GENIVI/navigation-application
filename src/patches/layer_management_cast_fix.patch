@@ -1,0 +1,13 @@
+diff --git a/LayerManagerPlugins/Renderers/Platform/X11GLESRenderer/src/X11GLESRenderer.cpp b/LayerManagerPlugins/Renderers/Platform/X11GLESRenderer/src/X11GLESRenderer.cpp
+index 2d9b0a9..09ffd43 100644
+--- a/LayerManagerPlugins/Renderers/Platform/X11GLESRenderer/src/X11GLESRenderer.cpp
++++ b/LayerManagerPlugins/Renderers/Platform/X11GLESRenderer/src/X11GLESRenderer.cpp
+@@ -46,7 +46,7 @@ bool X11GLESRenderer::start(int width, int height, const char* displayname)
+     m_pWindowSystem = new X11WindowSystem(displayname, width, height, m_pScene);
+     m_pGraphicSystem = new GLESGraphicsystem(width,height, ShaderProgramGLES::createProgram);
+ 
+-    if (!m_pWindowSystem->init(m_pGraphicSystem))
++    if (!m_pWindowSystem->init((BaseGraphicSystem<_XDisplay*, long unsigned int>*)m_pGraphicSystem))
+     {
+         goto fail; // TODO bad style
+     }
