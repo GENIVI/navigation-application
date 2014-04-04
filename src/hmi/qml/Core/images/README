@@ -1,0 +1,11 @@
+Release date: 2014-02-24
+Author: Philippe Colliot philippe.colliot@mpsa.com
+
+trip-computer-menu.xcf is made under Gimp 2.8, with group of layers.
+
+To generated the png images from the xcf file, you can use the following script:
+ save_all_layers.scm
+ Located here: http://www.franzzle.com/wordpress/save_all_layers.scm
+ In order to make it appeared into Gimp, please add it to the script folder and restart Gimp
+ (you can find the path in edit/preferences/folders/scripts) 
+ 

@@ -2,9 +2,10 @@
 *-debug/
 *-release/
 /.project
+bin/
 
 #files
 *~
 *.pro.user
 
-
+/.project

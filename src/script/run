@@ -1,0 +1,140 @@
+#! /bin/bash
+###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
+# \copyright Copyright (C) 2013-2014, PCA Peugeot Citroen
+#
+# \file run
+#
+# \brief This file is part of the Build System.
+#
+# \author # Author: Martin Schaller <martin.schaller@it-schaller.de>
+#
+# \version 1.0
+#
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License (MPL), v. 2.0.
+# If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# For further information see http://www.genivi.org/.
+#
+# List of changes:
+# 
+# <date>, <name>, <description of change>
+#
+# @licence end@
+###########################################################################
+
+function run
+{
+	local x=$xterm
+	title="$1"
+	shift
+	if [ "$1" = "-n" ]
+	then
+		shift
+		x=0
+	fi
+	if [ "$x" = 1 ]
+	then
+		xterm -T "$title" -sb -sl 5000 -e "$@" &
+	else
+		"$@" &
+	fi
+	PIDS="$PIDS $!"
+}
+
+function terminate
+{
+	set +e
+	trap "" EXIT INT
+	kill $PIDS
+	if [ -n "$wm" ]
+	then
+		sleep 2
+		cd
+		nohup $wm >/dev/null 2>/dev/null &
+	fi
+}
+
+BIN_DIR=$PWD/../../bin
+SRC_DIR=$PWD/..
+lm=0
+xterm=0
+poipoc=0
+wm=""
+app=application.qml
+while getopts a:c:lnpx opt
+do
+	case $opt in
+	a)
+		app=$OPTARG
+		;;
+	c)
+		plugin_args="$plugin_args -$opt $OPTARG"
+		;;
+	l)
+		lm=1
+		;;
+	n)
+		plugin_args="$plugin_args -$opt"
+		;;
+	p)
+		poipoc=1
+		;;
+	x)
+		plugin_args="$plugin_args -$opt"
+		xterm=1
+		;;
+	\?)
+		echo "Usage:"
+		echo "$0 [-a application][-c center][-lnx]"
+		echo "-a: Set application (default application.qml)"
+		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
+		echo "-l: Use layermanager"
+		echo "-n: Don't start enhanced positioning service"
+		echo "-p: Also start POI POC (assumes poi-service is in the same directory as navit-poc)"
+		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
+		exit 1
+	esac
+done
+
+if [ "$lm" = "1" ]
+then
+	for i in metacity compiz
+	do
+		if pidof $i
+		then
+			killall $i
+			while pidof $i
+			do
+				echo "Waiting for termination of $i"
+				sleep 1
+			done
+			wm="$i"
+			break
+		fi
+	done
+	set -e
+	export LM_USE_SESSION_BUS=enable
+	PATH=$PWD/../bin/layer_management/inst/usr/local/bin:$PWD/../bin/libqtlayerman/lmqmlviewer:$PATH
+	export LD_LIBRARY_PATH=$PWD/../bin/layer_management/inst/usr/local/lib:$PWD/../bin/libqtlayerman/src
+	export LM_PLUGIN_PATH=$PWD/../bin/layer_management/inst/usr/local/lib/layermanager
+	LayerManagerService  &
+	lm_pid=$!
+	sleep 2
+fi
+export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
+trap "terminate" EXIT INT
+cd ../navigation-service*/src/navigation/script
+run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
+cd -
+cd ../hmi/qml
+if [ "$lm" = 1 ]
+then
+	lmqmlviewer $app
+else
+	qmlviewer $app
+fi
