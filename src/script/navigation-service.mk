@@ -42,10 +42,10 @@ ALL+=poi-service navit-plugins
 CONSTANTS_SRC+=$(navigation-service_SRC)/api/mapviewer/genivi-mapviewer-constants.xml
 CONSTANTS_SRC+=$(navigation-service_SRC)/api/navigationcore/genivi-navigationcore-constants.xml
 CONSTANTS_SRC+=$(navigation-service_SRC)/api/poi-service/genivi-poiservice-constants.xml
-CONSTANTS_SRC+=$(navigation-service_SRC)/src/positioning/EnhancedPositionService/api/genivi-positioning-constants.xml
+CONSTANTS_SRC+=$(navigation-service_SRC)/src/navigation/positioning/EnhancedPositionService/api/genivi-positioning-constants.xml
 
 src-clean::
-	rm -rf $(navigation-service_SRC) $(navigation-service_SRC)
+	rm -rf $(navigation-service_SRC)
 
 help::
 	@echo "poi-service: Build poi-service"
@@ -63,7 +63,7 @@ $(poi-service_BIN)/Makefile: $(poi-service_SRC)/poi-server/poi-server.pro
 
 $(poi-common_BIN)/genivi-poiservice-constants.h: $(navigation-service_API)/poi-service/genivi-poiservice-constants.xml
 	mkdir -p $(poi-common_BIN)
-	$(poi-service_SRC)/script/generate-api.sh $(navigation-service_API) $(poi-common_BIN)
+	$(poi-service_SRC)/script/generate-api-for-navigation.sh $(navigation-service_API) $(poi-common_BIN)
 
 poi-service-configure: $(poi-service_BIN)/Makefile $(poi-common_BIN)/genivi-poiservice-constants.h
 

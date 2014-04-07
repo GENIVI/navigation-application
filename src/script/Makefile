@@ -24,9 +24,9 @@
 #
 # @licence end@
 
-SRC_DIR=$(PWD)/../../src
+SRC_DIR=$(CURDIR)/../../src
 PATCH_DIR=$(SRC_DIR)/patches
-BIN_DIR=$(PWD)/../../bin
+BIN_DIR=$(CURDIR)/../../bin
 QMAKE=qmake
 
 default: help
