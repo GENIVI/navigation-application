@@ -1,2 +1,2 @@
-plugin dbus  ../../../bin/testhmi/lib/
-plugin wheelarea  ../../../bin/testhmi/lib/
+plugin dbus  ../../../../bin/hmi/qml/lib/
+plugin wheelarea  ../../../../bin/hmi/qml/lib/

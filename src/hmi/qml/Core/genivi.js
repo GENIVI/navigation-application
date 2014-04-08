@@ -27,7 +27,7 @@
 * @licence end@
 */
 .pragma library
-Qt.include("../../../bin/testhmi/constants.js");
+Qt.include("../../../../bin/hmi/qml/constants.js");
 var Test;
 var dbusIf;
 var g_nav_session;
