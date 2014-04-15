@@ -76,4 +76,4 @@ $(poi-service_BIN)/empty.db:
 poi-service: $(poi-service_BIN)/poi-server $(poi-service_BIN)/empty.db
 
 navit-plugins mapviewer navigationcore deps::
-	$(MAKE) BIN_DIR=$(BIN_DIR) poi-service_API=$(poi-service_API) layer_management_INST=$(layer_management_INST) -C $(navigation-service_SRC)/src/navigation/script $@
+	$(MAKE) BIN_DIR=$(BIN_DIR) poi-service_API=$(poi-service_API) layer_management_INST=$(layer_management_INST) positioning_SRC=$(positioning_SRC) -C $(navigation-service_SRC)/src/navigation/script $@
