@@ -23,7 +23,7 @@
 # <date>, <name>, <description of change>
 #
 # @licence end@
-navigation-service_URL="http://git.projects.genivi.org/lbs/navigation-service.git"
+navigation-service_URL="http://git.projects.genivi.org/lbs/navigation.git"
 navigation-service_VERSION=HEAD
 navigation-service_SRC=$(SRC_DIR)/navigation-service-$(navigation-service_VERSION)
 navigation-service_API=$(navigation-service_SRC)/api
@@ -39,10 +39,10 @@ poi-common_BIN=$(BIN_DIR)/poi-common
 DEPS+=$(navigation-service_DEPS)
 
 ALL+=poi-service navit-plugins
-CONSTANTS_SRC+=$(navigation-service_SRC)/api/mapviewer/genivi-mapviewer-constants.xml
-CONSTANTS_SRC+=$(navigation-service_SRC)/api/navigationcore/genivi-navigationcore-constants.xml
+CONSTANTS_SRC+=$(navigation-service_SRC)/api/map-viewer/genivi-mapviewer-constants.xml
+CONSTANTS_SRC+=$(navigation-service_SRC)/api/navigation-core/genivi-navigationcore-constants.xml
 CONSTANTS_SRC+=$(navigation-service_SRC)/api/poi-service/genivi-poiservice-constants.xml
-CONSTANTS_SRC+=$(navigation-service_SRC)/src/navigation/positioning/EnhancedPositionService/api/genivi-positioning-constants.xml
+CONSTANTS_SRC+=$(positioning_API)/genivi-positioning-constants.xml
 
 src-clean::
 	rm -rf $(navigation-service_SRC)
@@ -63,7 +63,7 @@ $(poi-service_BIN)/Makefile: $(poi-service_SRC)/poi-server/poi-server.pro
 
 $(poi-common_BIN)/genivi-poiservice-constants.h: $(navigation-service_API)/poi-service/genivi-poiservice-constants.xml
 	mkdir -p $(poi-common_BIN)
-	$(poi-service_SRC)/script/generate-api-for-navigation.sh $(navigation-service_API) $(poi-common_BIN)
+	$(poi-service_SRC)/script/generate-api-for-navigation.sh $(navigation-service_API) $(poi-common_BIN) $(positioning_API)
 
 poi-service-configure: $(poi-service_BIN)/Makefile $(poi-common_BIN)/genivi-poiservice-constants.h
 
