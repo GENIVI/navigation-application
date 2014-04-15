@@ -23,11 +23,11 @@
 # <date>, <name>, <description of change>
 #
 # @licence end@
-positioning_SRC=$(SRC_DIR)/positioning
-positioning_API=$(positioning_SRC)/EnhancedPositionService/api
 positioning_BIN=$(BIN_DIR)/positioning
 positioning_URL=https://git.genivi.org/srv/git/positioning
 positioning_VERSION=daaf1b10766b04f5b1b6fa7fb7fc465bc48debb2
+positioning_SRC=$(SRC_DIR)/positioning_$(positioning_VERSION)
+positioning_API=$(positioning_SRC)/EnhancedPositionService/api
 
 ALL+=positioning
 
@@ -45,5 +45,5 @@ $(positioning_BIN)/EnhancedPositionService/src/server/position-daemon: $(positio
 	cd $(positioning_BIN) && make
 
 $(positioning_SRC)/CMakeLists.txt:
-	cd $(positioning_SRC)/.. && git clone $(positioning_URL)
+	cd $(positioning_SRC)/.. && git clone $(positioning_URL) $(positioning_SRC)
 	cd $(positioning_SRC) && git checkout $(positioning_VERSION)

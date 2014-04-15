@@ -25,7 +25,7 @@
 # @licence end@
 navigation-service_URL="http://git.projects.genivi.org/lbs/navigation.git"
 navigation-service_VERSION=HEAD
-navigation-service_SRC=$(SRC_DIR)/navigation-service-$(navigation-service_VERSION)
+navigation-service_SRC=$(SRC_DIR)/navigation-service_$(navigation-service_VERSION)
 navigation-service_API=$(navigation-service_SRC)/api
 navigation-service_BIN=$(BIN_DIR)/navigation-service
 navigation-service_DEPS=libsqlite3-dev libglibmm-2.4-dev sqlite3 xsltproc libdbus-c++-dev libdbus-1-dev
