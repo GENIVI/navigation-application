@@ -30,6 +30,7 @@
 function run
 {
 	local x=$xterm
+	local g=$gdb
 	title="$1"
 	shift
 	if [ "$1" = "-n" ]
@@ -37,8 +38,17 @@ function run
 		shift
 		x=0
 	fi
+	if [ "$1" = "-g" ]
+	then
+		shift
+		g=0
+	fi
 	if [ "$x" = 1 ]
 	then
+		if [ "$g" = 1 ]
+		then
+			set -- gdb -ex run --args "$@"
+		fi
 		xterm -T "$title" -sb -sl 5000 -e "$@" &
 	else
 		"$@" &
@@ -61,12 +71,13 @@ function terminate
 
 BIN_DIR=$PWD/../../bin
 SRC_DIR=$PWD/..
+gdb=0
 lm=0
 xterm=0
 poipoc=0
 wm=""
 app=application.qml
-while getopts a:c:lnpx opt
+while getopts a:c:glnpx opt
 do
 	case $opt in
 	a)
@@ -74,6 +85,10 @@ do
 		;;
 	c)
 		plugin_args="$plugin_args -$opt $OPTARG"
+		;;
+	g)
+		plugin_args="$plugin_args -$opt"
+		gdb=1
 		;;
 	l)
 		lm=1
@@ -93,6 +108,7 @@ do
 		echo "$0 [-a application][-c center][-lnx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
+		echo "-g: Run subprocesses within gdb (only with -x)"
 		echo "-l: Use layermanager"
 		echo "-n: Don't start enhanced positioning service"
 		echo "-p: Also start POI POC (assumes poi-service is in the same directory as navit-poc)"
