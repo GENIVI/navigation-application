@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="constants.xsl"?>
+
+<constants  name="FuelStopAdvisor">
+  <version>beta (17-12-2013)</version>
+  <doc>
+    <line>This document defines the constants that are used in the Fuel Stop Advisor demonstrator</line>
+      <line>The constants are defined for the demonstrator and not included into the GENIVI compliance</line>
+  </doc>
+
+  <!-- Unit settings -->
+  <id name="METRIC" value="0x0010" />
+  <id name="NON_METRIC" value="0x0011" />
+
+  <!-- Global data -->
+  <id name="ODOMETER" value="0x0020" />
+  <id name="FUEL_LEVEL" value="0x0021" />
+
+  <!-- Trip data -->
+  <id name="DISTANCE" value="0x0030" />
+  <id name="TIME" value="0x0031" />
+  <id name="AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE" value="0x0032" />
+  <id name="AVERAGE_SPEED" value="0x0033" />
+  <id name="TANK_DISTANCE" value="0x0034" />
+  <id name="INSTANT_FUEL_CONSUMPTION_PER_DISTANCE" value="0x0035" />
+
+  <!-- Enhanced tank distance data -->
+  <id name="ENHANCED_TANK_DISTANCE" value="0x0040" />
+
+  <!-- ... --> 
+</constants>
