@@ -1,0 +1,10 @@
+#Log file for the FSA simulator
+#ignition key OFF
+#fuel level 30 l
+#engine speed 0 RPM
+#vehicle speed 0 km/h
+#fuel 0 
+#localization 
+0,0$GVGNSVER,2,0,0
+0,0$GVSNSVER,2,0,0
+
