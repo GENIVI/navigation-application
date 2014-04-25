@@ -37,6 +37,7 @@ poi-service_BIN=$(BIN_DIR)/poi-service
 poi-common_BIN=$(BIN_DIR)/poi-common
 
 DEPS+=$(navigation-service_DEPS)
+deps:: $(poi-service_SRC)/poi-server/poi-server.pro
 
 ALL+=poi-service navit-plugins
 CONSTANTS_SRC+=$(navigation-service_SRC)/api/map-viewer/genivi-mapviewer-constants.xml
