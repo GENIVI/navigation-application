@@ -83,11 +83,9 @@ HMIMenu {
 				smooth: true
 			}
 		}
-
 		HMIList {
+			x:45; y:51; width:330; height:290;
 			property real selectedEntry
-			height:parent.height-bottom.height;
-			width:parent.width;
 			id:view
 			delegate: listDelegate
 			next:search
