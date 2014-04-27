@@ -74,7 +74,6 @@ SRC_DIR=$PWD/..
 gdb=0
 lm=0
 xterm=0
-poipoc=0
 wm=""
 app=application.qml
 while getopts a:c:glnpx opt
@@ -96,9 +95,6 @@ do
 	n)
 		plugin_args="$plugin_args -$opt"
 		;;
-	p)
-		poipoc=1
-		;;
 	x)
 		plugin_args="$plugin_args -$opt"
 		xterm=1
@@ -111,11 +107,13 @@ do
 		echo "-g: Run subprocesses within gdb (only with -x)"
 		echo "-l: Use layermanager"
 		echo "-n: Don't start enhanced positioning service"
-		echo "-p: Also start POI POC (assumes poi-service is in the same directory as navit-poc)"
 		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
 		exit 1
 	esac
 done
+
+REPLAYER_LOG_FILE=$(echo $SRC_DIR/positioning*/provider/rest/geneve-cologny.gvsl)
+export REPLAYER_LOG_FILE
 
 if [ "$lm" = "1" ]
 then
@@ -144,10 +142,11 @@ then
 fi
 export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
 trap "terminate" EXIT INT
-cd ../navigation-service*/src/navigation/script
+cd $BIN_DIR/poi-service
+run "POI service" ./poi-server -f empty.db
+cd $SRC_DIR/navigation-service*/src/navigation/script
 run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
-cd -
-cd ../hmi/qml
+cd $SRC_DIR/hmi/qml
 if [ "$lm" = 1 ]
 then
 	lmqmlviewer $app
