@@ -22,13 +22,13 @@ cmake_minimum_required(VERSION 2.8)
 include(FindPkgConfig)
 pkg_search_module(DBUS_CPP dbus-c++-glib-1 dbus-c++-1)
 pkg_search_module(GLIB glib-2.0)
-include_directories(${DBUS_CPP_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS})
+include_directories(${DBUS_CPP_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 ADD_CUSTOM_COMMAND(OUTPUT fuel-stop-advisor.h
-		   COMMAND dbusxx-xml2cpp fuel-stop-advisor.xml --adaptor=fuel-stop-advisor.h
+		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/fuel-stop-advisor.xml --adaptor=fuel-stop-advisor.h
 		   DEPENDS fuel-stop-advisor.xml
 		   )
 ADD_CUSTOM_COMMAND(OUTPUT constants.h
-	           COMMAND xsltproc enum.xsl constants.xml >constants.h
+	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${PROJECT_SOURCE_DIR}/constants.xml >constants.h
 		   DEPENDS constants.xml
 		   )
 add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor.h constants.h)
