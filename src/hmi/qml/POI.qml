@@ -108,7 +108,7 @@ HMIMenu {
 				Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));
 				Genivi.poisearch_message(dbusIf,"SetCenter",["structure",["double",46.2,"double",6.15,"int32",0]]);
 				Genivi.poisearch_message(dbusIf,"SetCategories",["array",["structure",["uint16",256,"uint32",1000]]]);
-				Genivi.poisearch_message(dbusIf,"StartPoiSearch",["string","","uint16",560]);
+				Genivi.poisearch_message(dbusIf,"StartPoiSearch",["string","","uint16",Genivi.POISERVICE_SORT_BY_DISTANCE]);
 				var res=Genivi.poisearch_message(dbusIf,"RequestResultList",["uint16",0,"uint16",10000,"array",["string","name"]]);
 				var res_win=res[5];
 				for (var i = 0 ; i < res_win.length ; i+=2) {
