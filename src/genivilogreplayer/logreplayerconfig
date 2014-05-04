@@ -1,0 +1,19 @@
+{
+	"sources" : [ 
+		{
+			"name" : "GeniviLogReplayer",
+			"path" : "../genivilogreplayer/genivilogreplayerplugin.so",
+			"delay" : "1000"
+		}
+	],
+	"sinks": [
+		{
+			"name" : "DBusSink",
+			"path" : "plugins/dbus/dbussinkplugin.so",
+			"frequency" : "1060",
+			"sessionbus" : 1
+		}
+
+	]
+}
+

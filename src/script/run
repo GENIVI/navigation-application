@@ -142,6 +142,8 @@ then
 fi
 export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
 trap "terminate" EXIT INT
+cd $BIN_DIR/automotive-message-broker
+run "Automotive Message Broker" ./ambd/ambd --config $SRC_DIR/genivilogreplayer/logreplayerconfig
 cd $BIN_DIR/poi-service
 run "POI service" ./poi-server -f empty.db
 cd $SRC_DIR/navigation-service*/src/navigation/script
