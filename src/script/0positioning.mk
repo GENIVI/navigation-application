@@ -24,10 +24,12 @@
 #
 # @licence end@
 positioning_BIN=$(BIN_DIR)/positioning
-positioning_URL=https://git.genivi.org/srv/git/positioning
-positioning_VERSION=daaf1b10766b04f5b1b6fa7fb7fc465bc48debb2
+gnss-service_BIN=$(BIN_DIR)/gnss-service
+sensors-service_BIN=$(BIN_DIR)/sensors-service
+positioning_URL=http://git.projects.genivi.org/lbs/positioning.git
+positioning_VERSION=HEAD
 positioning_SRC=$(SRC_DIR)/positioning_$(positioning_VERSION)
-positioning_API=$(positioning_SRC)/EnhancedPositionService/api
+positioning_API=$(positioning_SRC)/enhanced-position-service/api
 
 ALL+=positioning
 
@@ -35,13 +37,18 @@ help::
 	@echo "positioning: Build positioning"
 
 
-positioning: $(positioning_BIN)/EnhancedPositionService/src/server/position-daemon
+positioning: $(positioning_BIN)/enhanced-position-service/src/server/position-daemon
 
-$(positioning_BIN)/Makefile: $(positioning_SRC)/CMakeLists.txt
-	mkdir -p $(positioning_BIN)
-	cd $(positioning_BIN) && cmake -DWITH_GPSD=OFF -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=OFF $(positioning_SRC)
+$(positioning_BIN)/Makefile: $(positioning_SRC)/enhanced-position-service/CMakeLists.txt
+	mkdir -p $(positioning_BIN) $(gnss-service_BIN) $(sensors-service_BIN)
+	cd $(gnss-service_BIN) && cmake $(positioning_SRC)/gnss-service
+	cd $(sensors-service_BIN) && cmake $(positioning_SRC)/sensors-service
+	cd $(positioning_BIN) && cmake -DWITH_GPSD=OFF -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=OFF $(positioning_SRC)/enhanced-position-service
 
-$(positioning_BIN)/EnhancedPositionService/src/server/position-daemon: $(positioning_BIN)/Makefile
+
+$(positioning_BIN)/enhanced-position-service/src/server/position-daemon: $(positioning_BIN)/Makefile
+	cd $(gnss-service_BIN) && make
+	cd $(sensors-service_BIN) && make
 	cd $(positioning_BIN) && make
 
 $(positioning_SRC)/CMakeLists.txt:
