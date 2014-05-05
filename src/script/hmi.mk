@@ -38,7 +38,7 @@ $(TESTHMI_BIN)/Makefile: $(TESTHMI_SRC)/all.pro $(TESTHMI_SRC)/dbus.pro $(TESTHM
 ALL += testhmi
 
 $(TESTHMI_BIN)/constants.js: $(TESTHMI_SRC)/javascript.xsl $(CONSTANTS_SRC)
-	for i in $(CONSTANTS_SRC); do xsltproc $(TESTHMI_SRC)/javascript.xsl $$i ; done >$(TESTHMI_BIN)/constants.js
+	for i in $(CONSTANTS_SRC); do xsltproc $(TESTHMI_SRC)/javascript.xsl $$i || exit ; done >$(TESTHMI_BIN)/constants.js
 
 help::
 	@echo "testhmi: Build testhmi"
