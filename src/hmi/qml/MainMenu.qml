@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/fsa-main-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -48,19 +49,25 @@ HMIMenu {
         //so take in account the header height and substract it
 
 
-        StdButton { source:"Core/images/select-navigation.png"; x:100; y:30; width:140; height:100;id:navigation; page:"NavigationSearch"; explode:false; next:mapview; prev:quit}
-        StdButton { source:"Core/images/select-mapview.png"; x:560; y:30; width:140; height:100;id:mapview; explode:false; next:trip; prev:navigation; onClicked: {
+        StdButton { source:StyleSheet.select_navigation[StyleSheet.SOURCE]; x:StyleSheet.select_navigation[StyleSheet.X]; y:StyleSheet.select_navigation[StyleSheet.Y]; width:StyleSheet.select_navigation[StyleSheet.WIDTH]; height:StyleSheet.select_navigation[StyleSheet.HEIGHT];
+            id:navigation; page:"NavigationSearch"; explode:false; next:mapview; prev:quit}
+        StdButton { source:StyleSheet.select_mapview[StyleSheet.SOURCE]; x:StyleSheet.select_mapview[StyleSheet.X]; y:StyleSheet.select_mapview[StyleSheet.Y]; width:StyleSheet.select_mapview[StyleSheet.WIDTH]; height:StyleSheet.select_mapview[StyleSheet.HEIGHT];
+            id:mapview; explode:false; next:trip; prev:navigation; onClicked: {
 				Genivi.data["mapback"]="MainMenu";
 				Genivi.data["show_current_position"]=true;
 				pageOpen("NavigationBrowseMap");
 			}
 		}
-        StdButton { source:"Core/images/select-trip.png"; x:330; y:128; width:140; height:100;id:trip; explode:false; next:poi; prev:mapview;onClicked: {
+        StdButton { source:StyleSheet.select_trip[StyleSheet.SOURCE]; x:StyleSheet.select_trip[StyleSheet.X]; y:StyleSheet.select_trip[StyleSheet.Y]; width:StyleSheet.select_trip[StyleSheet.WIDTH]; height:StyleSheet.select_trip[StyleSheet.HEIGHT];
+            id:trip; explode:false; next:poi; prev:mapview;onClicked: {
                 pageOpen("TripComputer");
             }
         }
-        StdButton { source:"Core/images/select-poi.png"; x:100; y:224; width:140; height:100;id:poi; page:"POI"; explode:false; next:settings; prev:trip}
-        StdButton { source:"Core/images/select-configuration.png"; x:560; y:224; width:140; height:100;id:settings; page:"NavigationSettings"; explode:false; next:quit; prev:trip}
-        StdButton { textColor:"black"; pixelSize:38 ;source:"Core/images/quit.png"; x:600; y:374; width:180; height:60;id:quit; text: Genivi.gettext("Quit"); explode:false; next:navigation; prev:settings; onClicked:{dbusIf.quit()}}
+        StdButton { source:StyleSheet.select_poi[StyleSheet.SOURCE]; x:StyleSheet.select_poi[StyleSheet.X]; y:StyleSheet.select_poi[StyleSheet.Y]; width:StyleSheet.select_poi[StyleSheet.WIDTH]; height:StyleSheet.select_poi[StyleSheet.HEIGHT];
+            id:poi; page:"POI"; explode:false; next:settings; prev:trip}
+        StdButton { source:StyleSheet.select_configuration[StyleSheet.SOURCE]; x:StyleSheet.select_configuration[StyleSheet.X]; y:StyleSheet.select_configuration[StyleSheet.Y]; width:StyleSheet.select_configuration[StyleSheet.WIDTH]; height:StyleSheet.select_configuration[StyleSheet.HEIGHT];
+            id:settings; page:"NavigationSettings"; explode:false; next:quit; prev:trip}
+        StdButton { source:StyleSheet.quit[StyleSheet.SOURCE]; x:StyleSheet.quit[StyleSheet.X]; y:StyleSheet.quit[StyleSheet.Y]; width:StyleSheet.quit[StyleSheet.WIDTH]; height:StyleSheet.quit[StyleSheet.HEIGHT];textColor:StyleSheet.quit[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.quit[StyleSheet.PIXELSIZE];
+            id:quit; text: Genivi.gettext("Quit"); explode:false; next:navigation; prev:settings; onClicked:{dbusIf.quit()}}
     }
 }

@@ -29,77 +29,78 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/navigation-route-menu-css.js" as StyleSheet;
 
 HMIMenu {
-	id: menu
+    id: menu
     headlineFg: "grey"
     headlineBg: "blue"
     text: Genivi.gettext("NavigationRoute")
-	next: back
-	prev: calculate
-	property Item mapmatchedpositionPositionUpdateSignal;
+    next: back
+    prev: calculate
+    property Item mapmatchedpositionPositionUpdateSignal;
 
-	function latlon_to_map(latlon)
-	{
-		return [
-			"uint16",Genivi.NAVIGATIONCORE_LATITUDE,"variant",["double",latlon['lat']],
-			"uint16",Genivi.NAVIGATIONCORE_LONGITUDE,"variant",["double",latlon['lon']]
-		];
-	}
+    function latlon_to_map(latlon)
+    {
+        return [
+            "uint16",Genivi.NAVIGATIONCORE_LATITUDE,"variant",["double",latlon['lat']],
+            "uint16",Genivi.NAVIGATIONCORE_LONGITUDE,"variant",["double",latlon['lon']]
+        ];
+    }
 
-	function setLocation()
-	{
+    function setLocation()
+    {
         locationValue.text=Genivi.data['description'];
         positionValue.text=(Genivi.data['position'] ? Genivi.data['position']['description']:"");
         destinationValue.text=(Genivi.data['destination'] ? Genivi.data['destination']['description']:"");
-	}
+    }
 
-	function updateCurrentPosition()
-	{
-		var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
-		if (res[0] == 'map') {
-			var map=res[1];
-			var ok=0;
-			if (map[0] == 'uint16' && (map[1] == Genivi.NAVIGATIONCORE_LATITUDE || map[1] == Genivi.NAVIGATIONCORE_LONGITUDE) && map[2] == 'variant') {
-				var variant=map[3];
-				if (variant[0] == 'double' && variant[1] != '0') {
-					ok++;
-				}
-		
-			}
-			if (map[4] == 'uint16' && (map[5] == Genivi.NAVIGATIONCORE_LATITUDE || map[5] == Genivi.NAVIGATIONCORE_LONGITUDE) && map[6] == 'variant') {
-				var variant=map[7];
-				if (variant[0] == 'double' && variant[1] != '0') {
-					ok++;
-				}
-			}
-			if (ok == 2 && Genivi.data['destination']) {
-				calculate_curr.disabled=false;
-			} else {
-				calculate_curr.disabled=true;
-			}
-		}
-	
-	}
-	
-	function mapmatchedpositionPositionUpdate(args)
-	{
-		updateCurrentPosition();
-	}
+    function updateCurrentPosition()
+    {
+        var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
+        if (res[0] == 'map') {
+            var map=res[1];
+            var ok=0;
+            if (map[0] == 'uint16' && (map[1] == Genivi.NAVIGATIONCORE_LATITUDE || map[1] == Genivi.NAVIGATIONCORE_LONGITUDE) && map[2] == 'variant') {
+                var variant=map[3];
+                if (variant[0] == 'double' && variant[1] != '0') {
+                    ok++;
+                }
 
-	function connectSignals()
-	{
-		mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
-	}
+            }
+            if (map[4] == 'uint16' && (map[5] == Genivi.NAVIGATIONCORE_LATITUDE || map[5] == Genivi.NAVIGATIONCORE_LONGITUDE) && map[6] == 'variant') {
+                var variant=map[7];
+                if (variant[0] == 'double' && variant[1] != '0') {
+                    ok++;
+                }
+            }
+            if (ok == 2 && Genivi.data['destination']) {
+                calculate_curr.disabled=false;
+            } else {
+                calculate_curr.disabled=true;
+            }
+        }
 
-	function disconnectSignals()
-	{
-	}
+    }
 
-	DBusIf {
-		id:dbusIf
-	}
-	
+    function mapmatchedpositionPositionUpdate(args)
+    {
+        updateCurrentPosition();
+    }
+
+    function connectSignals()
+    {
+        mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
+    }
+
+    function disconnectSignals()
+    {
+    }
+
+    DBusIf {
+        id:dbusIf
+    }
+
     HMIBgImage {
         image:"navigation-route-menu-background";
         anchors { fill: parent; topMargin: parent.headlineHeight}
@@ -107,62 +108,63 @@ HMIMenu {
         //so take in account the header height and substract it
 
         Text {
-            height:menu.hspc
-            x:52; y:22;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.locationTitle[StyleSheet.X]; y:StyleSheet.locationTitle[StyleSheet.Y]; color:StyleSheet.locationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.locationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.locationTitle[StyleSheet.PIXELSIZE];
+            height: menu.hspc;
+            style: Text.Sunken;
+            smooth: true
+            id:locationTitle
             text: Genivi.gettext("EnteredLocation")
         }
 
-		Text {
-            id:locationValue
-			height:menu.hspc
-            width: 600
+        Text {
+            x:StyleSheet.locationValue[StyleSheet.X]; y:StyleSheet.locationValue[StyleSheet.Y]; color:StyleSheet.locationValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.locationValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.locationValue[StyleSheet.PIXELSIZE];width: StyleSheet.locationValue[StyleSheet.WIDTH];
+            height:menu.hspc
+            style: Text.Sunken;
+            smooth: true
             wrapMode: Text.WordWrap
-            x:52; y:52;
-            font.pixelSize: 32;
-            style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
-		}
+            id:locationValue
+        }
 
         Text {
+            x:StyleSheet.positionTitle[StyleSheet.X]; y:StyleSheet.positionTitle[StyleSheet.Y]; color:StyleSheet.positionTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.positionTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.positionTitle[StyleSheet.PIXELSIZE];
             height:menu.hspc
-            x:52; y:116;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            style: Text.Sunken;
+            smooth: true
+            id:positionTitle
             text: Genivi.gettext("Position")
         }
 
         Text {
-            id:positionValue
+            x:StyleSheet.positionValue[StyleSheet.X]; y:StyleSheet.positionValue[StyleSheet.Y]; color:StyleSheet.positionValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.positionValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.positionValue[StyleSheet.PIXELSIZE];width: StyleSheet.positionValue[StyleSheet.WIDTH];
             height:menu.hspc
-            width: 600
+            style: Text.Sunken;
+            smooth: true
             wrapMode: Text.WordWrap
-            x:52; y:150;
-            font.pixelSize: 32;
-            style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
+            id:positionValue
         }
 
         Text {
+            x:StyleSheet.destinationTitle[StyleSheet.X]; y:StyleSheet.destinationTitle[StyleSheet.Y]; color:StyleSheet.destinationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.destinationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.destinationTitle[StyleSheet.PIXELSIZE];
             height:menu.hspc
-            x:52; y:210;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            style: Text.Sunken;
+            smooth: true
+            id:destinationTitle
             text: Genivi.gettext("Destination")
         }
 
         Text {
-            id:destinationValue
+            x:StyleSheet.destinationValue[StyleSheet.X]; y:StyleSheet.destinationValue[StyleSheet.Y]; color:StyleSheet.destinationValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.destinationValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.destinationValue[StyleSheet.PIXELSIZE];width: StyleSheet.destinationValue[StyleSheet.WIDTH];
             height:menu.hspc
-            width: 600
+            style: Text.Sunken;
+            smooth: true
             wrapMode: Text.WordWrap
-            x:52; y:244;
-            font.pixelSize: 32;
-            style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
+            id:destinationValue
         }
 
-        StdButton { source:"Core/images/show-location-on-map.png"; x:660; y:38; width:100; height:60; id:show; disabled:false; next:destination; prev:back; explode:false;
+        StdButton { source:StyleSheet.show_location_on_map[StyleSheet.SOURCE]; x:StyleSheet.show_location_on_map[StyleSheet.X]; y:StyleSheet.show_location_on_map[StyleSheet.Y]; width:StyleSheet.show_location_on_map[StyleSheet.WIDTH]; height:StyleSheet.show_location_on_map[StyleSheet.HEIGHT];
+            id:show; disabled:false; next:destination; prev:back; explode:false;
             onClicked: {
-                Genivi.data['show_position']=new Array();
+                Genivi.data['show_position']=new Array;
                 Genivi.data['show_position']['lat']=Genivi.data['lat'];
                 Genivi.data['show_position']['lon']=Genivi.data['lon'];
                 Genivi.data["mapback"]="NavigationRoute";
@@ -171,9 +173,10 @@ HMIMenu {
             }
         }
 
-        StdButton { source:"Core/images/set-as-position.png"; x:660; y:142; width:100; height:60; id:position; disabled:false; next:calculate; prev:destination; explode:false;
+        StdButton { source:StyleSheet.set_as_position[StyleSheet.SOURCE]; x:StyleSheet.set_as_position[StyleSheet.X]; y:StyleSheet.set_as_position[StyleSheet.Y]; width:StyleSheet.set_as_position[StyleSheet.WIDTH]; height:StyleSheet.set_as_position[StyleSheet.HEIGHT];
+            id:position; disabled:false; next:calculate; prev:destination; explode:false;
             onClicked: {
-                Genivi.data['position']=new Array();
+                Genivi.data['position']=new Array;
                 Genivi.data['position']['lat']=Genivi.data['lat'];
                 Genivi.data['position']['lon']=Genivi.data['lon'];
                 Genivi.data['position']['description']=Genivi.data['description'];
@@ -183,9 +186,10 @@ HMIMenu {
             }
         }
 
-        StdButton { source:"Core/images/set-as-destination.png"; x:660; y:246; width:100; height:60; id:destination; disabled:false; next:position; prev:show; explode:false;
+        StdButton { source:StyleSheet.set_as_destination[StyleSheet.SOURCE]; x:StyleSheet.set_as_destination[StyleSheet.X]; y:StyleSheet.set_as_destination[StyleSheet.Y]; width:StyleSheet.set_as_destination[StyleSheet.WIDTH]; height:StyleSheet.set_as_destination[StyleSheet.HEIGHT];
+            id:destination; disabled:false; next:position; prev:show; explode:false;
              onClicked: {
-                Genivi.data['destination']=new Array();
+                Genivi.data['destination']=new Array;
                 Genivi.data['destination']['lat']=Genivi.data['lat'];
                 Genivi.data['destination']['lon']=Genivi.data['lon'];
                 Genivi.data['destination']['description']=Genivi.data['description'];
@@ -196,7 +200,8 @@ HMIMenu {
             }
         }
 
-        StdButton { textColor:"black"; pixelSize:38; text: Genivi.gettext("Route"); source:"Core/images/route.png"; x:20; y:374; width:180; height:60; id:calculate; explode:false;
+        StdButton { source:StyleSheet.route[StyleSheet.SOURCE]; x:StyleSheet.route[StyleSheet.X]; y:StyleSheet.route[StyleSheet.Y]; width:StyleSheet.route[StyleSheet.WIDTH]; height:StyleSheet.route[StyleSheet.HEIGHT];textColor:StyleSheet.route[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.route[StyleSheet.PIXELSIZE];
+            id:calculate; text: Genivi.gettext("Route"); explode:false;
             onClicked: {
                 var dest=latlon_to_map(Genivi.data['destination']);
                 var pos=latlon_to_map(Genivi.data['position']);
@@ -210,7 +215,8 @@ HMIMenu {
             disabled:!(Genivi.data['position'] && Genivi.data['destination']); next:calculate_curr; prev:position
         }
 
-        StdButton { textColor:"black"; pixelSize:38; text: Genivi.gettext("GoTo"); source:"Core/images/route.png"; x:224; y:374; width:180; height:60; id:calculate_curr; explode:false;
+        StdButton { source:StyleSheet.calculate_curr[StyleSheet.SOURCE]; x:StyleSheet.calculate_curr[StyleSheet.X]; y:StyleSheet.calculate_curr[StyleSheet.Y]; width:StyleSheet.calculate_curr[StyleSheet.WIDTH]; height:StyleSheet.calculate_curr[StyleSheet.HEIGHT];textColor:StyleSheet.calculate_curr[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.calculate_curr[StyleSheet.PIXELSIZE];
+            id:calculate_curr; text: Genivi.gettext("GoTo"); explode:false;
             onClicked: {
                 var dest=latlon_to_map(Genivi.data['destination']);
                 Genivi.routing_message(dbusIf,"SetWaypoints",["boolean",true,"array",["map",dest]]);
@@ -223,13 +229,15 @@ HMIMenu {
             disabled:true; next:back; prev:calculate
         }
 
-        StdButton { textColor:"black"; pixelSize:38 ; source:"Core/images/back.png"; x:600; y:374; width:180; height:60; id:back; text: Genivi.gettext("Back"); disabled:false; next:show; prev:calculate_curr;
+        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.back[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.back[StyleSheet.PIXELSIZE];
+            id:back; text: Genivi.gettext("Back");
             onClicked: {
                 disconnectSignals();
                 Genivi.data['lat']='';
                 Genivi.data['lon']='';
                 pageOpen("NavigationSearch");
             }
+            disabled:false; next:show; prev:calculate_curr;
         }
 
         Component.onCompleted: {
@@ -237,5 +245,5 @@ HMIMenu {
             updateCurrentPosition();
             connectSignals();
         }
-	}
+    }
 }
