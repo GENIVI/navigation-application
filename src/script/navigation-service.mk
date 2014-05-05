@@ -40,10 +40,12 @@ DEPS+=$(navigation-service_DEPS)
 deps:: $(poi-service_SRC)/poi-server/poi-server.pro
 
 ALL+=poi-service navit-plugins
-CONSTANTS_SRC+=$(navigation-service_SRC)/api/map-viewer/genivi-mapviewer-constants.xml
-CONSTANTS_SRC+=$(navigation-service_SRC)/api/navigation-core/genivi-navigationcore-constants.xml
-CONSTANTS_SRC+=$(navigation-service_SRC)/api/poi-service/genivi-poiservice-constants.xml
+navigation-service_CONSTANTS+=$(navigation-service_SRC)/api/map-viewer/genivi-mapviewer-constants.xml
+navigation-service_CONSTANTS+=$(navigation-service_SRC)/api/navigation-core/genivi-navigationcore-constants.xml
+navigation-service_CONSTANTS+=$(navigation-service_SRC)/api/poi-service/genivi-poiservice-constants.xml
+CONSTANTS_SRC+=$(navigation-service_CONSTANTS)
 CONSTANTS_SRC+=$(positioning_API)/genivi-positioning-constants.xml
+
 
 src-clean::
 	rm -rf $(navigation-service_SRC)
@@ -52,7 +54,7 @@ help::
 	@echo "poi-service: Build poi-service"
 	@echo "navit-plugins: Build navit-plugins"
 
-$(poi-service_SRC)/poi-server/poi-server.pro:
+$(poi-service_SRC)/poi-server/poi-server.pro $(navigation-service_CONSTANTS):
 	cd $(navigation-service_SRC)/.. && git clone $(navigation-service_URL) $(navigation-service_SRC)
 	cd $(navigation-service_SRC) && git checkout $(navigation-service_VERSION)
 
