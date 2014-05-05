@@ -29,15 +29,13 @@
 import subprocess
 from subprocess import call
 
-PATH_LOGREPLAYER='/genivi/positioning/build/log-replayer/src/'
+PATH_LOGREPLAYER='../../bin/log-replayer/'
 PATH_LOGFILES='../resource/'
 
 def launch(file): 
 	logreplayer=PATH_LOGREPLAYER + 'log-replayer'
 	file=PATH_LOGFILES + file
 	arguments='> /dev/null 2>&1 &'
-	print logreplayer
-	print file
 	call([logreplayer, file, arguments])
 
 

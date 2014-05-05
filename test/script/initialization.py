@@ -34,8 +34,8 @@ from threading import Timer
 from configTests import *
 
 PERIODICITY = 200 #in ms
-END_STEP_1 = 2*1000/PERIODICITY #2 s
-END_STEP_2 = 7*1000/PERIODICITY #7 s
+END_STEP_1 = 1*1000/PERIODICITY #1 s
+END_STEP_2 = 20*1000/PERIODICITY #20 s
 
 def steps():
 	global step
