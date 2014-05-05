@@ -51,6 +51,6 @@ $(positioning_BIN)/enhanced-position-service/src/server/position-daemon: $(posit
 	cd $(sensors-service_BIN) && make
 	cd $(positioning_BIN) && make
 
-$(positioning_SRC)/CMakeLists.txt:
+$(positioning_SRC)/enhanced-position-service/CMakeLists.txt:
 	cd $(positioning_SRC)/.. && git clone $(positioning_URL) $(positioning_SRC)
 	cd $(positioning_SRC) && git checkout $(positioning_VERSION)
