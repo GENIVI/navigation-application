@@ -101,13 +101,22 @@ HMIMenu {
 				var ids=[];
 				var distance=[];
 				var name=[];
-				console.log("test");
-				Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetVersion",[]));
-				Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetLanguage",[]));
-				Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetAvailableCategories",[]));
-				Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));
-				Genivi.poisearch_message(dbusIf,"SetCenter",["structure",["double",46.2,"double",6.15,"int32",0]]);
-				Genivi.poisearch_message(dbusIf,"SetCategories",["array",["structure",["uint16",256,"uint32",1000]]]);
+				var position=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
+				var category;
+				// Genivi.dump("",position);
+				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetVersion",[]));
+				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetLanguage",[]));
+				var categories=Genivi.poisearch_message_get(dbusIf,"GetAvailableCategories",[]);
+				for (var i = 0 ; i < categories.length ; i+=2) { 
+					if (categories[i+1][1][3] == 'fuel') {
+						// Genivi.dump("",categories[i+1][1]);
+						category=categories[i+1][1][1];
+						console.log("Category "+category);
+					}
+				}
+				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));
+				Genivi.poisearch_message(dbusIf,"SetCenter",["structure",["double",position[1][3][1],"double",position[1][7][1],"int32",0]]);
+				Genivi.poisearch_message(dbusIf,"SetCategories",["array",["structure",["uint16",category,"uint32",1000]]]);
 				Genivi.poisearch_message(dbusIf,"StartPoiSearch",["string","","uint16",Genivi.POISERVICE_SORT_BY_DISTANCE]);
 				var res=Genivi.poisearch_message(dbusIf,"RequestResultList",["uint16",0,"uint16",10000,"array",["string","name"]]);
 				var res_win=res[5];
@@ -122,6 +131,7 @@ HMIMenu {
 					name[poi_details[1][1]]=poi_details[1][3];
 				}	
 				// Genivi.dump("",details);
+				model.clear();
 				for (var i = 0 ; i < ids.length ; i+=2) {
 					var id=ids[i+1];
 					model.append({"name":distance[id]+" "+name[id]});
