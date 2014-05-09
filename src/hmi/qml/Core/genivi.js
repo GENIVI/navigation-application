@@ -379,6 +379,18 @@ function poisearch_message_get(par, func, args)
     return poi_message(par, "POISearch", func, args);
 }
 
+// Send a message to demonstrator (basic)
+function demonstrator_message(par, iface, func, args)
+{
+	return par.message("org.genivi.demonstrator."+iface,"/org/genivi/demonstrator/"+iface,"org.genivi.demonstrator."+iface, func, args);
+}
+
+// Send a message to tripcomputer (basic)
+function tripcomputer_message(par, func, args)
+{
+	return demonstrator_message(par, "TripComputer", func, args);
+}
+
 function setlang(lang)
 {
 	g_lang=lang;

@@ -33,6 +33,11 @@ import "Core/genivi.js" as Genivi;
 HMIMenu {
 	id: menu
 	text: Genivi.gettext("TripComputer")
+
+	DBusIf {
+		id: dbusIf
+	}
+
     function hideAll()
     {
         avg_speed.visible=false
@@ -131,12 +136,22 @@ HMIMenu {
 
 	function update()
     { //just to populate with default values
-		avg_speed.text="58";
-		avg_speed_unit.text="km/h"
-		avg_fuel.text="5.7";
-		avg_fuel_unit.text="L/100"
-		distance.text="129";
-		distance_unit.text="km";
+		var res=Genivi.tripcomputer_message(dbusIf,"GetTripData",["uint8",0]);
+		// Genivi.dump("",res);
+		for (var i = 0 ; i < res[1].length ; i+=4) {
+			if (res[1][i+1] == Genivi.TRIPCOMPUTER_ODOMETER) {
+				distance.text=res[1][i+3][1]/10;
+				distance_unit.text="km";
+			}
+			if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_SPEED) {
+				avg_speed.text=res[1][i+3][1]/10;
+				avg_speed_unit.text="km/h";
+			}
+			if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_FUEL_CONSUMPTION) {
+				avg_fuel.text=res[1][i+3][1]/10;
+				avg_fuel_unit.text="km/h";
+			}
+		}
         fuel.text="35";
         fuel_unit.text="L";
         tank_distance.text="540";
