@@ -27,9 +27,13 @@ ADD_CUSTOM_COMMAND(OUTPUT tripcomputer.h
 		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/tripcomputer.xml --adaptor=tripcomputer.h
 		   DEPENDS tripcomputer.xml
 		   )
+ADD_CUSTOM_COMMAND(OUTPUT amb.h
+		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/amb.xml --proxy=amb.h
+		   DEPENDS amb.xml
+		   )
 ADD_CUSTOM_COMMAND(OUTPUT constants.h
 	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${PROJECT_SOURCE_DIR}/constants.xml >constants.h
 		   DEPENDS constants.xml
 		   )
-add_executable(tripcomputer tripcomputer.cpp tripcomputer.h constants.h)
+add_executable(tripcomputer tripcomputer.cpp tripcomputer.h constants.h amb.h)
 target_link_libraries(tripcomputer ${DBUS_CPP_LDFLAGS} ${GLIB_LDFLAGS})

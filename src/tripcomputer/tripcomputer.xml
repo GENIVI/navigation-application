@@ -2,7 +2,7 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <?xml-stylesheet type="text/xsl" href="introspect.xsl"?>
 
-<node name="/org/genivi/demonstrator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
+<node name="/org/genivi/demonstrator/TripComputer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.demonstrator.TripComputer">
     <version>beta (29-11-2013)</version>
