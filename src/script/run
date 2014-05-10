@@ -174,6 +174,8 @@ cd $BIN_DIR/poi-service
 run "POI service" ./poi-server -f empty.db
 cd $SRC_DIR/navigation-service*/src/navigation/script
 run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
+run "Tripcomputer" $BIN_DIR/tripcomputer/tripcomputer
+run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
 cd $SRC_DIR/hmi/qml
 if [ "$lm" = 1 ]
 then
