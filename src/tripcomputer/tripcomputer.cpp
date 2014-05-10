@@ -6,10 +6,9 @@
 #include "constants.h"
 #include "amb.h"
 
-static DBus::Glib::BusDispatcher dispatcher,amb_dispatcher;
-static DBus::Connection *conn,*amb_conn;
+static DBus::Glib::BusDispatcher dispatcher;
+static DBus::Connection *conn;
 static class TripComputer *server;
-static class AutomotiveMessageBroker *amb;
 static GMainLoop *loop;
 
 static DBus::Variant
@@ -81,6 +80,17 @@ class TripComputer
         TripComputer(DBus::Connection &connection)
         : DBus::ObjectAdaptor(connection, "/org/genivi/demonstrator/TripComputer")
         {
+		amb_dispatcher.attach(NULL);
+		amb_conn = new DBus::Connection(DBus::Connection::SessionBus());
+		amb_conn->setup(&amb_dispatcher);
+		amb=new AutomotiveMessageBroker(*amb_conn);
+
+		fuel = amb->FindObject("Fuel");
+		odometer = amb->FindObject("Odometer");
+		printf("%d %d\n",fuel.size(), odometer.size());
+
+		fuel_properties=new Properties(*amb_conn,fuel[0]);
+		odometer_properties=new Properties(*amb_conn,odometer[0]);
         }
 
 	::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string >
@@ -116,33 +126,9 @@ class TripComputer
 	void ResetTripData(const uint8_t& number)
 	{
 	}
-};
-
-
-
-int main(int argc, char **argv)
-{
-	loop=g_main_loop_new(NULL, false);
-	dispatcher.attach(NULL);
-	DBus::default_dispatcher = &dispatcher;
-	conn = new DBus::Connection(DBus::Connection::SessionBus());
-	conn->setup(&dispatcher);
-	conn->request_name("org.genivi.demonstrator.TripComputer");
-	server=new TripComputer(*conn);
-
-	amb_dispatcher.attach(NULL);
-	amb_conn = new DBus::Connection(DBus::Connection::SessionBus());
-	amb_conn->setup(&amb_dispatcher);
-	amb=new AutomotiveMessageBroker(*amb_conn);
-
-	std::vector< ::DBus::Path > fuel = amb->FindObject("Fuel");
-	std::vector< ::DBus::Path > odometer = amb->FindObject("Odometer");
-	printf("%d %d\n",fuel.size(), odometer.size());
-
-	Properties *fuel_properties=new Properties(*amb_conn,fuel[0]);
-	Properties *odometer_properties=new Properties(*amb_conn,odometer[0]);
-#if 0
-	for (;;) {
+	
+	void update_data()
+	{
 		DBus::Variant variant=fuel_properties->Get("org.automotive.Fuel","Level");
 		DBus::MessageIter it=variant.reader();
 		uint16_t res;
@@ -157,10 +143,36 @@ int main(int argc, char **argv)
 		uint32_t res2;
 		it >> res2;
 		printf("%d\n",res2);
-		sleep(1);
 	}
-#endif
-	
 
+	private:
+	DBus::Glib::BusDispatcher amb_dispatcher;
+	DBus::Connection *amb_conn;
+	AutomotiveMessageBroker *amb;
+	std::vector< ::DBus::Path > fuel;
+	std::vector< ::DBus::Path > odometer;
+	Properties *fuel_properties;
+	Properties *odometer_properties;
+};
+
+static gboolean
+update_data(gpointer user_data)
+{
+	TripComputer *tc=(TripComputer *)user_data;
+	tc->update_data();
+	return TRUE;
+}
+
+int main(int argc, char **argv)
+{
+	loop=g_main_loop_new(NULL, false);
+	dispatcher.attach(NULL);
+	DBus::default_dispatcher = &dispatcher;
+	conn = new DBus::Connection(DBus::Connection::SessionBus());
+	conn->setup(&dispatcher);
+	conn->request_name("org.genivi.demonstrator.TripComputer");
+	server=new TripComputer(*conn);
+
+	g_timeout_add(1000, update_data, server);
 	g_main_loop_run(loop);
 }
