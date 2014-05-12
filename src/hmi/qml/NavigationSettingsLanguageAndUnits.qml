@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/navigation-settings-language-and-units-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -131,40 +132,49 @@ HMIMenu {
 
 	HMIBgImage {
 		id: content
-		image:"navigation-settings-language-and-units-menu-background";
-//Important notice: x,y coordinates from the left/top origin, so take in account the header of 26 pixels high
-		anchors { fill: parent; topMargin: parent.headlineHeight}
+        image:StyleSheet.navigation_settings_language_and_units_menu_background[StyleSheet.SOURCE];
+        anchors { fill: parent; topMargin: parent.headlineHeight}
 
 		Text {
-                height:menu.hspc
-				x:100; y:26;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
-				text: Genivi.gettext("Language")
+            x:StyleSheet.languagesTitle[StyleSheet.X]; y:StyleSheet.languagesTitle[StyleSheet.Y]; width:StyleSheet.languagesTitle[StyleSheet.WIDTH]; height:StyleSheet.languagesTitle[StyleSheet.HEIGHT];color:StyleSheet.languagesTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.languagesTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.languagesTitle[StyleSheet.PIXELSIZE];
+            id:languagesTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Language")
              }
-		StdButton { objectName:"fra_FRA"; source:"Core/images/french.png"; x:100; y:66; width:100; height:60; id:fr_FR; disabled:false; next:back; prev:back; explode:false; onClicked: {setLocale("fra","FRA");}}
-		StdButton { objectName:"deu_DEU"; source:"Core/images/german.png"; x:100; y:140; width:100; height:60; id:de_DE; disabled:false; next:back; prev:back; explode:false; onClicked: {setLocale("deu","DEU");}}
-		StdButton { objectName:"eng_USA"; source:"Core/images/us-english.png"; x:100; y:214; width:100; height:60; id:en_US; disabled:false; next:back; prev:back; explode:false; onClicked: {setLocale("eng","USA");}}
-		StdButton { objectName:"jpn_JPN"; source:"Core/images/japanese.png"; x:100; y:288; width:100; height:60; id:jp_JP; disabled:false; next:back; prev:back; explode:false; onClicked: {setLocale("jpn","JPN");}}
-		StdButton { textColor:"black"; pixelSize:38 ; source:"Core/images/back.png"; x:600; y:374; width:180; height:60; id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
+        StdButton { objectName:"fra_FRA";
+            source:StyleSheet.french_flag[StyleSheet.SOURCE]; x:StyleSheet.french_flag[StyleSheet.X]; y:StyleSheet.french_flag[StyleSheet.Y]; width:StyleSheet.french_flag[StyleSheet.WIDTH]; height:StyleSheet.french_flag[StyleSheet.HEIGHT];
+            id:fra_FRA; disabled:false; next:deu_DEU; prev:back; explode:false; onClicked: {setLocale("fra","FRA");}}
+        StdButton { objectName:"deu_DEU";
+            source:StyleSheet.german_flag[StyleSheet.SOURCE]; x:StyleSheet.german_flag[StyleSheet.X]; y:StyleSheet.german_flag[StyleSheet.Y]; width:StyleSheet.german_flag[StyleSheet.WIDTH]; height:StyleSheet.german_flag[StyleSheet.HEIGHT];
+             id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA; explode:false; onClicked: {setLocale("deu","DEU");}}
+        StdButton { objectName:"eng_USA";
+            source:StyleSheet.usa_flag[StyleSheet.SOURCE]; x:StyleSheet.usa_flag[StyleSheet.X]; y:StyleSheet.usa_flag[StyleSheet.Y]; width:StyleSheet.usa_flag[StyleSheet.WIDTH]; height:StyleSheet.usa_flag[StyleSheet.HEIGHT];
+            id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU; explode:false; onClicked: {setLocale("eng","USA");}}
+        StdButton { objectName:"jpn_JPN";
+            source:StyleSheet.japanese_flag[StyleSheet.SOURCE]; x:StyleSheet.japanese_flag[StyleSheet.X]; y:StyleSheet.japanese_flag[StyleSheet.Y]; width:StyleSheet.japanese_flag[StyleSheet.WIDTH]; height:StyleSheet.japanese_flag[StyleSheet.HEIGHT];
+            id:jpn_JPN; disabled:false; next:back; prev:eng_USA; explode:false; onClicked: {setLocale("jpn","JPN");}}
 
 		Text {
-                height:menu.hspc
-				x:330; y:26;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
-				text: Genivi.gettext("Units")
+            x:StyleSheet.unitsTitle[StyleSheet.X]; y:StyleSheet.unitsTitle[StyleSheet.Y]; width:StyleSheet.unitsTitle[StyleSheet.WIDTH]; height:StyleSheet.unitsTitle[StyleSheet.HEIGHT];color:StyleSheet.unitsTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[StyleSheet.PIXELSIZE];
+            id:unitsTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Units")
              }
-		StdButton { source:"Core/images/unit-km.png"; x:330; y:66; width:100; height:60; id:unit_km; explode:false; disabled:false; next:back; prev:back;
+        StdButton { source:StyleSheet.unit_km[StyleSheet.SOURCE]; x:StyleSheet.unit_km[StyleSheet.X]; y:StyleSheet.unit_km[StyleSheet.Y]; width:StyleSheet.unit_km[StyleSheet.WIDTH]; height:StyleSheet.unit_km[StyleSheet.HEIGHT];
+            id:unit_km; explode:false; disabled:false; next:back; prev:back;
 			onClicked: {
 				setUnits(Genivi.NAVIGATIONCORE_KM,Genivi.MAPVIEWER_KM);}
 		}
-		StdButton { source:"Core/images/unit-mile.png"; x:330; y:140; width:100; height:60; id:unit_mile; explode:false; disabled:false; next:back; prev:back;
+        StdButton { source:StyleSheet.unit_mile[StyleSheet.SOURCE]; x:StyleSheet.unit_mile[StyleSheet.X]; y:StyleSheet.unit_mile[StyleSheet.Y]; width:StyleSheet.unit_mile[StyleSheet.WIDTH]; height:StyleSheet.unit_mile[StyleSheet.HEIGHT];
+            id:unit_mile; explode:false; disabled:false; next:back; prev:back;
 			onClicked: {
 				setUnits(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
 		}
+        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
 
-		
 		Component.onCompleted: {
 			update();
 		}

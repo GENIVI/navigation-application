@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/fsa-poi-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -41,60 +42,53 @@ HMIMenu {
 
     function update()
     {
-        station_details.text="See details of \nthe station here"
+        selectedStationValue.text="See details of \nthe station \nhere"
     }
     HMIBgImage {
-		image:"fsa-poi-menu-background";
-//Important notice: x,y coordinates from the left/top origin, so take in account the header of 26 pixels high
-		anchors { fill: parent; topMargin: parent.headlineHeight }
+        image:StyleSheet.fsa_poi_menu_background[StyleSheet.SOURCE];
+        anchors { fill: parent; topMargin: parent.headlineHeight }
 		Text {
-            height:menu.hspc
-			x:122; y:20;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.searchResultTitle[StyleSheet.X]; y:StyleSheet.searchResultTitle[StyleSheet.Y]; width:StyleSheet.searchResultTitle[StyleSheet.WIDTH]; height:StyleSheet.searchResultTitle[StyleSheet.HEIGHT];color:StyleSheet.searchResultTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchResultTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultTitle[StyleSheet.PIXELSIZE];
+            id:searchResultTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("SearchResult")
 	   	}
 		Text {
-            height:menu.hspc
-			x:470; y:20;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.selectedStationTitle[StyleSheet.X]; y:StyleSheet.selectedStationTitle[StyleSheet.Y]; width:StyleSheet.selectedStationTitle[StyleSheet.WIDTH]; height:StyleSheet.selectedStationTitle[StyleSheet.HEIGHT];color:StyleSheet.selectedStationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.selectedStationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.selectedStationTitle[StyleSheet.PIXELSIZE];
+            id:selectedStationTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("SelectedStation")
 	   	}
 		Text {
-			id:station_details
-            height:menu.hspc
-			x:484; y:76;
-            font.pixelSize: 20;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.selectedStationValue[StyleSheet.X]; y:StyleSheet.selectedStationValue[StyleSheet.Y]; width:StyleSheet.selectedStationValue[StyleSheet.WIDTH]; height:StyleSheet.selectedStationValue[StyleSheet.HEIGHT];color:StyleSheet.selectedStationValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.selectedStationValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.selectedStationValue[StyleSheet.PIXELSIZE];
+            id:selectedStationValue
+            style: Text.Sunken;
+            smooth: true
 			text: " "
         }
 		Component {
-			id: listDelegate
-			Text {
-				width: 180;
-				height: 20;
-				id:text;
+            id: searchResultList
+            Text {
+                x:StyleSheet.searchResultValue[StyleSheet.X]; y:StyleSheet.searchResultValue[StyleSheet.Y]; width:StyleSheet.searchResultValue[StyleSheet.WIDTH]; height:StyleSheet.searchResultValue[StyleSheet.HEIGHT];color:StyleSheet.searchResultValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchResultValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultValue[StyleSheet.PIXELSIZE];
+                id:searchResultValue;
 				text: name;
-				font.pixelSize: 20;
 				style: Text.Sunken;
-				color: "white";
-				styleColor: "black";
 				smooth: true
 			}
 		}
 		HMIList {
-			x:45; y:51; width:330; height:290;
+            x:StyleSheet.searchResultList[StyleSheet.X]; y:StyleSheet.searchResultList[StyleSheet.Y]; width:StyleSheet.searchResultList[StyleSheet.WIDTH]; height:StyleSheet.searchResultList[StyleSheet.HEIGHT];
 			property real selectedEntry
 			id:view
-			delegate: listDelegate
-			next:search
+            delegate: searchResultList
+            next:select_search_for_refill
 			prev:back
 		}
 		StdButton { 
-			source:"Core/images/select-search-for-refill.png";
-			x:408; y:246; width:100; height:60;
-			id:search
+            source:StyleSheet.select_search_for_refill[StyleSheet.SOURCE]; x:StyleSheet.select_search_for_refill[StyleSheet.X]; y:StyleSheet.select_search_for_refill[StyleSheet.Y]; width:StyleSheet.select_search_for_refill[StyleSheet.WIDTH]; height:StyleSheet.select_search_for_refill[StyleSheet.HEIGHT];
+            id:select_search_for_refill
 			explode: false
 			onClicked: {
 				var model=view.model;
@@ -139,48 +133,44 @@ HMIMenu {
 			}
 		}
 		Text {
-            height:menu.hspc
-			x:408; y:316;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.searchTitle[StyleSheet.X]; y:StyleSheet.searchTitle[StyleSheet.Y]; width:StyleSheet.searchTitle[StyleSheet.WIDTH]; height:StyleSheet.searchTitle[StyleSheet.HEIGHT];color:StyleSheet.searchTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchTitle[StyleSheet.PIXELSIZE];
+            id:searchTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("SearchForPOI")
         }
 		StdButton { 
-			source:"Core/images/select-reroute.png";
-			x:534; y:246; width:100; height:60;
-			id:reroute; 
+            source:StyleSheet.select_reroute[StyleSheet.SOURCE]; x:StyleSheet.select_reroute[StyleSheet.X]; y:StyleSheet.select_reroute[StyleSheet.Y]; width:StyleSheet.select_reroute[StyleSheet.WIDTH]; height:StyleSheet.select_reroute[StyleSheet.HEIGHT];
+            id:select_reroute;
             explode:false;
-			next:display; prev:search
+            next:select_display_on_map; prev:select_search_for_refill
 		}
 		Text {
-            height:menu.hspc
-			x:534; y:316;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.rerouteTitle[StyleSheet.X]; y:StyleSheet.rerouteTitle[StyleSheet.Y]; width:StyleSheet.rerouteTitle[StyleSheet.WIDTH]; height:StyleSheet.rerouteTitle[StyleSheet.HEIGHT];color:StyleSheet.rerouteTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.rerouteTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.rerouteTitle[StyleSheet.PIXELSIZE];
+            id:rerouteTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("Reroute")
         }
-		StdButton { 
-			source:"Core/images/select-display-on-map.png";
-			x:658; y:246; width:100; height:60;
-            id:display;
+        StdButton {
+            source:StyleSheet.select_display_on_map[StyleSheet.SOURCE]; x:StyleSheet.select_display_on_map[StyleSheet.X]; y:StyleSheet.select_display_on_map[StyleSheet.Y]; width:StyleSheet.select_display_on_map[StyleSheet.WIDTH]; height:StyleSheet.select_display_on_map[StyleSheet.HEIGHT];
+            id:select_display_on_map;
             explode:false;
-			next:back; prev:reroute
+            next:back; prev:select_reroute
 		}
 		Text {
-            height:menu.hspc
-			x:658; y:316;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.displayTitle[StyleSheet.X]; y:StyleSheet.displayTitle[StyleSheet.Y]; width:StyleSheet.displayTitle[StyleSheet.WIDTH]; height:StyleSheet.displayTitle[StyleSheet.HEIGHT];color:StyleSheet.displayTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.displayTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.displayTitle[StyleSheet.PIXELSIZE];
+            id:displayTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("DisplayPOI")
         }
-		StdButton { 
-			textColor:"black"; pixelSize:38 ; 
-			source:"Core/images/back.png"; 
-			x:600; y:374; width:180; height:60; 
-			id:back; 
+        StdButton {
+            source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            id:back;
 			text: Genivi.gettext("Back"); 
 			disabled:false; 
-			next:search; prev:display; 
+            next:select_search_for_refill; prev:select_display_on_map;
 			page:"MainMenu"
 		}	
 	}

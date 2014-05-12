@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<layoutBuilder>
+	<layer height="46" width="98" x="645" y="409">quitText</layer>
+	<layer height="60" width="180" x="601" y="400">quit</layer>
+	<layer height="100" width="140" x="560" y="56">select-mapview</layer>
+	<layer height="100" width="140" x="100" y="250">select-poi</layer>
+	<layer height="100" width="140" x="330" y="153">select-trip</layer>
+	<layer height="100" width="140" x="560" y="250">select-configuration</layer>
+	<layer height="100" width="140" x="100" y="56">select-navigation</layer>
+	<layer height="454" width="800" x="0" y="26">fsa-main-menu-background</layer>
+</layoutBuilder>

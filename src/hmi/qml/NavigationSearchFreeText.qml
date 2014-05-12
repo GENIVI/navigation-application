@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/navigation-search-freetext-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -140,21 +141,19 @@ HMIMenu {
         }
 
     HMIBgImage {
-        image:"navigation-search-by-freetext-menu-background";
+        image:StyleSheet.navigation_search_by_freetext_menu_background[StyleSheet.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
-        //Important notice: x,y coordinates from the left/top origin of the component
-        //so take in account the header height and substract it
 
         Text {
-                height:menu.hspc
-                x:100; y:30;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true;
-                text: Genivi.gettext("Text");
+            x:StyleSheet.textTitle[StyleSheet.X]; y:StyleSheet.textTitle[StyleSheet.Y]; width:StyleSheet.textTitle[StyleSheet.WIDTH]; height:StyleSheet.textTitle[StyleSheet.HEIGHT];color:StyleSheet.textTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.textTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.textTitle[StyleSheet.PIXELSIZE];
+            id:textTitle;
+            style: Text.Sunken;
+            smooth: true;
+            text: Genivi.gettext("Text");
         }
 		EntryField {
-            x:100; y:74; width:280; height:60;
-            id: text
+            x:StyleSheet.textValue[StyleSheet.X]; y:StyleSheet.textValue[StyleSheet.Y]; width: StyleSheet.textValue[StyleSheet.WIDTH]; height: StyleSheet.textValue[StyleSheet.HEIGHT];
+            id: textValue
 			criterion: Genivi.NAVIGATIONCORE_FULL_ADDRESS
 			globaldata: 'location_input'
 			textfocus: true
@@ -163,17 +162,14 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         StdButton {
-            textColor:"black";
-            pixelSize:38 ;
-            source:"Core/images/ok.png";
-            x:20; y:374; width:180; height:60;
-            text:Genivi.gettext("Ok")
+            source:StyleSheet.ok[StyleSheet.SOURCE]; x:StyleSheet.ok[StyleSheet.X]; y:StyleSheet.ok[StyleSheet.Y]; width:StyleSheet.ok[StyleSheet.WIDTH]; height:StyleSheet.ok[StyleSheet.HEIGHT];textColor:StyleSheet.okText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.okText[StyleSheet.PIXELSIZE];
             id:ok
+            text:Genivi.gettext("Ok")
             next:back
-            prev:text
+            prev:textValue
             explode:false
             onClicked:{
-                accept(text);
+                accept(textValue);
 /*
                 leave(1);
                 Genivi.data['lat']=menu.lat;
@@ -183,7 +179,9 @@ HMIMenu {
 */
         }
         }
-        StdButton { textColor:"black"; pixelSize:38 ;source:"Core/images/back.png"; x:600; y:374; width:180; height:60;id:back; text: Genivi.gettext("Back"); explode:false; next:text; prev:ok;
+        StdButton {
+            source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            id:back; text: Genivi.gettext("Back"); explode:false; next:textValue; prev:ok;
             onClicked:{leave(1); pageOpen("NavigationSearch");}
         }
     }

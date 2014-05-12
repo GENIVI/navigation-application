@@ -43,10 +43,8 @@ HMIMenu {
 	}
 
 	HMIBgImage {
-		image:"fsa-main-menu-background";
+        image:StyleSheet.fsa_main_menu_background[StyleSheet.SOURCE];
 		anchors { fill: parent; topMargin: parent.headlineHeight}
-        //Important notice: x,y coordinates from the left/top origin of the component
-        //so take in account the header height and substract it
 
 
         StdButton { source:StyleSheet.select_navigation[StyleSheet.SOURCE]; x:StyleSheet.select_navigation[StyleSheet.X]; y:StyleSheet.select_navigation[StyleSheet.Y]; width:StyleSheet.select_navigation[StyleSheet.WIDTH]; height:StyleSheet.select_navigation[StyleSheet.HEIGHT];
@@ -67,7 +65,7 @@ HMIMenu {
             id:poi; page:"POI"; explode:false; next:settings; prev:trip}
         StdButton { source:StyleSheet.select_configuration[StyleSheet.SOURCE]; x:StyleSheet.select_configuration[StyleSheet.X]; y:StyleSheet.select_configuration[StyleSheet.Y]; width:StyleSheet.select_configuration[StyleSheet.WIDTH]; height:StyleSheet.select_configuration[StyleSheet.HEIGHT];
             id:settings; page:"NavigationSettings"; explode:false; next:quit; prev:trip}
-        StdButton { source:StyleSheet.quit[StyleSheet.SOURCE]; x:StyleSheet.quit[StyleSheet.X]; y:StyleSheet.quit[StyleSheet.Y]; width:StyleSheet.quit[StyleSheet.WIDTH]; height:StyleSheet.quit[StyleSheet.HEIGHT];textColor:StyleSheet.quit[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.quit[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.quit[StyleSheet.SOURCE]; x:StyleSheet.quit[StyleSheet.X]; y:StyleSheet.quit[StyleSheet.Y]; width:StyleSheet.quit[StyleSheet.WIDTH]; height:StyleSheet.quit[StyleSheet.HEIGHT];textColor:StyleSheet.quitText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.quitText[StyleSheet.PIXELSIZE];
             id:quit; text: Genivi.gettext("Quit"); explode:false; next:navigation; prev:settings; onClicked:{dbusIf.quit()}}
     }
 }

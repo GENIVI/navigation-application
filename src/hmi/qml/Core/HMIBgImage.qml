@@ -8,6 +8,7 @@
 * \brief This file is part of the navigation hmi.
 *
 * \author Martin Schaller <martin.schaller@it-schaller.de>
+* \author Philippe Colliot <philippe.colliot@mpsa.com>
 *
 * \version 1.0
 *
@@ -19,6 +20,7 @@
 * For further information see http://www.genivi.org/.
 *
 * List of changes:
+* 2014-05-08, Philippe Colliot, use of css file so change path of the image
 * <date>, <name>, <description of change>
 *
 * @licence end@
@@ -27,6 +29,6 @@ import QtQuick 1.0
 
 BorderImage {
 	property string image;
-	source:"images/"+image+".png";
+	source:"../"+image;
 	anchors { fill: parent; topMargin: parent.headlineHeight}
 }
