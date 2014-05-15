@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/navigation-search-address-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -48,14 +49,14 @@ HMIMenu {
         //load the field with saved values
         if (Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY] !== "")
         {//need to test empty string
-            country.text=Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY];
-            accept(country);
-            city.disabled=false;
+            countryValue.text=Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY];
+            accept(countryValue);
+            cityValue.disabled=false;
             if (Genivi.address[Genivi.NAVIGATIONCORE_CITY] !== "")
             {
-                city.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
-                street.disabled=false;
-                accept(city);
+                cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
+                streetValue.disabled=false;
+                accept(cityValue);
             }
         }
     }
@@ -85,53 +86,53 @@ HMIMenu {
 
 	function setContent(args)
 	{
-		country.text="";
-		city.text="";
-		street.text="";
-		number.text="";
+        countryValue.text="";
+        cityValue.text="";
+        streetValue.text="";
+        numberValue.text="";
 		for (var i=0 ; i < args.length ; i+=4) {
 			if (args[i+1] == Genivi.NAVIGATIONCORE_LATITUDE) lat=args[i+3][1];
 			if (args[i+1] == Genivi.NAVIGATIONCORE_LONGITUDE) lon=args[i+3][1];
-			if (args[i+1] == Genivi.NAVIGATIONCORE_COUNTRY) country.text=args[i+3][1];
-			if (args[i+1] == Genivi.NAVIGATIONCORE_CITY) city.text=args[i+3][1];
-			if (args[i+1] == Genivi.NAVIGATIONCORE_STREET) street.text=args[i+3][1];
-			if (args[i+1] == Genivi.NAVIGATIONCORE_HOUSENUMBER) number.text=args[i+3][1];
+            if (args[i+1] == Genivi.NAVIGATIONCORE_COUNTRY) countryValue.text=args[i+3][1];
+            if (args[i+1] == Genivi.NAVIGATIONCORE_CITY) cityValue.text=args[i+3][1];
+            if (args[i+1] == Genivi.NAVIGATIONCORE_STREET) streetValue.text=args[i+3][1];
+            if (args[i+1] == Genivi.NAVIGATIONCORE_HOUSENUMBER) numberValue.text=args[i+3][1];
 		}
 	}
 
 	function setDisabled(args)
 	{
-		country.disabled=true;
-		city.disabled=true;
-		street.disabled=true;
-		number.disabled=true;
+        countryValue.disabled=true;
+        cityValue.disabled=true;
+        streetValue.disabled=true;
+        numberValue.disabled=true;
 		for (var i=0 ; i < args.length ; i++) {
-			if (args[i] == Genivi.NAVIGATIONCORE_COUNTRY) country.disabled=false;
-			if (args[i] == Genivi.NAVIGATIONCORE_CITY) city.disabled=false;
-			if (args[i] == Genivi.NAVIGATIONCORE_STREET) street.disabled=false;
-			if (args[i] == Genivi.NAVIGATIONCORE_HOUSENUMBER) number.disabled=false;
+            if (args[i] == Genivi.NAVIGATIONCORE_COUNTRY) countryValue.disabled=false;
+            if (args[i] == Genivi.NAVIGATIONCORE_CITY) cityValue.disabled=false;
+            if (args[i] == Genivi.NAVIGATIONCORE_STREET) streetValue.disabled=false;
+            if (args[i] == Genivi.NAVIGATIONCORE_HOUSENUMBER) numberValue.disabled=false;
 		}
-		if (country.disabled)
-			country.text="";
-		if (city.disabled)
-			city.text="";
-		if (street.disabled)
-			street.text="";
-		if (number.disabled)
-			number.text="";
+        if (countryValue.disabled)
+            countryValue.text="";
+        if (cityValue.disabled)
+            cityValue.text="";
+        if (streetValue.disabled)
+            streetValue.text="";
+        if (numberValue.disabled)
+            numberValue.text="";
 	}
 
 	function setFocus()
 	{
 		var focus;
-		if (!country.disabled)
-			focus=country;
-		if (!city.disabled)
-			focus=city;
-		if (!street.disabled)
-			focus=street;
-		if (!number.disabled)
-			focus=number;
+        if (!countryValue.disabled)
+            focus=countryValue;
+        if (!cityValue.disabled)
+            focus=cityValue;
+        if (!streetValue.disabled)
+            focus=streetValue;
+        if (!numberValue.disabled)
+            focus=numberValue;
 		focus.takeFocus();
 	}
 
@@ -199,123 +200,118 @@ HMIMenu {
 			if (Genivi.entryselectedentry) {
 				Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry-1]);
 			}
-			if (Genivi.entrydest == 'country') accept(country);
-			if (Genivi.entrydest == 'city') accept(city);
-			if (Genivi.entrydest == 'street') accept(street);
-			if (Genivi.entrydest == 'number') accept(number);
+            if (Genivi.entrydest == 'countryValue') accept(countryValue);
+            if (Genivi.entrydest == 'cityValue') accept(cityValue);
+            if (Genivi.entrydest == 'streetValue') accept(streetValue);
+            if (Genivi.entrydest == 'numberValue') accept(numberValue);
 			Genivi.entrydest=null;
 		}
         }
 
     HMIBgImage {
-        image:"navigation-search-by-address-menu-background";
+        image:StyleSheet.navigation_search_by_address_menu_background[StyleSheet.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
-        //Important notice: x,y coordinates from the left/top origin of the component
-        //so take in account the header height and substract it
         id: content
 
         Text {
-                height:menu.hspc
-                x:100; y:30;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true;
-                text: Genivi.gettext("Country");
+            x:StyleSheet.countryTitle[StyleSheet.X]; y:StyleSheet.countryTitle[StyleSheet.Y]; width:StyleSheet.countryTitle[StyleSheet.WIDTH]; height:StyleSheet.countryTitle[StyleSheet.HEIGHT];color:StyleSheet.countryTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.countryTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.countryTitle[StyleSheet.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id: countryTitle
+            text: Genivi.gettext("Country");
         }
         EntryField {
-			id: country
-            x:100; y:74; width:280; height:60;
+            x:StyleSheet.countryValue[StyleSheet.X]; y:StyleSheet.countryValue[StyleSheet.Y]; width: StyleSheet.countryValue[StyleSheet.WIDTH]; height: StyleSheet.countryValue[StyleSheet.HEIGHT];
+            id: countryValue
 			criterion: Genivi.NAVIGATIONCORE_COUNTRY
-			globaldata: 'country'
+            globaldata: 'countryValue'
 			textfocus: true
-			next: city
+            next: cityValue
 			prev: back
 			onLeave:{menu.leave(0)}
 		}
         Text {
-                height:menu.hspc
-                x:460; y:30;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true;
-                text: Genivi.gettext("Street");
+            x:StyleSheet.streetTitle[StyleSheet.X]; y:StyleSheet.streetTitle[StyleSheet.Y]; width:StyleSheet.streetTitle[StyleSheet.WIDTH]; height:StyleSheet.streetTitle[StyleSheet.HEIGHT];color:StyleSheet.streetTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.streetTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.streetTitle[StyleSheet.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id:streetTitle
+            text: Genivi.gettext("Street");
         }
 		EntryField {
-			id:street
-            x:460; y:74; width:280; height:60;
+            x:StyleSheet.streetValue[StyleSheet.X]; y:StyleSheet.streetValue[StyleSheet.Y]; width: StyleSheet.streetValue[StyleSheet.WIDTH]; height: StyleSheet.streetValue[StyleSheet.HEIGHT];
+            id:streetValue
 			criterion: Genivi.NAVIGATIONCORE_STREET
-			globaldata: 'street'
-			next: number
-			prev: city
+            globaldata: 'streetValue'
+            next: numberValue
+            prev: cityValue
 			disabled: true
 			onLeave:{menu.leave(0)}
 		}
         Text {
-                height:menu.hspc
-                x:100; y:180;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true;
-                text: Genivi.gettext("City");
+            x:StyleSheet.cityTitle[StyleSheet.X]; y:StyleSheet.cityTitle[StyleSheet.Y]; width:StyleSheet.cityTitle[StyleSheet.WIDTH]; height:StyleSheet.cityTitle[StyleSheet.HEIGHT];color:StyleSheet.cityTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.cityTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.cityTitle[StyleSheet.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id:cityTitle
+            text: Genivi.gettext("City");
         }
         EntryField {
-			id:city
-            x:100; y:224; width:280; height:60;
+            x:StyleSheet.cityValue[StyleSheet.X]; y:StyleSheet.cityValue[StyleSheet.Y]; width: StyleSheet.cityValue[StyleSheet.WIDTH]; height: StyleSheet.cityValue[StyleSheet.HEIGHT];
+            id:cityValue
 			criterion: Genivi.NAVIGATIONCORE_CITY
-			globaldata: 'city'
-			next:street
-			prev:country
+            globaldata: 'cityValue'
+            next:streetValue
+            prev:countryValue
 			disabled: true
 			onLeave:{menu.leave(0)}
 		}
         Text {
-                height:menu.hspc
-                x:460; y:180;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true;
-                text: Genivi.gettext("Number");
+            x:StyleSheet.numberTitle[StyleSheet.X]; y:StyleSheet.numberTitle[StyleSheet.Y]; width:StyleSheet.numberTitle[StyleSheet.WIDTH]; height:StyleSheet.numberTitle[StyleSheet.HEIGHT];color:StyleSheet.numberTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.numberTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.numberTitle[StyleSheet.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id:numberTitle
+            text: Genivi.gettext("Number");
         }
         EntryField {
-			id:number
-            x:460; y:224; width:280; height:60;
+            x:StyleSheet.numberValue[StyleSheet.X]; y:StyleSheet.numberValue[StyleSheet.Y]; width: StyleSheet.numberValue[StyleSheet.WIDTH]; height: StyleSheet.numberValue[StyleSheet.HEIGHT];
+            id:numberValue
 			criterion: Genivi.NAVIGATIONCORE_HOUSENUMBER
-			globaldata: 'number'
+            globaldata: 'numberValue'
 			next: ok
-			prev: street
+            prev: streetValue
 			disabled: true
 			onLeave:{menu.leave(0)}
 		}
 
-        StdButton {
-            textColor:"black";
-            pixelSize:38 ;
-            source:"Core/images/ok.png";
-            x:20; y:374; width:180; height:60;
+        StdButton { source:StyleSheet.ok[StyleSheet.SOURCE]; x:StyleSheet.ok[StyleSheet.X]; y:StyleSheet.ok[StyleSheet.Y]; width:StyleSheet.ok[StyleSheet.WIDTH]; height:StyleSheet.ok[StyleSheet.HEIGHT];textColor:StyleSheet.okText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.okText[StyleSheet.PIXELSIZE];
             id:ok
             next:back
-            prev:number
+            prev:numberValue
             text:Genivi.gettext("Ok")
             disabled: true
             onClicked:{
                 leave(1);
                 //save address for next time
-                Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY]=country.text;
-                Genivi.address[Genivi.NAVIGATIONCORE_CITY]=city.text;
-                Genivi.address[Genivi.NAVIGATIONCORE_STREET]=street.text;
-                Genivi.address[Genivi.NAVIGATIONCORE_HOUSENUMBER]=number.text;
+                Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY]=countryValue.text;
+                Genivi.address[Genivi.NAVIGATIONCORE_CITY]=cityValue.text;
+                Genivi.address[Genivi.NAVIGATIONCORE_STREET]=streetValue.text;
+                Genivi.address[Genivi.NAVIGATIONCORE_HOUSENUMBER]=numberValue.text;
                 Genivi.data['lat']=menu.lat;
                 Genivi.data['lon']=menu.lon;
-                Genivi.data['description']=country.text;
-                if (!city.disabled)
-                    Genivi.data['description']+=' '+city.text;
-                if (!street.disabled)
-                    Genivi.data['description']+=' '+street.text;
-                if (!number.disabled)
-                    Genivi.data['description']+=' '+number.text;
+                Genivi.data['description']=countryValue.text;
+                if (!cityValue.disabled)
+                    Genivi.data['description']+=' '+cityValue.text;
+                if (!streetValue.disabled)
+                    Genivi.data['description']+=' '+streetValue.text;
+                if (!numberValue.disabled)
+                    Genivi.data['description']+=' '+numberValue.text;
                 //save entered location into the history
                 Genivi.updateHistoryOfLastEnteredLocation(Genivi.data['description'],Genivi.data['lat'],Genivi.data['lon']);
                 pageOpen("NavigationRoute");
             }
         }
 
-        StdButton { textColor:"black"; pixelSize:38 ;source:"Core/images/back.png"; x:600; y:374; width:180; height:60;id:back; text: Genivi.gettext("Back"); explode:false; next:country; prev:ok;
+        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            id:back; text: Genivi.gettext("Back"); explode:false; next:countryValue; prev:ok;
             onClicked:{leave(1); pageOpen("NavigationSearch");}
         }
 	}

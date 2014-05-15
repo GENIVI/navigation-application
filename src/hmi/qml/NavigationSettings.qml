@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/navigation-settings-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -40,7 +41,7 @@ HMIMenu {
 	DBusIf {
 		id:dbusIf;
 	}
-	property int speedValue: 0;
+    property int speedValueSent: 0;
 
 	function getDBusSpeedValue(value)
 	{
@@ -114,36 +115,36 @@ HMIMenu {
         var res=Genivi.mapmatch_message_get(dbusIf,"GetSimulationSpeed",[]);
 		if (res[0] == "uint8") {
 			if (res[1] == 0) {
-				speed.text="0";
-				speedValue=0;
+                speedValue.text="0";
+                speedValueSent=0;
 			}
 			if (res[1] == 1) {
-				speed.text="1/4";
-				speedValue=1;
+                speedValue.text="1/4";
+                speedValueSent=1;
 			}
 			if (res[1] == 2) {
-				speed.text="1/2";
-				speedValue=2;
+                speedValue.text="1/2";
+                speedValueSent=2;
 			}
 			if (res[1] == 4) {
-				speed.text="1";
-				speedValue=3;
+                speedValue.text="1";
+                speedValueSent=3;
 			}
 			if (res[1] == 8) {
-				speed.text="2";
-				speedValue=4;
+                speedValue.text="2";
+                speedValueSent=4;
 			}
 			if (res[1] == 16) {
-				speed.text="4";
-				speedValue=5;
+                speedValue.text="4";
+                speedValueSent=5;
 			}
 			if (res[1] == 32) {
-				speed.text="8";
-				speedValue=6;
+                speedValue.text="8";
+                speedValueSent=6;
 			}
 			if (res[1] == 64) {
-				speed.text="16";
-				speedValue=7;
+                speedValue.text="16";
+                speedValueSent=7;
 			}
 		} else {
 			console.log("Unexpected result from GetSimulationSpeed:");
@@ -153,73 +154,74 @@ HMIMenu {
 
 	HMIBgImage {
 		id: content
-        image:"navigation-settings-menu-background";
-//Important notice: x,y coordinates from the left/top origin, so take in account the header of 26 pixels high
-		anchors { fill: parent; topMargin: parent.headlineHeight}
+        image:StyleSheet.navigation_settings_background[StyleSheet.SOURCE];
+        anchors { fill: parent; topMargin: parent.headlineHeight}
 
 		Text {
-                height:menu.hspc
-				x:38; y:50;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
-				text: Genivi.gettext("Simulation")
+            x:StyleSheet.simulationTitle[StyleSheet.X]; y:StyleSheet.simulationTitle[StyleSheet.Y]; width:StyleSheet.simulationTitle[StyleSheet.WIDTH]; height:StyleSheet.simulationTitle[StyleSheet.HEIGHT];color:StyleSheet.simulationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.simulationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.simulationTitle[StyleSheet.PIXELSIZE];
+            id:simulationTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Simulation")
              }
 		Text {
-                height:menu.hspc
-				x:82; y:178;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
-				text: Genivi.gettext("Speed")
+            x:StyleSheet.speedTitle[StyleSheet.X]; y:StyleSheet.speedTitle[StyleSheet.Y]; width:StyleSheet.speedTitle[StyleSheet.WIDTH]; height:StyleSheet.speedTitle[StyleSheet.HEIGHT];color:StyleSheet.speedTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.speedTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.speedTitle[StyleSheet.PIXELSIZE];
+            id:speedTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Speed")
              }
 		Text {
-				id:speed
-                height:menu.hspc
-				x:102; y:112;
-                font.pixelSize: 32;
-                style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
-				text: ""
+            x:StyleSheet.speedValue[StyleSheet.X]; y:StyleSheet.speedValue[StyleSheet.Y]; width:StyleSheet.speedValue[StyleSheet.WIDTH]; height:StyleSheet.speedValue[StyleSheet.HEIGHT];color:StyleSheet.speedValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.speedValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.speedValue[StyleSheet.PIXELSIZE];
+            id:speedValue
+            style: Text.Sunken;
+            smooth: true
+            text: ""
              }
 
-		StdButton {source:"Core/images/speed-down.png"; x:40; y:108; width:37; height:42; id:speed_down; explode:false; disabled:false; next:back; prev:back;
+        StdButton {source:StyleSheet.speed_down[StyleSheet.SOURCE]; x:StyleSheet.speed_down[StyleSheet.X]; y:StyleSheet.speed_down[StyleSheet.Y]; width:StyleSheet.speed_down[StyleSheet.WIDTH]; height:StyleSheet.speed_down[StyleSheet.HEIGHT];
+            id:speed_down; explode:false; disabled:false; next:back; prev:back;
 			onClicked:
 			{
-				if (speedValue > 0)
-					speedValue = speedValue-1;
-				Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValue)]);
+                if (speedValueSent > 0)
+                    speedValueSent = speedValueSent-1;
+                Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
 				update();
 			}
 		}
-		StdButton {source:"Core/images/speed-up.png"; x:160; y:108; width:37; height:42; id:speed_up; explode:false; disabled:false; next:back; prev:back;
+        StdButton {source:StyleSheet.speed_up[StyleSheet.SOURCE]; x:StyleSheet.speed_up[StyleSheet.X]; y:StyleSheet.speed_up[StyleSheet.Y]; width:StyleSheet.speed_up[StyleSheet.WIDTH]; height:StyleSheet.speed_up[StyleSheet.HEIGHT];
+            id:speed_up; explode:false; disabled:false; next:back; prev:back;
 			onClicked:
 			{
-				if (speedValue < 7)
-					speedValue = speedValue+1;
-				Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValue)]);
+                if (speedValueSent < 7)
+                    speedValueSent = speedValueSent+1;
+                Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
 				update();
 			}
 		}
 
 		Text {
-                height:menu.hspc
-				x:330; y:178;
-                font.pixelSize: 25;
-                style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
-				text: Genivi.gettext("Mode")
+            x:StyleSheet.modeTitle[StyleSheet.X]; y:StyleSheet.modeTitle[StyleSheet.Y]; width:StyleSheet.modeTitle[StyleSheet.WIDTH]; height:StyleSheet.modeTitle[StyleSheet.HEIGHT];color:StyleSheet.modeTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.modeTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.modeTitle[StyleSheet.PIXELSIZE];
+            id:modeTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Mode")
              }
 
-		StdButton { x:260; y:102; width:100; height:60; id:on_off; next:back; prev:back; explode:false; disabled:false; 
+        StdButton { x:StyleSheet.simulation_on[StyleSheet.X]; y:StyleSheet.simulation_on[StyleSheet.Y]; width:StyleSheet.simulation_on[StyleSheet.WIDTH]; height:StyleSheet.simulation_on[StyleSheet.HEIGHT];
+            id:on_off; next:back; prev:back; explode:false; disabled:false;
 			property int status: 0;
 			function setState(name)
 			{
 				if (name=="ON")
 				{
 					status=1;
-					source="Core/images/simulation-off.png";
+                    source=StyleSheet.simulation_off[StyleSheet.SOURCE];
 				}
 				else
 				{
 					status=0;
-					source="Core/images/simulation-on.png";
+                    source=StyleSheet.simulation_on[StyleSheet.SOURCE];
 				}
             }
 			onClicked:
@@ -239,14 +241,15 @@ HMIMenu {
                 update();
 			}
 		}
-		StdButton { x:400; y:102; width:100; height:60; id:simu_mode; next:back; prev:back; explode:false; disabled:false; 
+        StdButton { x:StyleSheet.play[StyleSheet.X]; y:StyleSheet.play[StyleSheet.Y]; width:StyleSheet.play[StyleSheet.WIDTH]; height:StyleSheet.play[StyleSheet.HEIGHT];
+            id:simu_mode; next:back; prev:back; explode:false; disabled:false;
 			property int status: 0;
 			function setState(name)
 			{
 				if (name=="FREE")
 				{
 					status=0;
-					source="Core/images/play.png";
+                    source=StyleSheet.play[StyleSheet.SOURCE];
 					disabled=true;
 				}
 				else
@@ -254,7 +257,7 @@ HMIMenu {
 					if (name=="PLAY")
 					{
 						status=1;
-						source="Core/images/play.png";
+                        source=StyleSheet.play[StyleSheet.SOURCE];
 						enabled=true;
 					}
 					else
@@ -262,7 +265,7 @@ HMIMenu {
 						if (name=="PAUSE")
 						{
 							status=2;
-							source="Core/images/pause.png";
+                            source=StyleSheet.pause[StyleSheet.SOURCE];
 							enabled=true;
 						}
 					}
@@ -287,11 +290,14 @@ HMIMenu {
             }
 		}
 
-		StdButton { textColor:"black"; pixelSize:38 ; source:"Core/images/preferences.png"; x:20; y:374; width:260; height:60; id:preferences; text: Genivi.gettext("Preference"); disabled:false; next:language; prev:back; page:"NavigationSettingsPreferences"}
+        StdButton { source:StyleSheet.preferences[StyleSheet.SOURCE]; x:StyleSheet.preferences[StyleSheet.X]; y:StyleSheet.preferences[StyleSheet.Y]; width:StyleSheet.preferences[StyleSheet.WIDTH]; height:StyleSheet.preferences[StyleSheet.HEIGHT];textColor:StyleSheet.preferencesText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.preferencesText[StyleSheet.PIXELSIZE];
+            id:preferences; text: Genivi.gettext("Preference"); disabled:false; next:languageAndUnit; prev:back; page:"NavigationSettingsPreferences"}
 
-		StdButton { textColor:"black"; pixelSize:38 ; source:"Core/images/language-and-unit.png"; x:310; y:374; width:260; height:60; id:language; text: Genivi.gettext("LanguageAndUnits"); disabled:false; next:back; prev:preferences; page:"NavigationSettingsLanguageAndUnits"}
+        StdButton {source:StyleSheet.languageAndUnit[StyleSheet.SOURCE]; x:StyleSheet.languageAndUnit[StyleSheet.X]; y:StyleSheet.languageAndUnit[StyleSheet.Y]; width:StyleSheet.languageAndUnit[StyleSheet.WIDTH]; height:StyleSheet.languageAndUnit[StyleSheet.HEIGHT];textColor:StyleSheet.languageAndUnitText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.languageAndUnitText[StyleSheet.PIXELSIZE];
+            id:languageAndUnit; text: Genivi.gettext("LanguageAndUnits"); disabled:false; next:back; prev:preferences; page:"NavigationSettingsLanguageAndUnits"}
 
-		StdButton { textColor:"black"; pixelSize:38 ; source:"Core/images/back.png"; x:600; y:374; width:180; height:60; id:back; text: Genivi.gettext("Back"); disabled:false; next:preferences; prev:language; page:"MainMenu"}
+        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:preferences; prev:languageAndUnit; page:"MainMenu"}
 		Component.onCompleted: {
 			update();
 		}

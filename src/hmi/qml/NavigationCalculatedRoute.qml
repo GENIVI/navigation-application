@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/navigation-calculated-route-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
@@ -36,7 +37,7 @@ HMIMenu {
     headlineBg: "blue"
     text: Genivi.gettext("NavigationCalculatedRoute")
 	next: back
-	prev: description
+    prev: show_route_in_list
 	property Item routeCalculationSuccessfulSignal;
 	property Item routeCalculationFailedSignal;
 	property Item routeCalculationProgressUpdateSignal;
@@ -67,19 +68,19 @@ HMIMenu {
 		var res=Genivi.nav_message(dbusIf,"Guidance","GetGuidanceStatus",[]);
 		//Genivi.dump("",res);
 		if (res[0] == "uint16" && res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
-			start.disabled=true;
-			stop.disabled=false;
+            guidance_start.disabled=true;
+            guidance_stop.disabled=false;
 		} else {
-			start.disabled=false;
-			stop.disabled=true;
+            guidance_start.disabled=false;
+            guidance_stop.disabled=true;
 		}
 	}
 
 	function routeCalculationSuccessful(args)
 	{
         console.log("routeCalculationSuccessful:");
-		show.disabled=false;
-		description.disabled=false;
+        show_route_on_map.disabled=false;
+        show_route_in_list.disabled=false;
         menu.text=Genivi.gettext("NavigationCalculatedRoute");
 
         var para=[], pref=[];
@@ -111,8 +112,8 @@ HMIMenu {
                 }
             }
 
-            routeDistanceValue.text =Genivi.distance(distance);
-            routeTimeValue.text= Genivi.time(time);
+            distanceValue.text =Genivi.distance(distance);
+            timeValue.text= Genivi.time(time);
 
 		} else {
 			console.log("Unexpected result from GetRouteOverview:\n");
@@ -137,69 +138,62 @@ HMIMenu {
 
 
     HMIBgImage {
-        image:"navigation-calculated-route-menu-background";
+        image:StyleSheet.navigation_calculated_route_menu_background[StyleSheet.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
-        //Important notice: x,y coordinates from the left/top origin of the component
-        //so take in account the header height and substract it
 
         Text {
-            height:menu.hspc
-            x:532; y:36;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.guidanceTitle[StyleSheet.X]; y:StyleSheet.guidanceTitle[StyleSheet.Y]; width:StyleSheet.guidanceTitle[StyleSheet.WIDTH]; height:StyleSheet.guidanceTitle[StyleSheet.HEIGHT];color:StyleSheet.guidanceTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.guidanceTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.guidanceTitle[StyleSheet.PIXELSIZE];
+            id:guidanceTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("Guidance")
         }
 
         Text {
-            height:menu.hspc
-            x:500; y:202;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.displayRouteTitle[StyleSheet.X]; y:StyleSheet.displayRouteTitle[StyleSheet.Y]; width:StyleSheet.displayRouteTitle[StyleSheet.WIDTH]; height:StyleSheet.displayRouteTitle[StyleSheet.HEIGHT];color:StyleSheet.displayRouteTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.displayRouteTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.displayRouteTitle[StyleSheet.PIXELSIZE];
+            id:displayRouteTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("DisplayRoute")
         }
 
 
         Text {
-            height:menu.hspc
-            x:52; y:22;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.distanceTitle[StyleSheet.X]; y:StyleSheet.distanceTitle[StyleSheet.Y]; width:StyleSheet.distanceTitle[StyleSheet.WIDTH]; height:StyleSheet.distanceTitle[StyleSheet.HEIGHT];color:StyleSheet.distanceTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distanceTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distanceTitle[StyleSheet.PIXELSIZE];
+            id:distanceTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("RouteDistance")
         }
 
         Text {
-            id:routeDistanceValue
-            height:menu.hspc
-            width: 200
+            x:StyleSheet.distanceValue[StyleSheet.X]; y:StyleSheet.distanceValue[StyleSheet.Y]; width:StyleSheet.distanceValue[StyleSheet.WIDTH]; height:StyleSheet.distanceValue[StyleSheet.HEIGHT];color:StyleSheet.distanceValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distanceValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distanceValue[StyleSheet.PIXELSIZE];
+            id:distanceValue
             wrapMode: Text.WordWrap
-            x:52; y:52;
-            font.pixelSize: 32;
-            style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
+            style: Text.Sunken;
+            smooth: true
         }
 
         Text {
-            height:menu.hspc
-            x:52; y:116;
-            font.pixelSize: 25;
-            style: Text.Sunken; color: "black"; styleColor: "black"; smooth: true
+            x:StyleSheet.timeTitle[StyleSheet.X]; y:StyleSheet.timeTitle[StyleSheet.Y]; width:StyleSheet.timeTitle[StyleSheet.WIDTH]; height:StyleSheet.timeTitle[StyleSheet.HEIGHT];color:StyleSheet.timeTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.timeTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.timeTitle[StyleSheet.PIXELSIZE];
+            id:timeTitle;
+            style: Text.Sunken;
+            smooth: true
             text: Genivi.gettext("RouteTime")
         }
 
         Text {
-            id:routeTimeValue
-            height:menu.hspc
-            width: 200
+            x:StyleSheet.timeValue[StyleSheet.X]; y:StyleSheet.timeValue[StyleSheet.Y]; width:StyleSheet.timeValue[StyleSheet.WIDTH]; height:StyleSheet.timeValue[StyleSheet.HEIGHT];color:StyleSheet.timeValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.timeValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.timeValue[StyleSheet.PIXELSIZE];
+            id:timeValue
             wrapMode: Text.WordWrap
-            x:52; y:150;
-            font.pixelSize: 32;
-            style: Text.Sunken; color: "white"; styleColor: "white"; smooth: true
+            style: Text.Sunken;
+            smooth: true
         }
 
         StdButton {
-            source:"Core/images/show-route-on-map.png";
-            x:482; y:246; width:100; height:60;
-            id: show
-            explode:false; disabled:true; next:start; prev:back
+            source:StyleSheet.show_route_on_map[StyleSheet.SOURCE]; x:StyleSheet.show_route_on_map[StyleSheet.X]; y:StyleSheet.show_route_on_map[StyleSheet.Y]; width:StyleSheet.show_route_on_map[StyleSheet.WIDTH]; height:StyleSheet.show_route_on_map[StyleSheet.HEIGHT];
+            id: show_route_on_map
+            explode:false; disabled:true; next:guidance_start; prev:back
             onClicked: {
                 disconnectSignals();
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
@@ -209,18 +203,15 @@ HMIMenu {
             }
         }
         StdButton {
-            source:"Core/images/show-route-in-list.png";
-            x:612; y:246; width:100; height:60;
-            id:description;
+            source:StyleSheet.show_route_in_list[StyleSheet.SOURCE]; x:StyleSheet.show_route_in_list[StyleSheet.X]; y:StyleSheet.show_route_in_list[StyleSheet.Y]; width:StyleSheet.show_route_in_list[StyleSheet.WIDTH]; height:StyleSheet.show_route_in_list[StyleSheet.HEIGHT];
+            id:show_route_in_list;
             page:"NavigationRouteDescription";
-            explode:false; disabled:true; next:back; prev:stop
+            explode:false; disabled:true; next:back; prev:guidance_stop
         }
 
         StdButton {
-            source:"Core/images/guidance-on.png";
-            x:482; y:78; width:100; height:60;
-            textColor:"black"; pixelSize:38; text: Genivi.gettext("On");
-            id:start; explode:false; disabled:true; next:stop; prev:show
+            source:StyleSheet.guidance_start[StyleSheet.SOURCE]; x:StyleSheet.guidance_start[StyleSheet.X]; y:StyleSheet.guidance_start[StyleSheet.Y]; width:StyleSheet.guidance_start[StyleSheet.WIDTH]; height:StyleSheet.guidance_start[StyleSheet.HEIGHT];textColor:StyleSheet.startText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.startText[StyleSheet.PIXELSIZE];
+            id:guidance_start; text: Genivi.gettext("On");explode:false; disabled:true; next:guidance_stop; prev:show_route_on_map
             onClicked: {
                 disconnectSignals();
                 console.log("StartGuidance");
@@ -233,17 +224,16 @@ HMIMenu {
             }
         }
         StdButton {
-            source:"Core/images/guidance-off.png";
-            x:612; y:78; width:100; height:60;
-            textColor:"black"; pixelSize:38; text: Genivi.gettext("Off");
-            id:stop;explode:false; disabled:true; next:description; prev:start
+            source:StyleSheet.guidance_stop[StyleSheet.SOURCE]; x:StyleSheet.guidance_stop[StyleSheet.X]; y:StyleSheet.guidance_stop[StyleSheet.Y]; width:StyleSheet.guidance_stop[StyleSheet.WIDTH]; height:StyleSheet.guidance_stop[StyleSheet.HEIGHT];textColor:StyleSheet.stopText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.stopText[StyleSheet.PIXELSIZE];
+            id:guidance_stop;text: Genivi.gettext("Off");explode:false; disabled:true; next:show_route_in_list; prev:guidance_start
             onClicked: {
                 Genivi.guidance_message(dbusIf,"StopGuidance",[]);
-                start.disabled=false;
-                stop.disabled=true;
+                guidance_start.disabled=false;
+                guidance_stop.disabled=true;
             }
         }
-        StdButton { textColor:"black"; pixelSize:38 ; source:"Core/images/back.png"; x:600; y:374; width:180; height:60; id:back; text: Genivi.gettext("Back"); disabled:false; next:show; prev:calculate_curr;
+        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:show_route_on_map; prev:calculate_curr;
             onClicked: {
                 disconnectSignals();
                 pageOpen("NavigationRoute");
