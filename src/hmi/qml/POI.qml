@@ -153,7 +153,7 @@ HMIMenu {
 				for (var i = 0 ; i < ids.length ; i+=2) {
 					var id=ids[i+1];
 					var poi_data=Genivi.poi_data[id];
-					model.append({"name":poi_data.distance+" "+poi_data.name,"number":id});
+					model.append({"name":Genivi.distance(poi_data.distance)+" "+poi_data.name,"number":id});
 				}
 			}
 		}
@@ -171,8 +171,13 @@ HMIMenu {
 	    disabled:true;
             next:select_display_on_map; prev:select_search_for_refill
 			onClicked: {
-				console.log("Clicked");
-				console.log(Genivi.poi_id);
+				var poi_data=Genivi.poi_data[Genivi.poi_id];
+				var dest=["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"variant",["double",poi_data.lat],"uint16",Genivi.NAVIGATIONCORE_LONGITUDE,"variant",["double",poi_data.lon]];
+				Genivi.routing_message(dbusIf,"SetWaypoints",["boolean",true,"array",["map",dest]]);
+				Genivi.data['calculate_route']=true;
+				Genivi.data['lat']='';
+				Genivi.data['lon']='';
+				pageOpen("NavigationCalculatedRoute");
 			}
 		}
 		Text {
