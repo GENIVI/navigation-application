@@ -84,6 +84,7 @@ HMIMenu {
             select_trip2.visible=true;
             select_instant.visible=true;
             reset.visible=true;
+            update(1);
         }
         else
         if (Genivi.tripMode=="TRIP_NUMBER2")
@@ -101,6 +102,7 @@ HMIMenu {
             select_trip1.visible=true;
             select_instant.visible=true;
             reset.visible=true;
+            update(2);
         }
         else
         if (Genivi.tripMode=="TRIP_INSTANT")
@@ -117,6 +119,7 @@ HMIMenu {
             predictive_tank_distance_title.visible=true
             select_trip1.visible=true;
             select_trip2.visible=true;
+            update(0);
         }
         else
         {
@@ -136,30 +139,41 @@ HMIMenu {
         }
     }
 
-	function update()
+	function update(tripnr)
     {
-		var res=Genivi.tripcomputer_message(dbusIf,"GetTripData",["uint8",0]);
-		// Genivi.dump("",res);
-		for (var i = 0 ; i < res[1].length ; i+=4) {
-			if (res[1][i+1] == Genivi.TRIPCOMPUTER_ODOMETER) {
-                distance_value.text=res[1][i+3][1]/10;
-				distance_unit.text="km";
+		if (tripnr > 0) {
+			var res=Genivi.tripcomputer_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
+			// Genivi.dump("",res);
+			for (var i = 0 ; i < res[1].length ; i+=4) {
+				if (res[1][i+1] == Genivi.TRIPCOMPUTER_ODOMETER) {
+			distance_value.text=res[1][i+3][1]/10;
+					distance_unit.text="km";
+				}
+				if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_SPEED) {
+			avg_speed_value.text=res[1][i+3][1]/10;
+					avg_speed_unit.text="km/h";
+				}
+				if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_FUEL_CONSUMPTION) {
+			avg_fuel_value.text=res[1][i+3][1]/10;
+					avg_fuel_unit.text="l/100km";
+				}
 			}
-			if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_SPEED) {
-                avg_speed_value.text=res[1][i+3][1]/10;
-				avg_speed_unit.text="km/h";
+		} else {
+			var res=Genivi.tripcomputer_message(dbusIf,"GetInstantData",[]);
+			for (var i = 0 ; i < res[1].length ; i+=4) {
+				if (res[1][i+1] == Genivi.TRIPCOMPUTER_FUEL_LEVEL) {
+					fuel_value.text=res[1][i+3][1];
+					fuel_unit.text="L";
+				}
+				if (res[1][i+1] == Genivi.TRIPCOMPUTER_TANK_DISTANCE) {
+        				tank_distance_value.text=res[1][i+3][1];
+					tank_distance_unit.text="km";
+				}
 			}
-			if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_FUEL_CONSUMPTION) {
-                avg_fuel_value.text=res[1][i+3][1]/10;
-				avg_fuel_unit.text="km/h";
-			}
+
+			predictive_tank_distance_value.text="---";
+			predictive_tank_distance_unit.text="km";
 		}
-        fuel_value.text="--";
-        fuel_unit.text="L";
-        tank_distance_value.text="---";
-        tank_distance_unit.text="km";
-        predictive_tank_distance_value.text="---";
-        predictive_tank_distance_unit.text="km";
     }
     headlineFg: "grey"
     headlineBg: "blue"
@@ -315,6 +329,13 @@ HMIMenu {
             visible: false;
             id:reset; text: Genivi.gettext("Reset"); explode:false; disabled:false; next:select_trip1; prev:back;
             onClicked:{
+		if (Genivi.tripMode == "TRIP_NUMBER1") {
+			Genivi.tripcomputer_message(dbusIf,"ResetTripData",["uint8",0]);
+		}
+		if (Genivi.tripMode == "TRIP_NUMBER2") {
+			Genivi.tripcomputer_message(dbusIf,"ResetTripData",["uint8",1]);
+		}
+    		updateTripMode();
             }
         }
         StdButton { source:StyleSheet.select_trip1[StyleSheet.SOURCE]; x:StyleSheet.select_trip1[StyleSheet.X]; y:StyleSheet.select_trip1[StyleSheet.Y]; width:StyleSheet.select_trip1[StyleSheet.WIDTH]; height:StyleSheet.select_trip1[StyleSheet.HEIGHT];
@@ -346,6 +367,5 @@ HMIMenu {
     }
     Component.onCompleted: {
         updateTripMode();
-        update();
     }
 }
