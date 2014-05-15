@@ -73,6 +73,7 @@ HMIMenu {
             Text {
                 x:StyleSheet.searchResultValue[StyleSheet.X]; y:StyleSheet.searchResultValue[StyleSheet.Y]; width:StyleSheet.searchResultValue[StyleSheet.WIDTH]; height:StyleSheet.searchResultValue[StyleSheet.HEIGHT];color:StyleSheet.searchResultValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchResultValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultValue[StyleSheet.PIXELSIZE];
                 id:searchResultValue;
+				property real index:number;
 				text: name;
 				style: Text.Sunken;
 				smooth: true
@@ -85,6 +86,20 @@ HMIMenu {
             delegate: searchResultList
             next:select_search_for_refill
 			prev:back
+			onSelected:{
+				if (what) {
+					Genivi.poi_id=what.index;
+					var poi_data=Genivi.poi_data[what.index];
+        				selectedStationValue.text="Name:"+poi_data.name+"\nID:"+poi_data.id+"\nLat:"+poi_data.lat+"\nLon:"+poi_data.lon;
+					select_reroute.disabled=false;
+            				select_display_on_map.disabled=false;
+				} else {
+					Genivi.poi_id=null;
+        				selectedStationValue.text="";
+					select_reroute.disabled=true;
+					select_display_on_map.disabled=true;
+				}
+			}
 		}
 		StdButton { 
             source:StyleSheet.select_search_for_refill[StyleSheet.SOURCE]; x:StyleSheet.select_search_for_refill[StyleSheet.X]; y:StyleSheet.select_search_for_refill[StyleSheet.Y]; width:StyleSheet.select_search_for_refill[StyleSheet.WIDTH]; height:StyleSheet.select_search_for_refill[StyleSheet.HEIGHT];
@@ -93,8 +108,6 @@ HMIMenu {
 			onClicked: {
 				var model=view.model;
 				var ids=[];
-				var distance=[];
-				var name=[];
 				var position=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
 				var category;
 				Genivi.dump("",position);
@@ -122,18 +135,25 @@ HMIMenu {
 				for (var i = 0 ; i < res_win.length ; i+=2) {
 					ids.push(res_win[i+1][0]);
 					ids.push(res_win[i+1][1]);
-					distance[res_win[i+1][1]]=res_win[i+1][3];
+					var id=res_win[i+1][1];
+					Genivi.poi_data[id]=[];
+					Genivi.poi_data[id].id=id;
+					Genivi.poi_data[id].distance=res_win[i+1][3];
 				}
 				var details=Genivi.poisearch_message_get(dbusIf,"GetPoiDetails",["array",ids]);
 				for (var i = 0 ; i < details[1].length ; i+=2) {
 					var poi_details=details[1][i+1];
-					name[poi_details[1][1]]=poi_details[1][3];
-				}	
+					var id=poi_details[1][1];
+					Genivi.poi_data[id].name=poi_details[1][3];
+					Genivi.poi_data[id].lat=poi_details[1][5];
+					Genivi.poi_data[id].lon=poi_details[1][7];
+				}
 				// Genivi.dump("",details);
 				model.clear();
 				for (var i = 0 ; i < ids.length ; i+=2) {
 					var id=ids[i+1];
-					model.append({"name":distance[id]+" "+name[id]});
+					var poi_data=Genivi.poi_data[id];
+					model.append({"name":poi_data.distance+" "+poi_data.name,"number":id});
 				}
 			}
 		}
@@ -148,7 +168,12 @@ HMIMenu {
             source:StyleSheet.select_reroute[StyleSheet.SOURCE]; x:StyleSheet.select_reroute[StyleSheet.X]; y:StyleSheet.select_reroute[StyleSheet.Y]; width:StyleSheet.select_reroute[StyleSheet.WIDTH]; height:StyleSheet.select_reroute[StyleSheet.HEIGHT];
             id:select_reroute;
             explode:false;
+	    disabled:true;
             next:select_display_on_map; prev:select_search_for_refill
+			onClicked: {
+				console.log("Clicked");
+				console.log(Genivi.poi_id);
+			}
 		}
 		Text {
             x:StyleSheet.rerouteTitle[StyleSheet.X]; y:StyleSheet.rerouteTitle[StyleSheet.Y]; width:StyleSheet.rerouteTitle[StyleSheet.WIDTH]; height:StyleSheet.rerouteTitle[StyleSheet.HEIGHT];color:StyleSheet.rerouteTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.rerouteTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.rerouteTitle[StyleSheet.PIXELSIZE];
@@ -161,13 +186,22 @@ HMIMenu {
             source:StyleSheet.select_display_on_map[StyleSheet.SOURCE]; x:StyleSheet.select_display_on_map[StyleSheet.X]; y:StyleSheet.select_display_on_map[StyleSheet.Y]; width:StyleSheet.select_display_on_map[StyleSheet.WIDTH]; height:StyleSheet.select_display_on_map[StyleSheet.HEIGHT];
             id:select_display_on_map;
             explode:false;
+	    disabled:true;
             next:back; prev:select_reroute
+			onClicked: {
+				var poi_data=Genivi.poi_data[Genivi.poi_id];
+				Genivi.data['show_position']=new Array;
+				Genivi.data['show_position']['lat']=poi_data.lat;
+				Genivi.data['show_position']['lon']=poi_data.lon;
+				Genivi.data['mapback']="POI";
+				pageOpen("NavigationBrowseMap");
+			}
 		}
 		Text {
             x:StyleSheet.displayTitle[StyleSheet.X]; y:StyleSheet.displayTitle[StyleSheet.Y]; width:StyleSheet.displayTitle[StyleSheet.WIDTH]; height:StyleSheet.displayTitle[StyleSheet.HEIGHT];color:StyleSheet.displayTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.displayTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.displayTitle[StyleSheet.PIXELSIZE];
             id:displayTitle;
             style: Text.Sunken;
-            smooth: true
+            smooth: true;
             text: Genivi.gettext("DisplayPOI")
         }
         StdButton {
@@ -180,6 +214,7 @@ HMIMenu {
 		}	
 	}
 	Component.onCompleted: {
+		Genivi.poi_data=[];
 		update();
 	}
 }
