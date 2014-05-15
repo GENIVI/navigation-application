@@ -1,4 +1,4 @@
-#! /bin/bash
+! /bin/bash
 ###########################################################################
 # @licence app begin@
 # SPDX-License-Identifier: MPL-2.0
@@ -59,6 +59,19 @@ function run
 		"$@" &
 	fi
 	PIDS="$PIDS $!"
+}
+
+function wait_for_service
+{
+	for i in $(seq 1 50)
+	do
+		if dbus-send --dest=$1 $2 org.freedesktop.DBus.Introspectable.Introspect
+		then
+			return
+		fi
+		echo "Waiting for $1"
+		sleep 0.1
+	done
 }
 
 function terminate
@@ -172,8 +185,10 @@ then
 fi
 cd $BIN_DIR/poi-service
 run "POI service" ./poi-server -f empty.db
+wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearch
 cd $SRC_DIR/navigation-service*/src/navigation/script
 run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
+wait_for_service org.automotive.message.broker /
 run "Tripcomputer" $BIN_DIR/tripcomputer/tripcomputer
 run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
 cd $SRC_DIR/hmi/qml
