@@ -27,9 +27,21 @@ ADD_CUSTOM_COMMAND(OUTPUT fuel-stop-advisor.h
 		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/fuel-stop-advisor.xml --adaptor=fuel-stop-advisor.h
 		   DEPENDS fuel-stop-advisor.xml
 		   )
+ADD_CUSTOM_COMMAND(OUTPUT genivi-navigationcore-routing_adaptor.h
+		   COMMAND dbusxx-xml2cpp ${genivi-navigationcore-routing_API} --adaptor=genivi-navigationcore-routing_adaptor.h
+		   DEPENDS ${genivi-navigationcore-routing_API}
+		   )
+ADD_CUSTOM_COMMAND(OUTPUT genivi-navigationcore-constants.h
+	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${genivi-navigationcore-constants_API} >genivi-navigationcore-constants.h
+		   DEPENDS ${genivi-navigationcore-constants_API}
+		   )
+ADD_CUSTOM_COMMAND(OUTPUT amb.h
+		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/amb.xml --proxy=amb.h
+		   DEPENDS amb.xml
+		   )
 ADD_CUSTOM_COMMAND(OUTPUT constants.h
 	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${PROJECT_SOURCE_DIR}/constants.xml >constants.h
 		   DEPENDS constants.xml
 		   )
-add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor.h constants.h)
+add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor.h constants.h genivi-navigationcore-routing_adaptor.h amb.h genivi-navigationcore-constants.h)
 target_link_libraries(fuel-stop-advisor ${DBUS_CPP_LDFLAGS} ${GLIB_LDFLAGS})

@@ -34,7 +34,7 @@ help::
 
 $(fuel-stop-advisor_BIN)/Makefile: $(fuel-stop-advisor_SRC)/CMakeLists.txt
 	mkdir -p $(fuel-stop-advisor_BIN)
-	cd $(fuel-stop-advisor_BIN) && cmake $(fuel-stop-advisor_SRC)
+	cd $(fuel-stop-advisor_BIN) && cmake -Dgenivi-navigationcore-routing_API=$(navigation-service_API)/navigation-core/genivi-navigationcore-routing.xml -Dgenivi-navigationcore-constants_API=$(navigation-service_API)/navigation-core/genivi-navigationcore-constants.xml $(fuel-stop-advisor_SRC)
 
 $(fuel-stop-advisor_BIN)/fuel-stop-advisor: $(fuel-stop-advisor_BIN)/Makefile
 	$(MAKE) -C $(fuel-stop-advisor_BIN)
