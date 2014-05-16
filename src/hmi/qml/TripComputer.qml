@@ -123,7 +123,7 @@ HMIMenu {
         }
         else
         {
-            content.image="trip1-background"
+            content.image=StyleSheet.trip1_background[StyleSheet.SOURCE]
             avg_speed_value.visible=true
             avg_speed_unit.visible=true
             avg_speed_title.visible=true
@@ -269,7 +269,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.fuel_unit[StyleSheet.X]; y:StyleSheet.fuel_unit[StyleSheet.Y]; width:StyleSheet.fuel_unit[StyleSheet.WIDTH]; height:StyleSheet.v[StyleSheet.HEIGHT];color:StyleSheet.fuel_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.fuel_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.fuel_unit[StyleSheet.X]; y:StyleSheet.fuel_unit[StyleSheet.Y]; width:StyleSheet.fuel_unit[StyleSheet.WIDTH]; height:StyleSheet.fuel_unit[StyleSheet.HEIGHT];color:StyleSheet.fuel_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.fuel_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_unit[StyleSheet.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -325,7 +325,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.predictive_tank_distance_title[StyleSheet.X]; y:StyleSheet.predictive_tank_distance_title[StyleSheet.Y]; width:StyleSheet.v[StyleSheet.WIDTH]; height:StyleSheet.predictive_tank_distance_title[StyleSheet.HEIGHT];color:StyleSheet.predictive_tank_distance_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.predictive_tank_distance_title[StyleSheet.X]; y:StyleSheet.predictive_tank_distance_title[StyleSheet.Y]; width:StyleSheet.predictive_tank_distance_title[StyleSheet.WIDTH]; height:StyleSheet.predictive_tank_distance_title[StyleSheet.HEIGHT];color:StyleSheet.predictive_tank_distance_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_title[StyleSheet.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
