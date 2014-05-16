@@ -353,6 +353,7 @@ class FuelStopAdvisor
 	void update_data()
 	{
 		int i;
+		printf("update\n");
 		for (i = 0 ; i < TRIP_COUNT ; i++) {
 			trips[i].update(fuel_properties, odometer_properties);
 		}
@@ -362,20 +363,26 @@ class FuelStopAdvisor
 			DBus::Variant variant;
 			DBus::MessageIter it;
 
+
 			variant=fuel_properties->Get("org.automotive.Fuel","Level");
 			it=variant.reader();
 			it >> level;
 			enhancedDistance(level, remaining);
-			if (remaining < distanceThreshold)
+			printf("Advisor %f vs %d\n",remaining, distanceThreshold);
+			if (remaining < distanceThreshold) {
+				printf("Warning %f < %d\n",remaining, distanceThreshold);
 				FuelStopAdvisorWarning();
+			}
 		}
 	}
 
 	void
 	SetFuelAdvisorSettings(const bool& advisorMode, const uint8_t& distanceThreshold)
 	{
+		printf("SetFuelAdvisorSettings(%d,%d)\n",advisorMode, distanceThreshold);
 		this->advisorMode=advisorMode;
 		this->distanceThreshold=distanceThreshold;
+		update_data();
 	}
 	
 	void
@@ -389,6 +396,7 @@ class FuelStopAdvisor
 	{
 		printf("SetRouteHandle %d\n",routeHandle);
 		this->routeHandle=routeHandle;
+		update_data();
 	}
 
 	private:

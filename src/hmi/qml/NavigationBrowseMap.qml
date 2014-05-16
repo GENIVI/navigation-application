@@ -39,6 +39,7 @@ HMIMenu {
     property Item guidancePositionOnRouteChangedSignal;
 	property Item mapmatchedpositionPositionUpdateSignal;
 	property Item mapmatchedpositionAddressUpdateSignal;
+	property Item fuelStopAdvisorSignal;
 	property string guidance: "No guidance";
 	property string maneuver: "No maneuver";
 	property string maneuver_distance: "";
@@ -117,6 +118,11 @@ HMIMenu {
 		}
 	}
 
+	function fuelStopAdvisorWarning(args)
+	{
+		fuel.text="F";
+	}
+
 	function connectSignals()
         {
 		guidanceWaypointReachedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","WaypointReached",menu,"guidanceWaypointReached");
@@ -124,6 +130,7 @@ HMIMenu {
         guidancePositionOnRouteChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","PositionOnRouteChanged",menu,"guidancePositionOnRouteChanged");
 		mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
 		mapmatchedpositionAddressUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","AddressUpdate",menu,"mapmatchedpositionAddressUpdate");
+		fuelStopAdvisorSignal=dbusIf.connect("","/org/genivi/demonstrator/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor","FuelStopAdvisorWarning",menu,"fuelStopAdvisorWarning");
         }
 
         function disconnectSignals()
@@ -133,6 +140,9 @@ HMIMenu {
         guidancePositionOnRouteChangedSignal.destroy();
 		mapmatchedpositionPositionUpdateSignal.destroy();
 		mapmatchedpositionAddressUpdateSignal.destroy();
+		fuelStopAdvisorSignal.destroy();
+		Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
+		Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle","uint32",0);
 	}
 
 	function showSurfaces()
@@ -479,7 +489,7 @@ HMIMenu {
 		y:menu.height-height-4
 		x:menu.wspc/2;
 		height:content.h
-		spacing:menu.wspc/3
+		spacing:menu.wspc/4
 
 		StdButton { id:back; text:"Back"; next:menub; prev:camera
 			onClicked: {
@@ -582,6 +592,31 @@ HMIMenu {
 				smooth: true
 			}
 		}
+		Rectangle {
+			width:20
+			height:content.h
+			color:"#000000"
+			opacity: 0.8
+			radius: 10
+			MouseArea {
+				anchors.fill: parent
+				onClicked: {
+					disconnectSignals();
+					hideSurfaces();
+					pageOpen("POI");
+                        	}
+                	}
+			Text { 
+				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
+				id:fuel
+				text:""
+				font.pixelSize: 20;
+				style: Text.Sunken
+				color: "white"
+				styleColor: "black"
+				smooth: true
+			}
+		}
 	}
 	Component.onCompleted: {
 		Genivi.map_handle(dbusIf,map.width,map.height,Genivi.MAPVIEWER_MAIN_MAP);
@@ -620,5 +655,11 @@ HMIMenu {
 		showZoom();
 		updateAddress();
 		updateDayNight();
+		if (Genivi.g_routing_handle) {
+			Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
+		} else {
+			Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle","uint32",0);
+		}
+		Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
 	}
 }
