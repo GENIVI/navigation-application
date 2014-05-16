@@ -23,19 +23,38 @@ License:
 See headers and LICENSE file
 
 Test target: 
-Ubuntu 12.04.1 LTS
-
-To get the code:
-git clone http://git.projects.genivi.org/lbs/navigation-application.git $WORKING-DIR
+Ubuntu 14.04 LTS
 
 Dependencies:
-<to be completed>
+After a fresh install of ubuntu, do the following:
+
+	apt-get install git build-essential
+
+to get the necessary tools to get the code and make the build system working
+
+To get the code:
+(Set $WORKING-DIR here to a directory of your choice)
+
+	git clone http://git.projects.genivi.org/lbs/navigation-application.git $WORKING-DIR
+
  
 Build:
-cd $WORKING-DIR/navigation-application/src/script
-make all
+
+	cd $WORKING-DIR/src/script
+	make all2
+
+(For the first time, will install all prereqisites required to build the code)
+or, if you have already installed the prereqisites:
+
+	make all
 
 To launch (several options available):
-./run -n
 
+	./run
+
+You can get information about the various options available with
+
+	./run --help
+
+Options include running each process within its own terminal (or within gdb), creating log files, or disabling logreplayer or positioning from starting.
 
