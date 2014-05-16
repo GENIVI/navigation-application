@@ -32,7 +32,7 @@ CONSTANTS_SRC+=$(fuel-stop-advisor_SRC)/constants.xml
 help::
 	@echo "fuel-stop-advisor: Build fuel-stop-advisor"
 
-$(fuel-stop-advisor_BIN)/Makefile: $(fuel-stop-advisor_SRC)/CMakeLists.txt
+$(fuel-stop-advisor_BIN)/Makefile: $(fuel-stop-advisor_SRC)/CMakeLists.txt navigation-service-checkout
 	mkdir -p $(fuel-stop-advisor_BIN)
 	cd $(fuel-stop-advisor_BIN) && cmake -Dgenivi-navigationcore-routing_API=$(navigation-service_API)/navigation-core/genivi-navigationcore-routing.xml -Dgenivi-navigationcore-constants_API=$(navigation-service_API)/navigation-core/genivi-navigationcore-constants.xml $(fuel-stop-advisor_SRC)
 
