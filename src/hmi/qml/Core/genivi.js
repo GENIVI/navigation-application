@@ -391,6 +391,12 @@ function tripcomputer_message(par, func, args)
 	return demonstrator_message(par, "TripComputer", func, args);
 }
 
+// Send a message to fuel stop advisor (basic)
+function fuel_stop_advisor_message(par, func, args)
+{
+	return demonstrator_message(par, "FuelStopAdvisor", func, args);
+}
+
 function setlang(lang)
 {
 	g_lang=lang;

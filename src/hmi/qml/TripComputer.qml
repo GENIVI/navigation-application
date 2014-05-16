@@ -142,37 +142,45 @@ HMIMenu {
 	function update(tripnr)
     {
 		if (tripnr > 0) {
-			var res=Genivi.tripcomputer_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
+			var res=Genivi.fuel_stop_advisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
 			// Genivi.dump("",res);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
-				if (res[1][i+1] == Genivi.TRIPCOMPUTER_ODOMETER) {
+				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_ODOMETER) {
 			distance_value.text=res[1][i+3][1]/10;
 					distance_unit.text="km";
 				}
-				if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_SPEED) {
+				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_AVERAGE_SPEED) {
 			avg_speed_value.text=res[1][i+3][1]/10;
 					avg_speed_unit.text="km/h";
 				}
-				if (res[1][i+1] == Genivi.TRIPCOMPUTER_AVERAGE_FUEL_CONSUMPTION) {
+				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE) {
 			avg_fuel_value.text=res[1][i+3][1]/10;
 					avg_fuel_unit.text="l/100km";
 				}
 			}
 		} else {
-			var res=Genivi.tripcomputer_message(dbusIf,"GetInstantData",[]);
+			// var res=Genivi.fuel_stop_advisor_message(dbusIf,"GetInstantData",[]);
+			if (Genivi.g_routing_handle) {
+				Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
+			} else {
+				Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle","uint32",0);
+			}
+			var res=Genivi.fuel_stop_advisor_message(dbusIf,"GetGlobalData",[]);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
-				if (res[1][i+1] == Genivi.TRIPCOMPUTER_FUEL_LEVEL) {
+				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_FUEL_LEVEL) {
 					fuel_value.text=res[1][i+3][1];
 					fuel_unit.text="L";
 				}
-				if (res[1][i+1] == Genivi.TRIPCOMPUTER_TANK_DISTANCE) {
+				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_TANK_DISTANCE) {
         				tank_distance_value.text=res[1][i+3][1];
 					tank_distance_unit.text="km";
 				}
+				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE) {
+					predictive_tank_distance_value.text=res[1][i+3][1];
+					predictive_tank_distance_unit.text="km";
+				}
 			}
 
-			predictive_tank_distance_value.text="---";
-			predictive_tank_distance_unit.text="km";
 		}
     }
     headlineFg: "grey"
@@ -330,10 +338,10 @@ HMIMenu {
             id:reset; text: Genivi.gettext("Reset"); explode:false; disabled:false; next:select_trip1; prev:back;
             onClicked:{
 		if (Genivi.tripMode == "TRIP_NUMBER1") {
-			Genivi.tripcomputer_message(dbusIf,"ResetTripData",["uint8",0]);
+			Genivi.fuel_stop_advisor_message(dbusIf,"ResetTripData",["uint8",0]);
 		}
 		if (Genivi.tripMode == "TRIP_NUMBER2") {
-			Genivi.tripcomputer_message(dbusIf,"ResetTripData",["uint8",1]);
+			Genivi.fuel_stop_advisor_message(dbusIf,"ResetTripData",["uint8",1]);
 		}
     		updateTripMode();
             }
