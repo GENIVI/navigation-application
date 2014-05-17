@@ -38,7 +38,7 @@ function run
 	then
 		shift
 		x=0
-		log=0
+		l=0
 	fi
 	if [ "$1" = "-g" ]
 	then
@@ -52,7 +52,7 @@ function run
 			set -- gdb -ex run --args "$@"
 		fi
 		xterm -T "$title" -sb -sl 5000 -e "$@" &
-	elif [ "$log" = 1 ]
+	elif [ "$l" = 1 ]
 	then
 		"$@" >"$CUR_DIR/$title.log" 2>&1 &
 	else
@@ -192,6 +192,11 @@ wait_for_service org.automotive.message.broker /
 sleep 0.5
 run "Tripcomputer" $BIN_DIR/tripcomputer/tripcomputer
 run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
+if [ "$log" = 1 ]
+then
+	exec >$CUR_DIR/qmlviewer.log
+	exec 2>&1
+fi
 cd $SRC_DIR/hmi/qml
 if [ "$lm" = 1 ]
 then
