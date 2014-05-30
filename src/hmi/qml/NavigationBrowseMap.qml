@@ -344,12 +344,18 @@ HMIMenu {
                     var subarray=structure[11];
                     for (var j = 0 ; j < subarray.length ; j+=2) {
                         //multiple maneuvers are not managed !
-                        if (subarray[j] == "structure" && subarray[j+1][0] == "uint32" && subarray[j+1][2] == "uint32" && subarray[j+1][4] == "int32" && subarray[j+1][6] == "structure" && subarray[j+1][8] == "structure") {
+                        if (subarray[j] == "structure" && subarray[j+1][0] == "uint32" && subarray[j+1][2] == "uint32" && subarray[j+1][4] == "int32" && subarray[j+1][6] == "uint16" && subarray[j+1][8] == "array") {
                             var substructure=subarray[j+1];
-                            if (substructure[7][0] == "uint16" && substructure[7][2] == "uint16" && substructure[9][0] == "uint16" && substructure[9][2] == "string") {
-                                stop.disabled=false;
-                                maneuver=Genivi.ManeuverType[substructure[7][1]]+":"+Genivi.ManeuverDirection[substructure[9][1]];
-                                maneuver_distance=Genivi.distance(substructure[1])+" "+structure[3];
+                            var subsubarray=subarray[j+1][9];
+                            if (subsubarray[0] == "structure" && subsubarray[1][0] == "uint16")
+                            {
+                               if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
+                               {
+                                   stop.disabled=false;
+                                   maneuver=Genivi.ManeuverType[subarray[j+1][7]]+":"+Genivi.ManeuverDirection[subsubarray[1][3][1]];
+                                   maneuver_distance=Genivi.distance(substructure[1])+" "+structure[3];
+
+                               }
                             }
                         }
                     }
