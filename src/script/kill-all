@@ -1,0 +1,4 @@
+#!/bin/sh
+echo 'kill all remaining process'
+kill -9 `ps -ef | egrep 'poi-server|navit|tripcomputer|fuel-stop-advisor|position-daemon|qmlviewer|ambd' | grep -v grep | awk '{print $2}'`
+

@@ -1,0 +1,29 @@
+Release date of the file: 1-06-2014 
+Status: to be completed
+
+This test bench is based on Python pygame and use python enum class.
+If necessary please do:
+sudo apt-get install python-pip python-pygame
+pip install enum
+
+To test:
+
+Launch the application without the log replayer:
+./run -R
+
+Launch the test dashboard (keyboard interface)
+python simulation-dashboard.py
+
+Steps:
+'i' launches initialization.log
+'s' launches start.log
+'h' launches high-tank-level.log
+'l' launches low-tank-level.log
+'x' exits the dashboard (or close the window)
+
+
+Known issues:
+
+ambd process sometimes not killed, so check it
+./kill_all to kill all the process but still issue with ambd ?
+ 
