@@ -16,8 +16,8 @@ backText[X]=645;
 backText[Y]=382;
 backText[WIDTH]=105;
 backText[HEIGHT]=46;
-backText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-backText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+backText[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+backText[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 backText[PIXELSIZE]=38;
 
 var back=new Object;
@@ -46,8 +46,8 @@ historyText[X]=69;
 historyText[Y]=380;
 historyText[WIDTH]=174;
 historyText[HEIGHT]=46;
-historyText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-historyText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+historyText[TEXTCOLOR]=Qt.rgba(0, 0, 1, 1);
+historyText[STYLECOLOR]=Qt.rgba(0, 0, 1, 1);
 historyText[PIXELSIZE]=38;
 
 var history=new Object;

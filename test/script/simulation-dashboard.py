@@ -67,13 +67,6 @@ FUEL_INSTANT_CONSUMPTION_LOCATION = (150,238)
 LATITUDE_LOCATION = (64,287)
 LONGITUDE_LOCATION = (185,287)
 
-def extractAmbValue(string):
-	try:
-		value = re.search(r"dbus\.UInt16(.+?)variant",string).group(1)
-	except AttributeError:
-		value = ''
-	return value[1:-2]
-
 def display(string,location,fontColor,fontBackground):
 	text = font.render(string, True, fontColor, fontBackground)
 	textRect = text.get_rect()
@@ -156,9 +149,9 @@ def steps():
 	# get the geolocation
 	geoLocation = enhancedPositionInterface.GetData(dbus.Array([Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE,Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE,Genivi.ENHANCEDPOSITIONSERVICE_ALTITUDE]))
 	latitude=float(geoLocation[dbus.UInt16(Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE)])
-	displayLatitude(str(latitude))
+	displayLatitude("{:.3f}".format(latitude))
 	longitude=float(geoLocation[dbus.UInt16(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
-	displayLongitude(str(longitude))
+	displayLongitude("{:.3f}".format(longitude))
 
 	# refresh screen
 	refresh()

@@ -7,8 +7,8 @@ languagesTitle[X]=100;
 languagesTitle[Y]=21;
 languagesTitle[WIDTH]=156;
 languagesTitle[HEIGHT]=30;
-languagesTitle[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-languagesTitle[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+languagesTitle[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+languagesTitle[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 languagesTitle[PIXELSIZE]=25;
 
 var unitsTitle=new Object;
@@ -16,8 +16,8 @@ unitsTitle[X]=331;
 unitsTitle[Y]=21;
 unitsTitle[WIDTH]=79;
 unitsTitle[HEIGHT]=30;
-unitsTitle[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-unitsTitle[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+unitsTitle[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+unitsTitle[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 unitsTitle[PIXELSIZE]=25;
 
 var backText=new Object;
@@ -25,8 +25,8 @@ backText[X]=645;
 backText[Y]=382;
 backText[WIDTH]=105;
 backText[HEIGHT]=46;
-backText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-backText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+backText[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+backText[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 backText[PIXELSIZE]=38;
 
 var unit_km=new Object;
@@ -45,31 +45,31 @@ unit_mile[HEIGHT]=60;
 
 var german_flag=new Object;
 german_flag[SOURCE]="Core/images/german-flag.png";
-german_flag[X]=100;
-german_flag[Y]=140;
-german_flag[WIDTH]=100;
-german_flag[HEIGHT]=60;
+german_flag[X]=98;
+german_flag[Y]=138;
+german_flag[WIDTH]=104;
+german_flag[HEIGHT]=64;
 
 var usa_flag=new Object;
 usa_flag[SOURCE]="Core/images/usa-flag.png";
-usa_flag[X]=100;
-usa_flag[Y]=210;
-usa_flag[WIDTH]=100;
-usa_flag[HEIGHT]=60;
+usa_flag[X]=98;
+usa_flag[Y]=208;
+usa_flag[WIDTH]=104;
+usa_flag[HEIGHT]=64;
 
 var french_flag=new Object;
 french_flag[SOURCE]="Core/images/french-flag.png";
-french_flag[X]=100;
-french_flag[Y]=67;
-french_flag[WIDTH]=100;
-french_flag[HEIGHT]=60;
+french_flag[X]=98;
+french_flag[Y]=65;
+french_flag[WIDTH]=104;
+french_flag[HEIGHT]=64;
 
 var japanese_flag=new Object;
 japanese_flag[SOURCE]="Core/images/japanese-flag.png";
-japanese_flag[X]=100;
-japanese_flag[Y]=280;
-japanese_flag[WIDTH]=100;
-japanese_flag[HEIGHT]=60;
+japanese_flag[X]=98;
+japanese_flag[Y]=278;
+japanese_flag[WIDTH]=104;
+japanese_flag[HEIGHT]=64;
 
 var back=new Object;
 back[SOURCE]="Core/images/back.png";

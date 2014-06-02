@@ -21,8 +21,8 @@ simulationTitle[X]=38;
 simulationTitle[Y]=46;
 simulationTitle[WIDTH]=161;
 simulationTitle[HEIGHT]=30;
-simulationTitle[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-simulationTitle[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+simulationTitle[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+simulationTitle[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 simulationTitle[PIXELSIZE]=25;
 
 var speedValue=new Object;
@@ -85,8 +85,8 @@ backText[X]=630;
 backText[Y]=378;
 backText[WIDTH]=128;
 backText[HEIGHT]=49;
-backText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-backText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+backText[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+backText[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 backText[PIXELSIZE]=38;
 
 var back=new Object;
@@ -101,8 +101,8 @@ preferencesText[X]=25;
 preferencesText[Y]=382;
 preferencesText[WIDTH]=248;
 preferencesText[HEIGHT]=46;
-preferencesText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-preferencesText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+preferencesText[TEXTCOLOR]=Qt.rgba(0, 0, 1, 1);
+preferencesText[STYLECOLOR]=Qt.rgba(0, 0, 1, 1);
 preferencesText[PIXELSIZE]=38;
 
 var preferences=new Object;
@@ -117,8 +117,8 @@ languageAndUnitText[X]=312;
 languageAndUnitText[Y]=379;
 languageAndUnitText[WIDTH]=253;
 languageAndUnitText[HEIGHT]=46;
-languageAndUnitText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-languageAndUnitText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+languageAndUnitText[TEXTCOLOR]=Qt.rgba(0, 0, 1, 1);
+languageAndUnitText[STYLECOLOR]=Qt.rgba(0, 0, 1, 1);
 languageAndUnitText[PIXELSIZE]=38;
 
 var languageAndUnit=new Object;

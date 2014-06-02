@@ -7,8 +7,8 @@ textTitle[X]=101;
 textTitle[Y]=24;
 textTitle[WIDTH]=83;
 textTitle[HEIGHT]=46;
-textTitle[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-textTitle[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+textTitle[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+textTitle[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 textTitle[PIXELSIZE]=38;
 
 var keyboard=new Object;
@@ -23,8 +23,8 @@ backText[X]=630;
 backText[Y]=378;
 backText[WIDTH]=128;
 backText[HEIGHT]=49;
-backText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-backText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+backText[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
+backText[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
 backText[PIXELSIZE]=38;
 
 var back=new Object;
@@ -36,20 +36,20 @@ back[HEIGHT]=60;
 
 var textValue=new Object;
 textValue[X]=100;
-textValue[Y]=74;
-textValue[WIDTH]=198;
-textValue[HEIGHT]=58;
+textValue[Y]=82;
+textValue[WIDTH]=192;
+textValue[HEIGHT]=42;
 textValue[TEXTCOLOR]=Qt.rgba(1, 1, 1, 1);
 textValue[STYLECOLOR]=Qt.rgba(1, 1, 1, 1);
-textValue[PIXELSIZE]=48;
+textValue[PIXELSIZE]=35;
 
 var okText=new Object;
 okText[X]=85;
 okText[Y]=380;
 okText[WIDTH]=128;
 okText[HEIGHT]=49;
-okText[TEXTCOLOR]=Qt.rgba(0, 0, 0, 1);
-okText[STYLECOLOR]=Qt.rgba(0, 0, 0, 1);
+okText[TEXTCOLOR]=Qt.rgba(0, 0, 1, 1);
+okText[STYLECOLOR]=Qt.rgba(0, 0, 1, 1);
 okText[PIXELSIZE]=38;
 
 var ok=new Object;
