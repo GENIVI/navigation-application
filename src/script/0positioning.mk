@@ -8,6 +8,7 @@
 # \brief This file is part of the Build System.
 #
 # \author Martin Schaller <martin.schaller@it-schaller.de>
+# \author Philippe Colliot <philippe.colliot@mpsa.com>
 #
 # \version 1.0
 #
@@ -20,7 +21,7 @@
 #
 # List of changes:
 # 
-# <date>, <name>, <description of change>
+# 4/6/2014, Philippe Colliot, complete src-clean option
 #
 # @licence end@
 positioning_BIN=$(BIN_DIR)/positioning
@@ -33,9 +34,13 @@ positioning_API=$(positioning_SRC)/enhanced-position-service/api
 
 ALL+=positioning
 
+SRC_CLEAN+=clean-positioning_SRC
+
 help::
 	@echo "positioning: Build positioning"
 
+clean-positioning_SRC::
+	rm -rf $(positioning_SRC)
 
 positioning: $(positioning_BIN)/enhanced-position-service/src/server/position-daemon
 

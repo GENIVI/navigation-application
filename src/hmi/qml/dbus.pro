@@ -41,3 +41,6 @@ unix {
 	PKGCONFIG += dbus-1
 }
 
+OTHER_FILES += \
+    plugin/dbusplugin.json
+

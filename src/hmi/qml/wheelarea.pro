@@ -25,6 +25,7 @@
 # @licence end@
 TEMPLATE = lib
 CONFIG += qt plugin
+QT += widgets
 
 DESTDIR = lib
 OBJECTS_DIR = tmp
@@ -34,3 +35,6 @@ INCLUDEPATH += compat
 HEADERS += plugin/wheelareaplugin.h plugin/wheelarea.h
 
 SOURCES += plugin/wheelareaplugin.cpp 
+
+OTHER_FILES += \
+    plugin/wheelareaplugin.json

@@ -8,8 +8,9 @@
 # \brief This file is part of the Build System.
 #
 # \author Martin Schaller <martin.schaller@it-schaller.de>
+# \author Philippe Colliot <philippe.colliot@mpsa.com>
 #
-# \version 1.0
+# \version 1.1
 #
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License (MPL), v. 2.0.
@@ -20,7 +21,7 @@
 #
 # List of changes:
 # 
-# <date>, <name>, <description of change>
+# 4/6/2014, Philippe Colliot, complete src-clean option
 #
 # @licence end@
 
@@ -36,12 +37,14 @@ help::
 	@echo "all: Build $(ALL)"
 	@echo "all2: Install all necessary dependencies and build all"
 	@echo "clean: Clean up build dir"
-	@echo "src-clean: Clean up checked out sources"
+	@echo "src-clean: Clean up all checked out sources"
 
 
 include *.mk
 
 all: $(ALL)
+
+src-clean: $(SRC_CLEAN)
 
 deps::
 	sudo apt-get install $(DEPS)

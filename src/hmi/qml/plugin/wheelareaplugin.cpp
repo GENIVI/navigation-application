@@ -35,5 +35,3 @@ WheelAreaPlugin::registerTypes(const char *uri)
 {
 	qmlRegisterType < WheelArea > (uri, 1, 0, "WheelArea");
 }
-
-Q_EXPORT_PLUGIN2(wheelareaplugin, WheelAreaPlugin);

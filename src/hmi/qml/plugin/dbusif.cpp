@@ -449,7 +449,7 @@ dbus_iter_append_from_qml(DBusMessageIter *iter, QVariant t, QVariant v)
 			qDebug() << "variant must have 2 elements, not " << va.size();
 			throw("variant must have 2 elements");
 		}
-		if (!dbus_message_iter_open_container(iter, DBUS_TYPE_VARIANT, signature_from_qml(va[0],va[1]).toAscii(), &sub))
+        if (!dbus_message_iter_open_container(iter, DBUS_TYPE_VARIANT, signature_from_qml(va[0],va[1]).toLatin1(), &sub))
 			return false;
 		if (!dbus_iter_append_from_qml(&sub, va[0], va[1]))
 			return false;
@@ -461,7 +461,7 @@ dbus_iter_append_from_qml(DBusMessageIter *iter, QVariant t, QVariant v)
             qDebug() << "array must have even number of elements, not " << a.size();
             throw("array must have even number of elements");
         }
-        if (!dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY, signature_from_qml(a[0],a[1]).toAscii(), &sub))
+        if (!dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY, signature_from_qml(a[0],a[1]).toLatin1(), &sub))
             return false;
         for (int i = 0; i < a.size(); i+=2) {
             if (!dbus_iter_append_from_qml(&sub, a[i], a[i+1]))
@@ -496,7 +496,7 @@ dbus_iter_append_from_qml(DBusMessageIter *iter, QVariant t, QVariant v)
 			qDebug() << "map must have multiple of four elements, not " << m.size();
 			throw("map must have multiple of four elements");
 		}
-		if (!dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY, ("{"+signature_from_qml(m[0],m[1])+signature_from_qml(m[2],m[3])+"}").toAscii(), &sub))
+        if (!dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY, ("{"+signature_from_qml(m[0],m[1])+signature_from_qml(m[2],m[3])+"}").toLatin1(), &sub))
 			return false;
 		for (int i = 0; i < m.size(); i+=4) {
 			DBusMessageIter entry;
@@ -547,7 +547,7 @@ DBusIfSignal::signal(void)
 #ifdef DEBUG
 	qDebug() << "call " << m_slot << " with " << v;
 #endif
-	QMetaObject::invokeMethod(m_obj,m_slot.toAscii(),Q_ARG(QVariant,v));
+    QMetaObject::invokeMethod(m_obj,m_slot.toLatin1(),Q_ARG(QVariant,v));
 }
 
 QObject *
@@ -572,7 +572,7 @@ QVariant
 	    path << "Interface:" << interface << "Method:" << method <<
 	    "Args:" << v;
 #endif
-        DBusMessage *msg=dbus_message_new_method_call(service.toAscii(), path.toAscii(), interface.toAscii(), method.toAscii());
+        DBusMessage *msg=dbus_message_new_method_call(service.toLatin1(), path.toLatin1(), interface.toLatin1(), method.toLatin1());
 	if (dbus_message_from_qml_list(msg, v)) {
 		DBusError error;
 		dbus_error_init(&error);

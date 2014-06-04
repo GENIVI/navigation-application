@@ -2,5 +2,5 @@ How to generate a new style sheet (draft)
 NB: don't change the layer names of the xcf files
 Gimp version tested: 2.8
 To load the script in python:
-sudo cp /genivi/lbs/navigation-application/src/hmi/qml/Core/gimp/generate-style-sheet.py /usr/lib/gimp/2.0/plug-ins
+sudo cp generate-style-sheet.py /usr/lib/gimp/2.0/plug-ins
 sudo chmod +x /usr/lib/gimp/2.0/plug-ins/generate-style-sheet.py

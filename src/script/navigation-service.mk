@@ -9,7 +9,7 @@
 #
 # \author Martin Schaller <martin.schaller@it-schaller.de>
 #
-# \version 1.0
+# \version 1.1
 #
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License (MPL), v. 2.0.
@@ -20,7 +20,7 @@
 #
 # List of changes:
 # 
-# <date>, <name>, <description of change>
+# 4/6/2014, Philippe Colliot, complete src-clean option
 #
 # @licence end@
 navigation-service_URL="http://git.projects.genivi.org/lbs/navigation.git"
@@ -40,6 +40,8 @@ DEPS+=$(navigation-service_DEPS)
 deps:: $(poi-service_SRC)/poi-server/poi-server.pro
 
 ALL+=poi-service navit-plugins
+SRC_CLEAN+=clean-navigation-service_SRC
+
 navigation-service_CONSTANTS+=$(navigation-service_SRC)/api/map-viewer/genivi-mapviewer-constants.xml
 navigation-service_CONSTANTS+=$(navigation-service_SRC)/api/navigation-core/genivi-navigationcore-constants.xml
 navigation-service_CONSTANTS+=$(navigation-service_SRC)/api/poi-service/genivi-poiservice-constants.xml
@@ -47,7 +49,7 @@ CONSTANTS_SRC+=$(navigation-service_CONSTANTS)
 CONSTANTS_SRC+=$(positioning_API)/genivi-positioning-constants.xml
 
 
-src-clean::
+clean-navigation-service_SRC::
 	rm -rf $(navigation-service_SRC)
 
 help::

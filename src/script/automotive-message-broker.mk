@@ -8,8 +8,9 @@
 # \brief This file is part of the Build System.
 #
 # \author Martin Schaller <martin.schaller@it-schaller.de>
+# \author Philippe Colliot <philippe.colliot@mpsa.com>
 #
-# \version 1.0
+# \version 1.1
 #
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License (MPL), v. 2.0.
@@ -20,7 +21,7 @@
 #
 # List of changes:
 # 
-# <date>, <name>, <description of change>
+# 4/6/2014, Philippe Colliot, complete src-clean option
 #
 # @licence end@
 automotive-message-broker_URL="https://github.com/otcshare/automotive-message-broker.git"
@@ -31,11 +32,12 @@ automotive-message-broker_DEPS+=cmake libboost-dev libjson0-dev libtool uuid-dev
 
 DEPS+=$(automotive-message-broker_DEPS)
 ALL+=automotive-message-broker
+SRC_CLEAN+=clean-automotive-message-broker_SRC
 
 help::
 	@echo "automotive-message-broker: Build automotive-message-broker"
 
-src-clean::
+clean-automotive-message-broker_SRC::
 	rm -rf $(automotive-message-broker_SRC)
 
 

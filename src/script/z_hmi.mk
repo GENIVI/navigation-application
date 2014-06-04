@@ -9,7 +9,7 @@
 #
 # \author Martin Schaller <martin.schaller@it-schaller.de>
 #
-# \version 1.0
+# \version 1.1
 #
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License (MPL), v. 2.0.
@@ -20,12 +20,12 @@
 #
 # List of changes:
 # 
-# <date>, <name>, <description of change>
+# 04/06/2014, Philippe Colliot, Migration to Qt5.2
 #
 # @licence end@
 TESTHMI_SRC=$(SRC_DIR)/hmi/qml
 TESTHMI_BIN=$(BIN_DIR)/hmi/qml
-TESTHMI_DEPS=qt4-qmlviewer libqt4-dev libqt4-declarative
+TESTHMI_DEPS=qt4-qmlviewer libqt5dbus5 libqt5core5a libqt5gui5 qtscript5-dev 
 
 DEPS += $(TESTHMI_DEPS)
 testhmi: $(TESTHMI_BIN)/Makefile $(TESTHMI_BIN)/constants.js

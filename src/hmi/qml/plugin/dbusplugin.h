@@ -32,7 +32,8 @@
 
 class DBusPlugin:public QDeclarativeExtensionPlugin {
       Q_OBJECT public:
-	void registerTypes(const char *uri);
+    Q_PLUGIN_METADATA(IID "DBus plugin" FILE "dbusplugin.json")
+    void registerTypes(const char *uri);
 };
 
 #endif

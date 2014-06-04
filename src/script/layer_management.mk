@@ -35,11 +35,12 @@ layer_management_BIN=$(BIN_DIR)/layer_management
 layer_management_INST=$(layer_management_BIN)/inst/usr/local
 
 ALL+=layer_management
+SRC_CLEAN+=clean-layer_management_SRC
 
 help::
 	@echo "layer_management: Build layer_management"
 
-src-clean::
+clean-layer_management_SRC::
 	rm -rf $(layer_management_SRC)
 
 

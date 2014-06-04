@@ -27,7 +27,7 @@
 */
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeitem.h>
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 
 #include <QObject>
 

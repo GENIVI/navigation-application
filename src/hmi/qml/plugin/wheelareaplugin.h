@@ -32,7 +32,8 @@
 
 class WheelAreaPlugin:public QDeclarativeExtensionPlugin {
       Q_OBJECT public:
-	void registerTypes(const char *uri);
+    Q_PLUGIN_METADATA(IID "Wheel area plugin" FILE "wheelareaplugin.json")
+    void registerTypes(const char *uri);
 };
 
 #endif
