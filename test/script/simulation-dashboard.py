@@ -56,7 +56,8 @@ YELLOW = ( 255, 222, 0)
 # Define some constants
 PI = 3.141592653
 PERIODICITY = 200 #in ms
-CONVERSION = (3.6/PERIODICITY)
+FUEL_CONVERSION = (3.6/PERIODICITY)
+SPEED_CONVERSION = (36.0/PERIODICITY)
 
 # Item location on the screen
 STATUS_LOCATION = (100,10)
@@ -64,8 +65,9 @@ STEP_LOCATION = (150,68)
 ENGINE_SPEED_LOCATION = (150,118)
 FUEL_LEVEL_LOCATION = (150,175)
 FUEL_INSTANT_CONSUMPTION_LOCATION = (150,238)
-LATITUDE_LOCATION = (64,287)
-LONGITUDE_LOCATION = (185,287)
+VEHICLE_SPEED_LOCATION = (150,287)
+LATITUDE_LOCATION = (64,340)
+LONGITUDE_LOCATION = (185,340)
 
 def display(string,location,fontColor,fontBackground):
 	text = font.render(string, True, fontColor, fontBackground)
@@ -88,6 +90,9 @@ def displayFuelLevel(string):
 def displayFuelInstant(string):
 	display(string,FUEL_INSTANT_CONSUMPTION_LOCATION,YELLOW,BLACK)
 
+def displayVehicleSpeed(string):
+	display(string,VEHICLE_SPEED_LOCATION,YELLOW,BLACK)
+
 def displayLatitude(string):
 	display(string,LATITUDE_LOCATION,YELLOW,BLACK)
 
@@ -97,6 +102,15 @@ def displayLongitude(string):
 def refresh():
 	pygame.display.update()
 
+def initDisplay():
+	displayStatus('')
+	displayStep('')
+	displayEngineSpeed('0')
+	displayFuelLevel('0')
+	displayFuelInstant('0')
+	displayLatitude('0')
+	displayLongitude('0')
+	displayVehicleSpeed('0')	
       
 def steps():
 	global step
@@ -144,7 +158,9 @@ def steps():
 	fuelLevel = ambFuelInterface.GetLevel()
 	displayFuelLevel(str(int(fuelLevel[0])))
 	fuelInstCons = ambFuelInterface.GetInstantConsumption()
-	displayFuelInstant(str(int(fuelInstCons[0])*CONVERSION))
+	displayFuelInstant(str(int(fuelInstCons[0])*FUEL_CONVERSION))
+	odometer = ambOdometerInterface.GetOdometer()
+	displayVehicleSpeed(str(int(odometer[0])*SPEED_CONVERSION))
 
 	# get the geolocation
 	geoLocation = enhancedPositionInterface.GetData(dbus.Array([Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE,Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE,Genivi.ENHANCEDPOSITIONSERVICE_ALTITUDE]))
@@ -169,6 +185,7 @@ screen = pygame.display.set_mode( size )
 pygame.display.set_caption('Simulation dashboard')
 screen.blit(background,backgroundRect)
 font = pygame.font.SysFont('Calibri', 25, True, False)
+initDisplay()
 
 # Connect on the bus
 dbusConnectionBus = dbus.SessionBus()
@@ -186,6 +203,12 @@ ambEngineSpeedInterface = dbus.Interface(ambEngineSpeed, "org.automotive.EngineS
 fuelPath = ambInterface.FindObject("Fuel");
 ambFuel = dbusConnectionBus.get_object("org.automotive.message.broker", fuelPath[0])
 ambFuelInterface = dbus.Interface(ambFuel, "org.automotive.Fuel")
+
+# Get the object path to retrieve Odometer
+odometerPath = ambInterface.FindObject("Odometer");
+ambOdometer = dbusConnectionBus.get_object("org.automotive.message.broker", odometerPath[0])
+ambOdometerInterface = dbus.Interface(ambOdometer, "org.automotive.Odometer")
+
 
 # Enhanced position
 enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.positioning.EnhancedPosition", "/position")
