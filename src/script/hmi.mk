@@ -20,12 +20,12 @@
 #
 # List of changes:
 # 
-# <date>, <name>, <description of change>
+# 16/06/2014, Philippe Colliot, Migration to Qt5.2
 #
 # @licence end@
 TESTHMI_SRC=$(SRC_DIR)/hmi/qml
 TESTHMI_BIN=$(BIN_DIR)/hmi/qml
-TESTHMI_DEPS=qt4-qmlviewer libqt4-dev libqt4-declarative
+TESTHMI_DEPS=qt4-qmlviewer qtquick1-5-dev libqt5declarative5
 
 DEPS += $(TESTHMI_DEPS)
 testhmi: $(TESTHMI_BIN)/Makefile $(TESTHMI_BIN)/constants.js
