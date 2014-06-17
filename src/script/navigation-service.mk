@@ -57,7 +57,7 @@ help::
 	@echo "navit-plugins: Build navit-plugins"
 
 $(poi-service_SRC)/poi-server/poi-server.pro $(navigation-service_CONSTANTS):
-	cd $(navigation-service_SRC)/.. && git clone $(navigation-service_URL) $(navigation-service_SRC)
+	cd $(SRC_DIR) && git clone $(navigation-service_URL) $(navigation-service_SRC)
 	cd $(navigation-service_SRC) && git checkout $(navigation-service_VERSION)
 
 navigation-service-checkout: $(poi-service_SRC)/poi-server/poi-server.pro

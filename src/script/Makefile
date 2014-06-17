@@ -29,6 +29,7 @@ SRC_DIR=$(CURDIR)/../../src
 PATCH_DIR=$(SRC_DIR)/patches
 BIN_DIR=$(CURDIR)/../../bin
 QMAKE=qmake
+APT_GET=apt-get
 
 default: help
 
@@ -47,7 +48,7 @@ all: $(ALL)
 src-clean: $(SRC_CLEAN)
 
 deps::
-	sudo apt-get install $(DEPS)
+	sudo $(APT_GET) install $(DEPS)
 
 all2: deps all
 
