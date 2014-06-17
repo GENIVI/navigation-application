@@ -36,12 +36,57 @@ HMIMenu {
     headlineFg: "grey"
     headlineBg: "blue"
     text: Genivi.gettext("NavigationSettings")
-	next: back
+    property Item simulationStatusChangedSignal;
+    next: back
         prev: back
 	DBusIf {
 		id:dbusIf;
 	}
     property int speedValueSent: 0;
+
+    function simulationStatusChanged(args)
+    {
+        console.log("SimulationStatusChanged");
+        Genivi.dump("",args);
+        if (args[0] == 'uint16')
+        {
+            if (args[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+            {
+                on_off.setState("ON");
+                if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
+                {
+                    simu_mode.setState("PAUSE");
+                }
+                else
+                {
+                    if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+                    {
+                        simu_mode.setState("PLAY");
+                    }
+                }
+            }
+            else
+            {
+                on_off.setState("OFF");
+                simu_mode.setState("FREE");
+            }
+        } else {
+            console.log("Unexpected result from GetSimulationStatus:");
+            Genivi.dump("",args);
+        }
+
+    }
+
+    function connectSignals()
+    {
+        simulationStatusChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","SimulationStatusChanged",menu,"simulationStatusChanged");
+    }
+
+    function disconnectSignals()
+    {
+        simulationStatusChangedSignal.destroy();
+    }
+
 
 	function getDBusSpeedValue(value)
 	{
@@ -82,15 +127,14 @@ HMIMenu {
 	function update()
 	{
 	    var res=Genivi.mapmatch_message_get(dbusIf,"GetSimulationStatus",[]);
-		// FIXME: Result is first arg instead of last?
-		if (res[0] == 'uint16') 
+        console.log("GetSimulationStatus");
+        Genivi.dump("",res);
+        if (res[0] == 'uint16')
 		{
-			console.log(res[1]);
-			console.log(Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING);
-	        if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+            if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
 	        {
 				on_off.setState("ON");
-				if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED) 
+                if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
 				{
 					simu_mode.setState("PAUSE");
 				} 
@@ -151,6 +195,11 @@ HMIMenu {
 			Genivi.dump("",res);
 		}
 	}
+
+    function leave()
+    {
+        disconnectSignals();
+    }
 
 	HMIBgImage {
 		id: content
@@ -238,7 +287,6 @@ HMIMenu {
 					default:
 					break;
 				}
-                update();
 			}
 		}
         StdButton { x:StyleSheet.play[StyleSheet.X]; y:StyleSheet.play[StyleSheet.Y]; width:StyleSheet.play[StyleSheet.WIDTH]; height:StyleSheet.play[StyleSheet.HEIGHT];
@@ -275,18 +323,17 @@ HMIMenu {
 			{
 				switch (status) 
 				{
-					case 1: //pause
+                    case 2: //pause
 						//pause to resume
 		        		Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
                     break;
-					case 2: //resume
-						//resume to pause
+                    case 1: //play
+                        //play to pause
             			Genivi.mapmatch_message(dbusIf,"PauseSimulation",[]);
                     break;
 					default:
 					break;
 				}
-                update();
             }
 		}
 
@@ -297,9 +344,13 @@ HMIMenu {
             id:languageAndUnit; text: Genivi.gettext("LanguageAndUnits"); disabled:false; next:back; prev:preferences; page:"NavigationSettingsLanguageAndUnits"}
 
         StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:preferences; prev:languageAndUnit; page:"MainMenu"}
-		Component.onCompleted: {
-			update();
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:preferences; prev:languageAndUnit;
+            onClicked:{leave(); pageOpen("MainMenu");}
+        }
+
+        Component.onCompleted: {
+            connectSignals();
+            update();
 		}
 	}
 }

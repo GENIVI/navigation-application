@@ -193,7 +193,7 @@ HMIMenu {
         StdButton {
             source:StyleSheet.show_route_on_map[StyleSheet.SOURCE]; x:StyleSheet.show_route_on_map[StyleSheet.X]; y:StyleSheet.show_route_on_map[StyleSheet.Y]; width:StyleSheet.show_route_on_map[StyleSheet.WIDTH]; height:StyleSheet.show_route_on_map[StyleSheet.HEIGHT];
             id: show_route_on_map
-            explode:false; disabled:true; next:guidance_start; prev:back
+            explode:false; disabled:true; next:show_route_in_list; prev:back
             onClicked: {
                 disconnectSignals();
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
@@ -206,7 +206,7 @@ HMIMenu {
             source:StyleSheet.show_route_in_list[StyleSheet.SOURCE]; x:StyleSheet.show_route_in_list[StyleSheet.X]; y:StyleSheet.show_route_in_list[StyleSheet.Y]; width:StyleSheet.show_route_in_list[StyleSheet.WIDTH]; height:StyleSheet.show_route_in_list[StyleSheet.HEIGHT];
             id:show_route_in_list;
             page:"NavigationRouteDescription";
-            explode:false; disabled:true; next:back; prev:guidance_stop
+            explode:false; disabled:true; next:back; prev:show_route_on_map
         }
 
         StdButton {
@@ -225,7 +225,7 @@ HMIMenu {
         }
         StdButton {
             source:StyleSheet.guidance_stop[StyleSheet.SOURCE]; x:StyleSheet.guidance_stop[StyleSheet.X]; y:StyleSheet.guidance_stop[StyleSheet.Y]; width:StyleSheet.guidance_stop[StyleSheet.WIDTH]; height:StyleSheet.guidance_stop[StyleSheet.HEIGHT];textColor:StyleSheet.stopText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.stopText[StyleSheet.PIXELSIZE];
-            id:guidance_stop;text: Genivi.gettext("Off");explode:false; disabled:true; next:show_route_in_list; prev:guidance_start
+            id:guidance_stop;text: Genivi.gettext("Off");explode:false; disabled:true; next:show_route_on_map; prev:guidance_start
             onClicked: {
                 Genivi.guidance_message(dbusIf,"StopGuidance",[]);
                 guidance_start.disabled=false;
@@ -233,7 +233,7 @@ HMIMenu {
             }
         }
         StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:show_route_on_map; prev:calculate_curr;
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:show_route_on_map; prev:show_route_in_list;
             onClicked: {
                 disconnectSignals();
                 pageOpen("NavigationRoute");
