@@ -305,16 +305,18 @@ HMIMenu {
 					if (name=="PLAY")
 					{
 						status=1;
-                        source=StyleSheet.play[StyleSheet.SOURCE];
+                        source=StyleSheet.pause[StyleSheet.SOURCE];
 						enabled=true;
+                        disabled=false;
 					}
 					else
 					{
 						if (name=="PAUSE")
 						{
 							status=2;
-                            source=StyleSheet.pause[StyleSheet.SOURCE];
+                            source=StyleSheet.play[StyleSheet.SOURCE];
 							enabled=true;
+                            disabled=false;
 						}
 					}
 				}
