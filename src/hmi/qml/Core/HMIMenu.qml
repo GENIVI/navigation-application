@@ -24,6 +24,7 @@
 * @licence end@
 */
 import QtQuick 1.0
+import "style-sheets/style-constants.js" as Constants;
 
 Rectangle {
 	property alias text: titleText.text
@@ -33,8 +34,8 @@ Rectangle {
 	id: menu
 	property Item next
 	property Item prev
-	width: 800; height: 480
-	color: "#282828"
+    width: Constants.MENU_WIDTH; height: Constants.MENU_HEIGHT
+    color: Constants.MENU_BACKGROUND_COLOR
 	focus: true
 	anchors.fill: parent
 
@@ -158,7 +159,7 @@ Rectangle {
 	}
 	Rectangle {
 		id: headline
-		width: menu.width; height: 26
+        width: menu.width; height: Constants.MENU_BANNER_HEIGHT
 		color: "#0000ff"
 		Text {
 			id: titleText

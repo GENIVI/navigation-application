@@ -36,10 +36,10 @@ from gimpfu import *
 from gimpenums import *
 
 image_path = "Core/images/"
-y_offset = 26
+y_offset = 0
 
 def format_color(color) :
-	return "Qt.rgba(%i, %i, %i, %i)" % (color[0]/255.0,color[1]/255.0,color[2]/255.0,color[3]/255.0)
+	return "Qt.rgba(%.3f, %.3f, %.3f, %.3f)" % (color[0]/255.0,color[1]/255.0,color[2]/255.0,color[3]/255.0)
 
 def get_js_header():
 	header = ['/* This file is generated */','.pragma library','Qt.include("style-constants.js");','']
@@ -93,13 +93,18 @@ def generate_style_text_layer(layer):
 	return_list.append(str)
 	return return_list
     
-def generate_style_sheet(image, drawable, select_visible_layers, target_directory, generate_xml_log) :
+def generate_style_sheet(image, drawable, select_visible_layers, target_directory, generate_xml_log, test_banner) :
 	# transmit error messages to gimp console
 	gimp.pdb.gimp_message_set_handler( ERROR_CONSOLE )
 	sc_js_data = []
 	layers = image.layers
 	sc_name = target_directory+os.sep+'style-sheets'+os.sep+image.name;
 	sc_name = string.replace(sc_name, '.xcf', '')
+
+	if (test_banner):
+		y_offset = 26
+	else:
+		y_offset = 0
  
 	if (generate_xml_log):
 		#configure the XML document
@@ -187,7 +192,8 @@ register(
     [
       (PF_TOGGLE, "select_visible_layers_toggle", "Save only visible layers", True),
       (PF_DIRNAME, "target_directory_name", "Target directory (ex qml/Core)", os.getcwd()),
-      (PF_TOGGLE, "generate_xml_log_toggle", "Generate xml log file", False)
+      (PF_TOGGLE, "generate_xml_log_toggle", "Generate xml log file", False),
+      (PF_TOGGLE, "test_banner_toggle", "With test banner", False)
     ],
     [],
     generate_style_sheet )
