@@ -28,7 +28,7 @@ positioning_BIN=$(BIN_DIR)/positioning
 gnss-service_BIN=$(BIN_DIR)/gnss-service
 sensors-service_BIN=$(BIN_DIR)/sensors-service
 positioning_URL=http://git.projects.genivi.org/lbs/positioning.git
-positioning_VERSION=HEAD
+positioning_VERSION=40c43fd3ae2210a2cfc634cf6628e97fbcd41d93
 positioning_SRC=$(SRC_DIR)/positioning_$(positioning_VERSION)
 positioning_API=$(positioning_SRC)/enhanced-position-service/api
 

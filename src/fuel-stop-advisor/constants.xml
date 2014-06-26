@@ -12,20 +12,18 @@
   <id name="METRIC" value="0x0010" />
   <id name="NON_METRIC" value="0x0011" />
 
-  <!-- Global data -->
+  <!-- Instant data -->
   <id name="ODOMETER" value="0x0020" />
   <id name="FUEL_LEVEL" value="0x0021" />
+  <id name="TANK_DISTANCE" value="0x0022" />
+  <id name="INSTANT_FUEL_CONSUMPTION_PER_DISTANCE" value="0x0023" />
+  <id name="ENHANCED_TANK_DISTANCE" value="0x0024" />
 
   <!-- Trip data -->
   <id name="DISTANCE" value="0x0030" />
   <id name="TIME" value="0x0031" />
   <id name="AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE" value="0x0032" />
   <id name="AVERAGE_SPEED" value="0x0033" />
-  <id name="TANK_DISTANCE" value="0x0034" />
-  <id name="INSTANT_FUEL_CONSUMPTION_PER_DISTANCE" value="0x0035" />
-
-  <!-- Enhanced tank distance data -->
-  <id name="ENHANCED_TANK_DISTANCE" value="0x0040" />
 
   <!-- ... --> 
 </constants>

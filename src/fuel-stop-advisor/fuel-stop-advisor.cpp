@@ -5,6 +5,8 @@
 #include "fuel-stop-advisor.h"
 #include "constants.h"
 #include "amb.h"
+#include "ctripcomputer.h"
+#include <boost/variant/get.hpp>
 #include "genivi-navigationcore-constants.h"
 #include "genivi-navigationcore-routing_proxy.h"
 
@@ -13,7 +15,6 @@ static DBus::Connection *conn;
 static class FuelStopAdvisor *server;
 static GMainLoop *loop;
 
-#define TRIP_COUNT 2
 
 /* vehicle parameter */
 static double fuel_consumption_l_100km=6.3;
@@ -129,57 +130,6 @@ class AutomotiveMessageBroker
 	}
 };
 
-class Trip {
-	public:
-	Trip()
-	{
-		reset();
-	}
-
-	void
-	reset()
-	{
-		fuelTime=0;
-		level=0;
-		odometerTime=0;
-		odometer=0;
-	}
-	
-	void
-	update(Properties *fuel_properties, Properties *odometer_properties)
-	{
-		DBus::Variant variant;
-
-		if (!fuelTime) {
-			variant=fuel_properties->Get("org.automotive.Fuel","Time");
-			DBus::MessageIter it=variant.reader();
-			it >> fuelTime;
-			if (fuelTime) {
-				variant=fuel_properties->Get("org.automotive.Fuel","Level");
-				DBus::MessageIter it=variant.reader();
-				it >> level;
-				printf("New fuel level %d at %f\n",level,fuelTime);
-			}
-		}
-
-		if (!odometerTime) {
-			variant=odometer_properties->Get("org.automotive.Odometer","Time");
-			DBus::MessageIter it=variant.reader();
-			it >> odometerTime;
-			if (odometerTime) {
-				variant=odometer_properties->Get("org.automotive.Odometer","Odometer");
-				it=variant.reader();
-				it >> odometer;
-				printf("New odometer %d at %f\n",odometer,odometerTime);
-			}
-		}
-	}
-	double fuelTime;
-	uint16_t level;
-	double odometerTime;
-	uint32_t odometer;
-};
-
 
 class FuelStopAdvisor
 : public org::genivi::demonstrator::FuelStopAdvisor_adaptor,
@@ -190,6 +140,8 @@ class FuelStopAdvisor
         FuelStopAdvisor(DBus::Connection &connection)
         : DBus::ObjectAdaptor(connection, "/org/genivi/demonstrator/FuelStopAdvisor")
         {
+
+        //connect to amb and create two handlers for fuel and odometer
 		amb_dispatcher.attach(NULL);
 		amb_conn = new DBus::Connection(DBus::Connection::SessionBus());
 		amb_conn->setup(&amb_dispatcher);
@@ -202,108 +154,143 @@ class FuelStopAdvisor
 
 		fuel = amb->FindObject("Fuel");
 		odometer = amb->FindObject("Odometer");
-		printf("%d %d\n",fuel.size(), odometer.size());
 
 		fuel_properties=new Properties(*amb_conn,fuel[0]);
 		odometer_properties=new Properties(*amb_conn,odometer[0]);
+
+        // create an instance of basic trip computer and initialize it
+        mp_tripComputer = new CTripComputer();
+
+        mp_tripComputer->Initialize(CTripComputer::INSTANT_FUEL_CONSUMPTION_START_VALUE);
+
+        tripComputerInput_t tripComputerInput;
+
+        tripComputerInput.fuelLevel = 0;
+        tripComputerInput.time = 0;
+        tripComputerInput.distance = 0;
+        tripComputerInput.fuelConsumption = 0;
+
+        mp_tripComputer->RefreshTripComputerInput(tripComputerInput);
+
+        for (uint8_t i; i<mp_tripComputer->GetSupportedTripNumbers();i++)
+        {
+            mp_tripComputer->ResetTrip(i);
+        }
+
+        // init fsa settings
 		advisorMode=false;
 		distanceThreshold=0;
 		routeHandle=0;
+        initFlag=true;
         }
 
 	::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string >
 	GetVersion()
 	{
-		::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > ret;
-		ret._1=0;
-		ret._2=0;
-		ret._3=0;
-		ret._4="29-11-2013";
-		return ret;
-	}
+        ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > ret;
+        version_t version;
+        version = mp_tripComputer->GetVersion();  //Get the version of the basic trip computer
+        ret._1=version.major;
+        ret._2=version.minor;
+        ret._3=version.micro;
+        ret._4=version.date;
+        return ret;
+    }
 
 	void
 	SetUnits(const std::map< uint16_t, uint16_t >& data)
 	{
-	}
+        mp_tripComputer->SetUnits(data); //Set units of the basic trip computer
+    }
 
 	std::map< uint16_t, ::DBus::Variant >
-	GetGlobalData()
+    GetInstantData()
 	{
 		std::map< uint16_t, ::DBus::Variant > ret;
-		uint32_t odometer;
-		uint16_t level;
-		uint16_t consumption;
-		double remaining;
-		DBus::Variant variant;
-		DBus::MessageIter it;
+        tupleVariantTripComputer_t tripComputerData;
+        tupleVariantTripComputer_t::iterator iter;
+        variantTripComputer_t value;
+        uint16_t level;
+        double remaining;
 
-		variant=odometer_properties->Get("org.automotive.Odometer","Odometer");
-		it=variant.reader();
-		it >> odometer;
-		ret[GENIVI_FUELSTOPADVISOR_ODOMETER]=variant_uint32(odometer);
+        tripComputerData= mp_tripComputer->GetInstantData();
 
-		variant=fuel_properties->Get("org.automotive.Fuel","Level");
-		it=variant.reader();
-		it >> level;
-		ret[GENIVI_FUELSTOPADVISOR_FUEL_LEVEL]=variant_uint16(level);
+        for(iter = tripComputerData.begin(); iter != tripComputerData.end(); iter++)
+        {
+            value = iter->second;
+            if (iter->first == CTripComputer::TRIPCOMPUTER_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE)
+            {
+                ret[GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE]=variant_uint16(boost::get<uint16_t>(iter->second));
+            }
+            else
+            {
+                if (iter->first == CTripComputer::TRIPCOMPUTER_TANK_DISTANCE)
+                {
+                    ret[GENIVI_FUELSTOPADVISOR_TANK_DISTANCE]=variant_uint16(boost::get<uint16_t>(iter->second));
+                }
+            }
+        }
+        // for the demo check is fuel level available
+        if (fuelLevel != 0)
+        {
+            ret[GENIVI_FUELSTOPADVISOR_FUEL_LEVEL]=variant_uint16(fuelLevel);
+            ret[GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE]=variant_uint16(enhancedDistance(fuelLevel,remaining)+0.5);
+        }
 
-		variant=fuel_properties->Get("org.automotive.Fuel","InstantConsumption");
-		it=variant.reader();
-		it >> consumption;
-		ret[GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE]=variant_uint16(consumption);
 
-		ret[GENIVI_FUELSTOPADVISOR_TANK_DISTANCE]=variant_uint16(level/fuel_consumption_l_100km*100+0.5);
-		ret[GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE]=variant_uint16(enhancedDistance(level,remaining)+0.5);
-		return ret;
+        return ret;
 	}
 
 	uint8_t
 	GetSupportedTripNumbers()
 	{
-		return TRIP_COUNT;
-	}
+        return (mp_tripComputer->GetSupportedTripNumbers());
+    }
 
 	std::map< uint16_t, ::DBus::Variant >
 	GetTripData(const uint8_t& number)
 	{
-		if (number >= TRIP_COUNT)
-			throw DBus::ErrorInvalidArgs("Invalid trip number");
-		Trip current;
-		trips[number].update(fuel_properties, odometer_properties);
-		current.update(fuel_properties, odometer_properties);
-		std::map< uint16_t, ::DBus::Variant > ret;
-		if (trips[number].odometerTime != current.odometerTime) {
-			printf("Current odometer %d last odometer %d\n",current.odometer,trips[number].odometer);
-			printf("Current time %f last time %f\n",current.odometerTime,trips[number].odometerTime);
-			double average_speed=((current.odometer-trips[number].odometer)/10.0)/((current.odometerTime-trips[number].odometerTime)/3600.0);
-			printf("Average Speed %f km/h\n",average_speed);
-			ret[GENIVI_FUELSTOPADVISOR_AVERAGE_SPEED]=variant_uint16(average_speed*10+0.5);
-		} else {
-			ret[GENIVI_FUELSTOPADVISOR_AVERAGE_SPEED]=variant_uint16(0);
-		}
-		if (current.odometer != trips[number].odometer) {
-			printf("Current level %d last level %d\n",current.level,trips[number].level);
-			printf("Current odometer %d last odometer %d\n",current.odometer,trips[number].odometer);
-			double consumption=100.0*(trips[number].level-current.level)/((current.odometer-trips[number].odometer)/10);
-			printf("Consumption %f\n",consumption);
-			ret[GENIVI_FUELSTOPADVISOR_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE]=variant_uint16(consumption*10+0.5);
-		} else {
-			ret[GENIVI_FUELSTOPADVISOR_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE]=variant_uint16(0);
-		}
-		ret[GENIVI_FUELSTOPADVISOR_ODOMETER]=variant_uint32(current.odometer-trips[number].odometer);
-		return ret;
-	}
+        std::map< uint16_t, ::DBus::Variant > ret;
+        tupleVariantTripComputer_t tripComputerData;
+        tupleVariantTripComputer_t::iterator iter;
+        variantTripComputer_t value;
+
+        if (number >= mp_tripComputer->GetSupportedTripNumbers())
+            throw DBus::ErrorInvalidArgs("Invalid trip number");
+
+        tripComputerData= mp_tripComputer->GetTripData(number);
+        for(iter = tripComputerData.begin(); iter != tripComputerData.end(); iter++)
+        {
+            value = iter->second;
+            if (iter->first == CTripComputer::TRIPCOMPUTER_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE)
+            {
+                ret[GENIVI_FUELSTOPADVISOR_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE]=variant_uint16(boost::get<uint16_t>(iter->second));
+            }
+            else
+            {
+                if (iter->first == CTripComputer::TRIPCOMPUTER_AVERAGE_SPEED)
+                {
+                    ret[GENIVI_FUELSTOPADVISOR_AVERAGE_SPEED]=variant_uint16(boost::get<uint16_t>(iter->second));
+                }
+                else
+                {
+                    if (iter->first == CTripComputer::TRIPCOMPUTER_DISTANCE)
+                    {
+                        ret[GENIVI_FUELSTOPADVISOR_DISTANCE]=variant_uint16(boost::get<uint16_t>(iter->second));
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
 	void ResetTripData(const uint8_t& number)
 	{
-		if (number >= TRIP_COUNT)
-			throw DBus::ErrorInvalidArgs("Invalid trip number");
-		printf("Reset Trip %d\n",number);
-		trips[number].reset();
-		trips[number].update(fuel_properties, odometer_properties);
+        if (number >= mp_tripComputer->GetSupportedTripNumbers())
+           throw DBus::ErrorInvalidArgs("Invalid trip number");
+        mp_tripComputer->ResetTrip(number);
 		TripDataResetted(number);
-	}
+    }
 
 	double fuelConsumptionAtSpeed(uint16_t seg_speed)
 	{
@@ -352,28 +339,89 @@ class FuelStopAdvisor
 	
 	void update_data()
 	{
-		int i;
-		printf("update\n");
-		for (i = 0 ; i < TRIP_COUNT ; i++) {
-			trips[i].update(fuel_properties, odometer_properties);
-		}
+        tripComputerInput_t tripComputerInput;
+        DBus::Variant variant;
+        DBus::MessageIter it;
+        uint32_t odometer;
+        uint16_t level;
+        uint16_t consumption;
+        double remaining;
+        double time;
+
+
+        variant=fuel_properties->Get("org.automotive.Fuel","Level");
+        it=variant.reader();
+        it >> level;
+
+        variant=odometer_properties->Get("org.automotive.Odometer","Time");
+        it=variant.reader();
+        it >> time;
+
+        //odometer is used for simulating distance
+        variant=odometer_properties->Get("org.automotive.Odometer","Odometer");
+        it=variant.reader();
+        it >> odometer;
+
+        if (initFlag)
+        {
+            if (time != 0)
+            {
+                initFlag = false;
+                lastTime = time;
+                lastOdometer = odometer;
+            }
+            timeCounter = 0;
+            distanceCounter = 0;
+        }
+        else
+        {
+            if ((timeCounter+(time-lastTime)*CTripComputer::CONVERT_SECOND_IN_MILLISECOND) > USHRT_MAX)
+            {
+                timeCounter =  (time-lastTime)*CTripComputer::CONVERT_SECOND_IN_MILLISECOND - (USHRT_MAX - timeCounter);
+            }
+            else
+            {
+                timeCounter += (time-lastTime)*CTripComputer::CONVERT_SECOND_IN_MILLISECOND;
+            }
+            lastTime = time;
+
+//            if ((distanceCounter+(odometer-lastOdometer)) > USHRT_MAX)
+            if ((distanceCounter+odometer) > USHRT_MAX)
+            {
+//                distanceCounter =  (odometer-lastOdometer) - (USHRT_MAX - distanceCounter);
+                distanceCounter =  (distanceCounter+odometer)-USHRT_MAX ;
+            }
+            else
+            {
+//                distanceCounter += (odometer-lastOdometer);
+                distanceCounter += odometer;
+            }
+//            lastOdometer = odometer;
+
+        }
+        tripComputerInput.time = timeCounter;
+        tripComputerInput.distance = distanceCounter;
+
+        variant=fuel_properties->Get("org.automotive.Fuel","InstantConsumption");
+        it=variant.reader();
+        it >> consumption;
+
+        tripComputerInput.fuelLevel = level*CTripComputer::CONVERT_LITER_IN_DL;
+        tripComputerInput.fuelConsumption = consumption;
+
+        mp_tripComputer->RefreshTripComputerInput(tripComputerInput);
+
+        fuelLevel = level; //to avoid re-ask it to amb
+
 		if (advisorMode) {
-			uint16_t level;
-			double remaining;
-			DBus::Variant variant;
-			DBus::MessageIter it;
-
-
-			variant=fuel_properties->Get("org.automotive.Fuel","Level");
-			it=variant.reader();
-			it >> level;
-			enhancedDistance(level, remaining);
+            enhancedDistance(tripComputerInput.fuelLevel, remaining);
 			printf("Advisor %f vs %d\n",remaining, distanceThreshold);
 			if (remaining < distanceThreshold) {
 				printf("Warning %f < %d\n",remaining, distanceThreshold);
 				FuelStopAdvisorWarning();
 			}
 		}
+        TripDataUpdated(0); //arg is for future use
 	}
 
 	void
@@ -410,10 +458,16 @@ class FuelStopAdvisor
 	std::vector< ::DBus::Path > odometer;
 	Properties *fuel_properties;
 	Properties *odometer_properties;
-	Trip trips[TRIP_COUNT];
+    CTripComputer *mp_tripComputer;
 	bool advisorMode;
 	uint8_t distanceThreshold;
 	uint32_t routeHandle;
+    bool initFlag;
+    double lastTime;
+    uint16_t timeCounter;
+    uint32_t lastOdometer;
+    uint16_t distanceCounter;
+    uint16_t fuelLevel;
 };
 
 static gboolean
@@ -434,6 +488,6 @@ int main(int argc, char **argv)
 	conn->request_name("org.genivi.demonstrator.FuelStopAdvisor");
 	server=new FuelStopAdvisor(*conn);
 
-	g_timeout_add(1000, update_data, server);
+    g_timeout_add(CTripComputer::SAMPLING_TIME*CTripComputer::CONVERT_SECOND_IN_MILLISECOND, update_data, server);
 	g_main_loop_run(loop);
 }

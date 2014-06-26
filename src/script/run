@@ -189,8 +189,7 @@ wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearc
 cd $SRC_DIR/navigation-service*/src/navigation/script
 run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
 wait_for_service org.automotive.message.broker /
-sleep 0.5
-run "Tripcomputer" $BIN_DIR/tripcomputer/tripcomputer
+sleep 2
 run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
 if [ "$log" = 1 ]
 then

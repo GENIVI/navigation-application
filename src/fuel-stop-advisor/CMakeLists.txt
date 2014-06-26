@@ -43,5 +43,5 @@ ADD_CUSTOM_COMMAND(OUTPUT constants.h
 	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${PROJECT_SOURCE_DIR}/constants.xml >constants.h
 		   DEPENDS constants.xml
 		   )
-add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor.h constants.h genivi-navigationcore-routing_proxy.h amb.h genivi-navigationcore-constants.h)
+add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor.h constants.h genivi-navigationcore-routing_proxy.h amb.h genivi-navigationcore-constants.h ctripcomputer.cpp ctripcomputer.h ctripcomputertypes.h)
 target_link_libraries(fuel-stop-advisor ${DBUS_CPP_LDFLAGS} ${GLIB_LDFLAGS})

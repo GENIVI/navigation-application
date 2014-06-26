@@ -33,11 +33,27 @@ import "Core/style-sheets/trip-computer-menu-css.js" as StyleSheet;
 
 HMIMenu {
 	id: menu
-	text: Genivi.gettext("TripComputer")
+    property Item tripDataUpdatedSignal;
+    text: Genivi.gettext("TripComputer")
 
 	DBusIf {
 		id: dbusIf
 	}
+
+    function tripDataUpdated(args)
+    {
+        updateTripMode();
+    }
+
+    function connectSignals()
+    {
+        tripDataUpdatedSignal=dbusIf.connect("","/org/genivi/demonstrator/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor","TripDataUpdated",menu,"tripDataUpdated");
+    }
+
+    function disconnectSignals()
+    {
+        tripDataUpdatedSignal.destroy();
+    }
 
     function hideAll()
     {
@@ -139,50 +155,71 @@ HMIMenu {
         }
     }
 
+    function disableAllValue()
+    {
+        distance_value.text="---";
+        avg_speed_value.text="---";
+        avg_fuel_value.text="---";
+        fuel_value.text="---";
+        tank_distance_value.text="---";
+        predictive_tank_distance_value.text="---";
+    }
+
+    function setUnits()
+    {
+        distance_unit.text="km";
+        avg_speed_unit.text="km/h";
+        avg_fuel_unit.text="l/100km";
+        fuel_unit.text="L";
+        tank_distance_unit.text="km";
+        predictive_tank_distance_unit.text="km";
+    }
+
 	function update(tripnr)
     {
-		if (tripnr > 0) {
-			var res=Genivi.fuel_stop_advisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
+        var res;
+        disableAllValue(); // By default set all the values to "--"
+		if (tripnr > 0) {         
+            res=Genivi.fuel_stop_advisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
 			// Genivi.dump("",res);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
-				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_ODOMETER) {
+                if (res[1][i+1] == Genivi.FUELSTOPADVISOR_DISTANCE) {
 			distance_value.text=res[1][i+3][1]/10;
-					distance_unit.text="km";
 				}
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_AVERAGE_SPEED) {
 			avg_speed_value.text=res[1][i+3][1]/10;
-					avg_speed_unit.text="km/h";
 				}
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE) {
 			avg_fuel_value.text=res[1][i+3][1]/10;
-					avg_fuel_unit.text="l/100km";
 				}
 			}
 		} else {
-			// var res=Genivi.fuel_stop_advisor_message(dbusIf,"GetInstantData",[]);
-			if (Genivi.g_routing_handle) {
+            if (Genivi.g_routing_handle) {
 				Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
 			} else {
-				Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle","uint32",0);
+                Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",0);
 			}
-			var res=Genivi.fuel_stop_advisor_message(dbusIf,"GetGlobalData",[]);
+            res=Genivi.fuel_stop_advisor_message(dbusIf,"GetInstantData",[]);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_FUEL_LEVEL) {
 					fuel_value.text=res[1][i+3][1];
-					fuel_unit.text="L";
 				}
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_TANK_DISTANCE) {
         				tank_distance_value.text=res[1][i+3][1];
-					tank_distance_unit.text="km";
 				}
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE) {
 					predictive_tank_distance_value.text=res[1][i+3][1];
-					predictive_tank_distance_unit.text="km";
 				}
 			}
 
 		}
     }
+
+    function leave()
+    {
+        disconnectSignals();
+    }
+
     headlineFg: "grey"
     headlineBg: "blue"
 	HMIBgImage {
@@ -371,9 +408,13 @@ HMIMenu {
             }
         }
         StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); explode:false; disabled:false; next:reset; prev:select_instant; page:"MainMenu"}
+            id:back; text: Genivi.gettext("Back"); explode:false; disabled:false; next:reset; prev:select_instant;
+            onClicked:{leave(); pageOpen("MainMenu");}
+        }
     }
     Component.onCompleted: {
+        connectSignals();
+        setUnits();
         updateTripMode();
     }
 }

@@ -5,7 +5,7 @@
 <node name="/org/genivi/demonstrator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.demonstrator.FuelStopAdvisor">
-    <version>beta (17-12-2013)</version>
+    <version>beta (26-06-2014)</version>
     <doc>
       <line>FuelStopAdvisor = This interface offers functionalities to access the fuel  stop advisor features</line>
       <line>This interface is defined for the FSA demonstrator and not included into the GENIVI compliance</line>
@@ -43,9 +43,9 @@
       </arg>
     </method>
     
-    <method name="GetGlobalData">
+    <method name="GetInstantData">
       <doc>
-        <line>GetGlobalData = This method returns a given set of global (not related to a trip number) trip computer data (e.g. odometer, fuel level... )</line>
+        <line>GetInstantData = This method returns a given set of global (not related to a trip number) trip computer data (e.g. odometer, fuel level, tank distance... )</line>
       </doc>
 
       <arg name="data" type="a{qv}" direction="out">
@@ -53,9 +53,11 @@
           <line>data = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
           <line>Invalid data is not be returned to the client application</line>
-          <line>key = enum(INVALID,ODOMETER,FUEL_LEVEL,...,ALL)</line>
+          <line>key = enum(INVALID,ODOMETER,FUEL_LEVEL,TANK_DISTANCE,ENHANCED_TANK_DISTANCE,...,ALL)</line>
           <line>key = ODOMETER, value = value of type 'u', that expresses the total distance counter in: METRIC->tenth of kilometers NON_METRIC->tenth of miles</line>
           <line>key = FUEL_LEVEL, value = value of type 'q', that expresses fuel level in: METRIC->tenth of liters NON_METRIC->hundreth of gallon</line>
+          <line>key = TANK_DISTANCE, value = value of type 'q', that expresses the tank distance since the last reset of the trip computer in METRIC->kilometers or in NON_METRIC->miles</line>
+          <line>key = ENHANCED_TANK_DISTANCE, value = value of type 'q', that expresses the tank distance since the last reset of the trip computer in METRIC->kilometers or in NON_METRIC->miles</line>      
         </doc>
       </arg>
     </method>
@@ -88,15 +90,14 @@
           <line>data = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
           <line>Invalid data is not be returned to the client application</line>
-          <line>key = enum(INVALID,DISTANCE,TIME,INSTANT_FUEL_CONSUMPTION_PER_DISTANCE,AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE,AVERAGE_SPEED,TANK_DISTANCE,ENHANCED_TANK_DISTANCE,...,ALL)</line>
+          <line>key = enum(INVALID,DISTANCE,TIME,INSTANT_FUEL_CONSUMPTION_PER_DISTANCE,AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE,AVERAGE_SPEED,...,ALL)</line>
           <line>key = DISTANCE, value = value of type 'q', that expresses the distance since the last reset of the trip computer in METRIC->tenth of kilometers or in NON_METRIC->tenth of miles </line>  
           <line>key = TIME, value = value of type 'u', that expresses the elapsed time since the last reset of the trip computer in seconds</line>
           <line>key = INSTANT_FUEL_CONSUMPTION_PER_DISTANCE, value = value of type 'q', that expresses the instant fuel consumption per distance in METRIC->tenth of liters per 100 kilometers or the instant distance per fuel consumption in NON_METRIC->tenth of miles per gallon</line>
           <line>key = AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE, value = value of type 'q', that expresses the average fuel consumption per distance since the last reset of the trip computer in METRIC->tenth of liters per 100 kilometers or the average distance per fuel consumption in NON_METRIC->tenth of miles per gallon</line>
           <line>key = AVERAGE_SPEED, value = value of type 'q', that expresses the average speed since the last reset of the trip computer in METRIC->tenth of kilometers per hour or in NON_METRIC->tenth of miles per hour</line>
-          <line>key = TANK_DISTANCE, value = value of type 'q', that expresses the tank distance since the last reset of the trip computer in METRIC->kilometers or in NON_METRIC->miles</line>
-          <line>key = ENHANCED_TANK_DISTANCE, value = value of type 'q', that expresses the tank distance since the last reset of the trip computer in METRIC->kilometers or in NON_METRIC->miles</line>       </doc>
-      </arg>
+      </doc>
+     </arg>
     </method>
 
     <method name="ResetTripData">
@@ -113,6 +114,17 @@
     <signal name="TripDataResetted">
       <doc>
         <line>TripDataReset = This signal is emitted to notifiy a client application that the data of the given trip number has been resetted</line>
+      </doc>
+      <arg name="number" type="y">
+        <doc>
+          <line>number= value of type 'y' that expresses the trip number</line>
+        </doc>
+      </arg>
+    </signal>
+
+    <signal name="TripDataUpdated">
+      <doc>
+        <line>TripDataUpdated = This signal is emitted to notifiy a client application that the data has been updated</line>
       </doc>
       <arg name="number" type="y">
         <doc>
