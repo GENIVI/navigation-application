@@ -197,7 +197,7 @@ HMIMenu {
             if (Genivi.g_routing_handle) {
 				Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
 			} else {
-                Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",0);
+                Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
 			}
             res=Genivi.fuel_stop_advisor_message(dbusIf,"GetInstantData",[]);
 			for (var i = 0 ; i < res[1].length ; i+=4) {

@@ -171,7 +171,18 @@
       </doc>
       <arg name="routeHandle" type="u" direction="in">
         <doc>
-          <line>routeHandle = Route handle. Range[0x0:0x7fffffff]. 0x0 is reserved as an invalid handle value, which clears the route here</line>
+          <line>routeHandle = Route handle. Range[0x0:0x7fffffff]. </line>
+        </doc>
+      </arg>
+    </method>
+
+    <method name="ReleaseRouteHandle">
+      <doc>
+        <line>ReleaseRouteHandle = This method release the route handle for the enhanced tank distance</line>
+      </doc>
+      <arg name="routeHandle" type="u" direction="in">
+        <doc>
+          <line>routeHandle = Route handle. Range[0x0:0x7fffffff].</line>
         </doc>
       </arg>
     </method>

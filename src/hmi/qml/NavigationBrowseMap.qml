@@ -26,6 +26,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 
 HMIMenu {
 	id: menu
@@ -142,7 +143,7 @@ HMIMenu {
 		mapmatchedpositionAddressUpdateSignal.destroy();
 		fuelStopAdvisorSignal.destroy();
 		Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
-		Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle","uint32",0);
+        Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
 	}
 
 	function showSurfaces()
@@ -409,38 +410,38 @@ HMIMenu {
         property real panY: 40 //delta in pixel for y panning
         spacing: menu.wspc/3;
 
-		StdButton { id:up; text:"Up"; explode:false; next:left; prev:daynight
+        StdButton { id:up; text:"Up"; explode:false; next:left; prev:daynight; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
                 onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
                 onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 + content.panY]]]);}
 		}
-		StdButton { id:left; text:"Left"; explode:false; next:right; prev:up
+        StdButton { id:left; text:"Left"; explode:false; next:right; prev:up;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
                 onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
                 onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 + content.panX,"uint16",map.height/2]]]);}
 		}
-		StdButton { id:right; text:"Right"; explode:false; next:down; prev:left
+        StdButton { id:right; text:"Right"; explode:false; next:down; prev:left;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
                 onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
                 onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 - content.panX,"uint16",map.height/2]]]);}
 		}
-		StdButton { id:down; text:"Down"; explode:false; next:zoom_in; prev:right
+        StdButton { id:down; text:"Down"; explode:false; next:zoom_in; prev:right;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
                 onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
                 onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 - content.panY]]]);}
 		}
-		StdButton { id:zoom_in; text:"+"; explode:false; next:zoom_out; prev:down
+        StdButton { id:zoom_in; text:"+"; explode:false; next:zoom_out; prev:down;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",1]);showZoom();}
 		}
-		StdButton { id:zoom_out; text:"-"; explode:false; next:perspective; prev:zoom_in
+        StdButton { id:zoom_out; text:"-"; explode:false; next:perspective; prev:zoom_in;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",-1]);showZoom();}
 		}
-		StdButton { id:perspective; text:"3d"; explode:false; next:split; prev:zoom_out
+        StdButton { id:perspective; text:"3d"; explode:false; next:split; prev:zoom_out;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {togglePerspective();}
 		}
-		StdButton { id:split; text:"Split"; explode:false; next:orientation; prev:perspective
+        StdButton { id:split; text:"Split"; explode:false; next:orientation; prev:perspective;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {toggleSplit();}
 		}
-		StdButton { id:orientation; text:"N"; explode:false; next:camera; prev:split
+        StdButton { id:orientation; text:"N"; explode:false; next:camera; prev:split;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {toggleOrientation();}
 		}
-		StdButton { id:camera; text:"C"; explode:false; next:back; prev:orientation
+        StdButton { id:camera; text:"C"; explode:false; next:back; prev:orientation;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {
 				disableSplit();
 				disconnectSignals();
@@ -497,26 +498,26 @@ HMIMenu {
 		height:content.h
 		spacing:menu.wspc/4
 
-		StdButton { id:back; text:"Back"; next:menub; prev:camera
+        StdButton { id:back; text:"Back"; next:menub; prev:camera;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				disconnectSignals();
 				hideSurfaces();
 				pageOpen(Genivi.data["mapback"]);
 			}
 		}
-		StdButton { id:menub; text:"Menu"; next:stop; prev:back
+        StdButton { id:menub; text:"Menu"; next:stop; prev:back;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				disconnectSignals();
 				hideSurfaces();
 				pageOpen("MainMenu");
 			}
 		}
-		StdButton { id:stop; text:"Stop"; explode:false; next:daynight; prev:menub
+        StdButton { id:stop; text:"Stop"; explode:false; next:daynight; prev:menub;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onClicked: {stopGuidance();}
 			    disabled: true
 		}
 
-		StdButton { id:daynight; text:""; explode:false; next:up; prev:stop
+        StdButton { id:daynight; text:""; explode:false; next:up; prev:stop;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				toggleDayNight();
 			}
@@ -664,7 +665,7 @@ HMIMenu {
 		if (Genivi.g_routing_handle) {
 			Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
 		} else {
-			Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle","uint32",0);
+            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
 		}
 		Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
 	}

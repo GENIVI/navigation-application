@@ -29,6 +29,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 
 HMIMenu {
 	id: menu
@@ -164,30 +165,30 @@ HMIMenu {
 		property real scrollspeed: 40
 		spacing: menu.wspc/3;
 
-		StdButton { id:north; text:"North"; explode:false; next:south; prev:distancem
+        StdButton { id:north; text:"North"; explode:false; next:south; prev:distancem; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				set_angle(0);
 			}
 		}
 
-		StdButton { id:south; text:"South"; explode:false; next:east; prev:north
+        StdButton { id:south; text:"South"; explode:false; next:east; prev:north; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				set_angle(180);
 			}
 		}
 
-		StdButton { id:east; text:"East"; explode:false; next:west; prev:south
+        StdButton { id:east; text:"East"; explode:false; next:west; prev:south; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				set_angle(90);
 			}
 		}
 
-		StdButton { id:west; text:"West"; explode:false; next:back; prev:east
+        StdButton { id:west; text:"West"; explode:false; next:back; prev:east; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				set_angle(270);
 			}
 		}
-		StdButton { id:back; text:"Back"; explode:false; next:tiltp; prev:west
+        StdButton { id:back; text:"Back"; explode:false; next:tiltp; prev:west; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			onClicked: {
 				Genivi.data['show_current_position']=true;
 				move_stop();
@@ -211,32 +212,32 @@ HMIMenu {
 		height:content.h
 		spacing:menu.wspc/3
 
-		StdButton { id:tiltp; text:"Tilt+"; explode:false; next:tiltm; prev:back
+        StdButton { id:tiltp; text:"Tilt+"; explode:false; next:tiltm; prev:back; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onPressed: {camera_start_clamp("CameraTiltAngle",-10,0);}
 			    onReleased: {camera_stop();}
 		}
 
-		StdButton { id:tiltm; text:"Tilt-"; explode:false; next:heightp; prev:tiltp
+        StdButton { id:tiltm; text:"Tilt-"; explode:false; next:heightp; prev:tiltp; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onPressed: {camera_start_clamp("CameraTiltAngle",10,90);}
 			    onReleased: {camera_stop();}
 		}
 
-		StdButton { id:heightp; text:"Height+"; explode:false; next:heightm; prev:tiltm
+        StdButton { id:heightp; text:"Height+"; explode:false; next:heightm; prev:tiltm; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onPressed: {camera_start("CameraHeight",10);}
 			    onReleased: {camera_stop();}
 		}
 
-		StdButton { id:heightm; text:"Height-"; explode:false; next:distancep; prev:heightp
+        StdButton { id:heightm; text:"Height-"; explode:false; next:distancep; prev:heightp; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onPressed: {camera_start("CameraHeight",-10);}
 			    onReleased: {camera_stop();}
 		}
 
-		StdButton { id:distancep; text:"Distance+"; explode:false; next:distancem; prev:heightm
+        StdButton { id:distancep; text:"Distance+"; explode:false; next:distancem; prev:heightm; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onPressed: {camera_start("CameraDistanceFromTargetPoint",10);}
 			    onReleased: {camera_stop();}
 		}
 
-		StdButton { id:distancem; text:"Distance-"; explode:false; next:north; prev:distancep
+        StdButton { id:distancem; text:"Distance-"; explode:false; next:north; prev:distancep; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
 			    onPressed: {camera_start("CameraDistanceFromTargetPoint",-10);}
 			    onReleased: {camera_stop();}
 		}

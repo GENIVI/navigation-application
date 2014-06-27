@@ -225,18 +225,16 @@ class FuelStopAdvisor
             else
             {
                 if (iter->first == CTripComputer::TRIPCOMPUTER_TANK_DISTANCE)
-                {
+                { //tank distance is valid, so it means that fuel level is valid too
                     ret[GENIVI_FUELSTOPADVISOR_TANK_DISTANCE]=variant_uint16(boost::get<uint16_t>(iter->second));
+                    ret[GENIVI_FUELSTOPADVISOR_FUEL_LEVEL]=variant_uint16(fuelLevel);
+                    if (this->routeHandle != 0)
+                    { // a route is valid so it makes sense to calculate enhanced tank distance
+                        ret[GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE]=variant_uint16(enhancedDistance(fuelLevel,remaining)+0.5);
+                    }
                 }
             }
         }
-        // for the demo check is fuel level available
-        if (fuelLevel != 0)
-        {
-            ret[GENIVI_FUELSTOPADVISOR_FUEL_LEVEL]=variant_uint16(fuelLevel);
-            ret[GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE]=variant_uint16(enhancedDistance(fuelLevel,remaining)+0.5);
-        }
-
 
         return ret;
 	}
@@ -345,7 +343,6 @@ class FuelStopAdvisor
         uint32_t odometer;
         uint16_t level;
         uint16_t consumption;
-        double remaining;
         double time;
 
 
@@ -413,16 +410,22 @@ class FuelStopAdvisor
 
         fuelLevel = level; //to avoid re-ask it to amb
 
-		if (advisorMode) {
-            enhancedDistance(tripComputerInput.fuelLevel, remaining);
-			printf("Advisor %f vs %d\n",remaining, distanceThreshold);
-			if (remaining < distanceThreshold) {
-				printf("Warning %f < %d\n",remaining, distanceThreshold);
-				FuelStopAdvisorWarning();
-			}
-		}
         TripDataUpdated(0); //arg is for future use
 	}
+
+    void updateEnhancedDistance()
+    {
+        double remaining;
+        if (advisorMode) {
+            enhancedDistance(fuelLevel, remaining);
+            printf("Advisor %f vs %d\n",remaining, distanceThreshold);
+            if (remaining < distanceThreshold) {
+                printf("Warning %f < %d\n",remaining, distanceThreshold);
+                FuelStopAdvisorWarning();
+            }
+            TripDataUpdated(0); //arg is for future use
+        }
+    }
 
 	void
 	SetFuelAdvisorSettings(const bool& advisorMode, const uint8_t& distanceThreshold)
@@ -430,7 +433,7 @@ class FuelStopAdvisor
 		printf("SetFuelAdvisorSettings(%d,%d)\n",advisorMode, distanceThreshold);
 		this->advisorMode=advisorMode;
 		this->distanceThreshold=distanceThreshold;
-		update_data();
+        updateEnhancedDistance();
 	}
 	
 	void
@@ -444,8 +447,15 @@ class FuelStopAdvisor
 	{
 		printf("SetRouteHandle %d\n",routeHandle);
 		this->routeHandle=routeHandle;
-		update_data();
+        updateEnhancedDistance();
 	}
+
+    void ReleaseRouteHandle(const uint32_t& routeHandle)
+    {
+        printf("ResetRouteHandle %d\n",routeHandle);
+        this->routeHandle=0;
+        updateEnhancedDistance();
+    }
 
 	private:
 	DBus::Glib::BusDispatcher amb_dispatcher;

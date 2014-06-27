@@ -66,6 +66,7 @@ HMIMenu {
             id:selectedStationValue
             style: Text.Sunken;
             smooth: true
+            clip: true
 			text: " "
         }
 		Component {

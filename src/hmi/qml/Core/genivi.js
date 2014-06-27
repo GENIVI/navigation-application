@@ -230,7 +230,7 @@ function routing_handle_clear(par)
 {
     if (g_routing_handle) {
         routing_message(par, "DeleteRoute", []);
-        g_routing_handle=null;
+        g_routing_handle=0;
     }
 }
 
