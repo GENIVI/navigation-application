@@ -30,6 +30,7 @@
 import QtQuick 1.0
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 
 HMIMenu {
 	id: menu
@@ -67,6 +68,7 @@ HMIMenu {
 		}
 		StdButton {
 			id:back
+			pixelSize:Constants.MENU_ROUTE_DESCRIPTION_TEXT_PIXEL_SIZE;
 			text: "Back"
 			page:"NavigationCalculatedRoute"
 		}
