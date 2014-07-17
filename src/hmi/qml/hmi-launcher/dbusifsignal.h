@@ -25,11 +25,10 @@
 *
 * @licence end@
 */
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeitem.h>
+#include <QtQuick/qquickitem.h>
 #include <QtDBus/QtDBus>
 
-class DBusIfSignal:public QDeclarativeItem, protected QDBusContext {
+class DBusIfSignal:public QQuickItem, protected QDBusContext {
 	Q_OBJECT
       public:
 	DBusIfSignal(QString service, QString path, QString interface, QString name, QObject *obj, QString slot)

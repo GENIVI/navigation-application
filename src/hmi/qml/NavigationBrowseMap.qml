@@ -9,7 +9,7 @@
 *
 * \author Martin Schaller <martin.schaller@it-schaller.de>
 *
-* \version 1.0
+* \version 
 *
 * This Source Code Form is subject to the terms of the
 * Mozilla Public License (MPL), v. 2.0.
@@ -23,10 +23,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
@@ -125,26 +126,26 @@ HMIMenu {
 	}
 
 	function connectSignals()
-        {
-		guidanceWaypointReachedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","WaypointReached",menu,"guidanceWaypointReached");
-		guidanceManeuverChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","ManeuverChanged",menu,"guidanceManeuverChanged");
+    {
+        guidanceWaypointReachedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","WaypointReached",menu,"guidanceWaypointReached");
+        guidanceManeuverChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","ManeuverChanged",menu,"guidanceManeuverChanged");
         guidancePositionOnRouteChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","PositionOnRouteChanged",menu,"guidancePositionOnRouteChanged");
-		mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
-		mapmatchedpositionAddressUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","AddressUpdate",menu,"mapmatchedpositionAddressUpdate");
-		fuelStopAdvisorSignal=dbusIf.connect("","/org/genivi/demonstrator/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor","FuelStopAdvisorWarning",menu,"fuelStopAdvisorWarning");
-        }
+        mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
+        mapmatchedpositionAddressUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","AddressUpdate",menu,"mapmatchedpositionAddressUpdate");
+        fuelStopAdvisorSignal=dbusIf.connect("","/org/genivi/demonstrator/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor","FuelStopAdvisorWarning",menu,"fuelStopAdvisorWarning");
+    }
 
-        function disconnectSignals()
-        {
-		guidanceWaypointReachedSignal.destroy();
-		guidanceManeuverChangedSignal.destroy();
+    function disconnectSignals()
+    {
+        guidanceWaypointReachedSignal.destroy();
+        guidanceManeuverChangedSignal.destroy();
         guidancePositionOnRouteChangedSignal.destroy();
-		mapmatchedpositionPositionUpdateSignal.destroy();
-		mapmatchedpositionAddressUpdateSignal.destroy();
-		fuelStopAdvisorSignal.destroy();
-		Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
+        mapmatchedpositionPositionUpdateSignal.destroy();
+        mapmatchedpositionAddressUpdateSignal.destroy();
+        fuelStopAdvisorSignal.destroy();
+        Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
         Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
-	}
+    }
 
 	function showSurfaces()
 	{
@@ -484,6 +485,7 @@ HMIMenu {
 			}
 		}
 	}
+
 	Rectangle {
 		id:map
 		y:content.y+content.height+4
@@ -491,6 +493,7 @@ HMIMenu {
 		width:menu.width
 		color:"#ffff7e"
 	}
+
 	Row {
 		id:bottom
 		y:menu.height-height-4
@@ -625,7 +628,8 @@ HMIMenu {
 			}
 		}
 	}
-	Component.onCompleted: {
+
+    Component.onCompleted: {
 		Genivi.map_handle(dbusIf,map.width,map.height,Genivi.MAPVIEWER_MAIN_MAP);
 		showSurfaces();
 		if (Genivi.data['show_route_handle']) {

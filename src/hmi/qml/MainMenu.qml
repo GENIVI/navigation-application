@@ -26,10 +26,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/fsa-main-menu-css.js" as StyleSheet;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
@@ -66,6 +67,6 @@ HMIMenu {
         StdButton { source:StyleSheet.select_configuration[StyleSheet.SOURCE]; x:StyleSheet.select_configuration[StyleSheet.X]; y:StyleSheet.select_configuration[StyleSheet.Y]; width:StyleSheet.select_configuration[StyleSheet.WIDTH]; height:StyleSheet.select_configuration[StyleSheet.HEIGHT];
             id:settings; page:"NavigationSettings"; explode:false; next:quit; prev:trip}
         StdButton { source:StyleSheet.quit[StyleSheet.SOURCE]; x:StyleSheet.quit[StyleSheet.X]; y:StyleSheet.quit[StyleSheet.Y]; width:StyleSheet.quit[StyleSheet.WIDTH]; height:StyleSheet.quit[StyleSheet.HEIGHT];textColor:StyleSheet.quitText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.quitText[StyleSheet.PIXELSIZE];
-            id:quit; text: Genivi.gettext("Quit"); explode:false; next:navigation; prev:settings; onClicked:{dbusIf.quit()}}
+            id:quit; text: Genivi.gettext("Quit"); explode:false; next:navigation; prev:settings; onClicked:{Qt.quit()}}
     }
 }

@@ -23,6 +23,7 @@
 # For further information see http://www.genivi.org/.
 #
 # List of changes:
+# 17-7-2014, philippe colliot, fix rgba bug for migration to Qt 5
 # <date>, <name>, <description of change>
 #
 # @licence end@
@@ -39,7 +40,7 @@ image_path = "Core/images/"
 y_offset = 0
 
 def format_color(color) :
-	return "Qt.rgba(%.3f, %.3f, %.3f, %.3f)" % (color[0]/255.0,color[1]/255.0,color[2]/255.0,color[3]/255.0)
+	return "Qt.rgba(%.2f, %.2f, %.2f, %.2f)" % (color[0]/255.0,color[1]/255.0,color[2]/255.0,color[3]/255.0)
 
 def get_js_header():
 	header = ['/* This file is generated */','.pragma library','Qt.include("style-constants.js");','']

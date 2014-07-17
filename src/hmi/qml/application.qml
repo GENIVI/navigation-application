@@ -26,10 +26,13 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
+import QtQuick.Controls 1.0
+import QtQuick.Layouts 1.0
+import QtQuick.Dialogs 1.0
 import "Core/genivi.js" as Genivi;
 
-Item {
+ApplicationWindow {
 	id: container
 	width: 800; height: 480
 	property Item component;

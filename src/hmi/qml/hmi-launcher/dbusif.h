@@ -25,23 +25,20 @@
 *
 * @licence end@
 */
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeitem.h>
+#include <QtQuick/qquickitem.h>
 #include <QtDBus>
 
 #include <QObject>
 
-class DBusIf:public QDeclarativeItem {
+class DBusIf:public QQuickItem {
 	Q_OBJECT Q_PROPERTY(QString name READ name WRITE setName)
       public:
-	DBusIf(QDeclarativeItem * parent = 0);
+    DBusIf(QQuickItem * parent = 0);
 
 	QString name() const;
 	void setName(const QString & name);
 
-	Q_INVOKABLE void test(QVariant v);
 	Q_INVOKABLE void signal(QString, QString, QString, QVariant);
-	Q_INVOKABLE int uint32(int);
 	Q_INVOKABLE QVariant message(QString, QString, QString, QString, QVariant);
 	Q_INVOKABLE QObject *connect(QString, QString, QString, QString, QObject *, QString);
 	Q_INVOKABLE void quit(void);

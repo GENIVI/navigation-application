@@ -7,8 +7,8 @@ quitText[X]=645;
 quitText[Y]=409;
 quitText[WIDTH]=98;
 quitText[HEIGHT]=46;
-quitText[TEXTCOLOR]=Qt.rgba(0.043, 0.643, 0.580, 1.000);
-quitText[STYLECOLOR]=Qt.rgba(0.043, 0.643, 0.580, 1.000);
+quitText[TEXTCOLOR]=Qt.rgba(0.04, 0.64, 0.58, 1.00);
+quitText[STYLECOLOR]=Qt.rgba(0.04, 0.64, 0.58, 1.00);
 quitText[PIXELSIZE]=38;
 
 var quit=new Object;

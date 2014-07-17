@@ -26,10 +26,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/navigation-route-menu-css.js" as StyleSheet;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
     id: menu
@@ -232,10 +233,10 @@ HMIMenu {
             disabled:false; next:show; prev:calculate_curr;
         }
 
-        Component.onCompleted: {
-            setLocation();
-            updateCurrentPosition();
-            connectSignals();
-        }
+    }
+    Component.onCompleted: {
+        setLocation();
+        updateCurrentPosition();
+        connectSignals();
     }
 }

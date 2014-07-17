@@ -27,11 +27,11 @@
 */
 #include "wheelareaplugin.h"
 #include "wheelarea.h"
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeitem.h>
+#include <QtQuick/qquickitem.h>
 
 void
 WheelAreaPlugin::registerTypes(const char *uri)
 {
-	qmlRegisterType < WheelArea > (uri, 1, 0, "WheelArea");
+    Q_ASSERT(uri == QLatin1String("LBSPlugin"));
+    qmlRegisterType<WheelArea>(uri, 1, 0, "WheelArea");
 }

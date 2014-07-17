@@ -96,11 +96,13 @@ BIN_DIR=$PWD/../../bin
 SRC_DIR=$PWD/..
 gdb=0
 lm=0
+multi=0
 xterm=0
 log=0
 replayer=1
 wm=""
-app=application.qml
+app=$SRC_DIR/hmi/qml/application.qml
+
 while getopts a:c:glNnopRx opt
 do
 	case $opt in
@@ -176,30 +178,40 @@ then
 fi
 export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
 trap "terminate" EXIT INT
+
 cd $BIN_DIR/automotive-message-broker
 run "Automotive Message Broker" ./ambd/ambd --config $SRC_DIR/genivilogreplayer/logreplayerconfig
+
 if [ "$replayer" = 1 ]
 then
 	cd $BIN_DIR/log-replayer
 	run "Log Replayer" ./log-replayer $SRC_DIR/positioning_*/log-replayer/logs/geneve-cologny.log
 fi
+
 cd $BIN_DIR/poi-service
 run "POI service" ./poi-server -f empty.db
+
 wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearch
+
 cd $SRC_DIR/navigation-service*/src/navigation/script
 run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
+
 wait_for_service org.automotive.message.broker /
 sleep 2
+
 run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
+
 if [ "$log" = 1 ]
 then
 	exec >$CUR_DIR/qmlviewer.log
 	exec 2>&1
 fi
-cd $SRC_DIR/hmi/qml
+
+cd $BIN_DIR/hmi/qml
 if [ "$lm" = 1 ]
 then
 	lmqmlviewer $app
 else
-	qmlviewer $app
+	./hmi-launcher $app 
 fi
+

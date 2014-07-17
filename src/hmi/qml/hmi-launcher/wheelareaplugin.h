@@ -4,7 +4,7 @@
 *
 * \copyright Copyright (C) 2013-2014, PCA Peugeot Citroen
 *
-* \file wheelarea.h
+* \file wheelareaplugin.h
 *
 * \brief This file is part of the FSA HMI.
 *
@@ -25,27 +25,15 @@
 *
 * @licence end@
 */
-#ifndef WHEELAREA_H
-#define WHEELAREA_H
+#ifndef WHEELAREAPLUGIN_H
+#define WHEELAREAPLUGIN_H
 
-#include <QtDeclarative/qdeclarativeitem.h>
-#include <QGraphicsSceneWheelEvent>
+#include <QtQml/qqmlextensionplugin.h>
 
-
-class WheelArea : public QDeclarativeItem
-{
-    Q_OBJECT
-
-public:
-    explicit WheelArea(QDeclarativeItem *parent = 0) : QDeclarativeItem(parent) {}
-
-protected:
-    void wheelEvent(QGraphicsSceneWheelEvent *event) {
-	emit wheel(event->delta());
-    }
-
-signals:
-    void wheel(int delta);
+class WheelAreaPlugin:public QQmlExtensionPlugin {
+      Q_OBJECT public:
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface" FILE "wheelareaplugin.json")
+    void registerTypes(const char *uri);
 };
 
-#endif // WHEELAREA_H
+#endif

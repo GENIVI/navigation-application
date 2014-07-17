@@ -26,12 +26,12 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
-import CustomType 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/navigation-settings-preference-menu-css.js" as StyleSheet;
-
+import lbs.plugin.dbusif 1.0
+import lbs.plugin.preference 1.0
 
 HMIMenu {
 	id: menu
@@ -212,41 +212,42 @@ HMIMenu {
         StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
 
-		Component.onCompleted: {
-			var res=Genivi.routing_message(dbusIf,"GetCostModel",[]);
-			var costmodel=0;
-			if (res[0] == "uint16") {
-				costmodel=res[1];
-			} else {
-				console.log("Unexpected result from GetCostModel");
-				Genivi.dump("",res);
-			}
-			var res=Genivi.routing_message(dbusIf,"GetSupportedCostModels",[]);
-			if (res[0] != "array") {
-				console.log("Unexpected result from GetSupportedCostModel");
-				Genivi.dump("",res);
-			}
-			for (var i = 0 ; i < res[1].length ; i+=2) {
-				var button=Qt.createQmlObject('import QtQuick 1.0; import "Core"; StdButton { }',content,'dynamic');
-				button.source="Core/images/cost-model.png";
-				button.x=100; 
-				button.y=96+i*50; 
-				button.width=180; 
-				button.height=60;
-				button.textColor="black"; 
-				button.pixelSize=34;
-				button.userdata=res[1][i+1];
-				button.text=Genivi.CostModels[button.userdata];
-				button.disabled=button.userdata == costmodel;
-				button.clicked.connect(
-					function(what) {
-						Genivi.routing_message(dbusIf,"SetCostModel",["uint16",what.userdata]);
-						pageOpen("NavigationSettingsPreferences");
-					}
-				);
-			}
-
-			update();
-		}
 	}
+
+    Component.onCompleted: {
+        var res=Genivi.routing_message(dbusIf,"GetCostModel",[]);
+        var costmodel=0;
+        if (res[0] == "uint16") {
+            costmodel=res[1];
+        } else {
+            console.log("Unexpected result from GetCostModel");
+            Genivi.dump("",res);
+        }
+        var res=Genivi.routing_message(dbusIf,"GetSupportedCostModels",[]);
+        if (res[0] != "array") {
+            console.log("Unexpected result from GetSupportedCostModel");
+            Genivi.dump("",res);
+        }
+        for (var i = 0 ; i < res[1].length ; i+=2) {
+            var button=Qt.createQmlObject('import QtQuick 2.1 ; import "Core"; StdButton { }',content,'dynamic');
+            button.source="Core/images/cost-model.png";
+            button.x=100;
+            button.y=96+i*50;
+            button.width=180;
+            button.height=60;
+            button.textColor="black";
+            button.pixelSize=34;
+            button.userdata=res[1][i+1];
+            button.text=Genivi.CostModels[button.userdata];
+            button.disabled=button.userdata == costmodel;
+            button.clicked.connect(
+                function(what) {
+                    Genivi.routing_message(dbusIf,"SetCostModel",["uint16",what.userdata]);
+                    pageOpen("NavigationSettingsPreferences");
+                }
+            );
+        }
+
+        update();
+    }
 }

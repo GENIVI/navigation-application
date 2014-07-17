@@ -7,8 +7,8 @@ costModelValue[X]=119;
 costModelValue[Y]=134;
 costModelValue[WIDTH]=147;
 costModelValue[HEIGHT]=38;
-costModelValue[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-costModelValue[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+costModelValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+costModelValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 costModelValue[PIXELSIZE]=31;
 
 var ferriesText=new Object;
@@ -16,8 +16,8 @@ ferriesText[X]=330;
 ferriesText[Y]=137;
 ferriesText[WIDTH]=136;
 ferriesText[HEIGHT]=38;
-ferriesText[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-ferriesText[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+ferriesText[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+ferriesText[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 ferriesText[PIXELSIZE]=31;
 
 var motorWaysText=new Object;
@@ -25,8 +25,8 @@ motorWaysText[X]=330;
 motorWaysText[Y]=287;
 motorWaysText[WIDTH]=207;
 motorWaysText[HEIGHT]=38;
-motorWaysText[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-motorWaysText[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+motorWaysText[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+motorWaysText[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 motorWaysText[PIXELSIZE]=31;
 
 var tollRoadsText=new Object;
@@ -34,8 +34,8 @@ tollRoadsText[X]=330;
 tollRoadsText[Y]=208;
 tollRoadsText[WIDTH]=200;
 tollRoadsText[HEIGHT]=38;
-tollRoadsText[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-tollRoadsText[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+tollRoadsText[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+tollRoadsText[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 tollRoadsText[PIXELSIZE]=31;
 
 var routingPreferencesTitle=new Object;
@@ -43,8 +43,8 @@ routingPreferencesTitle[X]=331;
 routingPreferencesTitle[Y]=47;
 routingPreferencesTitle[WIDTH]=307;
 routingPreferencesTitle[HEIGHT]=30;
-routingPreferencesTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-routingPreferencesTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+routingPreferencesTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+routingPreferencesTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 routingPreferencesTitle[PIXELSIZE]=25;
 
 var costModelTitle=new Object;
@@ -52,8 +52,8 @@ costModelTitle[X]=100;
 costModelTitle[Y]=47;
 costModelTitle[WIDTH]=168;
 costModelTitle[HEIGHT]=30;
-costModelTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-costModelTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+costModelTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+costModelTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 costModelTitle[PIXELSIZE]=25;
 
 var cost_model=new Object;
@@ -110,8 +110,8 @@ backText[X]=645;
 backText[Y]=408;
 backText[WIDTH]=105;
 backText[HEIGHT]=46;
-backText[TEXTCOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
-backText[STYLECOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
+backText[TEXTCOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
+backText[STYLECOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
 backText[PIXELSIZE]=38;
 
 var back=new Object;

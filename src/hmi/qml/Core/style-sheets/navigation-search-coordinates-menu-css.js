@@ -7,8 +7,8 @@ longitudeTitle[X]=100;
 longitudeTitle[Y]=201;
 longitudeTitle[WIDTH]=188;
 longitudeTitle[HEIGHT]=46;
-longitudeTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-longitudeTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+longitudeTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+longitudeTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 longitudeTitle[PIXELSIZE]=38;
 
 var longitudeValue=new Object;
@@ -16,8 +16,8 @@ longitudeValue[X]=100;
 longitudeValue[Y]=256;
 longitudeValue[WIDTH]=288;
 longitudeValue[HEIGHT]=42;
-longitudeValue[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-longitudeValue[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+longitudeValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+longitudeValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 longitudeValue[PIXELSIZE]=35;
 
 var latitudeValue=new Object;
@@ -25,8 +25,8 @@ latitudeValue[X]=100;
 latitudeValue[Y]=108;
 latitudeValue[WIDTH]=288;
 latitudeValue[HEIGHT]=42;
-latitudeValue[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-latitudeValue[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+latitudeValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+latitudeValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 latitudeValue[PIXELSIZE]=35;
 
 var latitudeTitle=new Object;
@@ -34,8 +34,8 @@ latitudeTitle[X]=101;
 latitudeTitle[Y]=50;
 latitudeTitle[WIDTH]=155;
 latitudeTitle[HEIGHT]=46;
-latitudeTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-latitudeTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+latitudeTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+latitudeTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 latitudeTitle[PIXELSIZE]=38;
 
 var keyboard=new Object;
@@ -50,8 +50,8 @@ backText[X]=630;
 backText[Y]=404;
 backText[WIDTH]=128;
 backText[HEIGHT]=49;
-backText[TEXTCOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
-backText[STYLECOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
+backText[TEXTCOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
+backText[STYLECOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
 backText[PIXELSIZE]=38;
 
 var back=new Object;
@@ -66,8 +66,8 @@ okText[X]=85;
 okText[Y]=406;
 okText[WIDTH]=128;
 okText[HEIGHT]=49;
-okText[TEXTCOLOR]=Qt.rgba(0.000, 0.000, 0.000, 1.000);
-okText[STYLECOLOR]=Qt.rgba(0.000, 0.000, 0.000, 1.000);
+okText[TEXTCOLOR]=Qt.rgba(0.00, 0.00, 0.00, 1.00);
+okText[STYLECOLOR]=Qt.rgba(0.00, 0.00, 0.00, 1.00);
 okText[PIXELSIZE]=38;
 
 var ok=new Object;

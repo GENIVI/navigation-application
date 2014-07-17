@@ -26,10 +26,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/navigation-search-address-menu-css.js" as StyleSheet;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
@@ -185,27 +186,27 @@ HMIMenu {
 
 	DBusIf {
                 id: dbusIf
-		Component.onCompleted: {
-			connectSignals();		
-			
-			var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
-			Genivi.dump("",res);
-			if (res[0] != "error") {
-				console.log("NavigationCore Version "+res[1][1]+"."+res[1][3]+"."+res[1][5]+" "+res[1][7]);
-				res=Genivi.nav_session(dbusIf);
-				res=Genivi.loc_handle(dbusIf);
-			} else {
-				Genivi.dump("",res);
-			}
-			if (Genivi.entryselectedentry) {
-				Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry-1]);
-			}
+        Component.onCompleted: {
+            connectSignals();
+
+            var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
+            Genivi.dump("",res);
+            if (res[0] != "error") {
+                console.log("NavigationCore Version "+res[1][1]+"."+res[1][3]+"."+res[1][5]+" "+res[1][7]);
+                res=Genivi.nav_session(dbusIf);
+                res=Genivi.loc_handle(dbusIf);
+            } else {
+                Genivi.dump("",res);
+            }
+            if (Genivi.entryselectedentry) {
+                Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry-1]);
+            }
             if (Genivi.entrydest == 'countryValue') accept(countryValue);
             if (Genivi.entrydest == 'cityValue') accept(cityValue);
             if (Genivi.entrydest == 'streetValue') accept(streetValue);
             if (Genivi.entrydest == 'numberValue') accept(numberValue);
-			Genivi.entrydest=null;
-		}
+            Genivi.entrydest=null;
+        }
         }
 
     HMIBgImage {

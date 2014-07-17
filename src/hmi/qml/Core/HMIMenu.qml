@@ -9,7 +9,7 @@
 *
 * \author Martin Schaller <martin.schaller@it-schaller.de>
 *
-* \version 1.0
+* \version 
 *
 * This Source Code Form is subject to the terms of the
 * Mozilla Public License (MPL), v. 2.0.
@@ -23,8 +23,9 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "style-sheets/style-constants.js" as Constants;
+import lbs.plugin.wheelarea 1.0
 
 Rectangle {
 	property alias text: titleText.text
@@ -163,8 +164,8 @@ Rectangle {
 		color: "#0000ff"
 		Text {
 			id: titleText
-			font.pixelSize: 20;
-			style: Text.Sunken; color: "white"; styleColor: "black"; smooth: true
+            font.pixelSize: 20
+            style: Text.Sunken; color: "white"; styleColor: "black"; smooth: true
 		}	
 	}
 	states: State {

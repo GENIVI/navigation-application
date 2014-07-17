@@ -7,8 +7,8 @@ languagesTitle[X]=100;
 languagesTitle[Y]=47;
 languagesTitle[WIDTH]=156;
 languagesTitle[HEIGHT]=30;
-languagesTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-languagesTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+languagesTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+languagesTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 languagesTitle[PIXELSIZE]=25;
 
 var unitsTitle=new Object;
@@ -16,8 +16,8 @@ unitsTitle[X]=331;
 unitsTitle[Y]=47;
 unitsTitle[WIDTH]=79;
 unitsTitle[HEIGHT]=30;
-unitsTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-unitsTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+unitsTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+unitsTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 unitsTitle[PIXELSIZE]=25;
 
 var backText=new Object;
@@ -25,8 +25,8 @@ backText[X]=645;
 backText[Y]=408;
 backText[WIDTH]=105;
 backText[HEIGHT]=46;
-backText[TEXTCOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
-backText[STYLECOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
+backText[TEXTCOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
+backText[STYLECOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
 backText[PIXELSIZE]=38;
 
 var unit_km=new Object;

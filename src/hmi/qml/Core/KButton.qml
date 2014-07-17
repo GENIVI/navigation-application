@@ -11,7 +11,7 @@
 * \author Martin Schaller <martin.schaller@it-schaller.de>
 * \author Philippe Colliot <philippe.colliot@mpsa.com>
 *
-* \version 1.0
+* \version 
 *
 * This Source Code Form is subject to the terms of the
 * Mozilla Public License (MPL), v. 2.0.
@@ -26,7 +26,7 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 
 
 Button {

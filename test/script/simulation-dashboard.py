@@ -53,9 +53,10 @@ YELLOW = ( 255, 222, 0)
 
 # Define some constants
 PI = 3.141592653
-PERIODICITY = 1000 #in ms
-FUEL_CONVERSION = (3.6/PERIODICITY)
-SPEED_CONVERSION = (36.0/PERIODICITY)
+KEYBOARD_PERIODICITY = 200 #in ms
+GET_DBUS_PERIODICITY = 1000 #in ms
+FUEL_CONVERSION = (3.6/GET_DBUS_PERIODICITY)
+SPEED_CONVERSION = (36.0/GET_DBUS_PERIODICITY)
 
 # Item location on the screen
 STATUS_LOCATION = (100,10)
@@ -109,8 +110,8 @@ def initDisplay():
 	displayLatitude('0')
 	displayLongitude('0')
 	displayVehicleSpeed('0')	
-      
-def steps():
+   
+def getKeyboard():
 	global step
 
 	for event in pygame.event.get():
@@ -129,18 +130,19 @@ def steps():
 	elif keys[K_x]:
 		step=Step.END
 
+	return True 
+   
+def getDbus():
+	global step
+
 	# manage the logreplayer depending on the step
 	if step==Step.START:
-		displayStep( str(step) )
 		launch("start.log")
 	elif step==Step.INITIALIZATION:
-		displayStep( str(step) )
 		launch("initialization.log")
 	elif step==Step.HIGH_TANK_LEVEL:
-		displayStep( str(step) )
 		launch("high-tank-level.log")
 	elif step==Step.LOW_TANK_LEVEL:
-		displayStep( str(step) )
 		launch("low-tank-level.log")
 	elif step==Step.END:
 		displayStatus( 'End simulation   ' )
@@ -166,6 +168,8 @@ def steps():
 	displayLatitude("{:.3f}".format(latitude))
 	longitude=float(geoLocation[dbus.UInt16(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
 	displayLongitude("{:.3f}".format(longitude))
+
+	displayStep( str(step) )
 
 	# refresh screen
 	refresh()
@@ -218,7 +222,8 @@ refresh()
 
 # start 
 step = Step.START
-gobject.timeout_add(PERIODICITY,steps)
+gobject.timeout_add(KEYBOARD_PERIODICITY,getKeyboard)
+gobject.timeout_add(GET_DBUS_PERIODICITY,getDbus)
 loop = gobject.MainLoop()
 loop.run()
 

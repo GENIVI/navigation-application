@@ -4,7 +4,7 @@
 *
 * \copyright Copyright (C) 2013-2014, PCA Peugeot Citroen
 *
-* \file dbusplugin.h
+* \file wheelarea.h
 *
 * \brief This file is part of the FSA HMI.
 *
@@ -25,15 +25,27 @@
 *
 * @licence end@
 */
-#ifndef DBUSPLUGIN_H
-#define DBUSPLUGIN_H
+#ifndef WHEELAREA_H
+#define WHEELAREA_H
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtQuick/qquickitem.h>
+#include <QGraphicsSceneWheelEvent>
 
-class DBusPlugin:public QDeclarativeExtensionPlugin {
-      Q_OBJECT public:
-    Q_PLUGIN_METADATA(IID "DBus plugin" FILE "dbusplugin.json")
-    void registerTypes(const char *uri);
+
+class WheelArea : public QQuickItem
+{
+    Q_OBJECT
+
+public:
+    explicit WheelArea(QQuickItem *parent = 0) : QQuickItem(parent) {}
+
+protected:
+    void wheelEvent(QGraphicsSceneWheelEvent *event) {
+	emit wheel(event->delta());
+    }
+
+signals:
+    void wheel(int delta);
 };
 
-#endif
+#endif // WHEELAREA_H

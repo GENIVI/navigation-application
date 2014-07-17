@@ -26,10 +26,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
@@ -72,38 +73,40 @@ HMIMenu {
 			page:"NavigationBrowseMap";
 		}
 	}
-	DBusIf {
-                id:dbusIf
-		Component.onCompleted: {
-            var res=Genivi.guidance_message_get(dbusIf,"GetManeuversList",["uint16",0xffff,"uint32",0]);
-			if (res[0] == "uint16" && res[2] == "array") {
-				var array=res[3];
-                var model=view.model;
-                for (var i = 0 ; i < array.length ; i+=2) {
-                    if (array[i] == "structure" && array[i+1][0] == "string" && array[i+1][2] == "string" && array[i+1][4] == "uint16" && array[i+1][6] == "uint16" && array[i+1][8] == "uint32" && array[i+1][10] == "array") {
-                        var structure=array[i+1];
-                        var subarray=structure[11];
-                        for (var j = 0 ; j < subarray.length ; j+=2) {
-                            //multiple maneuvers are not managed !
-                            if (subarray[j] == "structure" && subarray[j+1][0] == "uint32" && subarray[j+1][2] == "uint32" && subarray[j+1][4] == "int32" && subarray[j+1][6] == "uint16" && subarray[j+1][8] == "array") {
-                                var substructure=subarray[j+1];
-                                var subsubarray=subarray[j+1][9];
-                                if (subsubarray[0] == "structure" && subsubarray[1][0] == "uint16")
-                                {
-                                   if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
-                                   {
-                                       var text=Genivi.distance(substructure[1])+" "+Genivi.distance(structure[9])+" "+Genivi.ManeuverType[subarray[j+1][7]]+":"+Genivi.ManeuverDirection[subsubarray[1][3][1]]+" "+structure[3];
-                                       model.append({"name":text});
-                                   }
-                                }
+
+    DBusIf {
+        id:dbusIf
+    }
+
+    Component.onCompleted: {
+        var res=Genivi.guidance_message_get(dbusIf,"GetManeuversList",["uint16",0xffff,"uint32",0]);
+        if (res[0] == "uint16" && res[2] == "array") {
+            var array=res[3];
+            var model=view.model;
+            for (var i = 0 ; i < array.length ; i+=2) {
+                if (array[i] == "structure" && array[i+1][0] == "string" && array[i+1][2] == "string" && array[i+1][4] == "uint16" && array[i+1][6] == "uint16" && array[i+1][8] == "uint32" && array[i+1][10] == "array") {
+                    var structure=array[i+1];
+                    var subarray=structure[11];
+                    for (var j = 0 ; j < subarray.length ; j+=2) {
+                        //multiple maneuvers are not managed !
+                        if (subarray[j] == "structure" && subarray[j+1][0] == "uint32" && subarray[j+1][2] == "uint32" && subarray[j+1][4] == "int32" && subarray[j+1][6] == "uint16" && subarray[j+1][8] == "array") {
+                            var substructure=subarray[j+1];
+                            var subsubarray=subarray[j+1][9];
+                            if (subsubarray[0] == "structure" && subsubarray[1][0] == "uint16")
+                            {
+                               if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
+                               {
+                                   var text=Genivi.distance(substructure[1])+" "+Genivi.distance(structure[9])+" "+Genivi.ManeuverType[subarray[j+1][7]]+":"+Genivi.ManeuverDirection[subsubarray[1][3][1]]+" "+structure[3];
+                                   model.append({"name":text});
+                               }
                             }
                         }
                     }
                 }
-			} else {
-				Console.log("Unexpected result from GetManeuversList");
-				Genivi.dump("",res);
-			}
+            }
+        } else {
+            Console.log("Unexpected result from GetManeuversList");
+            Genivi.dump("",res);
         }
-        }
+    }
 }

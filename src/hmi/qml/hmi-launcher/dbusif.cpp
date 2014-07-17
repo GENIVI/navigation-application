@@ -31,8 +31,8 @@
 #include <unistd.h>
 #include <dbus/dbus.h>
 
-DBusIf::DBusIf(QDeclarativeItem * parent)
-:  QDeclarativeItem(parent)
+DBusIf::DBusIf(QQuickItem * parent)
+:  QQuickItem(parent)
 {
 }
 

@@ -7,8 +7,8 @@ searchTitle[X]=274;
 searchTitle[Y]=175;
 searchTitle[WIDTH]=272;
 searchTitle[HEIGHT]=44;
-searchTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-searchTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+searchTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+searchTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 searchTitle[PIXELSIZE]=36;
 
 var backText=new Object;
@@ -16,8 +16,8 @@ backText[X]=645;
 backText[Y]=408;
 backText[WIDTH]=105;
 backText[HEIGHT]=46;
-backText[TEXTCOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
-backText[STYLECOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
+backText[TEXTCOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
+backText[STYLECOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
 backText[PIXELSIZE]=38;
 
 var back=new Object;
@@ -46,8 +46,8 @@ historyText[X]=69;
 historyText[Y]=406;
 historyText[WIDTH]=174;
 historyText[HEIGHT]=46;
-historyText[TEXTCOLOR]=Qt.rgba(0.000, 0.000, 0.000, 1.000);
-historyText[STYLECOLOR]=Qt.rgba(0.000, 0.000, 0.000, 1.000);
+historyText[TEXTCOLOR]=Qt.rgba(0.00, 0.00, 0.00, 1.00);
+historyText[STYLECOLOR]=Qt.rgba(0.00, 0.00, 0.00, 1.00);
 historyText[PIXELSIZE]=38;
 
 var history=new Object;

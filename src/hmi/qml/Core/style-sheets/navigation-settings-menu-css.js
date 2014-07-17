@@ -21,8 +21,8 @@ simulationTitle[X]=38;
 simulationTitle[Y]=72;
 simulationTitle[WIDTH]=161;
 simulationTitle[HEIGHT]=30;
-simulationTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-simulationTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+simulationTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+simulationTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 simulationTitle[PIXELSIZE]=25;
 
 var speedValue=new Object;
@@ -30,8 +30,8 @@ speedValue[X]=106;
 speedValue[Y]=130;
 speedValue[WIDTH]=30;
 speedValue[HEIGHT]=53;
-speedValue[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-speedValue[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+speedValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+speedValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 speedValue[PIXELSIZE]=44;
 
 var speedTitle=new Object;
@@ -39,8 +39,8 @@ speedTitle[X]=83;
 speedTitle[Y]=201;
 speedTitle[WIDTH]=83;
 speedTitle[HEIGHT]=30;
-speedTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-speedTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+speedTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+speedTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 speedTitle[PIXELSIZE]=25;
 
 var modeTitle=new Object;
@@ -48,8 +48,8 @@ modeTitle[X]=329;
 modeTitle[Y]=200;
 modeTitle[WIDTH]=76;
 modeTitle[HEIGHT]=30;
-modeTitle[TEXTCOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
-modeTitle[STYLECOLOR]=Qt.rgba(0.412, 0.412, 0.412, 1.000);
+modeTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+modeTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 modeTitle[PIXELSIZE]=25;
 
 var speed_up=new Object;
@@ -85,8 +85,8 @@ backText[X]=630;
 backText[Y]=404;
 backText[WIDTH]=128;
 backText[HEIGHT]=49;
-backText[TEXTCOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
-backText[STYLECOLOR]=Qt.rgba(0.000, 0.627, 0.565, 1.000);
+backText[TEXTCOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
+backText[STYLECOLOR]=Qt.rgba(0.00, 0.63, 0.56, 1.00);
 backText[PIXELSIZE]=38;
 
 var back=new Object;
@@ -101,8 +101,8 @@ preferencesText[X]=25;
 preferencesText[Y]=408;
 preferencesText[WIDTH]=248;
 preferencesText[HEIGHT]=46;
-preferencesText[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-preferencesText[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+preferencesText[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+preferencesText[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 preferencesText[PIXELSIZE]=38;
 
 var preferences=new Object;
@@ -117,8 +117,8 @@ languageAndUnitText[X]=312;
 languageAndUnitText[Y]=405;
 languageAndUnitText[WIDTH]=253;
 languageAndUnitText[HEIGHT]=46;
-languageAndUnitText[TEXTCOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
-languageAndUnitText[STYLECOLOR]=Qt.rgba(1.000, 1.000, 1.000, 1.000);
+languageAndUnitText[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+languageAndUnitText[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 languageAndUnitText[PIXELSIZE]=38;
 
 var languageAndUnit=new Object;

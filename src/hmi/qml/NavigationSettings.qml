@@ -26,10 +26,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/navigation-settings-menu-css.js" as StyleSheet;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
@@ -39,9 +40,11 @@ HMIMenu {
     property Item simulationStatusChangedSignal;
     next: back
         prev: back
-	DBusIf {
+
+    DBusIf {
 		id:dbusIf;
 	}
+
     property int speedValueSent: 0;
 
     function simulationStatusChanged(args)
@@ -156,43 +159,43 @@ HMIMenu {
 			Genivi.dump("",res);
 		}
 
-        var res=Genivi.mapmatch_message_get(dbusIf,"GetSimulationSpeed",[]);
-		if (res[0] == "uint8") {
-			if (res[1] == 0) {
+        var res1=Genivi.mapmatch_message_get(dbusIf,"GetSimulationSpeed",[]);
+        if (res1[0] == "uint8") {
+            if (res1[1] == 0) {
                 speedValue.text="0";
                 speedValueSent=0;
 			}
-			if (res[1] == 1) {
+            if (res1[1] == 1) {
                 speedValue.text="1/4";
                 speedValueSent=1;
 			}
-			if (res[1] == 2) {
+            if (res1[1] == 2) {
                 speedValue.text="1/2";
                 speedValueSent=2;
 			}
-			if (res[1] == 4) {
+            if (res1[1] == 4) {
                 speedValue.text="1";
                 speedValueSent=3;
 			}
-			if (res[1] == 8) {
+            if (res1[1] == 8) {
                 speedValue.text="2";
                 speedValueSent=4;
 			}
-			if (res[1] == 16) {
+            if (res1[1] == 16) {
                 speedValue.text="4";
                 speedValueSent=5;
 			}
-			if (res[1] == 32) {
+            if (res1[1] == 32) {
                 speedValue.text="8";
                 speedValueSent=6;
 			}
-			if (res[1] == 64) {
+            if (res1[1] == 64) {
                 speedValue.text="16";
                 speedValueSent=7;
 			}
 		} else {
 			console.log("Unexpected result from GetSimulationSpeed:");
-			Genivi.dump("",res);
+            Genivi.dump("",res1);
 		}
 	}
 
@@ -350,9 +353,10 @@ HMIMenu {
             onClicked:{leave(); pageOpen("MainMenu");}
         }
 
-        Component.onCompleted: {
-            connectSignals();
-            update();
-		}
 	}
+
+    Component.onCompleted: {
+        connectSignals();
+        update();
+    }
 }

@@ -26,7 +26,7 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 
 import "genivi.js" as Genivi;
 

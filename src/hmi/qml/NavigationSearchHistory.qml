@@ -27,9 +27,10 @@
 * @licence end@
 */
 
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu

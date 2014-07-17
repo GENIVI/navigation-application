@@ -26,10 +26,11 @@
 *
 * @licence end@
 */
-import QtQuick 1.0
+import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/navigation-settings-language-and-units-menu-css.js" as StyleSheet;
+import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
@@ -86,11 +87,11 @@ HMIMenu {
 					content.children[i].visible=true;
 					if (name == current_lang_nav && name == current_lang_map) {
 						content.children[i].disabled=true;
-					} else {
+                    } else {
 						content.children[i].disabled=false;
 					}
 				} else {
-					content.children[i].visible=false;
+                    content.children[i].visible=false;
 				}
 			}
 		}
@@ -103,26 +104,27 @@ HMIMenu {
 			Genivi.dump("",res);
 			units1=0;
 		}
-		var res=Genivi.map_message(dbusIf,"Configuration","GetUnitsOfMeasurement",[]);
-		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.MAPVIEWER_LENGTH && res[1][2] == "variant" && res[1][3][0] == "uint16") {
-			units2=res[1][3][1];
+        var res1=Genivi.map_message(dbusIf,"Configuration","GetUnitsOfMeasurement",[]);
+        if (res1[0] == "map" && res1[1][0] == "uint16" && res1[1][1] == Genivi.MAPVIEWER_LENGTH && res1[1][2] == "variant" && res1[1][3][0] == "uint16") {
+            units2=res1[1][3][1];
 		} else {
 			console.log("Unexpected result from GetUnitsOfMeasurement:");
-			Genivi.dump("",res);
+            Genivi.dump("",res1);
 			units2=0;
 		}
 		unit_km.disabled=false;
 		unit_mile.disabled=false;
 		if (units1==Genivi.NAVIGATIONCORE_KM && units2==Genivi.MAPVIEWER_KM) unit_km.disabled=true;
 		if (units1==Genivi.NAVIGATIONCORE_MILE && units2==Genivi.MAPVIEWER_MILE) unit_mile.disabled=true;
+        console.log("update done");
 	}
 	function setLocale(language, country)
 	{
 		Genivi.nav_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country]);
 		Genivi.map_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country]);
-		Genivi.setlang(language + "_" + country);
-		pageOpen("NavigationSettingsLanguageAndUnits"); //reload page because of texts...
-	}
+        Genivi.setlang(language + "_" + country);
+        pageOpen("NavigationSettingsLanguageAndUnits"); //reload page because of texts...
+    }
 	function setUnits(units1,units2)
 	{
 		Genivi.nav_message(dbusIf,"Configuration","SetUnitsOfMeasurement",["map",["uint16",Genivi.NAVIGATIONCORE_LENGTH,"variant",["uint16",units1]]]);
@@ -175,8 +177,9 @@ HMIMenu {
         StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
 
-		Component.onCompleted: {
-			update();
-		}
 	}
+
+    Component.onCompleted: {
+        update();
+    }
 }

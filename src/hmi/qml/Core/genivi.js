@@ -27,6 +27,7 @@
 * @licence end@
 */
 .pragma library
+
 Qt.include("../../../../bin/hmi/qml/constants.js");
 var Test;
 var dbusIf;
@@ -41,7 +42,15 @@ var g_lang;
 
 var data=new Array;
 
+var poi_data=new Array;
+var poi_id;
+
 var translations=new Array;
+
+var entryback;
+var entrydest;
+var entrycriterion;
+var entryselectedentry;
 
 var Maneuver = new Object;
 Maneuver[NAVIGATIONCORE_INVALID]="INVALID";
@@ -400,18 +409,18 @@ function fuel_stop_advisor_message(par, func, args)
 function setlang(lang)
 {
 	g_lang=lang;
-	translations = new Array();
-	Qt.include("translations/"+lang+".js");
+    translations = new Array;
+    Qt.include("translations/"+lang+".js");
 }
 
 function gettext(arg)
 {
-	if (!translations[arg]) {
-		if (g_lang) {
-			console.log("Translation for '" + arg + "' missing for " + g_lang);
-		}
-		return arg;
-	} else {
-		return translations[arg];
-	}
+    if (!translations[arg]) {
+        if (g_lang) {
+            console.log("Translation for '" + arg + "' missing for " + g_lang);
+        }
+        return arg;
+    } else {
+        return translations[arg];
+    }
 }

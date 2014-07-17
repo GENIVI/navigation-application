@@ -21,24 +21,25 @@
 # List of changes:
 # 
 # 16/06/2014, Philippe Colliot, Migration to Qt5.2
+# 16/07/2014, Philippe Colliot, hmi into an application launcher
 #
 # @licence end@
-TESTHMI_SRC=$(SRC_DIR)/hmi/qml
-TESTHMI_BIN=$(BIN_DIR)/hmi/qml
-TESTHMI_DEPS=qt4-qmlviewer qtquick1-5-dev libqt5declarative5
+HMI_SRC=$(SRC_DIR)/hmi/qml/hmi-launcher
+HMI_BIN=$(BIN_DIR)/hmi/qml
+HMI_DEPS=qtquick1-5-dev libqt5declarative5
 
-DEPS += $(TESTHMI_DEPS)
-testhmi: $(TESTHMI_BIN)/Makefile $(TESTHMI_BIN)/constants.js
-	$(MAKE) -C $(TESTHMI_BIN)
+DEPS += $(HMI_DEPS)
+hmi: $(HMI_BIN)/Makefile $(HMI_BIN)/constants.js
+	$(MAKE) -C $(HMI_BIN)
 
-$(TESTHMI_BIN)/Makefile: $(TESTHMI_SRC)/all.pro $(TESTHMI_SRC)/dbus.pro $(TESTHMI_SRC)/wheelarea.pro
-	mkdir -p $(TESTHMI_BIN)
-	cd $(TESTHMI_BIN) && $(QMAKE) $(TESTHMI_SRC)/all.pro
+$(HMI_BIN)/Makefile: $(HMI_SRC)/hmi-launcher.pro
+	mkdir -p $(HMI_BIN)
+	cd $(HMI_BIN) && $(QMAKE) $(HMI_SRC)/hmi-launcher.pro
 
-ALL += testhmi
+ALL += hmi
 
-$(TESTHMI_BIN)/constants.js: $(TESTHMI_SRC)/javascript.xsl $(CONSTANTS_SRC)
-	for i in $(CONSTANTS_SRC); do xsltproc $(TESTHMI_SRC)/javascript.xsl $$i || exit ; done >$(TESTHMI_BIN)/constants.js
+$(HMI_BIN)/constants.js: $(HMI_SRC)/javascript.xsl $(CONSTANTS_SRC)
+	for i in $(CONSTANTS_SRC); do xsltproc $(HMI_SRC)/javascript.xsl $$i || exit ; done >$(HMI_BIN)/constants.js
 
 help::
-	@echo "testhmi: Build testhmi"
+	@echo "hmi: Build hmi"
