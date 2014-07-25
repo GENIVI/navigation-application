@@ -1,10 +1,10 @@
-Release date of the file: 1-06-2014 
+Release date of the file: 18-07-2014 
 Status: to be completed
 
 This test bench is based on Python pygame and use python enum class.
 If necessary please do:
 sudo apt-get install python-pip python-pygame
-pip install enum
+sudo pip install enum
 
 To test:
 

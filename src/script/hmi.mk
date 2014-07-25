@@ -22,11 +22,12 @@
 # 
 # 16/06/2014, Philippe Colliot, Migration to Qt5.2
 # 16/07/2014, Philippe Colliot, hmi into an application launcher
+# 25/07/2014, Philippe Colliot, update dependencies list
 #
 # @licence end@
 HMI_SRC=$(SRC_DIR)/hmi/qml/hmi-launcher
 HMI_BIN=$(BIN_DIR)/hmi/qml
-HMI_DEPS=qtquick1-5-dev libqt5declarative5
+HMI_DEPS=qtdeclarative5-quicklayouts-plugin qtdeclarative5-dialogs-plugin qtdeclarative5-controls-plugin qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin libqt5declarative5
 
 DEPS += $(HMI_DEPS)
 hmi: $(HMI_BIN)/Makefile $(HMI_BIN)/constants.js

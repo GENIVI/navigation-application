@@ -1,4 +1,4 @@
-Release date of the file: 11-04-2014 
+Release date of the file: 25-07-2014 
 Status: to be completed
 
 Project:
@@ -25,7 +25,6 @@ See headers and LICENSE file
 Test target: 
 Ubuntu 14.04 LTS
 
-Dependencies:
 After a fresh install of ubuntu, do the following:
 
 	apt-get install git build-essential
@@ -37,14 +36,23 @@ To get the code:
 
 	git clone http://git.projects.genivi.org/lbs/navigation-application.git $WORKING-DIR
 
+Important notice: HMI is running under Qt5
+To check your version:
+qtchooser --print-env
+To select Qt5:
+export QT_SELECT=5
+
+Dependencies: (make all2 check/install the needed packages)
+(to be completed)
+cmake xsltproc libdbus-c++-dev libdbus-1-dev libdbus-c++-bin libsqlite3-dev libglibmm-2.4-dev sqlite3 xsltproc libboost-dev libjson0-dev libtool uuid-dev
  
 Build:
 
 	cd $WORKING-DIR/src/script
 	make all2
 
-(For the first time, will install all prereqisites required to build the code)
-or, if you have already installed the prereqisites:
+(For the first time, will install all prerequisites required to build the code)
+or, if you have already installed the prerequisites:
 
 	make all
 
