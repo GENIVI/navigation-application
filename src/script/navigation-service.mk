@@ -24,7 +24,7 @@
 #
 # @licence end@
 navigation-service_URL="http://git.projects.genivi.org/lbs/navigation.git"
-navigation-service_VERSION=f9bcf41cc68ac189781239c15ffc0fb52d086fdc
+navigation-service_VERSION=2402a071b38292226b8b4029e3f87d4374967d0a
 navigation-service_SRC=$(SRC_DIR)/navigation-service_$(navigation-service_VERSION)
 navigation-service_API=$(navigation-service_SRC)/api
 navigation-service_BIN=$(BIN_DIR)/navigation-service
