@@ -1,4 +1,4 @@
-Release date of the file: 18-07-2014 
+Release date of the file: 29-07-2014 
 Status: to be completed
 
 This test bench is based on Python pygame and use python enum class.
@@ -8,10 +8,11 @@ sudo pip install enum
 
 To test:
 
-Launch the application without the log replayer:
-./run -R
+Launch the application without the logreplayer:
+./run -r
 
 Launch the test dashboard (keyboard interface)
+(the test dashboard calls the logreplayer and uses test log files)
 python simulation-dashboard.py
 
 Steps:
@@ -21,9 +22,58 @@ Steps:
 'l' launches low-tank-level.log
 'x' exits the dashboard (or close the window)
 
+Test scenario:
+
+Assume no ./ambd/ambd process is still running (kill -9 if necessary)
+Assume application launched (./run -r) and test panel launched (python simulation-dashboard.py) successfully.
+The main HMI of FSA is displayed, and the test panel too, with right values displayed (Lat 46.202 Lon 6.147)
+
+Click on trip computer button
+(nothing is activated)
+Into the test panel, enter 'i' 
+Into the test panel, enter 'h'
+Fuel level is 30 l, trip values are displayed after 400 m
+Only tank distance is available (no guidance active)
+
+Click on BACK button
+Go to enter a destination
+Go to enter a destination per address
+Click on city button
+Enter zuri..
+Select Zürich into the list
+Click on street button
+Enter lamp..
+Select In Lampitzäcken into the list
+Click on OK button
+Click on set as destination
+(the GO TO button is activated)
+Click on GO TO button
+Route is calculated, DISTANCE = 286 km, TIME = 2:39:46
+Click on ON button (to activate the guidance)
+The map is displayed
+To activate the simulation:
+Click on Menu button
+Click on settings button
+(simulation panel)
+Click on ON button to start the simulation
+Simulation is started
+Click on BACK button
+
+Click on trip computer button
+Enhanced tank distance is lower than tank distance but > 286 km (route total distance)
+Into the test panel, enter 'l' 
+Fuel level is 15 l, Enhanced tank distance is lower than  286 km !
+Click on BACK button
+Click on map
+A F is diplayed, click on it
+Into the poi menu, click on SEARCH
+Select a full station
+The info about the station are displayed
+Click on REROUTE
 
 Known issues:
 
 ambd process sometimes not killed, so check it
 ./kill_all to kill all the process but still issue with ambd ?
+so you need to do kill -9 of the amb process
  

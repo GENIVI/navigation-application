@@ -213,7 +213,7 @@ ambOdometerInterface = dbus.Interface(ambOdometer, "org.automotive.Odometer")
 
 
 # Enhanced position
-enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.positioning.EnhancedPosition", "/position")
+enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.positioning.EnhancedPosition", "/org/genivi/positioning/EnhancedPosition")
 enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
 
 displayStatus( 'Start simulation' )

@@ -95,15 +95,17 @@ CUR_DIR=$PWD
 BIN_DIR=$PWD/../../bin
 SRC_DIR=$PWD/..
 gdb=0
-lm=0
-multi=0
 xterm=0
 log=0
+enhpos=1
+lm=0
+prototyping=0
 replayer=1
 wm=""
 app=$SRC_DIR/hmi/qml/application.qml
+popup=$SRC_DIR/hmi/qml/pop-up.qml
 
-while getopts a:c:glNnopRx opt
+while getopts a:c:glnoprx opt
 do
 	case $opt in
 	a)
@@ -119,14 +121,18 @@ do
 	l)
 		lm=1
 		;;
-	N|n)
+	n)
+		enhpos=0
 		plugin_args="$plugin_args -$opt"
 		;;
 	o)
 		plugin_args="$plugin_args -$opt"
 		log=1
 		;;
-	R)
+	p)
+		prototyping=1
+		;;
+	r)
 		replayer=0
 		;;
 	x)
@@ -135,14 +141,15 @@ do
 		;;
 	\?)
 		echo "Usage:"
-		echo "$0 [-a application][-c center][-lnx]"
+		echo "$0 [-a application][-c center][-glnoprx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
 		echo "-g: Run subprocesses within gdb (only with -x)"
 		echo "-l: Use layermanager"
-		echo "-N: Don't start enhanced positioning service"
+		echo "-n: Don't start enhanced positioning service"
 		echo "-o: Create log file of subprocess output"
-		echo "-R: Don't start replayer"
+		echo "-p: Prototyping"
+		echo "-r: Don't start replayer"
 		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
 		exit 1
 	esac
@@ -178,14 +185,18 @@ then
 fi
 export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
 trap "terminate" EXIT INT
+set -e
 
 cd $BIN_DIR/automotive-message-broker
 run "Automotive Message Broker" ./ambd/ambd --config $SRC_DIR/genivilogreplayer/logreplayerconfig
 
-if [ "$replayer" = 1 ]
+if [ "$enhpos" = 1 ]
 then
-	cd $BIN_DIR/log-replayer
-	run "Log Replayer" ./log-replayer $SRC_DIR/positioning_*/log-replayer/logs/geneve-cologny.log
+	if [ "$replayer" = 1 ]
+	then
+		cd $BIN_DIR/log-replayer
+		run "Log Replayer" ./log-replayer $SRC_DIR/positioning_*/log-replayer/logs/geneve-cologny.log
+	fi
 fi
 
 cd $BIN_DIR/poi-service
@@ -212,6 +223,11 @@ if [ "$lm" = 1 ]
 then
 	lmqmlviewer $app
 else
+if [ "$prototyping" = 1 ]
+then
+	./hmi-launcher $app $popup
+else
 	./hmi-launcher $app 
+fi
 fi
 
