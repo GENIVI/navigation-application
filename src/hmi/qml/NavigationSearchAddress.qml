@@ -56,22 +56,25 @@ HMIMenu {
             if (Genivi.address[Genivi.NAVIGATIONCORE_CITY] !== "")
             {
                 cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
-                streetValue.disabled=false;
                 accept(cityValue);
+                streetValue.disabled=false;
+                if (Genivi.address[Genivi.NAVIGATIONCORE_STREET] !== "")
+                {
+                    streetValue.text=Genivi.address[Genivi.NAVIGATIONCORE_STREET];
+                    accept(streetValue);
+                    numberValue.disabled=false;
+                }
             }
         }
     }
 
 	function currentSelectionCriterion(args)
 	{
-		console.log("CurrentSelectionCriterion");
-		Genivi.dump("",args);
+        Genivi.dump("CurrentSelectionCriterion",args);
 	}
 
 	function searchStatus(args)
 	{
-		console.log("SearchStatus");
-		Genivi.dump("",args);
 		if (args[3] == 2) 
 			menu.text="Search (Searching)";
 		else
@@ -80,9 +83,7 @@ HMIMenu {
 
 	function searchResultList(args)
 	{
-		console.log("SearchResultList:");
-		Genivi.dump("",args);
-		Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",0]);
+        Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry]);
 	}
 
 	function setContent(args)
@@ -140,7 +141,6 @@ HMIMenu {
 	function contentUpdated(args)
 	{
 		console.log("contentUpdated");
-		Genivi.dump("",args);
 		if (args[3]) {
 			ok.disabled=false;
 		}
@@ -190,7 +190,7 @@ HMIMenu {
             connectSignals();
 
             var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
-            Genivi.dump("",res);
+            console.log("Dbusif");
             if (res[0] != "error") {
                 console.log("NavigationCore Version "+res[1][1]+"."+res[1][3]+"."+res[1][5]+" "+res[1][7]);
                 res=Genivi.nav_session(dbusIf);
@@ -201,13 +201,25 @@ HMIMenu {
             if (Genivi.entryselectedentry) {
                 Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry-1]);
             }
-            if (Genivi.entrydest == 'countryValue') accept(countryValue);
-            if (Genivi.entrydest == 'cityValue') accept(cityValue);
-            if (Genivi.entrydest == 'streetValue') accept(streetValue);
-            if (Genivi.entrydest == 'numberValue') accept(numberValue);
+            if (Genivi.entrydest == 'countryValue')
+            {
+                accept(countryValue);
+            }
+            if (Genivi.entrydest == 'cityValue')
+            {
+                accept(cityValue);
+            }
+            if (Genivi.entrydest == 'streetValue')
+            {
+                accept(streetValue);
+            }
+            if (Genivi.entrydest == 'numberValue')
+            {
+                accept(numberValue);
+            }
             Genivi.entrydest=null;
         }
-        }
+    }
 
     HMIBgImage {
         image:StyleSheet.navigation_search_by_address_menu_background[StyleSheet.SOURCE];

@@ -1,4 +1,4 @@
-Release date of the file: 25-07-2014 
+Release date of the file: 30-07-2014 
 Status: to be completed
 
 Project:
@@ -36,15 +36,19 @@ To get the code:
 
 	git clone http://git.projects.genivi.org/lbs/navigation-application.git $WORKING-DIR
 
-Important notice: HMI is running under Qt5
+Important notice: 
+HMI is running under Qt5
 To check your version:
 qtchooser --print-env
 To select Qt5:
 export QT_SELECT=5
 
-Dependencies: (make all2 check/install the needed packages)
+Default address for the application is using a list of address accessed in english, so you need to set the locale to en_US
+export LANGUAGE=en_US
+
+Dependencies: (make all2 allows to check/install the needed packages)
 (to be completed)
-cmake xsltproc libdbus-c++-dev libdbus-1-dev libdbus-c++-bin libsqlite3-dev libglibmm-2.4-dev sqlite3 xsltproc libboost-dev libjson0-dev libtool uuid-dev
+cmake xsltproc libdbus-c++-dev libdbus-1-dev libdbus-c++-bin libsqlite3-dev libglibmm-2.4-dev sqlite3 xsltproc libboost-dev libjson0-dev libtool uuid-dev qtdeclarative5-quicklayouts-plugin qtdeclarative5-dialogs-plugin qtdeclarative5-controls-plugin qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin libqt5declarative5 
  
 Build:
 

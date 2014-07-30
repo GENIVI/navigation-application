@@ -38,6 +38,7 @@ HMIMenu {
     headlineBg: "blue"
     text: Genivi.gettext("NavigationSettings")
     property Item simulationStatusChangedSignal;
+    property Item simulationSpeedChangedSignal;
     next: back
         prev: back
 
@@ -46,6 +47,52 @@ HMIMenu {
 	}
 
     property int speedValueSent: 0;
+
+    function simulationSpeedChanged(args)
+    {
+        console.log("SimulationSpeedChanged");
+        if (args[0] == 'uint8')
+        {
+            if (args[1] == 0) {
+                speedValue.text="0";
+                speedValueSent=0;
+            }
+            if (args[1] == 1) {
+                speedValue.text="1/4";
+                speedValueSent=1;
+            }
+            if (args[1] == 2) {
+                speedValue.text="1/2";
+                speedValueSent=2;
+            }
+            if (args[1] == 4) {
+                speedValue.text="1";
+                speedValueSent=3;
+            }
+            if (args[1] == 8) {
+                speedValue.text="2";
+                speedValueSent=4;
+            }
+            if (args[1] == 16) {
+                speedValue.text="4";
+                speedValueSent=5;
+            }
+            if (args[1] == 32) {
+                speedValue.text="8";
+                speedValueSent=6;
+            }
+            if (args[1] == 64) {
+                speedValue.text="16";
+                speedValueSent=7;
+            }
+        }
+        else
+        {
+            console.log("Unexpected result from SimulationSpeedChanged:");
+            Genivi.dump("",args);
+        }
+
+    }
 
     function simulationStatusChanged(args)
     {
@@ -74,7 +121,7 @@ HMIMenu {
                 simu_mode.setState("FREE");
             }
         } else {
-            console.log("Unexpected result from GetSimulationStatus:");
+            console.log("Unexpected result from SimulationStatusChanged:");
             Genivi.dump("",args);
         }
 
@@ -83,11 +130,13 @@ HMIMenu {
     function connectSignals()
     {
         simulationStatusChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","SimulationStatusChanged",menu,"simulationStatusChanged");
+        simulationSpeedChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","SimulationSpeedChanged",menu,"simulationSpeedChanged");
     }
 
     function disconnectSignals()
     {
         simulationStatusChangedSignal.destroy();
+        simulationSpeedChangedSignal.destroy();
     }
 
 
@@ -236,9 +285,10 @@ HMIMenu {
 			onClicked:
 			{
                 if (speedValueSent > 0)
+                {
                     speedValueSent = speedValueSent-1;
+                }
                 Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
-				update();
 			}
 		}
         StdButton {source:StyleSheet.speed_up[StyleSheet.SOURCE]; x:StyleSheet.speed_up[StyleSheet.X]; y:StyleSheet.speed_up[StyleSheet.Y]; width:StyleSheet.speed_up[StyleSheet.WIDTH]; height:StyleSheet.speed_up[StyleSheet.HEIGHT];
@@ -246,9 +296,10 @@ HMIMenu {
 			onClicked:
 			{
                 if (speedValueSent < 7)
+                {
                     speedValueSent = speedValueSent+1;
+                }
                 Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
-				update();
 			}
 		}
 
@@ -292,6 +343,7 @@ HMIMenu {
 				}
 			}
 		}
+
         StdButton { x:StyleSheet.play[StyleSheet.X]; y:StyleSheet.play[StyleSheet.Y]; width:StyleSheet.play[StyleSheet.WIDTH]; height:StyleSheet.play[StyleSheet.HEIGHT];
             id:simu_mode; next:back; prev:back; explode:false; disabled:false;
 			property int status: 0;

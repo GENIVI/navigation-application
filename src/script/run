@@ -34,17 +34,20 @@ function run
 	local l=$log
 	title="$1"
 	shift
+
 	if [ "$1" = "-n" ]
 	then
 		shift
 		x=0
 		l=0
 	fi
+
 	if [ "$1" = "-g" ]
 	then
 		shift
 		g=0
 	fi
+
 	if [ "$x" = 1 ]
 	then
 		if [ "$g" = 1 ]
@@ -189,6 +192,8 @@ set -e
 
 cd $BIN_DIR/automotive-message-broker
 run "Automotive Message Broker" ./ambd/ambd --config $SRC_DIR/genivilogreplayer/logreplayerconfig
+wait_for_service org.automotive.message.broker /
+sleep 2
 
 if [ "$enhpos" = 1 ]
 then
@@ -205,11 +210,13 @@ run "POI service" ./poi-server -f empty.db
 wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearch
 
 cd $SRC_DIR/navigation-service*/src/navigation/script
-run "Navit Plugins" -n ./run -b $BIN_DIR $plugin_args
-
-wait_for_service org.automotive.message.broker /
-sleep 2
-
+#we don't use the replayer used by the navigation core because we need a plugin for the application !
+if [ "$enhpos" = 1 ]
+then
+	run "Navit Plugins" ./run -r -b $BIN_DIR $plugin_args
+else
+	run "Navit Plugins" ./run -rn -b $BIN_DIR $plugin_args
+fi
 run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
 
 if [ "$log" = 1 ]

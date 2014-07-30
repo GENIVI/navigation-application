@@ -49,7 +49,6 @@ HMIMenu {
 	function searchStatus(args)
 	{
 		console.log("SearchStatus");
-		Genivi.dump("",args);
 		if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
 			view.model.clear();
 			menu.text="Entry (Searching)";
@@ -86,7 +85,6 @@ HMIMenu {
 
 	function spellResult(args)
 	{
-		Genivi.dump("",args);
 		if (args[0] == "uint32" && args[2] == "string" && args[4] == "string") {
 			if (text.text.length < args[3].length) {
 				extraspell=args[3].substr(text.text.length);
@@ -94,10 +92,8 @@ HMIMenu {
 				
 			}
 			keyboard.setactivekeys('\b'+args[5],true);
-			Genivi.dump("",args);
 		} else {
 			console.log("Unexpected result from SpellResult:");
-			Genivi.dump("",args);
 		}
 	}
 
@@ -168,6 +164,7 @@ HMIMenu {
 			StdButton { id:back; text: "Back"; onClicked: {
 				Genivi.entrydest=null;
 				disconnectSignals();
+                Genivi.entryselectedentry=0;
 				pageOpen(Genivi.entryback);
 			} next:view; prev:keyboard}
 		}
