@@ -37,6 +37,14 @@
 
 DLT_DECLARE_CONTEXT(gContext);
 
+bool running = true;
+
+void sighandler(int sig)
+{
+  LOG_INFO_MSG(gContext,"Signal received");
+  running = false;
+}
+
 bool getStrToSend(FILE* file, char* line, int dim)
 {
     static long unsigned int lastTimestamp = 0;
@@ -65,10 +73,15 @@ bool getStrToSend(FILE* file, char* line, int dim)
 
     if(strchr(line, '#') != 0)
     {  
-        return true; //skip comment line - no impact on delta times
+        line[0] = '\0';
+        return true; //skip comment line 
     }
 
-    sscanf(line, "%lu", &timestamp);
+    if (!sscanf(line, "%lu", &timestamp))
+    {
+        line[0] = '\0';
+        return true; //skip lines without timestamp
+    }
 
     if(!lastTimestamp)
     {
@@ -83,7 +96,7 @@ bool getStrToSend(FILE* file, char* line, int dim)
     LOG_DEBUG(gContext,"Waiting %lu ms", delta);
     LOG_DEBUG_MSG(gContext,"------------------------------------------------");
 
-    if(delta >= 0)
+    if(timestamp >= lastTimestamp)
     {
         usleep(delta*1000); // TODO time drift issues
     }
@@ -106,6 +119,9 @@ int main(int argc, char* argv[])
     char * filename = 0;
     char buf[BUFLEN];
     char msgId[MSGIDLEN];
+
+    signal(SIGTERM, sighandler);
+    signal(SIGINT, sighandler);
 
     if(argc < 2)
     {
@@ -133,7 +149,7 @@ int main(int argc, char* argv[])
     //si_other.sin_port = htons(<port number>);
     if(inet_aton(IPADDR, &si_other.sin_addr) == 0)
     {
-        LOG_ERROR_MSG(gContext,"inet_aton() failded!");
+        LOG_ERROR_MSG(gContext,"inet_aton() failed!");
         return EXIT_FAILURE;
     }
 
@@ -147,7 +163,7 @@ int main(int argc, char* argv[])
 
     LOG_INFO(gContext,"Started reading log file %s",filename);
 
-    while(1)
+    while(running)
     {
         if(!getStrToSend(logfile,buf,BUFLEN))
         {
@@ -155,12 +171,18 @@ int main(int argc, char* argv[])
             return EXIT_FAILURE;
         }
 
+        if (strlen(buf) < 3)
+        {
+            //skip empty lines (includes comments)
+            continue;
+        }
+
         sscanf(buf, "%*[^'$']$%[^',']", msgId);
 
         //GNSS: list of supported message IDs
 	char* gnssstr = "GVGNSVER,GVGNSP,GVGNSC,GVGNSSAC,GVGNSC3D,GVGNSSSAT,GVGNSSUTCT,"
 			"GVGNSSUTCD";
-        if(strstr(gnssstr, msgId) != NULL && buf[0] != '#')
+        if(strstr(gnssstr, msgId) != NULL)
         {
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT1);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
@@ -179,7 +201,7 @@ int main(int argc, char* argv[])
 	char* snsstr = "GVSNSVER,GVSNSACC,GVSNSACCCONF,GVSNSGYRO,GVSNSGYROCONF,GVSNSINCL,"
 			"GVSNSODO,GVSNSREV,GVSNSSLIP,GVSTEER,GVSNSVEHCONF,GVSNSVEHSP,"
 			"GVSNSVEHST,GVSNSWHTK,GVSNSWHTKCONF,GVSNSWHA,GVSNSWHS,GVSNSDRVDIR,";
-        if(strstr(snsstr, msgId) != NULL && buf[0] != '#')
+        if(strstr(snsstr, msgId) != NULL)
         {
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT2);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
@@ -198,7 +220,7 @@ int main(int argc, char* argv[])
 	char* vhlstr = "GVVEHVER,GVVEHENGSPEED,GVVEHFUELLEVEL,GVVEHFUELCONS,"
 			"GVVEHTOTALODO,GVVEHWHRDCONF,GVVEHFRTKWDCONF,GVVEHRRTKWDCONF,"
 			"GVVEHFRWHBSCONF,GVVEHRRWHBSCONF";
-        if(strstr(vhlstr, msgId) != NULL && buf[0] != '#')
+        if(strstr(vhlstr, msgId) != NULL)
         {
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT3);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
