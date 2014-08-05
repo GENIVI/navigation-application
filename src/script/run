@@ -27,34 +27,37 @@
 # @licence end@
 ###########################################################################
 
-# function to start a process by managing the options
+# function to start a process by freezing some of the options
 function run
 {
+	# copy options to local options
 	local x=$xterm
 	local g=$gdb
 	local l=$log
 	local title="$1"
 	shift
+	# manage freezing options
 	if [ "$1" = "-n" ]
-	then
+	then # freeze xterm and log
 		shift
 		x=0
 		l=0
 	fi
 	if [ "$1" = "-g" ]
-	then
+	then # freeze debug
 		shift
 		g=0
 	fi
+	# manage local options
 	if [ "$x" = 1 ]
-	then
+	then # subprocess into xterm
 		if [ "$g" = 1 ]
-		then
+		then # debug mode
 			set -- gdb -ex run --args "$@"
 		fi
 		xterm -T "$title" -sb -sl 5000 -e "$@" &
 	elif [ "$l" = 1 ]
-	then
+	then # log file
 		"$@" >"$CUR_DIR/$title.log" 2>&1 &
 	else
 		"$@" &
