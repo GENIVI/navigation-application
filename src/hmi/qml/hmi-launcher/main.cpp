@@ -50,7 +50,6 @@ int main(int argc, char ** argv)
     window->show();
 
     rc = app.exec();
-
     delete component;
     return rc;
 }

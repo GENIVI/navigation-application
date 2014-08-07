@@ -113,7 +113,6 @@ HMIMenu {
 			if (res[3])
 				text+="*";
 			zoomlevel.text=text;
-			console.log("zoomlevel " + text);
 		} else {
 			console.log("Unexpected Result from GetMapViewScale:");
 			Genivi.dump("",res);
@@ -336,8 +335,6 @@ HMIMenu {
 
         var res=Genivi.guidance_message_get(dbusIf,"GetManeuversList",["uint16",1,"uint32",0]);
 
-        Genivi.dump("GetManeuversList",res);
-
         if (res[0] == "uint16" && res[2] == "array") {
             var array=res[3];
             for (var i = 0 ; i < array.length ; i+=2) {
@@ -363,8 +360,6 @@ HMIMenu {
                     }
                 }
             }
-            console.log("maneuver " + maneuver);
-            console.log("maneuver_distance " + maneuver_distance);
 
         } else {
             console.log("Unexpected result from GetManeuversList");

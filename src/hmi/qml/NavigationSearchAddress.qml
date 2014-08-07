@@ -70,7 +70,6 @@ HMIMenu {
 
 	function currentSelectionCriterion(args)
 	{
-        Genivi.dump("CurrentSelectionCriterion",args);
 	}
 
 	function searchStatus(args)
@@ -140,7 +139,6 @@ HMIMenu {
 
 	function contentUpdated(args)
 	{
-		console.log("contentUpdated");
 		if (args[3]) {
 			ok.disabled=false;
 		}
@@ -167,8 +165,6 @@ HMIMenu {
 
 	function accept(what)
 	{
-		console.log(what);
-		console.log("accept "+what.criterion+" "+what.text);
 		ok.disabled=true;
 		Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",what.criterion]);
 		Genivi.locationinput_message(dbusIf,"Search",["string",what.text,"uint16",10]);
@@ -190,9 +186,7 @@ HMIMenu {
             connectSignals();
 
             var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
-            console.log("Dbusif");
             if (res[0] != "error") {
-                console.log("NavigationCore Version "+res[1][1]+"."+res[1][3]+"."+res[1][5]+" "+res[1][7]);
                 res=Genivi.nav_session(dbusIf);
                 res=Genivi.loc_handle(dbusIf);
             } else {

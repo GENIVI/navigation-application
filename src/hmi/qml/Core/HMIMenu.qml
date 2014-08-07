@@ -48,7 +48,6 @@ Rectangle {
 		anchors.fill: parent
 		onClicked: {
 			var focus=find_focus(menu);
-			console.log("clicked "+focus);
 			focus.mclicked(focus);
 		}
 

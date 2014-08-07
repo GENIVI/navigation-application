@@ -125,7 +125,6 @@ HMIMenu {
 					if (categories[i+1][1][3] == 'fuel') {
 						// Genivi.dump("",categories[i+1][1]);
 						category=categories[i+1][1][1];
-						console.log("Category "+category);
 					}
 				}
 				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));

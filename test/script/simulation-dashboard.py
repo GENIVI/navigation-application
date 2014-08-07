@@ -25,6 +25,7 @@
 **************************************************************************
 """
 import sys,tty,termios,select,pygame,gobject,time,dbus,re,argparse
+import pdb
  
 from pygame.locals import *
 from threading import Timer
@@ -44,6 +45,8 @@ class Genivi(Enum):
 	ENHANCEDPOSITIONSERVICE_LATITUDE = 0x0020
 	ENHANCEDPOSITIONSERVICE_LONGITUDE = 0x0021
 	ENHANCEDPOSITIONSERVICE_ALTITUDE = 0x0022
+	FUELSTOPADVISOR_TANK_DISTANCE = 0x0022
+	FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE = 0x0024
 
 # Define some colors
 BLACK = ( 0, 0, 0)
@@ -69,9 +72,11 @@ FUEL_INSTANT_CONSUMPTION_LOCATION = (150,238)
 VEHICLE_SPEED_LOCATION = (150,287)
 LATITUDE_LOCATION = (64,340)
 LONGITUDE_LOCATION = (185,340)
-GUIDANCE_STATUS_LOCATION = (380,238)
+GUIDANCE_STATUS_LOCATION = (380,118)
 SIMULATION_STATUS_LOCATION = (380,175)
 FUEL_STOP_ADVISOR_WARNING_LOCATION = (380,238)
+FUEL_STOP_ADVISOR_TANK_DISTANCE_LOCATION = (380,287)
+FUEL_STOP_ADVISOR_ENHANCED_TANK_DISTANCE_LOCATION = (380,340)
 
 def display(string,location,fontColor,fontBackground):
 	global args
@@ -118,6 +123,12 @@ def displaySimulationStatus(string):
 def displayFuelStopAdvisorWarning(string):
 	display(string,FUEL_STOP_ADVISOR_WARNING_LOCATION,YELLOW,BLACK)
 
+def displayFuelStopAdvisorTankDistance(string):
+	display(string,FUEL_STOP_ADVISOR_TANK_DISTANCE_LOCATION,YELLOW,BLACK)
+
+def displayFuelStopAdvisorEnhancedTankDistance(string):
+	display(string,FUEL_STOP_ADVISOR_ENHANCED_TANK_DISTANCE_LOCATION,YELLOW,BLACK)
+
 def refresh():
 	pygame.display.update()
 
@@ -129,7 +140,12 @@ def initDisplay():
 	displayFuelInstant('0')
 	displayLatitude('0')
 	displayLongitude('0')
-	displayVehicleSpeed('0')	
+	displayVehicleSpeed('0')
+	displayGuidanceStatus('OFF')
+	displaySimulationStatus('OFF')	
+	displayFuelStopAdvisorWarning('')
+	displayFuelStopAdvisorTankDistance('----')
+	displayFuelStopAdvisorEnhancedTankDistance('----')
    
 def getKeyboard():
 	global step
@@ -188,6 +204,19 @@ def getDbus():
 	displayLatitude("{:.3f}".format(latitude))
 	longitude=float(geoLocation[dbus.UInt16(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
 	displayLongitude("{:.3f}".format(longitude))
+
+	# get the tank distance
+	instantData = fuelStopAdvisorInterface.GetInstantData()
+	if dbus.UInt16(Genivi.FUELSTOPADVISOR_TANK_DISTANCE) in instantData:
+		tankDistance = int(instantData[dbus.UInt16(Genivi.FUELSTOPADVISOR_TANK_DISTANCE)])	
+		displayFuelStopAdvisorTankDistance(str(tankDistance))
+	else:
+		displayFuelStopAdvisorTankDistance("----")
+	if dbus.UInt16(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE) in instantData:
+		enhancedTankDistance = int(instantData[dbus.UInt16(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE)])	
+		displayFuelStopAdvisorEnhancedTankDistance(str(enhancedTankDistance))
+	else:
+		displayFuelStopAdvisorEnhancedTankDistance('----')
 
 	displayStep( str(step) )
 

@@ -50,7 +50,6 @@ HMIMenu {
 
 	function searchStatus(args)
 	{
-		console.log("SearchStatus");
 		Genivi.dump("",args);
 		if (args[3] == 2) 
 			menu.text="FreeText (Searching)";
@@ -60,7 +59,6 @@ HMIMenu {
 
 	function searchResultList(args)
 	{
-		console.log("SearchResultList:");
 		Genivi.dump("",args);
 		Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",0]);
 	}
@@ -71,7 +69,6 @@ HMIMenu {
 		city="";
 		street="";
 		number="";
-		console.log("contentUpdated:");
 		args=args[7];
 		Genivi.dump("",args);
 		for (var i=0 ; i < args.length ; i+=4) {
@@ -105,8 +102,6 @@ HMIMenu {
 
 	function accept(what)
 	{
-		console.log(what);
-		console.log("accept "+what.criterion+" "+what.text);
 		Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",what.criterion]);
 		Genivi.locationinput_message(dbusIf,"Search",["string",what.text,"uint16",10]);
 	}
@@ -129,7 +124,6 @@ HMIMenu {
             var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
             Genivi.dump("",res);
             if (res[0] != "error") {
-                console.log("NavigationCore Version "+res[1][1]+"."+res[1][3]+"."+res[1][5]+" "+res[1][7]);
                 res=Genivi.nav_session(dbusIf);
                 res=Genivi.loc_handle(dbusIf);
             } else {

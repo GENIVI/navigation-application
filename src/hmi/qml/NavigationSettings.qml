@@ -50,7 +50,6 @@ HMIMenu {
 
     function simulationSpeedChanged(args)
     {
-        console.log("SimulationSpeedChanged");
         if (args[0] == 'uint8')
         {
             if (args[1] == 0) {
@@ -96,7 +95,6 @@ HMIMenu {
 
     function simulationStatusChanged(args)
     {
-        console.log("SimulationStatusChanged");
         Genivi.dump("",args);
         if (args[0] == 'uint16')
         {
@@ -179,8 +177,6 @@ HMIMenu {
 	function update()
 	{
 	    var res=Genivi.mapmatch_message_get(dbusIf,"GetSimulationStatus",[]);
-        console.log("GetSimulationStatus");
-        Genivi.dump("",res);
         if (res[0] == 'uint16')
 		{
             if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)

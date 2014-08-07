@@ -71,7 +71,6 @@ HMIMenu {
 			next:back
 			prev:back
             onSelected:{
-                console.log("selected "+what.index);
                 Genivi.data['description'] = what.text;
                 Genivi.data['lat'] = Genivi.historyOfLastEnteredLat[what.index];
                 Genivi.data['lon'] = Genivi.historyOfLastEnteredLon[what.index];

@@ -58,9 +58,6 @@ HMIMenu {
 
 	function routeCalculationProgressUpdate(args)
 	{
-		console.log("routeCalculationProgressUpdate:");
-		Genivi.dump("",args);
-
         menu.text=Genivi.gettext("CalculatedRouteInProgress")+ " "+args[7]+"%";
 	}
 
@@ -79,7 +76,6 @@ HMIMenu {
 
 	function routeCalculationSuccessful(args)
 	{
-        console.log("routeCalculationSuccessful:");
         show_route_on_map.disabled=false;
         show_route_in_list.disabled=false;
         menu.text=Genivi.gettext("NavigationCalculatedRoute");
@@ -215,9 +211,7 @@ HMIMenu {
             id:guidance_start; text: Genivi.gettext("On");explode:false; disabled:true; next:guidance_stop; prev:show_route_on_map
             onClicked: {
                 disconnectSignals();
-                console.log("StartGuidance");
                 Genivi.guidance_message(dbusIf,"StartGuidance",Genivi.routing_handle(dbusIf));
-                console.log("StartGuidance done");
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
                 Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
                 Genivi.data["show_current_position"]=true;

@@ -24,7 +24,7 @@
 #
 # @licence end@
 navigation-service_URL="http://git.projects.genivi.org/lbs/navigation.git"
-navigation-service_VERSION=01c066b8dac69bf4878f81fef84d591ac44b9aee
+navigation-service_VERSION=bd2f6945f79388ad7b8f16c60130b75e7e85dfa0
 navigation-service_SRC=$(SRC_DIR)/navigation-service_$(navigation-service_VERSION)
 navigation-service_API=$(navigation-service_SRC)/api
 navigation-service_BIN=$(BIN_DIR)/navigation-service
@@ -50,7 +50,7 @@ CONSTANTS_SRC+=$(positioning_API)/genivi-positioning-constants.xml
 
 
 clean-navigation-service_SRC::
-	rm -rf $(navigation-service_SRC)
+	rm -rf $(SRC_DIR)/navigation-service_*
 
 help::
 	@echo "poi-service: Build poi-service"

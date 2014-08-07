@@ -116,7 +116,6 @@ HMIMenu {
 		unit_mile.disabled=false;
 		if (units1==Genivi.NAVIGATIONCORE_KM && units2==Genivi.MAPVIEWER_KM) unit_km.disabled=true;
 		if (units1==Genivi.NAVIGATIONCORE_MILE && units2==Genivi.MAPVIEWER_MILE) unit_mile.disabled=true;
-        console.log("update done");
 	}
 	function setLocale(language, country)
 	{

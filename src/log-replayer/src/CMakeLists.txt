@@ -16,18 +16,28 @@
 # @licence end@
 ###########################################################################
 
-project(log-replayer)
-cmake_minimum_required(VERSION 2.6.0)
+message(STATUS "LOG-REPLAYER")
+message(STATUS "WITH_DLT = ${WITH_DLT}")
 
-option(WITH_DLT
-    "Enable the build to enable DLT logging " OFF)
+find_package(PkgConfig)
 
+set(LIB_SRCS ${CMAKE_SOURCE_DIR}/src/log-replayer.c)
 
-message(STATUS)
+set(LIBRARIES pthread)
+
+if(WITH_DLT)
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
+    find_package(DLT REQUIRED)
+    add_definitions("-DDLT_ENABLED=1")
+    include_directories( ${DLT_INCLUDE_DIRS} )
+    set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
+add_executable(log-replayer ${LIB_SRCS})
+
+target_link_libraries(log-replayer ${LIBRARIES})
+
 message(STATUS "---------------------------------------------------------")
 
-add_subdirectory(src)
 
 
-message(STATUS "---------------------------------------------------------")
-message(STATUS)

@@ -103,7 +103,6 @@ Item {
 
 	function setactivekeys(keys,enabled)
 	{
-		console.log("setactivekeys "+keys);
 		activekeys=keys.toLowerCase();
 		activekeys_enabled=enabled;
 		shift(shiftlevel);

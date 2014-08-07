@@ -48,7 +48,6 @@ HMIMenu {
 
 	function searchStatus(args)
 	{
-		console.log("SearchStatus");
 		if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
 			view.model.clear();
 			menu.text="Entry (Searching)";
@@ -101,7 +100,6 @@ HMIMenu {
 	{
 		input=extraspell+input;
 		extraspell='';
-		console.log("spell "+input);
 		Genivi.locationinput_message(dbusIf,"Spell",["string",input,"uint16",10]);
 	}
 
@@ -194,7 +192,6 @@ HMIMenu {
 			next:keyboard
 			prev:back
 			onSelected:{
-				console.log("selected "+what.index);
 				Genivi.entrydest=null;
 				disconnectSignals();
 				Genivi.entryselectedentry=what.index;

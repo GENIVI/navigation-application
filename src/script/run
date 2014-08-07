@@ -34,6 +34,7 @@ function run
 	local x=$xterm
 	local g=$gdb
 	local l=$log
+	local v=$verbose
 	local title="$1"
 	shift
 	# manage freezing options
@@ -60,7 +61,12 @@ function run
 	then # log file
 		"$@" >"$CUR_DIR/$title.log" 2>&1 &
 	else
-		"$@" &
+		if [ "$v" = 1 ]
+		then
+			"$@" &
+		else
+			"$@" > /dev/null 2>&1 &
+		fi
 	fi
 	PIDS="$PIDS $!" #add pid to list of pid
 }
@@ -111,11 +117,12 @@ enhpos=1 #enhanced position server enabled
 replayer=1 #replayer enabled
 lm=0 #layer manager disabled
 wm="" #to store the current window manager (in case of start with the layer manager)
+verbose=0 #no debug or log messages
 
 # hmi panel launched
 app=$SRC_DIR/hmi/qml/application.qml
 
-while getopts a:c:glnorx opt
+while getopts a:c:glnorvx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -142,6 +149,9 @@ do
 	r) #disable the log replayer
 		replayer=0
 		;;
+	v) #enable log messages
+		verbose=1
+		;;
 	x) #enable subprocess in a separate xterm
 		plugin_args="$plugin_args -$opt"
 		xterm=1
@@ -156,6 +166,7 @@ do
 		echo "-n: Don't start enhanced positioning service"
 		echo "-o: Create log file of subprocess output"
 		echo "-r: Don't start replayer"
+		echo "-v: Enable the output of log or debug messages"
 		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
 		exit 1
 	esac
@@ -198,7 +209,7 @@ set -e #exit on error now
 
 # start the automotive message broker and wait for dbus service
 cd $BIN_DIR/automotive-message-broker
-run "Automotive Message Broker" ./ambd/ambd --config $SRC_DIR/genivilogreplayer/logreplayerconfig
+run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $SRC_DIR/genivilogreplayer/logreplayerconfig
 wait_for_service org.automotive.message.broker /
 
 # start the poi service and wait for dbus service
@@ -215,13 +226,13 @@ then # start the enhanced position server
 	if [ "$replayer" = 1 ]
 	then # start the log replayer
 		cd $BIN_DIR/log-replayer
-		run "Log Replayer" ./log-replayer $SRC_DIR/positioning_*/log-replayer/logs/geneve-cologny.log
+		run "Log Replayer" ./log-replayer > /dev/null 2>&1 $SRC_DIR/positioning_*/log-replayer/logs/geneve-cologny.log
 	fi
 else # no enhanced position server
 	run "Navit Plugins" ./run -rn -b $BIN_DIR $plugin_args
 fi
 
-sleep 2 # need a sleep here (to be improved)
+sleep 3 # need a sleep here (to be improved)
 # start the fuel stop advisor application
 run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
 

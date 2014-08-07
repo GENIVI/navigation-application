@@ -26,17 +26,17 @@
 
 **************************************************************************
 """
-import subprocess
-from subprocess import call
+import subprocess,os
+from subprocess import call 
 
 PATH_LOGREPLAYER='../../bin/log-replayer/'
 PATH_LOGFILES='../resource/'
 
 def launch(file): 
+	FNULL = open(os.devnull,'w')
 	logreplayer=PATH_LOGREPLAYER + 'log-replayer'
 	file=PATH_LOGFILES + file
-	arguments='> /dev/null 2>&1 &'
-	call([logreplayer, file, arguments])
+	call([logreplayer, file], stdout=FNULL, stderr=FNULL)
 
 
 

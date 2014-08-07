@@ -38,7 +38,7 @@ help::
 	@echo "automotive-message-broker: Build automotive-message-broker"
 
 clean-automotive-message-broker_SRC::
-	rm -rf $(automotive-message-broker_SRC)
+	rm -rf $(SRC_DIR)/automotive-message-broker_*
 
 
 $(automotive-message-broker_SRC)/CMakeLists.txt:

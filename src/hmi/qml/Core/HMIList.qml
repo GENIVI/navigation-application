@@ -54,7 +54,6 @@ Rectangle {
 		clip: true
 
 		onMclicked: {
-			console.log("onMclicked");
 			rectangle.selected(view.currentItem);
 		}
 		MouseArea {
