@@ -95,7 +95,6 @@ HMIMenu {
 
     function simulationStatusChanged(args)
     {
-        Genivi.dump("",args);
         if (args[0] == 'uint16')
         {
             if (args[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)

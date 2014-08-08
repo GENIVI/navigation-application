@@ -47,6 +47,12 @@ class Genivi(Enum):
 	ENHANCEDPOSITIONSERVICE_ALTITUDE = 0x0022
 	FUELSTOPADVISOR_TANK_DISTANCE = 0x0022
 	FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE = 0x0024
+	NAVIGATIONCORE_ACTIVE = 0x0060
+	NAVIGATIONCORE_INACTIVE = 0x0061
+	NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION = 0x0220
+	NAVIGATIONCORE_SIMULATION_STATUS_RUNNING = 0x0221
+	NAVIGATIONCORE_SIMULATION_STATUS_PAUSED = 0x0222
+	NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION = 0x0223
 
 # Define some colors
 BLACK = ( 0, 0, 0)
@@ -143,9 +149,9 @@ def initDisplay():
 	displayVehicleSpeed('0')
 	displayGuidanceStatus('OFF')
 	displaySimulationStatus('OFF')	
-	displayFuelStopAdvisorWarning('')
-	displayFuelStopAdvisorTankDistance('----')
-	displayFuelStopAdvisorEnhancedTankDistance('----')
+	displayFuelStopAdvisorWarning(' ')
+	displayFuelStopAdvisorTankDistance('-----')
+	displayFuelStopAdvisorEnhancedTankDistance('-----')
    
 def getKeyboard():
 	global step
@@ -209,14 +215,14 @@ def getDbus():
 	instantData = fuelStopAdvisorInterface.GetInstantData()
 	if dbus.UInt16(Genivi.FUELSTOPADVISOR_TANK_DISTANCE) in instantData:
 		tankDistance = int(instantData[dbus.UInt16(Genivi.FUELSTOPADVISOR_TANK_DISTANCE)])	
-		displayFuelStopAdvisorTankDistance(str(tankDistance))
+		displayFuelStopAdvisorTankDistance(str(tankDistance) + ' ')
 	else:
-		displayFuelStopAdvisorTankDistance("----")
+		displayFuelStopAdvisorTankDistance("-----")
 	if dbus.UInt16(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE) in instantData:
 		enhancedTankDistance = int(instantData[dbus.UInt16(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE)])	
-		displayFuelStopAdvisorEnhancedTankDistance(str(enhancedTankDistance))
+		displayFuelStopAdvisorEnhancedTankDistance(str(enhancedTankDistance) + ' ')
 	else:
-		displayFuelStopAdvisorEnhancedTankDistance('----')
+		displayFuelStopAdvisorEnhancedTankDistance('-----')
 
 	displayStep( str(step) )
 
@@ -225,9 +231,28 @@ def getDbus():
 
 	return True 
 
-def fuelStopAdvisorWarningHandler(arg):
+def fuelStopAdvisorWarningHandler():
 	displayFuelStopAdvisorWarning("F")
 
+def guidanceStatusHandler(status,handle):
+	if status==Genivi.NAVIGATIONCORE_ACTIVE:
+		displayGuidanceStatus(' ON ')
+	elif status==Genivi.NAVIGATIONCORE_INACTIVE:
+		displayGuidanceStatus('OFF')
+	else:
+		displayGuidanceStatus('---')
+
+def mapMatchedPositionSimulationStatusHandler(arg):
+	if arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION:
+		displaySimulationStatus('OFF ')
+	elif arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING:
+		displaySimulationStatus('RUN ')
+	elif arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED:
+		displaySimulationStatus('PAU ')
+	elif arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION:
+		displaySimulationStatus('FIX ')
+	else:
+		displaySimulationStatus('OFF ')
 
 # Main program begins here
 parser = argparse.ArgumentParser(description='Simulation dashboard for navigation PoC and FSA.')
@@ -297,6 +322,25 @@ except dbus.DBusException:
 	sys.exit(1)
 enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
 
+# Guidance
+try:
+	guidanceObject = dbusConnectionBus.get_object("org.genivi.navigationcore.Guidance","/org/genivi/navigationcore")
+except dbus.DBusException:
+	print "connection to Guidance failed"
+	print_exc()
+	sys.exit(1)
+guidanceInterface = dbus.Interface(guidanceObject, "org.genivi.navigationcore.Guidance")
+dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigationcore.Guidance", signal_name = "GuidanceStatusChanged")
+
+# Map matched position
+try:
+	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
+except dbus.DBusException:
+	print "connection to Map matched position failed"
+	print_exc()
+	sys.exit(1)
+mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
+dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
 
 displayStatus( 'Start simulation' )
 

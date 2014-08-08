@@ -112,7 +112,6 @@ HMIMenu {
 				var ids=[];
 				var position=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
 				var category;
-				Genivi.dump("",position);
 				if (!position[1][3][1] && !position[1][7][1]) {
 					model.clear();
 					model.append({"name":"No position available"});

@@ -143,7 +143,13 @@ HMIMenu {
         mapmatchedpositionAddressUpdateSignal.destroy();
         fuelStopAdvisorSignal.destroy();
         Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
-        Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
+        if (Genivi.g_routing_handle) {
+            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
+        }
+        else
+        {
+            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",0);
+        }
     }
 
 	function showSurfaces()
@@ -636,7 +642,7 @@ HMIMenu {
 			if (res[0] == "structure") {
 				Genivi.mapviewercontrol_message(dbusIf, "SetMapViewBoundingBox", res);
 			} else {
-				Console.log("Unexpected result from GetRouteBoundingBox:");
+                console.log("Unexpected result from GetRouteBoundingBox:");
 				Genivi.dump("",res);
 			}
 			delete(Genivi.data['zoom_route_handle']);
@@ -658,14 +664,15 @@ HMIMenu {
 		connectSignals();
 		updateGuidance();
 		updateMapViewer();
-		showZoom();
+        showZoom();
 		updateAddress();
 		updateDayNight();
 		if (Genivi.g_routing_handle) {
 			Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
-		} else {
-            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
-		}
-		Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
+            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
+        } else {
+            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",0);
+            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
+        }
 	}
 }

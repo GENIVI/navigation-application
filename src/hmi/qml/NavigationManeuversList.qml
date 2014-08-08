@@ -105,7 +105,7 @@ HMIMenu {
                 }
             }
         } else {
-            Console.log("Unexpected result from GetManeuversList");
+            console.log("Unexpected result from GetManeuversList");
             Genivi.dump("",res);
         }
     }
