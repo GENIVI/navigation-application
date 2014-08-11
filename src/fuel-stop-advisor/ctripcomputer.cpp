@@ -32,7 +32,7 @@
 
 CTripComputer::CTripComputer()
 {
-    m_version.date = "1-12-2013";
+    m_version.date = "11-08-2014";
     m_version.major = 1;
     m_version.minor = 0;
     m_version.micro = 0;

@@ -1,10 +1,21 @@
-Release date of the file: 29-07-2014 
+Release date of the file: 11-08-2014 
 Status: to be completed
 
-This test bench is based on Python pygame and use python enum class.
-If necessary please do:
-sudo apt-get install python-pip python-pygame
-sudo pip install enum
+This test bench requires Python version >= 3.4 and uses pygame.
+
+How to get pygame
+It seems you need to build it, so follow this recipe:
+(thanks to Sir on http://heritagerobotics.wordpress.com/category/xubuntu-stuff/)
+cd  
+sudo apt-get install mercurial
+hg clone https://bitbucket.org/pygame/pygame
+cd pygame
+sudo apt-get install python3-dev  python3-numpy  libsdl-dev libsdl-image1.2-dev  libsdl-mixer1.2-dev  libsdl-ttf2.0-dev  libsmpeg-dev  libportmidi-dev  libavformat-dev  libswscale-dev libjpeg-dev libfreetype6-dev
+python3 setup.py build
+sudo python3 setup.py install
+
+You need some other packages
+sudo apt-get install python3-gobject
 
 To test:
 
@@ -13,7 +24,7 @@ Launch the application without the logreplayer:
 
 Launch the test dashboard (keyboard interface)
 (the test dashboard calls the logreplayer and uses test log files)
-python simulation-dashboard.py
+python3 simulation-dashboard.py
 
 Steps:
 'i' launches initialization.log

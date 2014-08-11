@@ -54,6 +54,8 @@ HMIMenu {
 		//Genivi.dump("",args);
 
         menu.text=Genivi.gettext("CalculatedRouteFailed");
+        // Tell the FSA that there's no route available
+        Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
 	}
 
 	function routeCalculationProgressUpdate(args)
@@ -71,7 +73,7 @@ HMIMenu {
 		} else {
             guidance_start.disabled=false;
             guidance_stop.disabled=true;
-		}
+        }
 	}
 
 	function routeCalculationSuccessful(args)
@@ -116,6 +118,8 @@ HMIMenu {
 			console.log("Unexpected result from GetRouteOverview:\n");
 			Genivi.dump("",res);
 		}
+        // Give the route handle to the FSA
+        Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
 		updateStartStop();
 	}
 

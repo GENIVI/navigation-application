@@ -121,7 +121,23 @@ HMIMenu {
 
 	function fuelStopAdvisorWarning(args)
 	{
-		fuel.text="F";
+        if (args[0] == 'bool')
+        {
+            if (args[1] == 1)
+            {
+                fuel.text="F";
+            }
+            else
+            {
+                fuel.text=" ";
+             }
+        }
+        else
+        {
+            console.log("Unexpected result from fuelStopAdvisorWarning:");
+            Genivi.dump("",args);
+        }
+
 	}
 
 	function connectSignals()
@@ -142,14 +158,6 @@ HMIMenu {
         mapmatchedpositionPositionUpdateSignal.destroy();
         mapmatchedpositionAddressUpdateSignal.destroy();
         fuelStopAdvisorSignal.destroy();
-        Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
-        if (Genivi.g_routing_handle) {
-            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
-        }
-        else
-        {
-            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",0);
-        }
     }
 
 	function showSurfaces()
@@ -329,6 +337,8 @@ HMIMenu {
 		}
 		if (res[1] == Genivi.NAVIGATIONCORE_INACTIVE) {
 			stop.disabled=true;
+            //Guidance inactive, so inform the trip computer
+            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
 			guidance="No guidance";
 			maneuver="No maneuver";
 			maneuver_distance="";
@@ -337,6 +347,8 @@ HMIMenu {
 			return;
 		} else {
 			stop.disabled=false;
+            //Guidance active, so inform the trip computer (refresh)
+            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
 		}
 
         var res=Genivi.guidance_message_get(dbusIf,"GetManeuversList",["uint16",1,"uint32",0]);
@@ -667,12 +679,5 @@ HMIMenu {
         showZoom();
 		updateAddress();
 		updateDayNight();
-		if (Genivi.g_routing_handle) {
-			Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
-            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
-        } else {
-            Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",0);
-            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
-        }
 	}
 }

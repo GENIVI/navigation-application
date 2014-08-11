@@ -24,24 +24,25 @@
 * @licence end@
 **************************************************************************
 """
-import sys,tty,termios,select,pygame,gobject,time,dbus,re,argparse
+import sys,tty,termios,select,pygame,gi,time,dbus,re,argparse
 import pdb
  
 from pygame.locals import *
 from threading import Timer
 from configTests import *
-from enum import Enum
+from enum import IntEnum
 from dbus.mainloop.glib import DBusGMainLoop
 from traceback import print_exc
+from gi.repository import GObject
 
-class Step(Enum):
+class Step(IntEnum):
 	START = 0
 	INITIALIZATION = 1
 	HIGH_TANK_LEVEL = 2
 	LOW_TANK_LEVEL = 3
 	END = 4
 
-class Genivi(Enum):
+class Genivi(IntEnum):
 	ENHANCEDPOSITIONSERVICE_LATITUDE = 0x0020
 	ENHANCEDPOSITIONSERVICE_LONGITUDE = 0x0021
 	ENHANCEDPOSITIONSERVICE_ALTITUDE = 0x0022
@@ -71,7 +72,7 @@ SPEED_CONVERSION = (36.0/GET_DBUS_PERIODICITY)
 
 # Item location on the screen
 STATUS_LOCATION = (100,10)
-STEP_LOCATION = (150,68)
+STEP_LOCATION = (100,68)
 ENGINE_SPEED_LOCATION = (150,118)
 FUEL_LEVEL_LOCATION = (150,175)
 FUEL_INSTANT_CONSUMPTION_LOCATION = (150,238)
@@ -93,7 +94,7 @@ def display(string,location,fontColor,fontBackground):
 
 def logVerbose(data,value):
 	if args.ver==True:
-		print data,": ",value
+		print (data,": ",value)
 
 def displayStatus(string):
 	display(string,STATUS_LOCATION,WHITE,BLUE)
@@ -149,7 +150,7 @@ def initDisplay():
 	displayVehicleSpeed('0')
 	displayGuidanceStatus('OFF')
 	displaySimulationStatus('OFF')	
-	displayFuelStopAdvisorWarning(' ')
+	displayFuelStopAdvisorWarning('-----')
 	displayFuelStopAdvisorTankDistance('-----')
 	displayFuelStopAdvisorEnhancedTankDistance('-----')
    
@@ -200,7 +201,7 @@ def getDbus():
 	fuelLevel = ambFuelInterface.GetLevel()
 	displayFuelLevel(str(int(fuelLevel[0])))
 	fuelInstCons = ambFuelInterface.GetInstantConsumption()
-	displayFuelInstant(str(int(fuelInstCons[0])*FUEL_CONVERSION))
+	displayFuelInstant("{:.2f}".format(int(fuelInstCons[0])*FUEL_CONVERSION))
 	odometer = ambOdometerInterface.GetOdometer()
 	displayVehicleSpeed(str(int(odometer[0])*SPEED_CONVERSION))
 
@@ -224,15 +225,18 @@ def getDbus():
 	else:
 		displayFuelStopAdvisorEnhancedTankDistance('-----')
 
-	displayStep( str(step) )
+	displayStep( str(step.name) )
 
 	# refresh screen
 	refresh()
 
 	return True 
 
-def fuelStopAdvisorWarningHandler():
-	displayFuelStopAdvisorWarning("F")
+def fuelStopAdvisorWarningHandler(destinationCantBeReached):
+	if destinationCantBeReached==True:
+		displayFuelStopAdvisorWarning('Warning')
+	else:
+		displayFuelStopAdvisorWarning('-------     ')
 
 def guidanceStatusHandler(status,handle):
 	if status==Genivi.NAVIGATIONCORE_ACTIVE:
@@ -283,7 +287,7 @@ dbusConnectionBus = dbus.SessionBus()
 try:
 	ambObject = dbusConnectionBus.get_object("org.automotive.message.broker", "/")
 except dbus.DBusException:
-	print "connection to Automotive message broker failed"
+	print ("connection to Automotive message broker failed")
 	print_exc()
 	sys.exit(1)
 ambInterface = dbus.Interface(ambObject, "org.automotive.Manager")
@@ -307,7 +311,7 @@ ambOdometerInterface = dbus.Interface(ambOdometer, "org.automotive.Odometer")
 try:
 	fuelStopAdvisorObject = dbusConnectionBus.get_object("org.genivi.demonstrator.FuelStopAdvisor","/org/genivi/demonstrator/FuelStopAdvisor")
 except dbus.DBusException:
-	print "connection to Fuel Stop Advisor failed"
+	print ("connection to Fuel Stop Advisor failed")
 	print_exc()
 	sys.exit(1)
 fuelStopAdvisorInterface = dbus.Interface(fuelStopAdvisorObject, "org.genivi.demonstrator.FuelStopAdvisor")
@@ -317,7 +321,7 @@ dbusConnectionBus.add_signal_receiver(fuelStopAdvisorWarningHandler, dbus_interf
 try:
 	enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.positioning.EnhancedPosition", "/org/genivi/positioning/EnhancedPosition")
 except dbus.DBusException:
-	print "connection to Enhanced position failed"
+	print ("connection to Enhanced position failed")
 	print_exc()
 	sys.exit(1)
 enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
@@ -326,7 +330,7 @@ enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.p
 try:
 	guidanceObject = dbusConnectionBus.get_object("org.genivi.navigationcore.Guidance","/org/genivi/navigationcore")
 except dbus.DBusException:
-	print "connection to Guidance failed"
+	print ("connection to Guidance failed")
 	print_exc()
 	sys.exit(1)
 guidanceInterface = dbus.Interface(guidanceObject, "org.genivi.navigationcore.Guidance")
@@ -336,7 +340,7 @@ dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "o
 try:
 	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
 except dbus.DBusException:
-	print "connection to Map matched position failed"
+	print ("connection to Map matched position failed")
 	print_exc()
 	sys.exit(1)
 mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
@@ -348,10 +352,10 @@ refresh()
 
 # start 
 step = Step.START
-gobject.timeout_add(KEYBOARD_PERIODICITY,getKeyboard)
-gobject.timeout_add(GET_DBUS_PERIODICITY,getDbus)
+GObject.timeout_add(KEYBOARD_PERIODICITY,getKeyboard)
+GObject.timeout_add(GET_DBUS_PERIODICITY,getDbus)
 
-loop = gobject.MainLoop()
+loop = GObject.MainLoop()
 loop.run()
 
 

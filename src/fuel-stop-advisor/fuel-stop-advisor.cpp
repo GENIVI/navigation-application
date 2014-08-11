@@ -180,6 +180,7 @@ class FuelStopAdvisor
         // init fsa settings
 		advisorMode=false;
 		distanceThreshold=0;
+        destinationCantBeReached=false;
 		routeHandle=0;
         initFlag=true;
         }
@@ -421,8 +422,13 @@ class FuelStopAdvisor
             printf("Advisor %f vs %d\n",remaining, distanceThreshold);
             if (remaining < distanceThreshold) {
                 printf("Warning %f < %d\n",remaining, distanceThreshold);
-                FuelStopAdvisorWarning();
+                destinationCantBeReached = true;
             }
+            else
+            {
+                destinationCantBeReached = false;
+            }
+            FuelStopAdvisorWarning(destinationCantBeReached);
             TripDataUpdated(0); //arg is for future use
         }
     }
@@ -437,10 +443,11 @@ class FuelStopAdvisor
 	}
 	
 	void
-	GetFuelAdvisorSettings(bool& advisorMode, uint8_t& distanceThreshold)
+    GetFuelAdvisorSettings(bool& advisorMode, uint8_t& distanceThreshold, bool& destinationCantBeReached)
 	{
 		advisorMode=this->advisorMode;
 		distanceThreshold=this->distanceThreshold;
+        destinationCantBeReached=this->destinationCantBeReached;
 	}
 
 	void SetRouteHandle(const uint32_t& routeHandle)
@@ -471,6 +478,7 @@ class FuelStopAdvisor
     CTripComputer *mp_tripComputer;
 	bool advisorMode;
 	uint8_t distanceThreshold;
+    bool destinationCantBeReached;
 	uint32_t routeHandle;
     bool initFlag;
     double lastTime;

@@ -5,7 +5,7 @@
 <node name="/org/genivi/demonstrator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.demonstrator.FuelStopAdvisor">
-    <version>beta (26-06-2014)</version>
+    <version>1.0.0 (11-08-2014)</version>
     <doc>
       <line>FuelStopAdvisor = This interface offers functionalities to access the fuel  stop advisor features</line>
       <line>This interface is defined for the FSA demonstrator and not included into the GENIVI compliance</line>
@@ -163,6 +163,11 @@
           <line>distanceThreshold= value of type 'y' that expresses the distance threshold in METRIC->kilometers or in NON_METRIC->miles</line>
         </doc>
       </arg>
+      <arg name="destinationCantBeReached" type="b" direction="out">
+        <doc>
+          <line>destinationCantBeReached = TRUE means that there's a risk of not reaching the destination </line>
+        </doc>
+      </arg>
     </method>
 
     <method name="SetRouteHandle">
@@ -189,8 +194,13 @@
 
     <signal name="FuelStopAdvisorWarning">
       <doc>
-        <line>FuelStopAdvisorWarning = This signal is emitted to notify a client application that there's a risk of not reaching the destination</line>
+        <line>FuelStopAdvisorWarning = This signal is emitted to notify a client application whether there's a risk of not reaching the destination</line>
       </doc>
+      <arg name="destinationCantBeReached" type="b">
+        <doc>
+          <line>destinationCantBeReached = TRUE means that there's a risk of not reaching the destination </line>
+        </doc>
+      </arg>
     </signal>
 
   </interface>

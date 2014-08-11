@@ -29,7 +29,7 @@
 import subprocess,os
 from subprocess import call 
 
-PATH_LOGREPLAYER='../../bin/log-replayer/'
+PATH_LOGREPLAYER='../../bin/log-replayer/src/'
 PATH_LOGFILES='../resource/'
 
 def launch(file): 
