@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-settings-language-and-units-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -133,47 +134,47 @@ HMIMenu {
 
 	HMIBgImage {
 		id: content
-        image:StyleSheet.navigation_settings_language_and_units_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_settings_language_and_units_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
 		Text {
-            x:StyleSheet.languagesTitle[StyleSheet.X]; y:StyleSheet.languagesTitle[StyleSheet.Y]; width:StyleSheet.languagesTitle[StyleSheet.WIDTH]; height:StyleSheet.languagesTitle[StyleSheet.HEIGHT];color:StyleSheet.languagesTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.languagesTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.languagesTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.languagesTitle[Constants.X]; y:StyleSheet.languagesTitle[Constants.Y]; width:StyleSheet.languagesTitle[Constants.WIDTH]; height:StyleSheet.languagesTitle[Constants.HEIGHT];color:StyleSheet.languagesTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.languagesTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.languagesTitle[Constants.PIXELSIZE];
             id:languagesTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Language")
              }
         StdButton { objectName:"fra_FRA";
-            source:StyleSheet.french_flag[StyleSheet.SOURCE]; x:StyleSheet.french_flag[StyleSheet.X]; y:StyleSheet.french_flag[StyleSheet.Y]; width:StyleSheet.french_flag[StyleSheet.WIDTH]; height:StyleSheet.french_flag[StyleSheet.HEIGHT];
+            source:StyleSheet.french_flag[Constants.SOURCE]; x:StyleSheet.french_flag[Constants.X]; y:StyleSheet.french_flag[Constants.Y]; width:StyleSheet.french_flag[Constants.WIDTH]; height:StyleSheet.french_flag[Constants.HEIGHT];
             id:fra_FRA; disabled:false; next:deu_DEU; prev:back; explode:false; onClicked: {setLocale("fra","FRA");}}
         StdButton { objectName:"deu_DEU";
-            source:StyleSheet.german_flag[StyleSheet.SOURCE]; x:StyleSheet.german_flag[StyleSheet.X]; y:StyleSheet.german_flag[StyleSheet.Y]; width:StyleSheet.german_flag[StyleSheet.WIDTH]; height:StyleSheet.german_flag[StyleSheet.HEIGHT];
+            source:StyleSheet.german_flag[Constants.SOURCE]; x:StyleSheet.german_flag[Constants.X]; y:StyleSheet.german_flag[Constants.Y]; width:StyleSheet.german_flag[Constants.WIDTH]; height:StyleSheet.german_flag[Constants.HEIGHT];
              id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA; explode:false; onClicked: {setLocale("deu","DEU");}}
         StdButton { objectName:"eng_USA";
-            source:StyleSheet.usa_flag[StyleSheet.SOURCE]; x:StyleSheet.usa_flag[StyleSheet.X]; y:StyleSheet.usa_flag[StyleSheet.Y]; width:StyleSheet.usa_flag[StyleSheet.WIDTH]; height:StyleSheet.usa_flag[StyleSheet.HEIGHT];
+            source:StyleSheet.usa_flag[Constants.SOURCE]; x:StyleSheet.usa_flag[Constants.X]; y:StyleSheet.usa_flag[Constants.Y]; width:StyleSheet.usa_flag[Constants.WIDTH]; height:StyleSheet.usa_flag[Constants.HEIGHT];
             id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU; explode:false; onClicked: {setLocale("eng","USA");}}
         StdButton { objectName:"jpn_JPN";
-            source:StyleSheet.japanese_flag[StyleSheet.SOURCE]; x:StyleSheet.japanese_flag[StyleSheet.X]; y:StyleSheet.japanese_flag[StyleSheet.Y]; width:StyleSheet.japanese_flag[StyleSheet.WIDTH]; height:StyleSheet.japanese_flag[StyleSheet.HEIGHT];
+            source:StyleSheet.japanese_flag[Constants.SOURCE]; x:StyleSheet.japanese_flag[Constants.X]; y:StyleSheet.japanese_flag[Constants.Y]; width:StyleSheet.japanese_flag[Constants.WIDTH]; height:StyleSheet.japanese_flag[Constants.HEIGHT];
             id:jpn_JPN; disabled:false; next:back; prev:eng_USA; explode:false; onClicked: {setLocale("jpn","JPN");}}
 
 		Text {
-            x:StyleSheet.unitsTitle[StyleSheet.X]; y:StyleSheet.unitsTitle[StyleSheet.Y]; width:StyleSheet.unitsTitle[StyleSheet.WIDTH]; height:StyleSheet.unitsTitle[StyleSheet.HEIGHT];color:StyleSheet.unitsTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.unitsTitle[Constants.X]; y:StyleSheet.unitsTitle[Constants.Y]; width:StyleSheet.unitsTitle[Constants.WIDTH]; height:StyleSheet.unitsTitle[Constants.HEIGHT];color:StyleSheet.unitsTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[Constants.PIXELSIZE];
             id:unitsTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Units")
              }
-        StdButton { source:StyleSheet.unit_km[StyleSheet.SOURCE]; x:StyleSheet.unit_km[StyleSheet.X]; y:StyleSheet.unit_km[StyleSheet.Y]; width:StyleSheet.unit_km[StyleSheet.WIDTH]; height:StyleSheet.unit_km[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.unit_km[Constants.SOURCE]; x:StyleSheet.unit_km[Constants.X]; y:StyleSheet.unit_km[Constants.Y]; width:StyleSheet.unit_km[Constants.WIDTH]; height:StyleSheet.unit_km[Constants.HEIGHT];
             id:unit_km; explode:false; disabled:false; next:back; prev:back;
 			onClicked: {
 				setUnits(Genivi.NAVIGATIONCORE_KM,Genivi.MAPVIEWER_KM);}
 		}
-        StdButton { source:StyleSheet.unit_mile[StyleSheet.SOURCE]; x:StyleSheet.unit_mile[StyleSheet.X]; y:StyleSheet.unit_mile[StyleSheet.Y]; width:StyleSheet.unit_mile[StyleSheet.WIDTH]; height:StyleSheet.unit_mile[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.unit_mile[Constants.SOURCE]; x:StyleSheet.unit_mile[Constants.X]; y:StyleSheet.unit_mile[Constants.Y]; width:StyleSheet.unit_mile[Constants.WIDTH]; height:StyleSheet.unit_mile[Constants.HEIGHT];
             id:unit_mile; explode:false; disabled:false; next:back; prev:back;
 			onClicked: {
 				setUnits(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
 		}
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
 
 	}

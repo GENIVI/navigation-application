@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-settings-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -250,32 +251,32 @@ HMIMenu {
 
 	HMIBgImage {
 		id: content
-        image:StyleSheet.navigation_settings_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_settings_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
 		Text {
-            x:StyleSheet.simulationTitle[StyleSheet.X]; y:StyleSheet.simulationTitle[StyleSheet.Y]; width:StyleSheet.simulationTitle[StyleSheet.WIDTH]; height:StyleSheet.simulationTitle[StyleSheet.HEIGHT];color:StyleSheet.simulationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.simulationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.simulationTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.simulationTitle[Constants.X]; y:StyleSheet.simulationTitle[Constants.Y]; width:StyleSheet.simulationTitle[Constants.WIDTH]; height:StyleSheet.simulationTitle[Constants.HEIGHT];color:StyleSheet.simulationTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.simulationTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.simulationTitle[Constants.PIXELSIZE];
             id:simulationTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Simulation")
              }
 		Text {
-            x:StyleSheet.speedTitle[StyleSheet.X]; y:StyleSheet.speedTitle[StyleSheet.Y]; width:StyleSheet.speedTitle[StyleSheet.WIDTH]; height:StyleSheet.speedTitle[StyleSheet.HEIGHT];color:StyleSheet.speedTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.speedTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.speedTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.speedTitle[Constants.X]; y:StyleSheet.speedTitle[Constants.Y]; width:StyleSheet.speedTitle[Constants.WIDTH]; height:StyleSheet.speedTitle[Constants.HEIGHT];color:StyleSheet.speedTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.speedTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.speedTitle[Constants.PIXELSIZE];
             id:speedTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Speed")
              }
 		Text {
-            x:StyleSheet.speedValue[StyleSheet.X]; y:StyleSheet.speedValue[StyleSheet.Y]; width:StyleSheet.speedValue[StyleSheet.WIDTH]; height:StyleSheet.speedValue[StyleSheet.HEIGHT];color:StyleSheet.speedValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.speedValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.speedValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.speedValue[Constants.X]; y:StyleSheet.speedValue[Constants.Y]; width:StyleSheet.speedValue[Constants.WIDTH]; height:StyleSheet.speedValue[Constants.HEIGHT];color:StyleSheet.speedValue[Constants.TEXTCOLOR];styleColor:StyleSheet.speedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.speedValue[Constants.PIXELSIZE];
             id:speedValue
             style: Text.Sunken;
             smooth: true
             text: ""
              }
 
-        StdButton {source:StyleSheet.speed_down[StyleSheet.SOURCE]; x:StyleSheet.speed_down[StyleSheet.X]; y:StyleSheet.speed_down[StyleSheet.Y]; width:StyleSheet.speed_down[StyleSheet.WIDTH]; height:StyleSheet.speed_down[StyleSheet.HEIGHT];
+        StdButton {source:StyleSheet.speed_down[Constants.SOURCE]; x:StyleSheet.speed_down[Constants.X]; y:StyleSheet.speed_down[Constants.Y]; width:StyleSheet.speed_down[Constants.WIDTH]; height:StyleSheet.speed_down[Constants.HEIGHT];
             id:speed_down; explode:false; disabled:false; next:back; prev:back;
 			onClicked:
 			{
@@ -286,7 +287,7 @@ HMIMenu {
                 Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
 			}
 		}
-        StdButton {source:StyleSheet.speed_up[StyleSheet.SOURCE]; x:StyleSheet.speed_up[StyleSheet.X]; y:StyleSheet.speed_up[StyleSheet.Y]; width:StyleSheet.speed_up[StyleSheet.WIDTH]; height:StyleSheet.speed_up[StyleSheet.HEIGHT];
+        StdButton {source:StyleSheet.speed_up[Constants.SOURCE]; x:StyleSheet.speed_up[Constants.X]; y:StyleSheet.speed_up[Constants.Y]; width:StyleSheet.speed_up[Constants.WIDTH]; height:StyleSheet.speed_up[Constants.HEIGHT];
             id:speed_up; explode:false; disabled:false; next:back; prev:back;
 			onClicked:
 			{
@@ -299,14 +300,14 @@ HMIMenu {
 		}
 
 		Text {
-            x:StyleSheet.modeTitle[StyleSheet.X]; y:StyleSheet.modeTitle[StyleSheet.Y]; width:StyleSheet.modeTitle[StyleSheet.WIDTH]; height:StyleSheet.modeTitle[StyleSheet.HEIGHT];color:StyleSheet.modeTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.modeTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.modeTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.modeTitle[Constants.X]; y:StyleSheet.modeTitle[Constants.Y]; width:StyleSheet.modeTitle[Constants.WIDTH]; height:StyleSheet.modeTitle[Constants.HEIGHT];color:StyleSheet.modeTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.modeTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.modeTitle[Constants.PIXELSIZE];
             id:modeTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Mode")
              }
 
-        StdButton { x:StyleSheet.simulation_on[StyleSheet.X]; y:StyleSheet.simulation_on[StyleSheet.Y]; width:StyleSheet.simulation_on[StyleSheet.WIDTH]; height:StyleSheet.simulation_on[StyleSheet.HEIGHT];
+        StdButton { x:StyleSheet.simulation_on[Constants.X]; y:StyleSheet.simulation_on[Constants.Y]; width:StyleSheet.simulation_on[Constants.WIDTH]; height:StyleSheet.simulation_on[Constants.HEIGHT];
             id:on_off; next:back; prev:back; explode:false; disabled:false;
 			property int status: 0;
 			function setState(name)
@@ -314,12 +315,12 @@ HMIMenu {
 				if (name=="ON")
 				{
 					status=1;
-                    source=StyleSheet.simulation_off[StyleSheet.SOURCE];
+                    source=StyleSheet.simulation_off[Constants.SOURCE];
 				}
 				else
 				{
 					status=0;
-                    source=StyleSheet.simulation_on[StyleSheet.SOURCE];
+                    source=StyleSheet.simulation_on[Constants.SOURCE];
 				}
             }
 			onClicked:
@@ -339,7 +340,7 @@ HMIMenu {
 			}
 		}
 
-        StdButton { x:StyleSheet.play[StyleSheet.X]; y:StyleSheet.play[StyleSheet.Y]; width:StyleSheet.play[StyleSheet.WIDTH]; height:StyleSheet.play[StyleSheet.HEIGHT];
+        StdButton { x:StyleSheet.play[Constants.X]; y:StyleSheet.play[Constants.Y]; width:StyleSheet.play[Constants.WIDTH]; height:StyleSheet.play[Constants.HEIGHT];
             id:simu_mode; next:back; prev:back; explode:false; disabled:false;
 			property int status: 0;
 			function setState(name)
@@ -347,7 +348,7 @@ HMIMenu {
 				if (name=="FREE")
 				{
 					status=0;
-                    source=StyleSheet.play[StyleSheet.SOURCE];
+                    source=StyleSheet.play[Constants.SOURCE];
 					disabled=true;
 				}
 				else
@@ -355,7 +356,7 @@ HMIMenu {
 					if (name=="PLAY")
 					{
 						status=1;
-                        source=StyleSheet.pause[StyleSheet.SOURCE];
+                        source=StyleSheet.pause[Constants.SOURCE];
 						enabled=true;
                         disabled=false;
 					}
@@ -364,7 +365,7 @@ HMIMenu {
 						if (name=="PAUSE")
 						{
 							status=2;
-                            source=StyleSheet.play[StyleSheet.SOURCE];
+                            source=StyleSheet.play[Constants.SOURCE];
 							enabled=true;
                             disabled=false;
 						}
@@ -389,13 +390,13 @@ HMIMenu {
             }
 		}
 
-        StdButton { source:StyleSheet.preferences[StyleSheet.SOURCE]; x:StyleSheet.preferences[StyleSheet.X]; y:StyleSheet.preferences[StyleSheet.Y]; width:StyleSheet.preferences[StyleSheet.WIDTH]; height:StyleSheet.preferences[StyleSheet.HEIGHT];textColor:StyleSheet.preferencesText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.preferencesText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.preferences[Constants.SOURCE]; x:StyleSheet.preferences[Constants.X]; y:StyleSheet.preferences[Constants.Y]; width:StyleSheet.preferences[Constants.WIDTH]; height:StyleSheet.preferences[Constants.HEIGHT];textColor:StyleSheet.preferencesText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.preferencesText[Constants.PIXELSIZE];
             id:preferences; text: Genivi.gettext("Preference"); disabled:false; next:languageAndUnit; prev:back; page:"NavigationSettingsPreferences"}
 
-        StdButton {source:StyleSheet.languageAndUnit[StyleSheet.SOURCE]; x:StyleSheet.languageAndUnit[StyleSheet.X]; y:StyleSheet.languageAndUnit[StyleSheet.Y]; width:StyleSheet.languageAndUnit[StyleSheet.WIDTH]; height:StyleSheet.languageAndUnit[StyleSheet.HEIGHT];textColor:StyleSheet.languageAndUnitText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.languageAndUnitText[StyleSheet.PIXELSIZE];
+        StdButton {source:StyleSheet.languageAndUnit[Constants.SOURCE]; x:StyleSheet.languageAndUnit[Constants.X]; y:StyleSheet.languageAndUnit[Constants.Y]; width:StyleSheet.languageAndUnit[Constants.WIDTH]; height:StyleSheet.languageAndUnit[Constants.HEIGHT];textColor:StyleSheet.languageAndUnitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.languageAndUnitText[Constants.PIXELSIZE];
             id:languageAndUnit; text: Genivi.gettext("LanguageAndUnits"); disabled:false; next:back; prev:preferences; page:"NavigationSettingsLanguageAndUnits"}
 
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:preferences; prev:languageAndUnit;
             onClicked:{leave(); pageOpen("MainMenu");}
         }

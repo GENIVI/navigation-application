@@ -107,15 +107,24 @@ translations["Entry"]="ENTRY";
 //NavigationBrowseMap
 translations["NavigationBrowseMap"]="BROWSE MAP";
 translations["NavigationCurrentStreet"]="CURRENT STREET";
-translations["Night"]="NIGHT";
-translations["Day"]="DAY";
-translations["North"]="NORTH";
-translations["South"]="SOUTH";
-translations["East"]="EAST";
-translations["West"]="WEST";
-translations["CameraTilt"]="TILT";
-translations["CameraHeight"]="HEIGHT";
-translations["CameraDistance"]="DISTANCE";
+translations["FSAWarning"]="Destination not reached";
+translations["NoGuidance"]="No guidance";
+translations["NoManeuver"]="No maneuver";
+
+//CameraSettings
+translations["North"]="N";
+translations["South"]="S";
+translations["East"]="E";
+translations["West"]="W";
+translations["CameraTilt"]="Tilt";
+translations["CameraHeight"]="Height";
+translations["CameraDistance"]="Dist";
+translations["CameraPerspective3d"]="3d";
+translations["CameraPerspective2d"]="2d";
+translations["Split"]="Sp";
+translations["Join"]="Jo";
+translations["Day"]="Da";
+translations["Night"]="Ni";
 
 //NavigationManeuversList
 translations["NavigationManeuversList"]="MANEUVER LIST";
@@ -143,5 +152,6 @@ translations["Ok"]="OK";
 translations["On"]="ON";
 translations["Off"]="OFF";
 translations["Back"]="BACK";
+translations["Menu"]="MENU";
 translations["Quit"]="QUIT";
 

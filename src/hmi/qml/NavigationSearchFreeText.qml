@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-search-freetext-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -136,18 +137,18 @@ HMIMenu {
         }
 
     HMIBgImage {
-        image:StyleSheet.navigation_search_by_freetext_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_search_by_freetext_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
         Text {
-            x:StyleSheet.textTitle[StyleSheet.X]; y:StyleSheet.textTitle[StyleSheet.Y]; width:StyleSheet.textTitle[StyleSheet.WIDTH]; height:StyleSheet.textTitle[StyleSheet.HEIGHT];color:StyleSheet.textTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.textTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.textTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.textTitle[Constants.X]; y:StyleSheet.textTitle[Constants.Y]; width:StyleSheet.textTitle[Constants.WIDTH]; height:StyleSheet.textTitle[Constants.HEIGHT];color:StyleSheet.textTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.textTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.textTitle[Constants.PIXELSIZE];
             id:textTitle;
             style: Text.Sunken;
             smooth: true;
             text: Genivi.gettext("Text");
         }
 		EntryField {
-            x:StyleSheet.textValue[StyleSheet.X]; y:StyleSheet.textValue[StyleSheet.Y]; width: StyleSheet.textValue[StyleSheet.WIDTH]; height: StyleSheet.textValue[StyleSheet.HEIGHT];
+            x:StyleSheet.textValue[Constants.X]; y:StyleSheet.textValue[Constants.Y]; width: StyleSheet.textValue[Constants.WIDTH]; height: StyleSheet.textValue[Constants.HEIGHT];
             id: textValue
 			criterion: Genivi.NAVIGATIONCORE_FULL_ADDRESS
 			globaldata: 'location_input'
@@ -157,7 +158,7 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         StdButton {
-            source:StyleSheet.ok[StyleSheet.SOURCE]; x:StyleSheet.ok[StyleSheet.X]; y:StyleSheet.ok[StyleSheet.Y]; width:StyleSheet.ok[StyleSheet.WIDTH]; height:StyleSheet.ok[StyleSheet.HEIGHT];textColor:StyleSheet.okText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.okText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.ok[Constants.SOURCE]; x:StyleSheet.ok[Constants.X]; y:StyleSheet.ok[Constants.Y]; width:StyleSheet.ok[Constants.WIDTH]; height:StyleSheet.ok[Constants.HEIGHT];textColor:StyleSheet.okText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.okText[Constants.PIXELSIZE];
             id:ok
             text:Genivi.gettext("Ok")
             next:back
@@ -175,7 +176,7 @@ HMIMenu {
         }
         }
         StdButton {
-            source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; next:textValue; prev:ok;
             onClicked:{leave(1); pageOpen("NavigationSearch");}
         }

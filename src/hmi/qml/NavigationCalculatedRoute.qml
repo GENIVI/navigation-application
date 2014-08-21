@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-calculated-route-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -139,11 +140,11 @@ HMIMenu {
 
 
     HMIBgImage {
-        image:StyleSheet.navigation_calculated_route_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_calculated_route_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
         Text {
-            x:StyleSheet.guidanceTitle[StyleSheet.X]; y:StyleSheet.guidanceTitle[StyleSheet.Y]; width:StyleSheet.guidanceTitle[StyleSheet.WIDTH]; height:StyleSheet.guidanceTitle[StyleSheet.HEIGHT];color:StyleSheet.guidanceTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.guidanceTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.guidanceTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.guidanceTitle[Constants.X]; y:StyleSheet.guidanceTitle[Constants.Y]; width:StyleSheet.guidanceTitle[Constants.WIDTH]; height:StyleSheet.guidanceTitle[Constants.HEIGHT];color:StyleSheet.guidanceTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.guidanceTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.guidanceTitle[Constants.PIXELSIZE];
             id:guidanceTitle;
             style: Text.Sunken;
             smooth: true
@@ -151,7 +152,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.displayRouteTitle[StyleSheet.X]; y:StyleSheet.displayRouteTitle[StyleSheet.Y]; width:StyleSheet.displayRouteTitle[StyleSheet.WIDTH]; height:StyleSheet.displayRouteTitle[StyleSheet.HEIGHT];color:StyleSheet.displayRouteTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.displayRouteTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.displayRouteTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.displayRouteTitle[Constants.X]; y:StyleSheet.displayRouteTitle[Constants.Y]; width:StyleSheet.displayRouteTitle[Constants.WIDTH]; height:StyleSheet.displayRouteTitle[Constants.HEIGHT];color:StyleSheet.displayRouteTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.displayRouteTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.displayRouteTitle[Constants.PIXELSIZE];
             id:displayRouteTitle;
             style: Text.Sunken;
             smooth: true
@@ -160,7 +161,7 @@ HMIMenu {
 
 
         Text {
-            x:StyleSheet.distanceTitle[StyleSheet.X]; y:StyleSheet.distanceTitle[StyleSheet.Y]; width:StyleSheet.distanceTitle[StyleSheet.WIDTH]; height:StyleSheet.distanceTitle[StyleSheet.HEIGHT];color:StyleSheet.distanceTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distanceTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distanceTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.distanceTitle[Constants.X]; y:StyleSheet.distanceTitle[Constants.Y]; width:StyleSheet.distanceTitle[Constants.WIDTH]; height:StyleSheet.distanceTitle[Constants.HEIGHT];color:StyleSheet.distanceTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.distanceTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distanceTitle[Constants.PIXELSIZE];
             id:distanceTitle;
             style: Text.Sunken;
             smooth: true
@@ -168,7 +169,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.distanceValue[StyleSheet.X]; y:StyleSheet.distanceValue[StyleSheet.Y]; width:StyleSheet.distanceValue[StyleSheet.WIDTH]; height:StyleSheet.distanceValue[StyleSheet.HEIGHT];color:StyleSheet.distanceValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distanceValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distanceValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.distanceValue[Constants.X]; y:StyleSheet.distanceValue[Constants.Y]; width:StyleSheet.distanceValue[Constants.WIDTH]; height:StyleSheet.distanceValue[Constants.HEIGHT];color:StyleSheet.distanceValue[Constants.TEXTCOLOR];styleColor:StyleSheet.distanceValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distanceValue[Constants.PIXELSIZE];
             id:distanceValue
             wrapMode: Text.WordWrap
             style: Text.Sunken;
@@ -176,7 +177,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.timeTitle[StyleSheet.X]; y:StyleSheet.timeTitle[StyleSheet.Y]; width:StyleSheet.timeTitle[StyleSheet.WIDTH]; height:StyleSheet.timeTitle[StyleSheet.HEIGHT];color:StyleSheet.timeTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.timeTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.timeTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.timeTitle[Constants.X]; y:StyleSheet.timeTitle[Constants.Y]; width:StyleSheet.timeTitle[Constants.WIDTH]; height:StyleSheet.timeTitle[Constants.HEIGHT];color:StyleSheet.timeTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.timeTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.timeTitle[Constants.PIXELSIZE];
             id:timeTitle;
             style: Text.Sunken;
             smooth: true
@@ -184,7 +185,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.timeValue[StyleSheet.X]; y:StyleSheet.timeValue[StyleSheet.Y]; width:StyleSheet.timeValue[StyleSheet.WIDTH]; height:StyleSheet.timeValue[StyleSheet.HEIGHT];color:StyleSheet.timeValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.timeValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.timeValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.timeValue[Constants.X]; y:StyleSheet.timeValue[Constants.Y]; width:StyleSheet.timeValue[Constants.WIDTH]; height:StyleSheet.timeValue[Constants.HEIGHT];color:StyleSheet.timeValue[Constants.TEXTCOLOR];styleColor:StyleSheet.timeValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.timeValue[Constants.PIXELSIZE];
             id:timeValue
             wrapMode: Text.WordWrap
             style: Text.Sunken;
@@ -192,7 +193,7 @@ HMIMenu {
         }
 
         StdButton {
-            source:StyleSheet.show_route_on_map[StyleSheet.SOURCE]; x:StyleSheet.show_route_on_map[StyleSheet.X]; y:StyleSheet.show_route_on_map[StyleSheet.Y]; width:StyleSheet.show_route_on_map[StyleSheet.WIDTH]; height:StyleSheet.show_route_on_map[StyleSheet.HEIGHT];
+            source:StyleSheet.show_route_on_map[Constants.SOURCE]; x:StyleSheet.show_route_on_map[Constants.X]; y:StyleSheet.show_route_on_map[Constants.Y]; width:StyleSheet.show_route_on_map[Constants.WIDTH]; height:StyleSheet.show_route_on_map[Constants.HEIGHT];
             id: show_route_on_map
             explode:false; disabled:true; next:show_route_in_list; prev:back
             onClicked: {
@@ -204,14 +205,14 @@ HMIMenu {
             }
         }
         StdButton {
-            source:StyleSheet.show_route_in_list[StyleSheet.SOURCE]; x:StyleSheet.show_route_in_list[StyleSheet.X]; y:StyleSheet.show_route_in_list[StyleSheet.Y]; width:StyleSheet.show_route_in_list[StyleSheet.WIDTH]; height:StyleSheet.show_route_in_list[StyleSheet.HEIGHT];
+            source:StyleSheet.show_route_in_list[Constants.SOURCE]; x:StyleSheet.show_route_in_list[Constants.X]; y:StyleSheet.show_route_in_list[Constants.Y]; width:StyleSheet.show_route_in_list[Constants.WIDTH]; height:StyleSheet.show_route_in_list[Constants.HEIGHT];
             id:show_route_in_list;
             page:"NavigationRouteDescription";
             explode:false; disabled:true; next:back; prev:show_route_on_map
         }
 
         StdButton {
-            source:StyleSheet.guidance_start[StyleSheet.SOURCE]; x:StyleSheet.guidance_start[StyleSheet.X]; y:StyleSheet.guidance_start[StyleSheet.Y]; width:StyleSheet.guidance_start[StyleSheet.WIDTH]; height:StyleSheet.guidance_start[StyleSheet.HEIGHT];textColor:StyleSheet.startText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.startText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.guidance_start[Constants.SOURCE]; x:StyleSheet.guidance_start[Constants.X]; y:StyleSheet.guidance_start[Constants.Y]; width:StyleSheet.guidance_start[Constants.WIDTH]; height:StyleSheet.guidance_start[Constants.HEIGHT];textColor:StyleSheet.startText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.startText[Constants.PIXELSIZE];
             id:guidance_start; text: Genivi.gettext("On");explode:false; disabled:true; next:guidance_stop; prev:show_route_on_map
             onClicked: {
                 disconnectSignals();
@@ -223,7 +224,7 @@ HMIMenu {
             }
         }
         StdButton {
-            source:StyleSheet.guidance_stop[StyleSheet.SOURCE]; x:StyleSheet.guidance_stop[StyleSheet.X]; y:StyleSheet.guidance_stop[StyleSheet.Y]; width:StyleSheet.guidance_stop[StyleSheet.WIDTH]; height:StyleSheet.guidance_stop[StyleSheet.HEIGHT];textColor:StyleSheet.stopText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.stopText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.guidance_stop[Constants.SOURCE]; x:StyleSheet.guidance_stop[Constants.X]; y:StyleSheet.guidance_stop[Constants.Y]; width:StyleSheet.guidance_stop[Constants.WIDTH]; height:StyleSheet.guidance_stop[Constants.HEIGHT];textColor:StyleSheet.stopText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.stopText[Constants.PIXELSIZE];
             id:guidance_stop;text: Genivi.gettext("Off");explode:false; disabled:true; next:show_route_on_map; prev:guidance_start
             onClicked: {
                 Genivi.guidance_message(dbusIf,"StopGuidance",[]);
@@ -231,7 +232,7 @@ HMIMenu {
                 guidance_stop.disabled=true;
             }
         }
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:show_route_on_map; prev:show_route_in_list;
             onClicked: {
                 disconnectSignals();

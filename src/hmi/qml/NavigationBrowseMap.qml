@@ -27,6 +27,13 @@ import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
+import "Core/style-sheets/navigation-browse-map-bottom-css.js" as StyleSheetBottom
+import "Core/style-sheets/navigation-browse-map-route-css.js" as StyleSheetRoute
+import "Core/style-sheets/navigation-browse-map-guidance-css.js" as StyleSheetGuidance
+import "Core/style-sheets/navigation-browse-map-scroll-css.js" as StyleSheetScroll
+import "Core/style-sheets/navigation-browse-map-simulation-css.js" as StyleSheetSimulation
+import "Core/style-sheets/navigation-browse-map-top-css.js" as StyleSheetTop
+
 import lbs.plugin.dbusif 1.0
 
 HMIMenu {
@@ -34,7 +41,7 @@ HMIMenu {
     headlineFg: "grey"
     headlineBg: "blue"
     text: Genivi.gettext("NavigationBrowseMap")
-	next: up
+    next: scrollup
 	prev: menub
 	property Item guidanceWaypointReachedSignal;
 	property Item guidanceManeuverChangedSignal;
@@ -42,14 +49,8 @@ HMIMenu {
 	property Item mapmatchedpositionPositionUpdateSignal;
 	property Item mapmatchedpositionAddressUpdateSignal;
 	property Item fuelStopAdvisorSignal;
-	property string guidance: "No guidance";
-	property string maneuver: "No maneuver";
-	property string maneuver_distance: "";
-	property string totaldistance: "";
-	property string totaltime: "";
 	property bool north:false;
 	
-
 	DBusIf {
 		id:dbusIf
 	}
@@ -59,7 +60,7 @@ HMIMenu {
 		// TODO: Create possibility to poll information?
 		// console.log("guidanceManeuverChanged");
 		// Genivi.dump("",args);
-		guidance=Genivi.Maneuver[args[1]];
+        maneuverAdvice.text=Genivi.Maneuver[args[1]];
 	}
 
 	function guidanceWaypointReached(args)
@@ -67,9 +68,9 @@ HMIMenu {
 		// console.log("guidanceWaypointReached");
 		// Genivi.dump("",args);
 		if (args[2]) {
-			guidance="Destination reached";
+            maneuverAdvice.text="Destination reached";
 		} else {
-			guidance="Waypoint reached";
+            maneuverAdvice.text="Waypoint reached";
 		}
 
 	}
@@ -83,7 +84,7 @@ HMIMenu {
 	{
 		var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_SPEED]]);
 		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.NAVIGATIONCORE_SPEED && res[1][2] == "variant" && res[1][3][0] == "double") {
-			speed.text=res[1][3][1]+"\nkm/h";
+            speedValue.text=res[1][3][1];
 		} else {
 			console.log("Unexpected result from GetPosition:");
 			Genivi.dump("",res);
@@ -94,9 +95,9 @@ HMIMenu {
 	{
 		var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetAddress",["array",["uint16",Genivi.NAVIGATIONCORE_STREET]]);
 		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.NAVIGATIONCORE_STREET && res[1][2] == "variant" && res[1][3][0] == "string") {
-            menu.text=Genivi.gettext("NavigationCurrentStreet") + ":"+res[1][3][1];
+            currentroad.text=res[1][3][1];
 		} else {
-            menu.text=Genivi.gettext("NavigationBrowseMap");
+            currentroad.text="";
 		}
 	}
 
@@ -125,11 +126,11 @@ HMIMenu {
         {
             if (args[1] == 1)
             {
-                fuel.text="F";
+                fsamessageText.text=Genivi.gettext("FSAWarning");
             }
             else
             {
-                fuel.text=" ";
+                fsamessageText.text=" ";
              }
         }
         else
@@ -190,33 +191,6 @@ HMIMenu {
 		Genivi.lm_message(dbusIf,"ServiceDisconnect",["uint32",dbusIf.pid()]);
 	}
 
-
-	function updateMapViewer()
-	{
-		var res=Genivi.mapviewercontrol_message(dbusIf,"GetMapViewPerspective",[]);
-		if (res[0] == "uint16") {
-			if (res[1] == Genivi.MAPVIEWER_2D) {
-				perspective.text="3d";
-			} else {
-				perspective.text="2d";
-			}
-		} else {
-			console.log("Unexpected result from GetMapViewPerspective:");
-			Genivi.dump("",res);
-		}
-		var res=Genivi.mapviewercontrol_message(dbusIf,"GetDisplayedRoutes",[]);
-		if (res[0] == "array" && res[1] && res[1].length) {
-			split.disabled=false;
-		} else {
-			split.disabled=true;
-		}
-		if (Genivi.g_map_handle2) {
-			split.text="Join";
-		} else {
-			split.text="Split";
-		}
-	}
-
 	function routeOverview()
 	{
 		if (!split.disabled) {
@@ -226,104 +200,15 @@ HMIMenu {
 		}
 	}
 
-	function updateDayNight()
-	{
-		var res=Genivi.mapviewercontrol_message(dbusIf, "GetMapViewTheme", []);
-		if (res[0] == "uint16" && res[1] == Genivi.MAPVIEWER_THEME_1) {
-			daynight.text="Night";
-		} else {
-			daynight.text="Day";
-		}
-	}
-
-	function toggleDayNight()
-	{
-		var res=Genivi.mapviewercontrol_message(dbusIf, "GetMapViewTheme", []);
-		if (res[0] == "uint16" && res[1] == Genivi.MAPVIEWER_THEME_1) {
-			Genivi.mapviewercontrol_message(dbusIf,"SetMapViewTheme",["uint16",Genivi.MAPVIEWER_THEME_2]);
-			if (Genivi.g_map_handle2) {
-				Genivi.mapviewercontrol_message2(dbusIf,"SetMapViewTheme",["uint16",Genivi.MAPVIEWER_THEME_2]);
-			}	
-			daynight.text="Day";
-		} else {
-			Genivi.mapviewercontrol_message(dbusIf,"SetMapViewTheme",["uint16",Genivi.MAPVIEWER_THEME_1]);
-			if (Genivi.g_map_handle2) {
-				Genivi.mapviewercontrol_message2(dbusIf,"SetMapViewTheme",["uint16",Genivi.MAPVIEWER_THEME_1]);
-			}
-			daynight.text="Night";
-		}
-	}
-
-	function togglePerspective()
-	{
-		if (perspective.text == "2d") {
-			Genivi.mapviewercontrol_message(dbusIf,"SetMapViewPerspective",["uint16",Genivi.MAPVIEWER_2D]);
-		} else {
-			Genivi.mapviewercontrol_message(dbusIf,"SetMapViewPerspective",["uint16",Genivi.MAPVIEWER_3D]);
-		}
-		updateMapViewer();
-	}
-
-	function toggleSplit()
-	{
-		hideSurfaces();
-		var res=Genivi.mapviewercontrol_message(dbusIf,"GetDisplayedRoutes",[]);
-		var res3=Genivi.mapviewercontrol_message(dbusIf, "GetMapViewTheme", []);
-		if (split.text == "Split") {
-			Genivi.map_handle_clear(dbusIf);
-			Genivi.map_handle2(dbusIf,map.width/2,map.height,Genivi.MAPVIEWER_MAIN_MAP);
-			Genivi.map_handle(dbusIf,map.width/2,map.height,Genivi.MAPVIEWER_MAIN_MAP);
-			if (res[0] == "array" && res[1] && res[1].length) {
-                var res2=Genivi.routing_message_get(dbusIf, "GetRouteBoundingBox", []);
-				if (res2[0] == "structure") {
-					Genivi.mapviewercontrol_message2(dbusIf, "SetMapViewBoundingBox", res2);
-				} else {
-					console.log("Unexpected result from GetRouteBoundingBox:");
-					Genivi.dump("",res2);
-				}
-			}
-			if (res3[0] == "uint16") {
-				Genivi.mapviewercontrol_message(dbusIf, "SetMapViewTheme", res3);
-				Genivi.mapviewercontrol_message2(dbusIf, "SetMapViewTheme", res3);
-			}
-			Genivi.mapviewercontrol_message(dbusIf, "SetFollowCarMode", ["boolean",true]);
-		} else {
-			Genivi.map_handle_clear2(dbusIf);
-			Genivi.map_handle_clear(dbusIf);
-			Genivi.map_handle(dbusIf,map.width,map.height,Genivi.MAPVIEWER_MAIN_MAP);
-			if (res3[0] == "uint16") {
-				Genivi.mapviewercontrol_message(dbusIf, "SetMapViewTheme", res3);
-			}
-			Genivi.mapviewercontrol_message(dbusIf, "SetFollowCarMode", ["boolean",true]);
-		}
-		if (res[0] == "array" && res[1] && res[1].length) {
-			for (var i = 0 ; i < res[1].length ; i+=2) {
-				Genivi.mapviewercontrol_message(dbusIf, "DisplayRoute", res[1][i+1]);
-				if (split.text == "Split") {
-					Genivi.mapviewercontrol_message2(dbusIf, "DisplayRoute", res[1][i+1]);
-				}
-			}
-		}
-		showSurfaces();
-		updateMapViewer();
-	}
-
-	function disableSplit()
-	{
-		if (Genivi.g_map_handle2) {
-			toggleSplit();
-		}
-	}
-
 	function toggleOrientation()
 	{
 		north=!north;
 		if (north) {
 			Genivi.mapviewercontrol_message(dbusIf, "SetCameraHeadingAngle", ["int32",0]);
-			orientation.text="D";
+            orientation.setState("D");
 		} else {
 			Genivi.mapviewercontrol_message(dbusIf, "SetCameraHeadingTrackUp", []);
-			orientation.text="N";
+            orientation.setState("N");
 		}
 	}
 
@@ -336,17 +221,16 @@ HMIMenu {
 			return;
 		}
 		if (res[1] == Genivi.NAVIGATIONCORE_INACTIVE) {
-			stop.disabled=true;
             //Guidance inactive, so inform the trip computer
             Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
-			guidance="No guidance";
-			maneuver="No maneuver";
-			maneuver_distance="";
-			totaldistance="";
-			totaltime="";
+            maneuverAdvice.text=Genivi.gettext("NoGuidance");
+            maneuverValue.text=Genivi.gettext("NoManeuver");
+            distancetomaneuverValue.text="----";
+            distancetodestinationValue.text="----";
+            timetodestinationValue.text="----";
+            roadaftermaneuverValue.text="----";
 			return;
 		} else {
-			stop.disabled=false;
             //Guidance active, so inform the trip computer (refresh)
             Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
 		}
@@ -368,9 +252,10 @@ HMIMenu {
                             {
                                if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
                                {
-                                   stop.disabled=false;
-                                   maneuver=Genivi.ManeuverType[subarray[j+1][7]]+":"+Genivi.ManeuverDirection[subsubarray[1][3][1]];
-                                   maneuver_distance=Genivi.distance(substructure[1])+" "+structure[3];
+                                   maneuverValue.text=Genivi.ManeuverDirection[subsubarray[1][3][1]];
+                                   //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
+                                   distancetomaneuverValue.text=Genivi.distance(substructure[1]);
+                                   roadaftermaneuverValue.text=structure[3];
 
                                }
                             }
@@ -388,7 +273,7 @@ HMIMenu {
 
         if (res[0] == "uint32")
         {
-            totaldistance = Genivi.distance(res[1]);
+            distancetodestinationValue.text = Genivi.distance(res[1]);
         }
         else
         {
@@ -397,7 +282,7 @@ HMIMenu {
         }
         if (res[2] == "uint32")
         {
-            totaltime = Genivi.time(res[3]);
+            timetodestinationValue.text = Genivi.time(res[3]);
         }
         else
         {
@@ -413,237 +298,318 @@ HMIMenu {
 		updateGuidance();
 	}
 
-	Row {
-		id:content
-		y:30;
-		x:menu.wspc/2;
-		height:content.h
-		property real w: menu.w(7);
-		property real h: menu.h(4);
-        property real panX: 40 //delta in pixel for x panning
-        property real panY: 40 //delta in pixel for y panning
-        spacing: menu.wspc/3;
+    Rectangle {
+        id:map
+        x:0
+        y:0
+        height:menu.height
+        width:menu.width
+        color:"#ffff7e"
 
-        StdButton { id:up; text:"Up"; explode:false; next:left; prev:daynight; pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-                onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 + content.panY]]]);}
-		}
-        StdButton { id:left; text:"Left"; explode:false; next:right; prev:up;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-                onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 + content.panX,"uint16",map.height/2]]]);}
-		}
-        StdButton { id:right; text:"Right"; explode:false; next:down; prev:left;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-                onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 - content.panX,"uint16",map.height/2]]]);}
-		}
-        StdButton { id:down; text:"Down"; explode:false; next:zoom_in; prev:right;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-                onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 - content.panY]]]);}
-		}
-        StdButton { id:zoom_in; text:"+"; explode:false; next:zoom_out; prev:down;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",1]);showZoom();}
-		}
-        StdButton { id:zoom_out; text:"-"; explode:false; next:perspective; prev:zoom_in;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",-1]);showZoom();}
-		}
-        StdButton { id:perspective; text:"3d"; explode:false; next:split; prev:zoom_out;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {togglePerspective();}
-		}
-        StdButton { id:split; text:"Split"; explode:false; next:orientation; prev:perspective;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {toggleSplit();}
-		}
-        StdButton { id:orientation; text:"N"; explode:false; next:camera; prev:split;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {toggleOrientation();}
-		}
-        StdButton { id:camera; text:"C"; explode:false; next:back; prev:orientation;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {
-				disableSplit();
-				disconnectSignals();
-				hideSurfaces();
-				pageOpen("CameraSettings");
-			    }
-		}
-		Rectangle {
-			width:speed.width+20
-			height:content.h
-			color:"#000000"
-			opacity: 0.8
-			radius: 10
-			Text { 
-				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
-				id:speed
-				font.pixelSize: 18;
-				style: Text.Sunken
-				color: "white"
-				styleColor: "black"
-				smooth: true
-				text: "0\nkm/h"
-			}
-		}
-		Rectangle {
-			width:zoomlevel.width+20
-			height:content.h
-			color:"#000000"
-			opacity: 0.8
-			radius: 10
+        Rectangle {
+            opacity: 0.8
+            width: StyleSheetTop.navigation_browse_map_top_background[Constants.WIDTH]
+            height: StyleSheetTop.navigation_browse_map_top_background[Constants.HEIGHT]
+            x: Constants.MENU_BROWSE_MAP_TOP_X
+            y: Constants.MENU_BROWSE_MAP_TOP_Y
+            HMIBgImage {
+                id: top
+                image:StyleSheetTop.navigation_browse_map_top_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
 
-			Text { 
-				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
-				id:zoomlevel
-				font.pixelSize: 18;
-				style: Text.Sunken
-				color: "white"
-				styleColor: "black"
-				smooth: true
-			}
-		}
-	}
+                Text {
+                    x:StyleSheetTop.fsamessageText[Constants.X]; y:StyleSheetTop.fsamessageText[Constants.Y]; width:StyleSheetTop.fsamessageText[Constants.WIDTH]; height:StyleSheetTop.fsamessageText[Constants.HEIGHT];color:StyleSheetTop.fsamessageText[Constants.TEXTCOLOR];styleColor:StyleSheetTop.fsamessageText[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.fsamessageText[Constants.PIXELSIZE];
+                    id:fsamessageText
+                    visible: true
+                    style: Text.Sunken
+                    smooth: true
+                    text:""
+                }
 
-	Rectangle {
-		id:map
-		y:content.y+content.height+4
-		height:menu.height-y-bottom.height-8
-		width:menu.width
-		color:"#ffff7e"
-	}
+                StdButton {
+                    source:StyleSheetTop.select_search_for_refill_in_top[Constants.SOURCE]; x:StyleSheetTop.select_search_for_refill_in_top[Constants.X]; y:StyleSheetTop.select_search_for_refill_in_top[Constants.Y]; width:StyleSheetTop.select_search_for_refill_in_top[Constants.WIDTH]; height:StyleSheetTop.select_search_for_refill_in_top[Constants.HEIGHT];
+                    id:select_search_for_refill_in_top
+                    explode: false
+                    onClicked: {
+                        disconnectSignals();
+                        hideSurfaces();
+                        pageOpen("POI");
+                                }
+                        }
 
-	Row {
-		id:bottom
-		y:menu.height-height-4
-		x:menu.wspc/2;
-		height:content.h
-		spacing:menu.wspc/4
+                Text {
+                    x:StyleSheetTop.speedValue[Constants.X]; y:StyleSheetTop.speedValue[Constants.Y]; width:StyleSheetTop.speedValue[Constants.WIDTH]; height:StyleSheetTop.speedValue[Constants.HEIGHT];color:StyleSheetTop.speedValue[Constants.TEXTCOLOR];styleColor:StyleSheetTop.speedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.speedValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:speedValue
+                    text: "---"
+                }
 
-        StdButton { id:back; text:"Back"; next:menub; prev:camera;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			onClicked: {
-				disconnectSignals();
-				hideSurfaces();
-				pageOpen(Genivi.data["mapback"]);
-			}
-		}
-        StdButton { id:menub; text:"Menu"; next:stop; prev:back;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			onClicked: {
-				disconnectSignals();
-				hideSurfaces();
-				pageOpen("MainMenu");
-			}
-		}
-        StdButton { id:stop; text:"Stop"; explode:false; next:daynight; prev:menub;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			    onClicked: {stopGuidance();}
-			    disabled: true
-		}
+                Text {
+                    x:StyleSheetTop.speedUnit[Constants.X]; y:StyleSheetTop.speedUnit[Constants.Y]; width:StyleSheetTop.speedUnit[Constants.WIDTH]; height:StyleSheetTop.speedUnit[Constants.HEIGHT];color:StyleSheetTop.speedUnit[Constants.TEXTCOLOR];styleColor:StyleSheetTop.speedUnit[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.speedUnit[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:speedUnit
+                    text: "km/h"
+                }
+            }
+        }
 
-        StdButton { id:daynight; text:""; explode:false; next:up; prev:stop;pixelSize:Constants.MENU_BROWSE_MAP_TEXT_PIXEL_SIZE;
-			onClicked: {
-				toggleDayNight();
-			}
-		}
-		
-		Rectangle {
-			width:totalt.width+20
-			height:content.h
-			color:"#000000"
-			opacity: 0.8
-			radius: 10
-			MouseArea {
-				anchors.fill: parent
-				onClicked: {
-					routeOverview();
-                        	}
-                	}
-			Text { 
-				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
-				id:totalt
-				text: "TotalTime:\n"+menu.totaltime
-				font.pixelSize: 18;
-				style: Text.Sunken
-				color: "white"
-				styleColor: "black"
-				smooth: true
-			}
-		}
-		Rectangle {
-			width:totaldist.width+20
-			height:content.h
-			color:"#000000"
-			opacity: 0.8
-			radius: 10
-			MouseArea {
-				anchors.fill: parent
-				onClicked: {
-					routeOverview();
-                        	}
-                	}
-			Text { 
-				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
-				id:totaldist
-				text: "TotalDistance:\n"+menu.totaldistance
-				font.pixelSize: 18;
-				style: Text.Sunken
-				color: "white"
-				styleColor: "black"
-				smooth: true
-			}
-		}
-		Rectangle {
-			width:nextturn.width+20
-			height:content.h
-			color:"#000000"
-			opacity: 0.8
-			radius: 10
-			MouseArea {
-				anchors.fill: parent
-				onClicked: {
-					var res=Genivi.guidance_message(dbusIf,"GetGuidanceStatus",[]);
-					if (res[0] == "uint16") {
-						if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
-							disconnectSignals();
-							hideSurfaces();
-							pageOpen("NavigationManeuversList");
-						}
-					}
-                        	}
-                	}
-			Text { 
-				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
-				id:nextturn
-				text: menu.guidance+"\n"+menu.maneuver+"\n"+menu.maneuver_distance;
-				font.pixelSize: 12;
-				style: Text.Sunken
-				color: "white"
-				styleColor: "black"
-				smooth: true
-			}
-		}
-		Rectangle {
-			width:20
-			height:content.h
-			color:"#000000"
-			opacity: 0.8
-			radius: 10
-			MouseArea {
-				anchors.fill: parent
-				onClicked: {
-					disconnectSignals();
-					hideSurfaces();
-					pageOpen("POI");
-                        	}
-                	}
-			Text { 
-				anchors { left:parent.left; leftMargin: 10; top:parent.top; topMargin: 2 }
-				id:fuel
-				text:""
-				font.pixelSize: 20;
-				style: Text.Sunken
-				color: "white"
-				styleColor: "black"
-				smooth: true
-			}
-		}
-	}
+        Rectangle {
+            opacity: 0.8
+            width: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.WIDTH]
+            height: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.HEIGHT]
+            x: Constants.MENU_BROWSE_MAP_BOTTOM_X
+            y: Constants.MENU_BROWSE_MAP_BOTTOM_Y
+            HMIBgImage {
+                id: bottom
+                image:StyleSheetBottom.navigation_browse_map_bottom_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+
+                StdButton {
+                    source:StyleSheetBottom.menub[Constants.SOURCE]; x:StyleSheetBottom.menub[Constants.X]; y:StyleSheetBottom.menub[Constants.Y]; width:StyleSheetBottom.menub[Constants.WIDTH]; height:StyleSheetBottom.menub[Constants.HEIGHT];textColor:StyleSheetBottom.menubText[Constants.TEXTCOLOR]; pixelSize:StyleSheetBottom.menubText[Constants.PIXELSIZE];
+                    id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:settings;
+                    onClicked: {
+                        disconnectSignals();
+                        hideSurfaces();
+                        pageOpen("MainMenu");
+                    }
+                }
+
+                StdButton {
+                    x:StyleSheetBottom.directiondestination[Constants.X]; y:StyleSheetBottom.directiondestination[Constants.Y]; width:StyleSheetBottom.directiondestination[Constants.WIDTH]; height:StyleSheetBottom.directiondestination[Constants.HEIGHT];
+                    id:orientation; next:zoomin; prev:menub; explode:false; disabled:false;
+                    source:StyleSheetBottom.directionnorth[Constants.SOURCE]; //todo call get status
+                    property int status: 0;
+                    function setState(name)
+                    {
+                        if (name=="D")
+                        {
+                            status=1;
+                            source=StyleSheetBottom.directionnorth[Constants.SOURCE];
+                        }
+                        else
+                        {
+                            status=0;
+                            source=StyleSheetBottom.directiondestination[Constants.SOURCE];
+                        }
+                    }
+                    onClicked:
+                    {
+                        toggleOrientation();
+                    }
+                }
+
+                Text {
+                    x:StyleSheetBottom.currentroad[Constants.X]; y:StyleSheetBottom.currentroad[Constants.Y]; width:StyleSheetBottom.currentroad[Constants.WIDTH]; height:StyleSheetBottom.currentroad[Constants.HEIGHT];color:StyleSheetBottom.currentroad[Constants.TEXTCOLOR];styleColor:StyleSheetBottom.currentroad[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBottom.currentroad[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:currentroad
+                    text: "-------"
+                }
+
+                StdButton {
+                    source:StyleSheetBottom.zoomin[Constants.SOURCE]; x:StyleSheetBottom.zoomin[Constants.X]; y:StyleSheetBottom.zoomin[Constants.Y]; width:StyleSheetBottom.zoomin[Constants.WIDTH]; height:StyleSheetBottom.zoomin[Constants.HEIGHT];
+                    id:zoomin; explode:false; next:zoomout; prev:orientation;
+                    onClicked: {
+                        Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",1]);
+                        showZoom();
+                    }
+                }
+
+                Text {
+                    x:StyleSheetBottom.zoomlevel[Constants.X]; y:StyleSheetBottom.zoomlevel[Constants.Y]; width:StyleSheetBottom.zoomlevel[Constants.WIDTH]; height:StyleSheetBottom.zoomlevel[Constants.HEIGHT];color:StyleSheetBottom.zoomlevel[Constants.TEXTCOLOR];styleColor:StyleSheetBottom.zoomlevel[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBottom.zoomlevel[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:zoomlevel
+                    text: " "
+                }
+
+                StdButton {
+                    source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
+                    id:zoomout; explode:false; next:settings; prev:zoomin;
+                    onClicked: {
+                        Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",-1]);
+                        showZoom();
+                    }
+                }
+
+                StdButton {
+                    source:StyleSheetBottom.settings[Constants.SOURCE]; x:StyleSheetBottom.settings[Constants.X]; y:StyleSheetBottom.settings[Constants.Y]; width:StyleSheetBottom.settings[Constants.WIDTH]; height:StyleSheetBottom.settings[Constants.HEIGHT];
+                    id:settings; explode:false; next:menub; prev:zoomout;
+                    onClicked: {
+                        disconnectSignals();
+                        hideSurfaces();
+                        pageOpen("CameraSettings");
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            opacity: 0.8
+            width: StyleSheetRoute.navigation_browse_map_route_background[Constants.WIDTH]
+            height: StyleSheetRoute.navigation_browse_map_route_background[Constants.HEIGHT]
+            x: Constants.MENU_BROWSE_MAP_ROUTE_X
+            y: Constants.MENU_BROWSE_MAP_ROUTE_Y
+            HMIBgImage {
+                id: route
+                image:StyleSheetRoute.navigation_browse_map_route_background[Constants.SOURCE]
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        routeOverview();
+                                }
+                }
+
+                Text {
+                    x:StyleSheetRoute.timetodestinationValue[Constants.X]; y:StyleSheetRoute.timetodestinationValue[Constants.Y]; width:StyleSheetRoute.timetodestinationValue[Constants.WIDTH]; height:StyleSheetRoute.timetodestinationValue[Constants.HEIGHT];color:StyleSheetRoute.timetodestinationValue[Constants.TEXTCOLOR];styleColor:StyleSheetRoute.timetodestinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetRoute.timetodestinationValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:timetodestinationValue
+                    text: "-------"
+                }
+
+                Text {
+                    x:StyleSheetRoute.distancetodestinationValue[Constants.X]; y:StyleSheetRoute.distancetodestinationValue[Constants.Y]; width:StyleSheetRoute.distancetodestinationValue[Constants.WIDTH]; height:StyleSheetRoute.distancetodestinationValue[Constants.HEIGHT];color:StyleSheetRoute.distancetodestinationValue[Constants.TEXTCOLOR];styleColor:StyleSheetRoute.distancetodestinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetRoute.distancetodestinationValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:distancetodestinationValue
+                    text: "----"
+                }
+
+            }
+        }
+
+        Rectangle {
+            opacity: 0.8
+            width: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.WIDTH]
+            height: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.HEIGHT]
+            x: Constants.MENU_BROWSE_MAP_GUIDANCE_X
+            y: Constants.MENU_BROWSE_MAP_GUIDANCE_Y
+            HMIBgImage {
+                id: guidance
+                image:StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.SOURCE]
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        var res=Genivi.guidance_message(dbusIf,"GetGuidanceStatus",[]);
+                        if (res[0] == "uint16") {
+                            if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
+                                disconnectSignals();
+                                hideSurfaces();
+                                pageOpen("NavigationManeuversList");
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    x:StyleSheetGuidance.maneuverValue[Constants.X]; y:StyleSheetGuidance.maneuverValue[Constants.Y]; width:StyleSheetGuidance.maneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.maneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.maneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.maneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.maneuverValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:maneuverValue
+                    text: " "
+                }
+
+                Text {
+                    x:StyleSheetGuidance.distancetomaneuverValue[Constants.X]; y:StyleSheetGuidance.distancetomaneuverValue[Constants.Y]; width:StyleSheetGuidance.distancetomaneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.distancetomaneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.distancetomaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.distancetomaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.distancetomaneuverValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:distancetomaneuverValue
+                    text: " "
+                }
+
+                Text {
+                    x:StyleSheetGuidance.roadaftermaneuverValue[Constants.X]; y:StyleSheetGuidance.roadaftermaneuverValue[Constants.Y]; width:StyleSheetGuidance.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.roadaftermaneuverValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:roadaftermaneuverValue
+                    text: " "
+                }
+
+                Text {
+                    x:StyleSheetGuidance.maneuverAdvice[Constants.X]; y:StyleSheetGuidance.maneuverAdvice[Constants.Y]; width:StyleSheetGuidance.maneuverAdvice[Constants.WIDTH]; height:StyleSheetGuidance.maneuverAdvice[Constants.HEIGHT];color:StyleSheetGuidance.maneuverAdvice[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.maneuverAdvice[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.maneuverAdvice[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:maneuverAdvice
+                    text: " "
+                }
+
+            }
+        }
+
+        Rectangle {
+            opacity: 0.8
+            width: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.WIDTH]
+            height: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.HEIGHT]
+            x: Constants.MENU_BROWSE_MAP_SCROLL_X
+            y: Constants.MENU_BROWSE_MAP_SCROLL_Y
+            HMIBgImage {
+                property real panX: 40 //delta in pixel for x panning
+                property real panY: 40 //delta in pixel for y panning
+                id: scroll
+                image:StyleSheetScroll.navigation_browse_map_scroll_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+
+                StdButton {
+                    source:StyleSheetScroll.scrollup[Constants.SOURCE]; x:StyleSheetScroll.scrollup[Constants.X]; y:StyleSheetScroll.scrollup[Constants.Y]; width:StyleSheetScroll.scrollup[Constants.WIDTH]; height:StyleSheetScroll.scrollup[Constants.HEIGHT];
+                    id:scrollup; explode:false; next:scrollleft; prev:scrolldown;
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 + scroll.panY]]]);}
+                }
+
+                StdButton {
+                    source:StyleSheetScroll.scrollleft[Constants.SOURCE]; x:StyleSheetScroll.scrollleft[Constants.X]; y:StyleSheetScroll.scrollleft[Constants.Y]; width:StyleSheetScroll.scrollleft[Constants.WIDTH]; height:StyleSheetScroll.scrollleft[Constants.HEIGHT];
+                    id:scrollleft; explode:false; next:scrollright; prev:scrollup;
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 + scroll.panX,"uint16",map.height/2]]]);}
+                }
+
+                StdButton {
+                    source:StyleSheetScroll.scrollright[Constants.SOURCE]; x:StyleSheetScroll.scrollright[Constants.X]; y:StyleSheetScroll.scrollright[Constants.Y]; width:StyleSheetScroll.scrollright[Constants.WIDTH]; height:StyleSheetScroll.scrollright[Constants.HEIGHT];
+                    id:scrollright; explode:false; next:scrolldown; prev:scrollleft;
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 - scroll.panX,"uint16",map.height/2]]]);}
+                }
+
+                StdButton {
+                    source:StyleSheetScroll.scrolldown[Constants.SOURCE]; x:StyleSheetScroll.scrolldown[Constants.X]; y:StyleSheetScroll.scrolldown[Constants.Y]; width:StyleSheetScroll.scrolldown[Constants.WIDTH]; height:StyleSheetScroll.scrolldown[Constants.HEIGHT];
+                    id:scrolldown; explode:false; next:scrollup; prev:scrollright;
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 - scroll.panY]]]);}
+                }
+            }
+        }
+
+        Rectangle {
+            opacity: 0.8
+            width: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.WIDTH]
+            height: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.HEIGHT]
+            x: Constants.MENU_BROWSE_MAP_SIMULATION_X
+            y: Constants.MENU_BROWSE_MAP_SIMULATION_Y
+            HMIBgImage {
+                id: simulation
+                image:StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+            }
+        }
+    }
 
     Component.onCompleted: {
-		Genivi.map_handle(dbusIf,map.width,map.height,Genivi.MAPVIEWER_MAIN_MAP);
+        Genivi.map_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
 		showSurfaces();
 		if (Genivi.data['show_route_handle']) {
 			Genivi.mapviewercontrol_message(dbusIf, "DisplayRoute", Genivi.data['show_route_handle'].concat("boolean",false));
@@ -675,9 +641,7 @@ HMIMenu {
 		}
 		connectSignals();
 		updateGuidance();
-		updateMapViewer();
         showZoom();
 		updateAddress();
-		updateDayNight();
 	}
 }

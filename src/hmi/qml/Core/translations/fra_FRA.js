@@ -107,15 +107,25 @@ translations["Entry"]="SAISIE";
 //NavigationBrowseMap
 translations["NavigationBrowseMap"]="EXPLORER LA CARTE";
 translations["NavigationCurrentStreet"]="RUE ACTUELLE";
-translations["Night"]="NUIT";
-translations["Day"]="JOUR";
-translations["North"]="NORD";
-translations["South"]="SUD";
-translations["East"]="EST";
-translations["West"]="OUEST";
-translations["CameraTilt"]="TILT";
-translations["CameraHeight"]="HAUTEUR";
-translations["CameraDistance"]="DISTANCE";
+translations["FSAWarning"]="Destination not reached";
+translations["NoGuidance"]="No guidance";
+translations["NoManeuver"]="No maneuver";
+
+//CameraSettings
+translations["North"]="N";
+translations["South"]="S";
+translations["East"]="E";
+translations["West"]="O";
+translations["CameraTilt"]="Tilt";
+translations["CameraHeight"]="Height";
+translations["CameraDistance"]="Dist";
+translations["CameraPerspective3d"]="3d";
+translations["CameraPerspective2d"]="2d";
+translations["Split"]="Sp";
+translations["Join"]="Jo";
+translations["Day"]="Da";
+translations["Night"]="Ni";
+
 
 //NavigationManeuversList
 translations["NavigationManeuversList"]="LISTE DES MANEUVRES";
@@ -143,5 +153,6 @@ translations["Ok"]="OK";
 translations["On"]="ON";
 translations["Off"]="OFF";
 translations["Back"]="RETOUR";
+translations["Menu"]="MENU";
 translations["Quit"]="QUITTER";
 

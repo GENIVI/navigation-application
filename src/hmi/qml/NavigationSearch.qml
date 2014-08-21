@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-search-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -44,35 +45,35 @@ HMIMenu {
     }
 
     HMIBgImage {
-        image:StyleSheet.navigation_search_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_search_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
         Text {
-            x:StyleSheet.searchTitle[StyleSheet.X]; y:StyleSheet.searchTitle[StyleSheet.Y]; width:StyleSheet.searchTitle[StyleSheet.WIDTH]; height:StyleSheet.searchTitle[StyleSheet.HEIGHT];color:StyleSheet.searchTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.searchTitle[Constants.X]; y:StyleSheet.searchTitle[Constants.Y]; width:StyleSheet.searchTitle[Constants.WIDTH]; height:StyleSheet.searchTitle[Constants.HEIGHT];color:StyleSheet.searchTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.searchTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             id: searchTitle
             text: Genivi.gettext("SearchMode")
         }
 
-        StdButton { source:StyleSheet.search_by_address[StyleSheet.SOURCE]; x:StyleSheet.search_by_address[StyleSheet.X]; y:StyleSheet.search_by_address[StyleSheet.Y]; width:StyleSheet.search_by_address[StyleSheet.WIDTH]; height:StyleSheet.search_by_address[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.search_by_address[Constants.SOURCE]; x:StyleSheet.search_by_address[Constants.X]; y:StyleSheet.search_by_address[Constants.Y]; width:StyleSheet.search_by_address[Constants.WIDTH]; height:StyleSheet.search_by_address[Constants.HEIGHT];
             id:search_by_address;  explode:false; next:search_by_coordinates; prev:back;
             onClicked: {
                 Genivi.preloadMode=true;
                 pageOpen("NavigationSearchAddress");
             }
         }
-        StdButton { source:StyleSheet.search_by_coordinates[StyleSheet.SOURCE]; x:StyleSheet.search_by_coordinates[StyleSheet.X]; y:StyleSheet.search_by_coordinates[StyleSheet.Y]; width:StyleSheet.search_by_coordinates[StyleSheet.WIDTH]; height:StyleSheet.search_by_coordinates[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.search_by_coordinates[Constants.SOURCE]; x:StyleSheet.search_by_coordinates[Constants.X]; y:StyleSheet.search_by_coordinates[Constants.Y]; width:StyleSheet.search_by_coordinates[Constants.WIDTH]; height:StyleSheet.search_by_coordinates[Constants.HEIGHT];
             id:search_by_coordinates; page:"NavigationSearchCoordinates"; explode:false; next:search_by_poi; prev:search_by_address}
-        StdButton { source:StyleSheet.search_by_poi[StyleSheet.SOURCE]; x:StyleSheet.search_by_poi[StyleSheet.X]; y:StyleSheet.search_by_poi[StyleSheet.Y]; width:StyleSheet.search_by_poi[StyleSheet.WIDTH]; height:StyleSheet.search_by_poi[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.search_by_poi[Constants.SOURCE]; x:StyleSheet.search_by_poi[Constants.X]; y:StyleSheet.search_by_poi[Constants.Y]; width:StyleSheet.search_by_poi[Constants.WIDTH]; height:StyleSheet.search_by_poi[Constants.HEIGHT];
             id:search_by_poi; page:"POI"; explode:false; next:search_by_freetext; prev:search_by_coordinates}
-        StdButton { source:StyleSheet.search_by_freetext[StyleSheet.SOURCE]; x:StyleSheet.search_by_freetext[StyleSheet.X]; y:StyleSheet.search_by_freetext[StyleSheet.Y]; width:StyleSheet.search_by_freetext[StyleSheet.WIDTH]; height:StyleSheet.search_by_freetext[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.search_by_freetext[Constants.SOURCE]; x:StyleSheet.search_by_freetext[Constants.X]; y:StyleSheet.search_by_freetext[Constants.Y]; width:StyleSheet.search_by_freetext[Constants.WIDTH]; height:StyleSheet.search_by_freetext[Constants.HEIGHT];
             id:search_by_freetext; page:"NavigationSearchFreeText"; explode:false; next:history; prev:search_by_poi}
 
-        StdButton { source:StyleSheet.history[StyleSheet.SOURCE]; x:StyleSheet.history[StyleSheet.X]; y:StyleSheet.history[StyleSheet.Y]; width:StyleSheet.history[StyleSheet.WIDTH]; height:StyleSheet.history[StyleSheet.HEIGHT];textColor:StyleSheet.historyText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.historyText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.history[Constants.SOURCE]; x:StyleSheet.history[Constants.X]; y:StyleSheet.history[Constants.Y]; width:StyleSheet.history[Constants.WIDTH]; height:StyleSheet.history[Constants.HEIGHT];textColor:StyleSheet.historyText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.historyText[Constants.PIXELSIZE];
             id:history; text: Genivi.gettext("History"); disabled:false; explode:false; next:back; prev:search_by_freetext; page:"NavigationSearchHistory"}
 
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; next:search_by_address; prev:search_by_freetext; page:"MainMenu";}
     }
 }

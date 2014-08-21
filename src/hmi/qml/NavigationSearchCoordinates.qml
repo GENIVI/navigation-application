@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-search-coordinates-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -52,18 +53,18 @@ HMIMenu {
 
 
     HMIBgImage {
-        image:StyleSheet.navigation_search_by_coordinates_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_search_by_coordinates_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
         Text {
-            x:StyleSheet.latitudeTitle[StyleSheet.X]; y:StyleSheet.latitudeTitle[StyleSheet.Y]; width:StyleSheet.latitudeTitle[StyleSheet.WIDTH]; height:StyleSheet.latitudeTitle[StyleSheet.HEIGHT];color:StyleSheet.latitudeTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.latitudeTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.latitudeTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.latitudeTitle[Constants.X]; y:StyleSheet.latitudeTitle[Constants.Y]; width:StyleSheet.latitudeTitle[Constants.WIDTH]; height:StyleSheet.latitudeTitle[Constants.HEIGHT];color:StyleSheet.latitudeTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.latitudeTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.latitudeTitle[Constants.PIXELSIZE];
             id:latitudeTitle;
             style: Text.Sunken;
             smooth: true;
             text: Genivi.gettext("Latitude");
         }
         EntryField {
-            x:StyleSheet.latitudeValue[StyleSheet.X]; y:StyleSheet.latitudeValue[StyleSheet.Y]; width: StyleSheet.latitudeValue[StyleSheet.WIDTH]; height: StyleSheet.latitudeValue[StyleSheet.HEIGHT];
+            x:StyleSheet.latitudeValue[Constants.X]; y:StyleSheet.latitudeValue[Constants.Y]; width: StyleSheet.latitudeValue[Constants.WIDTH]; height: StyleSheet.latitudeValue[Constants.HEIGHT];
             id: latitudeValue
 			globaldata: 'lat'
 			textfocus: true
@@ -72,14 +73,14 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         Text {
-            x:StyleSheet.longitudeTitle[StyleSheet.X]; y:StyleSheet.longitudeTitle[StyleSheet.Y]; width:StyleSheet.longitudeTitle[StyleSheet.WIDTH]; height:StyleSheet.longitudeTitle[StyleSheet.HEIGHT];color:StyleSheet.longitudeTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.longitudeTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.longitudeTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.longitudeTitle[Constants.X]; y:StyleSheet.longitudeTitle[Constants.Y]; width:StyleSheet.longitudeTitle[Constants.WIDTH]; height:StyleSheet.longitudeTitle[Constants.HEIGHT];color:StyleSheet.longitudeTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.longitudeTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.longitudeTitle[Constants.PIXELSIZE];
             id:longitudeTitle;
             style: Text.Sunken;
             smooth: true;
             text: Genivi.gettext("Longitude");
         }
 		EntryField {
-            x:StyleSheet.longitudeValue[StyleSheet.X]; y:StyleSheet.longitudeValue[StyleSheet.Y]; width: StyleSheet.longitudeValue[StyleSheet.WIDTH]; height: StyleSheet.longitudeValue[StyleSheet.HEIGHT];
+            x:StyleSheet.longitudeValue[Constants.X]; y:StyleSheet.longitudeValue[Constants.Y]; width: StyleSheet.longitudeValue[Constants.WIDTH]; height: StyleSheet.longitudeValue[Constants.HEIGHT];
             id: longitudeValue
 			globaldata: 'lon'
 			next: ok
@@ -87,7 +88,7 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         StdButton {
-            source:StyleSheet.ok[StyleSheet.SOURCE]; x:StyleSheet.ok[StyleSheet.X]; y:StyleSheet.ok[StyleSheet.Y]; width:StyleSheet.ok[StyleSheet.WIDTH]; height:StyleSheet.ok[StyleSheet.HEIGHT];textColor:StyleSheet.okText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.okText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.ok[Constants.SOURCE]; x:StyleSheet.ok[Constants.X]; y:StyleSheet.ok[Constants.Y]; width:StyleSheet.ok[Constants.WIDTH]; height:StyleSheet.ok[Constants.HEIGHT];textColor:StyleSheet.okText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.okText[Constants.PIXELSIZE];
             id:ok
             next:back
             prev:longitudeValue
@@ -101,7 +102,7 @@ HMIMenu {
             }
         }
         StdButton {
-            source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; next:latitudeValue; prev:ok;
             onClicked:{
                 Genivi.data['lat']='';

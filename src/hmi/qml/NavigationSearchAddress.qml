@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-search-address-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -216,19 +217,19 @@ HMIMenu {
     }
 
     HMIBgImage {
-        image:StyleSheet.navigation_search_by_address_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_search_by_address_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
         id: content
 
         Text {
-            x:StyleSheet.countryTitle[StyleSheet.X]; y:StyleSheet.countryTitle[StyleSheet.Y]; width:StyleSheet.countryTitle[StyleSheet.WIDTH]; height:StyleSheet.countryTitle[StyleSheet.HEIGHT];color:StyleSheet.countryTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.countryTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.countryTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.countryTitle[Constants.X]; y:StyleSheet.countryTitle[Constants.Y]; width:StyleSheet.countryTitle[Constants.WIDTH]; height:StyleSheet.countryTitle[Constants.HEIGHT];color:StyleSheet.countryTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.countryTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.countryTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true;
             id: countryTitle
             text: Genivi.gettext("Country");
         }
         EntryField {
-            x:StyleSheet.countryValue[StyleSheet.X]; y:StyleSheet.countryValue[StyleSheet.Y]; width: StyleSheet.countryValue[StyleSheet.WIDTH]; height: StyleSheet.countryValue[StyleSheet.HEIGHT];
+            x:StyleSheet.countryValue[Constants.X]; y:StyleSheet.countryValue[Constants.Y]; width: StyleSheet.countryValue[Constants.WIDTH]; height: StyleSheet.countryValue[Constants.HEIGHT];
             id: countryValue
 			criterion: Genivi.NAVIGATIONCORE_COUNTRY
             globaldata: 'countryValue'
@@ -238,14 +239,14 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         Text {
-            x:StyleSheet.streetTitle[StyleSheet.X]; y:StyleSheet.streetTitle[StyleSheet.Y]; width:StyleSheet.streetTitle[StyleSheet.WIDTH]; height:StyleSheet.streetTitle[StyleSheet.HEIGHT];color:StyleSheet.streetTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.streetTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.streetTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.streetTitle[Constants.X]; y:StyleSheet.streetTitle[Constants.Y]; width:StyleSheet.streetTitle[Constants.WIDTH]; height:StyleSheet.streetTitle[Constants.HEIGHT];color:StyleSheet.streetTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.streetTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.streetTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true;
             id:streetTitle
             text: Genivi.gettext("Street");
         }
 		EntryField {
-            x:StyleSheet.streetValue[StyleSheet.X]; y:StyleSheet.streetValue[StyleSheet.Y]; width: StyleSheet.streetValue[StyleSheet.WIDTH]; height: StyleSheet.streetValue[StyleSheet.HEIGHT];
+            x:StyleSheet.streetValue[Constants.X]; y:StyleSheet.streetValue[Constants.Y]; width: StyleSheet.streetValue[Constants.WIDTH]; height: StyleSheet.streetValue[Constants.HEIGHT];
             id:streetValue
 			criterion: Genivi.NAVIGATIONCORE_STREET
             globaldata: 'streetValue'
@@ -255,14 +256,14 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         Text {
-            x:StyleSheet.cityTitle[StyleSheet.X]; y:StyleSheet.cityTitle[StyleSheet.Y]; width:StyleSheet.cityTitle[StyleSheet.WIDTH]; height:StyleSheet.cityTitle[StyleSheet.HEIGHT];color:StyleSheet.cityTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.cityTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.cityTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.cityTitle[Constants.X]; y:StyleSheet.cityTitle[Constants.Y]; width:StyleSheet.cityTitle[Constants.WIDTH]; height:StyleSheet.cityTitle[Constants.HEIGHT];color:StyleSheet.cityTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.cityTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.cityTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true;
             id:cityTitle
             text: Genivi.gettext("City");
         }
         EntryField {
-            x:StyleSheet.cityValue[StyleSheet.X]; y:StyleSheet.cityValue[StyleSheet.Y]; width: StyleSheet.cityValue[StyleSheet.WIDTH]; height: StyleSheet.cityValue[StyleSheet.HEIGHT];
+            x:StyleSheet.cityValue[Constants.X]; y:StyleSheet.cityValue[Constants.Y]; width: StyleSheet.cityValue[Constants.WIDTH]; height: StyleSheet.cityValue[Constants.HEIGHT];
             id:cityValue
 			criterion: Genivi.NAVIGATIONCORE_CITY
             globaldata: 'cityValue'
@@ -272,14 +273,14 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
         Text {
-            x:StyleSheet.numberTitle[StyleSheet.X]; y:StyleSheet.numberTitle[StyleSheet.Y]; width:StyleSheet.numberTitle[StyleSheet.WIDTH]; height:StyleSheet.numberTitle[StyleSheet.HEIGHT];color:StyleSheet.numberTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.numberTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.numberTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.numberTitle[Constants.X]; y:StyleSheet.numberTitle[Constants.Y]; width:StyleSheet.numberTitle[Constants.WIDTH]; height:StyleSheet.numberTitle[Constants.HEIGHT];color:StyleSheet.numberTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.numberTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.numberTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true;
             id:numberTitle
             text: Genivi.gettext("Number");
         }
         EntryField {
-            x:StyleSheet.numberValue[StyleSheet.X]; y:StyleSheet.numberValue[StyleSheet.Y]; width: StyleSheet.numberValue[StyleSheet.WIDTH]; height: StyleSheet.numberValue[StyleSheet.HEIGHT];
+            x:StyleSheet.numberValue[Constants.X]; y:StyleSheet.numberValue[Constants.Y]; width: StyleSheet.numberValue[Constants.WIDTH]; height: StyleSheet.numberValue[Constants.HEIGHT];
             id:numberValue
 			criterion: Genivi.NAVIGATIONCORE_HOUSENUMBER
             globaldata: 'numberValue'
@@ -289,7 +290,7 @@ HMIMenu {
 			onLeave:{menu.leave(0)}
 		}
 
-        StdButton { source:StyleSheet.ok[StyleSheet.SOURCE]; x:StyleSheet.ok[StyleSheet.X]; y:StyleSheet.ok[StyleSheet.Y]; width:StyleSheet.ok[StyleSheet.WIDTH]; height:StyleSheet.ok[StyleSheet.HEIGHT];textColor:StyleSheet.okText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.okText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.ok[Constants.SOURCE]; x:StyleSheet.ok[Constants.X]; y:StyleSheet.ok[Constants.Y]; width:StyleSheet.ok[Constants.WIDTH]; height:StyleSheet.ok[Constants.HEIGHT];textColor:StyleSheet.okText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.okText[Constants.PIXELSIZE];
             id:ok
             next:back
             prev:numberValue
@@ -317,7 +318,7 @@ HMIMenu {
             }
         }
 
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; next:countryValue; prev:ok;
             onClicked:{leave(1); pageOpen("NavigationSearch");}
         }

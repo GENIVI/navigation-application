@@ -49,7 +49,7 @@ def get_js_header():
 def generate_style_image_layer(layer):
 	layer_name=layer.name
 	return_list = []
-	# format name for the object (replace - with _ )
+	# format name for the object (replace - with _ ), dash is prohibited in qml
 	object_name = string.replace(layer_name, '-', '_')
 	str = 'var '+object_name+'=new Object;'
 	return_list.append(str)
@@ -71,6 +71,8 @@ def generate_style_image_layer(layer):
 def generate_style_text_layer(layer):
 	object_name=layer.name
 	return_list = []
+	# format name for the object (replace - with _ ), dash is prohibited in qml
+	object_name = string.replace(object_name, '-', '_')
 	str = 'var '+object_name+'=new Object;'
 	return_list.append(str)
 	str = object_name+'[X]='+"%d"%layer.offsets[0]+';'

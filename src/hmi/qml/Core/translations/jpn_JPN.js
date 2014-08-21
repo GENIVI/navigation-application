@@ -107,15 +107,24 @@ translations["Entry"]="文字入力";
 //NavigationBrowseMap
 translations["NavigationBrowseMap"]="地図を調べる";
 translations["NavigationCurrentStreet"]="現在地";
-translations["Night"]="NIGHT";
-translations["Day"]="DAY";
+translations["FSAWarning"]="Destination not reached";
+translations["NoGuidance"]="No guidance";
+translations["NoManeuver"]="No maneuver";
+
+//CameraSettings
 translations["North"]="北緯";
 translations["South"]="南緯";
 translations["East"]="東経";
 translations["West"]="西経";
-translations["CameraTilt"]="TILT";
-translations["CameraHeight"]="HEIGHT";
-translations["CameraDistance"]="DISTANCE";
+translations["CameraTilt"]="Tilt";
+translations["CameraHeight"]="Height";
+translations["CameraDistance"]="Dist";
+translations["CameraPerspective3d"]="3d";
+translations["CameraPerspective2d"]="2d";
+translations["Split"]="Sp";
+translations["Join"]="Jo";
+translations["Day"]="Da";
+translations["Night"]="Ni";
 
 //NavigationManeuversList
 translations["NavigationManeuversList"]="操作表示";
@@ -143,6 +152,7 @@ translations["Ok"]="OK";
 translations["On"]="ON";
 translations["Off"]="OFF";
 translations["Back"]="BACK";
+translations["Menu"]="MENU";
 translations["Quit"]="QUIT";
 
 

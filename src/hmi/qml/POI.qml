@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/fsa-poi-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -46,24 +47,24 @@ HMIMenu {
         selectedStationValue.text="See details of \nthe station \nhere"
     }
     HMIBgImage {
-        image:StyleSheet.fsa_poi_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.fsa_poi_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight }
 		Text {
-            x:StyleSheet.searchResultTitle[StyleSheet.X]; y:StyleSheet.searchResultTitle[StyleSheet.Y]; width:StyleSheet.searchResultTitle[StyleSheet.WIDTH]; height:StyleSheet.searchResultTitle[StyleSheet.HEIGHT];color:StyleSheet.searchResultTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchResultTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.searchResultTitle[Constants.X]; y:StyleSheet.searchResultTitle[Constants.Y]; width:StyleSheet.searchResultTitle[Constants.WIDTH]; height:StyleSheet.searchResultTitle[Constants.HEIGHT];color:StyleSheet.searchResultTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.searchResultTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultTitle[Constants.PIXELSIZE];
             id:searchResultTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("SearchResult")
 	   	}
 		Text {
-            x:StyleSheet.selectedStationTitle[StyleSheet.X]; y:StyleSheet.selectedStationTitle[StyleSheet.Y]; width:StyleSheet.selectedStationTitle[StyleSheet.WIDTH]; height:StyleSheet.selectedStationTitle[StyleSheet.HEIGHT];color:StyleSheet.selectedStationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.selectedStationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.selectedStationTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.selectedStationTitle[Constants.X]; y:StyleSheet.selectedStationTitle[Constants.Y]; width:StyleSheet.selectedStationTitle[Constants.WIDTH]; height:StyleSheet.selectedStationTitle[Constants.HEIGHT];color:StyleSheet.selectedStationTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.selectedStationTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.selectedStationTitle[Constants.PIXELSIZE];
             id:selectedStationTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("SelectedStation")
 	   	}
 		Text {
-            x:StyleSheet.selectedStationValue[StyleSheet.X]; y:StyleSheet.selectedStationValue[StyleSheet.Y]; width:StyleSheet.selectedStationValue[StyleSheet.WIDTH]; height:StyleSheet.selectedStationValue[StyleSheet.HEIGHT];color:StyleSheet.selectedStationValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.selectedStationValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.selectedStationValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.selectedStationValue[Constants.X]; y:StyleSheet.selectedStationValue[Constants.Y]; width:StyleSheet.selectedStationValue[Constants.WIDTH]; height:StyleSheet.selectedStationValue[Constants.HEIGHT];color:StyleSheet.selectedStationValue[Constants.TEXTCOLOR];styleColor:StyleSheet.selectedStationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.selectedStationValue[Constants.PIXELSIZE];
             id:selectedStationValue
             style: Text.Sunken;
             smooth: true
@@ -73,7 +74,7 @@ HMIMenu {
 		Component {
             id: searchResultList
             Text {
-                x:StyleSheet.searchResultValue[StyleSheet.X]; y:StyleSheet.searchResultValue[StyleSheet.Y]; width:StyleSheet.searchResultValue[StyleSheet.WIDTH]; height:StyleSheet.searchResultValue[StyleSheet.HEIGHT];color:StyleSheet.searchResultValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchResultValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultValue[StyleSheet.PIXELSIZE];
+                x:StyleSheet.searchResultValue[Constants.X]; y:StyleSheet.searchResultValue[Constants.Y]; width:StyleSheet.searchResultValue[Constants.WIDTH]; height:StyleSheet.searchResultValue[Constants.HEIGHT];color:StyleSheet.searchResultValue[Constants.TEXTCOLOR];styleColor:StyleSheet.searchResultValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultValue[Constants.PIXELSIZE];
                 id:searchResultValue;
 				property real index:number;
 				text: name;
@@ -82,7 +83,7 @@ HMIMenu {
 			}
 		}
 		HMIList {
-            x:StyleSheet.searchResultList[StyleSheet.X]; y:StyleSheet.searchResultList[StyleSheet.Y]; width:StyleSheet.searchResultList[StyleSheet.WIDTH]; height:StyleSheet.searchResultList[StyleSheet.HEIGHT];
+            x:StyleSheet.searchResultList[Constants.X]; y:StyleSheet.searchResultList[Constants.Y]; width:StyleSheet.searchResultList[Constants.WIDTH]; height:StyleSheet.searchResultList[Constants.HEIGHT];
 			property real selectedEntry
 			id:view
             delegate: searchResultList
@@ -104,7 +105,7 @@ HMIMenu {
 			}
 		}
 		StdButton { 
-            source:StyleSheet.select_search_for_refill[StyleSheet.SOURCE]; x:StyleSheet.select_search_for_refill[StyleSheet.X]; y:StyleSheet.select_search_for_refill[StyleSheet.Y]; width:StyleSheet.select_search_for_refill[StyleSheet.WIDTH]; height:StyleSheet.select_search_for_refill[StyleSheet.HEIGHT];
+            source:StyleSheet.select_search_for_refill[Constants.SOURCE]; x:StyleSheet.select_search_for_refill[Constants.X]; y:StyleSheet.select_search_for_refill[Constants.Y]; width:StyleSheet.select_search_for_refill[Constants.WIDTH]; height:StyleSheet.select_search_for_refill[Constants.HEIGHT];
             id:select_search_for_refill
 			explode: false
 			onClicked: {
@@ -158,14 +159,14 @@ HMIMenu {
 			}
 		}
 		Text {
-            x:StyleSheet.searchTitle[StyleSheet.X]; y:StyleSheet.searchTitle[StyleSheet.Y]; width:StyleSheet.searchTitle[StyleSheet.WIDTH]; height:StyleSheet.searchTitle[StyleSheet.HEIGHT];color:StyleSheet.searchTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.searchTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.searchTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.searchTitle[Constants.X]; y:StyleSheet.searchTitle[Constants.Y]; width:StyleSheet.searchTitle[Constants.WIDTH]; height:StyleSheet.searchTitle[Constants.HEIGHT];color:StyleSheet.searchTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.searchTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchTitle[Constants.PIXELSIZE];
             id:searchTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("SearchForPOI")
         }
 		StdButton { 
-            source:StyleSheet.select_reroute[StyleSheet.SOURCE]; x:StyleSheet.select_reroute[StyleSheet.X]; y:StyleSheet.select_reroute[StyleSheet.Y]; width:StyleSheet.select_reroute[StyleSheet.WIDTH]; height:StyleSheet.select_reroute[StyleSheet.HEIGHT];
+            source:StyleSheet.select_reroute[Constants.SOURCE]; x:StyleSheet.select_reroute[Constants.X]; y:StyleSheet.select_reroute[Constants.Y]; width:StyleSheet.select_reroute[Constants.WIDTH]; height:StyleSheet.select_reroute[Constants.HEIGHT];
             id:select_reroute;
             explode:false;
 	    disabled:true;
@@ -181,14 +182,14 @@ HMIMenu {
 			}
 		}
 		Text {
-            x:StyleSheet.rerouteTitle[StyleSheet.X]; y:StyleSheet.rerouteTitle[StyleSheet.Y]; width:StyleSheet.rerouteTitle[StyleSheet.WIDTH]; height:StyleSheet.rerouteTitle[StyleSheet.HEIGHT];color:StyleSheet.rerouteTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.rerouteTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.rerouteTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.rerouteTitle[Constants.X]; y:StyleSheet.rerouteTitle[Constants.Y]; width:StyleSheet.rerouteTitle[Constants.WIDTH]; height:StyleSheet.rerouteTitle[Constants.HEIGHT];color:StyleSheet.rerouteTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.rerouteTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.rerouteTitle[Constants.PIXELSIZE];
             id:rerouteTitle;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Reroute")
         }
         StdButton {
-            source:StyleSheet.select_display_on_map[StyleSheet.SOURCE]; x:StyleSheet.select_display_on_map[StyleSheet.X]; y:StyleSheet.select_display_on_map[StyleSheet.Y]; width:StyleSheet.select_display_on_map[StyleSheet.WIDTH]; height:StyleSheet.select_display_on_map[StyleSheet.HEIGHT];
+            source:StyleSheet.select_display_on_map[Constants.SOURCE]; x:StyleSheet.select_display_on_map[Constants.X]; y:StyleSheet.select_display_on_map[Constants.Y]; width:StyleSheet.select_display_on_map[Constants.WIDTH]; height:StyleSheet.select_display_on_map[Constants.HEIGHT];
             id:select_display_on_map;
             explode:false;
 	    disabled:true;
@@ -203,14 +204,14 @@ HMIMenu {
 			}
 		}
 		Text {
-            x:StyleSheet.displayTitle[StyleSheet.X]; y:StyleSheet.displayTitle[StyleSheet.Y]; width:StyleSheet.displayTitle[StyleSheet.WIDTH]; height:StyleSheet.displayTitle[StyleSheet.HEIGHT];color:StyleSheet.displayTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.displayTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.displayTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.displayTitle[Constants.X]; y:StyleSheet.displayTitle[Constants.Y]; width:StyleSheet.displayTitle[Constants.WIDTH]; height:StyleSheet.displayTitle[Constants.HEIGHT];color:StyleSheet.displayTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.displayTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.displayTitle[Constants.PIXELSIZE];
             id:displayTitle;
             style: Text.Sunken;
             smooth: true;
             text: Genivi.gettext("DisplayPOI")
         }
         StdButton {
-            source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+            source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back;
 			text: Genivi.gettext("Back"); 
 			disabled:false; 

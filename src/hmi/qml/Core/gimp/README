@@ -2,13 +2,14 @@ How to generate a new style sheet (draft)
 NB: don't change the layer names of the xcf files
 Gimp version tested: 2.8
 To load the script in python:
+exit Gimp
 sudo cp generate-style-sheet.py /usr/lib/gimp/2.0/plug-ins
 sudo chmod +x /usr/lib/gimp/2.0/plug-ins/generate-style-sheet.py
 
 For the time being, there's no batch so you need to open each xcf file
 To generate a style sheet and the images:
 Genivi/Generate style sheet
-Choose the target (qml/Core)
+Choose the target (must be qml/Core)
 Press OK
 NB: No test banner by default, so, into style-constants.js the value is set to 0
 var MENU_BANNER_HEIGHT = 0; 

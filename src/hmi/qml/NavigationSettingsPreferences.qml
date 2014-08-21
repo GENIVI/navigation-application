@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-settings-preference-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 import lbs.plugin.preference 1.0
@@ -155,10 +156,10 @@ HMIMenu {
 
 	HMIBgImage {
 		id: content
-        image:StyleSheet.navigation_settings_preference_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_settings_preference_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 		Text {
-            x:StyleSheet.costModelTitle[StyleSheet.X]; y:StyleSheet.costModelTitle[StyleSheet.Y]; width:StyleSheet.costModelTitle[StyleSheet.WIDTH]; height:StyleSheet.costModelTitle[StyleSheet.HEIGHT];color:StyleSheet.costModelTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.costModelTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.costModelTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.costModelTitle[Constants.X]; y:StyleSheet.costModelTitle[Constants.Y]; width:StyleSheet.costModelTitle[Constants.WIDTH]; height:StyleSheet.costModelTitle[Constants.HEIGHT];color:StyleSheet.costModelTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.costModelTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.costModelTitle[Constants.PIXELSIZE];
             id:costModelTitle;
             style: Text.Sunken;
             smooth: true
@@ -166,7 +167,7 @@ HMIMenu {
         }
 
 		Text {
-            x:StyleSheet.routingPreferencesTitle[StyleSheet.X]; y:StyleSheet.routingPreferencesTitle[StyleSheet.Y]; width:StyleSheet.routingPreferencesTitle[StyleSheet.WIDTH]; height:StyleSheet.routingPreferencesTitle[StyleSheet.HEIGHT];color:StyleSheet.routingPreferencesTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.routingPreferencesTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.routingPreferencesTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.routingPreferencesTitle[Constants.X]; y:StyleSheet.routingPreferencesTitle[Constants.Y]; width:StyleSheet.routingPreferencesTitle[Constants.WIDTH]; height:StyleSheet.routingPreferencesTitle[Constants.HEIGHT];color:StyleSheet.routingPreferencesTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.routingPreferencesTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.routingPreferencesTitle[Constants.PIXELSIZE];
             id:routingPreferencesTitle;
             style: Text.Sunken;
             smooth: true
@@ -174,42 +175,42 @@ HMIMenu {
         }
 
 		Text {
-            x:StyleSheet.ferriesText[StyleSheet.X]; y:StyleSheet.ferriesText[StyleSheet.Y]; width:StyleSheet.ferriesText[StyleSheet.WIDTH]; height:StyleSheet.ferriesText[StyleSheet.HEIGHT];color:StyleSheet.ferriesText[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.ferriesText[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.ferriesText[StyleSheet.PIXELSIZE];
+            x:StyleSheet.ferriesText[Constants.X]; y:StyleSheet.ferriesText[Constants.Y]; width:StyleSheet.ferriesText[Constants.WIDTH]; height:StyleSheet.ferriesText[Constants.HEIGHT];color:StyleSheet.ferriesText[Constants.TEXTCOLOR];styleColor:StyleSheet.ferriesText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.ferriesText[Constants.PIXELSIZE];
             id: ferriesText;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Ferries")
         }
-        StdButton { source:StyleSheet.allow_ferries[StyleSheet.SOURCE]; x:StyleSheet.allow_ferries[StyleSheet.X]; y:StyleSheet.allow_ferries[StyleSheet.Y]; width:StyleSheet.allow_ferries[StyleSheet.WIDTH]; height:StyleSheet.allow_ferries[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.allow_ferries[Constants.SOURCE]; x:StyleSheet.allow_ferries[Constants.X]; y:StyleSheet.allow_ferries[Constants.Y]; width:StyleSheet.allow_ferries[Constants.WIDTH]; height:StyleSheet.allow_ferries[Constants.HEIGHT];
             id:ferries_yes; next:back; prev:back; explode:false; onClicked:{remove(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_FERRY)}}
-        StdButton { source:StyleSheet.avoid_ferries[StyleSheet.SOURCE]; x:StyleSheet.avoid_ferries[StyleSheet.X]; y:StyleSheet.avoid_ferries[StyleSheet.Y]; width:StyleSheet.avoid_ferries[StyleSheet.WIDTH]; height:StyleSheet.avoid_ferries[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.avoid_ferries[Constants.SOURCE]; x:StyleSheet.avoid_ferries[Constants.X]; y:StyleSheet.avoid_ferries[Constants.Y]; width:StyleSheet.avoid_ferries[Constants.WIDTH]; height:StyleSheet.avoid_ferries[Constants.HEIGHT];
             id:ferries_no; next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_FERRY)}}
 
 		Text {
-            x:StyleSheet.tollRoadsText[StyleSheet.X]; y:StyleSheet.tollRoadsText[StyleSheet.Y]; width:StyleSheet.tollRoadsText[StyleSheet.WIDTH]; height:StyleSheet.tollRoadsText[StyleSheet.HEIGHT];color:StyleSheet.tollRoadsText[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.tollRoadsText[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.tollRoadsText[StyleSheet.PIXELSIZE];
+            x:StyleSheet.tollRoadsText[Constants.X]; y:StyleSheet.tollRoadsText[Constants.Y]; width:StyleSheet.tollRoadsText[Constants.WIDTH]; height:StyleSheet.tollRoadsText[Constants.HEIGHT];color:StyleSheet.tollRoadsText[Constants.TEXTCOLOR];styleColor:StyleSheet.tollRoadsText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tollRoadsText[Constants.PIXELSIZE];
             id: tollRoadsText;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("TollRoads")
         }
-        StdButton { source:StyleSheet.allow_tollRoads[StyleSheet.SOURCE]; x:StyleSheet.allow_tollRoads[StyleSheet.X]; y:StyleSheet.allow_tollRoads[StyleSheet.Y]; width:StyleSheet.allow_tollRoads[StyleSheet.WIDTH]; height:StyleSheet.allow_tollRoads[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.allow_tollRoads[Constants.SOURCE]; x:StyleSheet.allow_tollRoads[Constants.X]; y:StyleSheet.allow_tollRoads[Constants.Y]; width:StyleSheet.allow_tollRoads[Constants.WIDTH]; height:StyleSheet.allow_tollRoads[Constants.HEIGHT];
             id:toll_roads_yes; next:back; prev:back; explode:false; onClicked:{remove(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
-        StdButton { source:StyleSheet.avoid_tollRoads[StyleSheet.SOURCE]; x:StyleSheet.avoid_tollRoads[StyleSheet.X]; y:StyleSheet.avoid_tollRoads[StyleSheet.Y]; width:StyleSheet.avoid_tollRoads[StyleSheet.WIDTH]; height:StyleSheet.avoid_tollRoads[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.avoid_tollRoads[Constants.SOURCE]; x:StyleSheet.avoid_tollRoads[Constants.X]; y:StyleSheet.avoid_tollRoads[Constants.Y]; width:StyleSheet.avoid_tollRoads[Constants.WIDTH]; height:StyleSheet.avoid_tollRoads[Constants.HEIGHT];
             id:toll_roads_no;  next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
 
 		Text {
-            x:StyleSheet.motorWaysText[StyleSheet.X]; y:StyleSheet.motorWaysText[StyleSheet.Y]; width:StyleSheet.motorWaysText[StyleSheet.WIDTH]; height:StyleSheet.motorWaysText[StyleSheet.HEIGHT];color:StyleSheet.motorWaysText[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.motorWaysText[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.motorWaysText[StyleSheet.PIXELSIZE];
+            x:StyleSheet.motorWaysText[Constants.X]; y:StyleSheet.motorWaysText[Constants.Y]; width:StyleSheet.motorWaysText[Constants.WIDTH]; height:StyleSheet.motorWaysText[Constants.HEIGHT];color:StyleSheet.motorWaysText[Constants.TEXTCOLOR];styleColor:StyleSheet.motorWaysText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.motorWaysText[Constants.PIXELSIZE];
             id:motorWaysText;
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("MotorWays")
         }
-        StdButton { source:StyleSheet.allow_motorways[StyleSheet.SOURCE]; x:StyleSheet.allow_motorways[StyleSheet.X]; y:StyleSheet.allow_motorways[StyleSheet.Y]; width:StyleSheet.allow_motorways[StyleSheet.WIDTH]; height:StyleSheet.allow_motorways[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.allow_motorways[Constants.SOURCE]; x:StyleSheet.allow_motorways[Constants.X]; y:StyleSheet.allow_motorways[Constants.Y]; width:StyleSheet.allow_motorways[Constants.WIDTH]; height:StyleSheet.allow_motorways[Constants.HEIGHT];
             id:motorways_yes; next:back; prev:back; explode:false; onClicked:{remove(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
-        StdButton { source:StyleSheet.avoid_motorways[StyleSheet.SOURCE]; x:StyleSheet.avoid_motorways[StyleSheet.X]; y:StyleSheet.avoid_motorways[StyleSheet.Y]; width:StyleSheet.avoid_motorways[StyleSheet.WIDTH]; height:StyleSheet.avoid_motorways[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.avoid_motorways[Constants.SOURCE]; x:StyleSheet.avoid_motorways[Constants.X]; y:StyleSheet.avoid_motorways[Constants.Y]; width:StyleSheet.avoid_motorways[Constants.WIDTH]; height:StyleSheet.avoid_motorways[Constants.HEIGHT];
             id:motorways_no;  next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
 
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
 
 	}

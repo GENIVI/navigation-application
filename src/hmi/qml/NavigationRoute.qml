@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-route-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -103,11 +104,11 @@ HMIMenu {
     }
 
     HMIBgImage {
-        image:StyleSheet.navigation_route_menu_background[StyleSheet.SOURCE];
+        image:StyleSheet.navigation_route_menu_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
 
         Text {
-            x:StyleSheet.locationTitle[StyleSheet.X]; y:StyleSheet.locationTitle[StyleSheet.Y]; width:StyleSheet.locationTitle[StyleSheet.WIDTH]; height:StyleSheet.locationTitle[StyleSheet.HEIGHT];color:StyleSheet.locationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.locationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.locationTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.locationTitle[Constants.X]; y:StyleSheet.locationTitle[Constants.Y]; width:StyleSheet.locationTitle[Constants.WIDTH]; height:StyleSheet.locationTitle[Constants.HEIGHT];color:StyleSheet.locationTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.locationTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.locationTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             id:locationTitle
@@ -115,7 +116,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.locationValue[StyleSheet.X]; y:StyleSheet.locationValue[StyleSheet.Y]; width:StyleSheet.locationValue[StyleSheet.WIDTH]; height:StyleSheet.locationValue[StyleSheet.HEIGHT];color:StyleSheet.locationValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.locationValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.locationValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.locationValue[Constants.X]; y:StyleSheet.locationValue[Constants.Y]; width:StyleSheet.locationValue[Constants.WIDTH]; height:StyleSheet.locationValue[Constants.HEIGHT];color:StyleSheet.locationValue[Constants.TEXTCOLOR];styleColor:StyleSheet.locationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.locationValue[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             wrapMode: Text.WordWrap
@@ -123,7 +124,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.positionTitle[StyleSheet.X]; y:StyleSheet.positionTitle[StyleSheet.Y]; width:StyleSheet.positionTitle[StyleSheet.WIDTH]; height:StyleSheet.positionTitle[StyleSheet.HEIGHT];color:StyleSheet.positionTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.positionTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.positionTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.positionTitle[Constants.X]; y:StyleSheet.positionTitle[Constants.Y]; width:StyleSheet.positionTitle[Constants.WIDTH]; height:StyleSheet.positionTitle[Constants.HEIGHT];color:StyleSheet.positionTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.positionTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.positionTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             id:positionTitle
@@ -131,7 +132,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.positionValue[StyleSheet.X]; y:StyleSheet.positionValue[StyleSheet.Y]; width:StyleSheet.positionValue[StyleSheet.WIDTH]; height:StyleSheet.positionValue[StyleSheet.HEIGHT];color:StyleSheet.positionValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.positionValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.positionValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.positionValue[Constants.X]; y:StyleSheet.positionValue[Constants.Y]; width:StyleSheet.positionValue[Constants.WIDTH]; height:StyleSheet.positionValue[Constants.HEIGHT];color:StyleSheet.positionValue[Constants.TEXTCOLOR];styleColor:StyleSheet.positionValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.positionValue[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             wrapMode: Text.WordWrap
@@ -139,7 +140,7 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.destinationTitle[StyleSheet.X]; y:StyleSheet.destinationTitle[StyleSheet.Y]; width:StyleSheet.destinationTitle[StyleSheet.WIDTH]; height:StyleSheet.destinationTitle[StyleSheet.HEIGHT];color:StyleSheet.destinationTitle[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.destinationTitle[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.destinationTitle[StyleSheet.PIXELSIZE];
+            x:StyleSheet.destinationTitle[Constants.X]; y:StyleSheet.destinationTitle[Constants.Y]; width:StyleSheet.destinationTitle[Constants.WIDTH]; height:StyleSheet.destinationTitle[Constants.HEIGHT];color:StyleSheet.destinationTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.destinationTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.destinationTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             id:destinationTitle
@@ -147,14 +148,14 @@ HMIMenu {
         }
 
         Text {
-            x:StyleSheet.destinationValue[StyleSheet.X]; y:StyleSheet.destinationValue[StyleSheet.Y]; width:StyleSheet.destinationValue[StyleSheet.WIDTH]; height:StyleSheet.destinationValue[StyleSheet.HEIGHT];color:StyleSheet.destinationValue[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.destinationValue[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.destinationValue[StyleSheet.PIXELSIZE];
+            x:StyleSheet.destinationValue[Constants.X]; y:StyleSheet.destinationValue[Constants.Y]; width:StyleSheet.destinationValue[Constants.WIDTH]; height:StyleSheet.destinationValue[Constants.HEIGHT];color:StyleSheet.destinationValue[Constants.TEXTCOLOR];styleColor:StyleSheet.destinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.destinationValue[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
             wrapMode: Text.WordWrap
             id:destinationValue
         }
 
-        StdButton { source:StyleSheet.show_location_on_map[StyleSheet.SOURCE]; x:StyleSheet.show_location_on_map[StyleSheet.X]; y:StyleSheet.show_location_on_map[StyleSheet.Y]; width:StyleSheet.show_location_on_map[StyleSheet.WIDTH]; height:StyleSheet.show_location_on_map[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.show_location_on_map[Constants.SOURCE]; x:StyleSheet.show_location_on_map[Constants.X]; y:StyleSheet.show_location_on_map[Constants.Y]; width:StyleSheet.show_location_on_map[Constants.WIDTH]; height:StyleSheet.show_location_on_map[Constants.HEIGHT];
             id:show; disabled:false; next:destination; prev:back; explode:false;
             onClicked: {
                 Genivi.data['show_position']=new Array;
@@ -166,7 +167,7 @@ HMIMenu {
             }
         }
 
-        StdButton { source:StyleSheet.set_as_position[StyleSheet.SOURCE]; x:StyleSheet.set_as_position[StyleSheet.X]; y:StyleSheet.set_as_position[StyleSheet.Y]; width:StyleSheet.set_as_position[StyleSheet.WIDTH]; height:StyleSheet.set_as_position[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.set_as_position[Constants.SOURCE]; x:StyleSheet.set_as_position[Constants.X]; y:StyleSheet.set_as_position[Constants.Y]; width:StyleSheet.set_as_position[Constants.WIDTH]; height:StyleSheet.set_as_position[Constants.HEIGHT];
             id:position; disabled:false; next:calculate; prev:destination; explode:false;
             onClicked: {
                 Genivi.data['position']=new Array;
@@ -179,7 +180,7 @@ HMIMenu {
             }
         }
 
-        StdButton { source:StyleSheet.set_as_destination[StyleSheet.SOURCE]; x:StyleSheet.set_as_destination[StyleSheet.X]; y:StyleSheet.set_as_destination[StyleSheet.Y]; width:StyleSheet.set_as_destination[StyleSheet.WIDTH]; height:StyleSheet.set_as_destination[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.set_as_destination[Constants.SOURCE]; x:StyleSheet.set_as_destination[Constants.X]; y:StyleSheet.set_as_destination[Constants.Y]; width:StyleSheet.set_as_destination[Constants.WIDTH]; height:StyleSheet.set_as_destination[Constants.HEIGHT];
             id:destination; disabled:false; next:position; prev:show; explode:false;
              onClicked: {
                 Genivi.data['destination']=new Array;
@@ -193,7 +194,7 @@ HMIMenu {
             }
         }
 
-        StdButton { source:StyleSheet.route[StyleSheet.SOURCE]; x:StyleSheet.route[StyleSheet.X]; y:StyleSheet.route[StyleSheet.Y]; width:StyleSheet.route[StyleSheet.WIDTH]; height:StyleSheet.route[StyleSheet.HEIGHT];textColor:StyleSheet.routeText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.routeText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.route[Constants.SOURCE]; x:StyleSheet.route[Constants.X]; y:StyleSheet.route[Constants.Y]; width:StyleSheet.route[Constants.WIDTH]; height:StyleSheet.route[Constants.HEIGHT];textColor:StyleSheet.routeText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.routeText[Constants.PIXELSIZE];
             id:calculate; text: Genivi.gettext("Route"); explode:false;
             onClicked: {
                 var dest=latlon_to_map(Genivi.data['destination']);
@@ -208,7 +209,7 @@ HMIMenu {
             disabled:!(Genivi.data['position'] && Genivi.data['destination']); next:calculate_curr; prev:position
         }
 
-        StdButton { source:StyleSheet.calculate_curr[StyleSheet.SOURCE]; x:StyleSheet.calculate_curr[StyleSheet.X]; y:StyleSheet.calculate_curr[StyleSheet.Y]; width:StyleSheet.calculate_curr[StyleSheet.WIDTH]; height:StyleSheet.calculate_curr[StyleSheet.HEIGHT];textColor:StyleSheet.calculate_currText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
             id:calculate_curr; text: Genivi.gettext("GoTo"); explode:false;
             onClicked: {
                 var dest=latlon_to_map(Genivi.data['destination']);
@@ -222,7 +223,7 @@ HMIMenu {
             disabled:true; next:back; prev:calculate
         }
 
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back");
             onClicked: {
                 disconnectSignals();

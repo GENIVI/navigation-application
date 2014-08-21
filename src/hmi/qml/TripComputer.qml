@@ -29,6 +29,7 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/trip-computer-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
@@ -88,7 +89,7 @@ HMIMenu {
         hideAll()
         if (Genivi.tripMode=="TRIP_NUMBER1")
         {
-            content.image=StyleSheet.trip1_background[StyleSheet.SOURCE]
+            content.image=StyleSheet.trip1_background[Constants.SOURCE]
             avg_speed_value.visible=true
             avg_speed_unit.visible=true
             avg_speed_title.visible=true
@@ -106,7 +107,7 @@ HMIMenu {
         else
         if (Genivi.tripMode=="TRIP_NUMBER2")
         {
-            content.image=StyleSheet.trip2_background[StyleSheet.SOURCE]
+            content.image=StyleSheet.trip2_background[Constants.SOURCE]
             avg_speed_value.visible=true
             avg_speed_unit.visible=true
             avg_speed_title.visible=true
@@ -124,7 +125,7 @@ HMIMenu {
         else
         if (Genivi.tripMode=="TRIP_INSTANT")
         {
-            content.image=StyleSheet.trip_instant_background[StyleSheet.SOURCE]
+            content.image=StyleSheet.trip_instant_background[Constants.SOURCE]
             fuel_value.visible=true
             fuel_unit.visible=true
             fuel_title.visible=true
@@ -140,7 +141,7 @@ HMIMenu {
         }
         else
         {
-            content.image=StyleSheet.trip1_background[StyleSheet.SOURCE]
+            content.image=StyleSheet.trip1_background[Constants.SOURCE]
             avg_speed_value.visible=true
             avg_speed_unit.visible=true
             avg_speed_title.visible=true
@@ -222,7 +223,7 @@ HMIMenu {
         id:content
 		anchors { fill: parent; topMargin: parent.headlineHeight}
         Text {
-            x:StyleSheet.avg_speed_value[StyleSheet.X]; y:StyleSheet.avg_speed_value[StyleSheet.Y]; width:StyleSheet.avg_speed_value[StyleSheet.WIDTH]; height:StyleSheet.avg_speed_value[StyleSheet.HEIGHT];color:StyleSheet.avg_speed_value[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.avg_speed_value[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_value[StyleSheet.PIXELSIZE];
+            x:StyleSheet.avg_speed_value[Constants.X]; y:StyleSheet.avg_speed_value[Constants.Y]; width:StyleSheet.avg_speed_value[Constants.WIDTH]; height:StyleSheet.avg_speed_value[Constants.HEIGHT];color:StyleSheet.avg_speed_value[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_speed_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_value[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -230,7 +231,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.avg_speed_unit[StyleSheet.X]; y:StyleSheet.avg_speed_unit[StyleSheet.Y]; width:StyleSheet.avg_speed_unit[StyleSheet.WIDTH]; height:StyleSheet.avg_speed_unit[StyleSheet.HEIGHT];color:StyleSheet.avg_speed_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.avg_speed_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.avg_speed_unit[Constants.X]; y:StyleSheet.avg_speed_unit[Constants.Y]; width:StyleSheet.avg_speed_unit[Constants.WIDTH]; height:StyleSheet.avg_speed_unit[Constants.HEIGHT];color:StyleSheet.avg_speed_unit[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_speed_unit[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_unit[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -238,7 +239,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.avg_speed_title[StyleSheet.X]; y:StyleSheet.avg_speed_title[StyleSheet.Y]; width:StyleSheet.avg_speed_title[StyleSheet.WIDTH]; height:StyleSheet.avg_speed_title[StyleSheet.HEIGHT];color:StyleSheet.avg_speed_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.avg_speed_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.avg_speed_title[Constants.X]; y:StyleSheet.avg_speed_title[Constants.Y]; width:StyleSheet.avg_speed_title[Constants.WIDTH]; height:StyleSheet.avg_speed_title[Constants.HEIGHT];color:StyleSheet.avg_speed_title[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_speed_title[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_title[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -246,7 +247,7 @@ HMIMenu {
             text: Genivi.gettext("AvgSpeed")
         }
         Text {
-            x:StyleSheet.avg_fuel_value[StyleSheet.X]; y:StyleSheet.avg_fuel_value[StyleSheet.Y]; width:StyleSheet.avg_fuel_value[StyleSheet.WIDTH]; height:StyleSheet.avg_fuel_value[StyleSheet.HEIGHT];color:StyleSheet.avg_fuel_value[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_value[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_value[StyleSheet.PIXELSIZE];
+            x:StyleSheet.avg_fuel_value[Constants.X]; y:StyleSheet.avg_fuel_value[Constants.Y]; width:StyleSheet.avg_fuel_value[Constants.WIDTH]; height:StyleSheet.avg_fuel_value[Constants.HEIGHT];color:StyleSheet.avg_fuel_value[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_value[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -254,7 +255,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.avg_fuel_unit[StyleSheet.X]; y:StyleSheet.avg_fuel_unit[StyleSheet.Y]; width:StyleSheet.avg_fuel_unit[StyleSheet.WIDTH]; height:StyleSheet.avg_fuel_unit[StyleSheet.HEIGHT];color:StyleSheet.avg_fuel_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.avg_fuel_unit[Constants.X]; y:StyleSheet.avg_fuel_unit[Constants.Y]; width:StyleSheet.avg_fuel_unit[Constants.WIDTH]; height:StyleSheet.avg_fuel_unit[Constants.HEIGHT];color:StyleSheet.avg_fuel_unit[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_unit[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_unit[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -262,7 +263,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.avg_fuel_title[StyleSheet.X]; y:StyleSheet.avg_fuel_title[StyleSheet.Y]; width:StyleSheet.avg_fuel_title[StyleSheet.WIDTH]; height:StyleSheet.avg_fuel_title[StyleSheet.HEIGHT];color:StyleSheet.avg_fuel_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.avg_fuel_title[Constants.X]; y:StyleSheet.avg_fuel_title[Constants.Y]; width:StyleSheet.avg_fuel_title[Constants.WIDTH]; height:StyleSheet.avg_fuel_title[Constants.HEIGHT];color:StyleSheet.avg_fuel_title[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_title[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_title[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -270,7 +271,7 @@ HMIMenu {
             text: Genivi.gettext("AvgFuel")
         }
         Text {
-            x:StyleSheet.distance_value[StyleSheet.X]; y:StyleSheet.distance_value[StyleSheet.Y]; width:StyleSheet.distance_value[StyleSheet.WIDTH]; height:StyleSheet.distance_value[StyleSheet.HEIGHT];color:StyleSheet.distance_value[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distance_value[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distance_value[StyleSheet.PIXELSIZE];
+            x:StyleSheet.distance_value[Constants.X]; y:StyleSheet.distance_value[Constants.Y]; width:StyleSheet.distance_value[Constants.WIDTH]; height:StyleSheet.distance_value[Constants.HEIGHT];color:StyleSheet.distance_value[Constants.TEXTCOLOR];styleColor:StyleSheet.distance_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distance_value[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -278,7 +279,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.distance_unit[StyleSheet.X]; y:StyleSheet.distance_unit[StyleSheet.Y]; width:StyleSheet.distance_unit[StyleSheet.WIDTH]; height:StyleSheet.distance_unit[StyleSheet.HEIGHT];color:StyleSheet.distance_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distance_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distance_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.distance_unit[Constants.X]; y:StyleSheet.distance_unit[Constants.Y]; width:StyleSheet.distance_unit[Constants.WIDTH]; height:StyleSheet.distance_unit[Constants.HEIGHT];color:StyleSheet.distance_unit[Constants.TEXTCOLOR];styleColor:StyleSheet.distance_unit[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distance_unit[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -286,7 +287,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.distance_title[StyleSheet.X]; y:StyleSheet.distance_title[StyleSheet.Y]; width:StyleSheet.distance_title[StyleSheet.WIDTH]; height:StyleSheet.distance_title[StyleSheet.HEIGHT];color:StyleSheet.distance_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.distance_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.distance_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.distance_title[Constants.X]; y:StyleSheet.distance_title[Constants.Y]; width:StyleSheet.distance_title[Constants.WIDTH]; height:StyleSheet.distance_title[Constants.HEIGHT];color:StyleSheet.distance_title[Constants.TEXTCOLOR];styleColor:StyleSheet.distance_title[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distance_title[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -294,7 +295,7 @@ HMIMenu {
             text: Genivi.gettext("Distance")
         }
         Text {
-            x:StyleSheet.fuel_value[StyleSheet.X]; y:StyleSheet.fuel_value[StyleSheet.Y]; width:StyleSheet.fuel_value[StyleSheet.WIDTH]; height:StyleSheet.fuel_value[StyleSheet.HEIGHT];color:StyleSheet.fuel_value[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.fuel_value[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_value[StyleSheet.PIXELSIZE];
+            x:StyleSheet.fuel_value[Constants.X]; y:StyleSheet.fuel_value[Constants.Y]; width:StyleSheet.fuel_value[Constants.WIDTH]; height:StyleSheet.fuel_value[Constants.HEIGHT];color:StyleSheet.fuel_value[Constants.TEXTCOLOR];styleColor:StyleSheet.fuel_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_value[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -302,7 +303,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.fuel_unit[StyleSheet.X]; y:StyleSheet.fuel_unit[StyleSheet.Y]; width:StyleSheet.fuel_unit[StyleSheet.WIDTH]; height:StyleSheet.fuel_unit[StyleSheet.HEIGHT];color:StyleSheet.fuel_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.fuel_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.fuel_unit[Constants.X]; y:StyleSheet.fuel_unit[Constants.Y]; width:StyleSheet.fuel_unit[Constants.WIDTH]; height:StyleSheet.fuel_unit[Constants.HEIGHT];color:StyleSheet.fuel_unit[Constants.TEXTCOLOR];styleColor:StyleSheet.fuel_unit[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_unit[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -310,7 +311,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.fuel_title[StyleSheet.X]; y:StyleSheet.fuel_title[StyleSheet.Y]; width:StyleSheet.fuel_title[StyleSheet.WIDTH]; height:StyleSheet.fuel_title[StyleSheet.HEIGHT];color:StyleSheet.fuel_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.fuel_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.fuel_title[Constants.X]; y:StyleSheet.fuel_title[Constants.Y]; width:StyleSheet.fuel_title[Constants.WIDTH]; height:StyleSheet.fuel_title[Constants.HEIGHT];color:StyleSheet.fuel_title[Constants.TEXTCOLOR];styleColor:StyleSheet.fuel_title[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_title[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -318,7 +319,7 @@ HMIMenu {
             text: Genivi.gettext("FuelLevel")
         }
         Text {
-            x:StyleSheet.tank_distance_value[StyleSheet.X]; y:StyleSheet.tank_distance_value[StyleSheet.Y]; width:StyleSheet.tank_distance_value[StyleSheet.WIDTH]; height:StyleSheet.tank_distance_value[StyleSheet.HEIGHT];color:StyleSheet.tank_distance_value[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.tank_distance_value[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_value[StyleSheet.PIXELSIZE];
+            x:StyleSheet.tank_distance_value[Constants.X]; y:StyleSheet.tank_distance_value[Constants.Y]; width:StyleSheet.tank_distance_value[Constants.WIDTH]; height:StyleSheet.tank_distance_value[Constants.HEIGHT];color:StyleSheet.tank_distance_value[Constants.TEXTCOLOR];styleColor:StyleSheet.tank_distance_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_value[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -326,7 +327,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.tank_distance_unit[StyleSheet.X]; y:StyleSheet.tank_distance_unit[StyleSheet.Y]; width:StyleSheet.tank_distance_unit[StyleSheet.WIDTH]; height:StyleSheet.tank_distance_unit[StyleSheet.HEIGHT];color:StyleSheet.tank_distance_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.tank_distance_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.tank_distance_unit[Constants.X]; y:StyleSheet.tank_distance_unit[Constants.Y]; width:StyleSheet.tank_distance_unit[Constants.WIDTH]; height:StyleSheet.tank_distance_unit[Constants.HEIGHT];color:StyleSheet.tank_distance_unit[Constants.TEXTCOLOR];styleColor:StyleSheet.tank_distance_unit[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_unit[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -334,7 +335,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.tank_distance_title[StyleSheet.X]; y:StyleSheet.tank_distance_title[StyleSheet.Y]; width:StyleSheet.tank_distance_title[StyleSheet.WIDTH]; height:StyleSheet.tank_distance_title[StyleSheet.HEIGHT];color:StyleSheet.tank_distance_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.tank_distance_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.tank_distance_title[Constants.X]; y:StyleSheet.tank_distance_title[Constants.Y]; width:StyleSheet.tank_distance_title[Constants.WIDTH]; height:StyleSheet.tank_distance_title[Constants.HEIGHT];color:StyleSheet.tank_distance_title[Constants.TEXTCOLOR];styleColor:StyleSheet.tank_distance_title[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_title[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -342,7 +343,7 @@ HMIMenu {
             text: Genivi.gettext("TankDistance")
         }
         Text {
-            x:StyleSheet.predictive_tank_distance_value[StyleSheet.X]; y:StyleSheet.predictive_tank_distance_value[StyleSheet.Y]; width:StyleSheet.predictive_tank_distance_value[StyleSheet.WIDTH]; height:StyleSheet.predictive_tank_distance_value[StyleSheet.HEIGHT];color:StyleSheet.predictive_tank_distance_value[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_value[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_value[StyleSheet.PIXELSIZE];
+            x:StyleSheet.predictive_tank_distance_value[Constants.X]; y:StyleSheet.predictive_tank_distance_value[Constants.Y]; width:StyleSheet.predictive_tank_distance_value[Constants.WIDTH]; height:StyleSheet.predictive_tank_distance_value[Constants.HEIGHT];color:StyleSheet.predictive_tank_distance_value[Constants.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_value[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -350,7 +351,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.predictive_tank_distance_unit[StyleSheet.X]; y:StyleSheet.predictive_tank_distance_unit[StyleSheet.Y]; width:StyleSheet.predictive_tank_distance_unit[StyleSheet.WIDTH]; height:StyleSheet.predictive_tank_distance_unit[StyleSheet.HEIGHT];color:StyleSheet.predictive_tank_distance_unit[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_unit[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_unit[StyleSheet.PIXELSIZE];
+            x:StyleSheet.predictive_tank_distance_unit[Constants.X]; y:StyleSheet.predictive_tank_distance_unit[Constants.Y]; width:StyleSheet.predictive_tank_distance_unit[Constants.WIDTH]; height:StyleSheet.predictive_tank_distance_unit[Constants.HEIGHT];color:StyleSheet.predictive_tank_distance_unit[Constants.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_unit[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_unit[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -358,7 +359,7 @@ HMIMenu {
             text: " "
         }
         Text {
-            x:StyleSheet.predictive_tank_distance_title[StyleSheet.X]; y:StyleSheet.predictive_tank_distance_title[StyleSheet.Y]; width:StyleSheet.predictive_tank_distance_title[StyleSheet.WIDTH]; height:StyleSheet.predictive_tank_distance_title[StyleSheet.HEIGHT];color:StyleSheet.predictive_tank_distance_title[StyleSheet.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_title[StyleSheet.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_title[StyleSheet.PIXELSIZE];
+            x:StyleSheet.predictive_tank_distance_title[Constants.X]; y:StyleSheet.predictive_tank_distance_title[Constants.Y]; width:StyleSheet.predictive_tank_distance_title[Constants.WIDTH]; height:StyleSheet.predictive_tank_distance_title[Constants.HEIGHT];color:StyleSheet.predictive_tank_distance_title[Constants.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_title[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_title[Constants.PIXELSIZE];
             visible: false
             style: Text.Sunken;
             smooth: true
@@ -366,7 +367,7 @@ HMIMenu {
             text: Genivi.gettext("PredictiveTankDistance")
         }
 
-        StdButton { source:StyleSheet.reset[StyleSheet.SOURCE]; x:StyleSheet.reset[StyleSheet.X]; y:StyleSheet.reset[StyleSheet.Y]; width:StyleSheet.reset[StyleSheet.WIDTH]; height:StyleSheet.reset[StyleSheet.HEIGHT];textColor:StyleSheet.resetText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.resetText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.reset[Constants.SOURCE]; x:StyleSheet.reset[Constants.X]; y:StyleSheet.reset[Constants.Y]; width:StyleSheet.reset[Constants.WIDTH]; height:StyleSheet.reset[Constants.HEIGHT];textColor:StyleSheet.resetText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.resetText[Constants.PIXELSIZE];
             visible: false;
             id:reset; text: Genivi.gettext("Reset"); explode:false; disabled:false; next:select_trip1; prev:back;
             onClicked:{
@@ -379,7 +380,7 @@ HMIMenu {
     		updateTripMode();
             }
         }
-        StdButton { source:StyleSheet.select_trip1[StyleSheet.SOURCE]; x:StyleSheet.select_trip1[StyleSheet.X]; y:StyleSheet.select_trip1[StyleSheet.Y]; width:StyleSheet.select_trip1[StyleSheet.WIDTH]; height:StyleSheet.select_trip1[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.select_trip1[Constants.SOURCE]; x:StyleSheet.select_trip1[Constants.X]; y:StyleSheet.select_trip1[Constants.Y]; width:StyleSheet.select_trip1[Constants.WIDTH]; height:StyleSheet.select_trip1[Constants.HEIGHT];
             visible: false;
             id:select_trip1; explode:false; disabled:false; next:select_trip2; prev:reset;
             onClicked:{
@@ -387,7 +388,7 @@ HMIMenu {
                 updateTripMode();
             }
         }
-        StdButton { source:StyleSheet.select_trip2[StyleSheet.SOURCE]; x:StyleSheet.select_trip2[StyleSheet.X]; y:StyleSheet.select_trip2[StyleSheet.Y]; width:StyleSheet.select_trip2[StyleSheet.WIDTH]; height:StyleSheet.select_trip2[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.select_trip2[Constants.SOURCE]; x:StyleSheet.select_trip2[Constants.X]; y:StyleSheet.select_trip2[Constants.Y]; width:StyleSheet.select_trip2[Constants.WIDTH]; height:StyleSheet.select_trip2[Constants.HEIGHT];
             visible: false;
             id:select_trip2; explode:false; disabled:false; next:select_instant; prev:select_trip1;
             onClicked:{
@@ -395,7 +396,7 @@ HMIMenu {
                 updateTripMode();
             }
         }
-        StdButton { source:StyleSheet.select_instant[StyleSheet.SOURCE]; x:StyleSheet.select_instant[StyleSheet.X]; y:StyleSheet.select_instant[StyleSheet.Y]; width:StyleSheet.select_instant[StyleSheet.WIDTH]; height:StyleSheet.select_instant[StyleSheet.HEIGHT];
+        StdButton { source:StyleSheet.select_instant[Constants.SOURCE]; x:StyleSheet.select_instant[Constants.X]; y:StyleSheet.select_instant[Constants.Y]; width:StyleSheet.select_instant[Constants.WIDTH]; height:StyleSheet.select_instant[Constants.HEIGHT];
             visible: false;
             id:select_instant; explode:false; disabled:false; next:back; prev:select_trip2;
             onClicked:{
@@ -403,7 +404,7 @@ HMIMenu {
                 updateTripMode();
             }
         }
-        StdButton { source:StyleSheet.back[StyleSheet.SOURCE]; x:StyleSheet.back[StyleSheet.X]; y:StyleSheet.back[StyleSheet.Y]; width:StyleSheet.back[StyleSheet.WIDTH]; height:StyleSheet.back[StyleSheet.HEIGHT];textColor:StyleSheet.backText[StyleSheet.TEXTCOLOR]; pixelSize:StyleSheet.backText[StyleSheet.PIXELSIZE];
+        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; disabled:false; next:reset; prev:select_instant;
             onClicked:{leave(); pageOpen("MainMenu");}
         }
