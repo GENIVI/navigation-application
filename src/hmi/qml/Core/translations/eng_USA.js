@@ -28,6 +28,11 @@
 */
 //MainMenu
 translations["MainMenu"]="MAIN MENU";
+translations["Navigation"]="NAVI";
+translations["Mapview"]="MAP";
+translations["Poi"]="POI";
+translations["Configuration"]="CONFIG";
+translations["Trip"]="TRIP";
 
 //NavigationSearch
 translations["NavigationSearch"]="SEARCH";
@@ -60,6 +65,7 @@ translations["Speed"]="SPEED";
 translations["Preference"]="PREFERENCE";
 translations["LanguageAndUnits"]="LANG&UNITS";
 translations["Mode"]="MODE";
+translations["OnMapView"]="ON MAP VIEW";
 
 //NavigationSettingsPreferences
 translations["NavigationSettingsPreferences"]="PREFERENCES";
@@ -92,8 +98,10 @@ translations["Guidance"]="GUIDANCE";
 translations["DisplayRoute"]="DISPLAY ROUTE";
 translations["OnMap"]="ON MAP";
 translations["InAList"]="IN A LIST";
-translations["CalculatedRouteInProgress"]="CALCULATED ROUTE";
+translations["StatusTitle"]="STATUS";
+translations["CalculatedRouteInProgress"]="CALCULATION IN PROGRESS";
 translations["CalculatedRouteFailed"]="CALCULATION FAILED";
+translations["CalculatedRouteSuccess"]="ROUTE AVAILABLE";
 
 //NavigationRouteDescription
 translations["NavigationRouteDescription"]="MANEUVER LIST";

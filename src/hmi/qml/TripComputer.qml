@@ -36,7 +36,6 @@ import lbs.plugin.dbusif 1.0
 HMIMenu {
 	id: menu
     property Item tripDataUpdatedSignal;
-    text: Genivi.gettext("TripComputer")
 
 	DBusIf {
 		id: dbusIf
@@ -82,7 +81,6 @@ HMIMenu {
         select_instant.visible=false;
         reset.visible=false;
     }
-
 
     function updateTripMode()
     {
@@ -217,10 +215,30 @@ HMIMenu {
         disconnectSignals();
     }
 
-    headlineFg: "grey"
-    headlineBg: "blue"
 	HMIBgImage {
         id:content
+        image:
+        {
+            if (Genivi.tripMode=="TRIP_NUMBER1")
+            {
+                image=StyleSheet.trip1_background[Constants.SOURCE]
+            }
+            else
+            if (Genivi.tripMode=="TRIP_NUMBER2")
+            {
+                image=StyleSheet.trip2_background[Constants.SOURCE]
+            }
+            else
+            if (Genivi.tripMode=="TRIP_INSTANT")
+            {
+                image=StyleSheet.trip_instant_background[Constants.SOURCE]
+            }
+            else
+            {
+                image=StyleSheet.trip1_background[Constants.SOURCE]
+            }
+        }
+
 		anchors { fill: parent; topMargin: parent.headlineHeight}
         Text {
             x:StyleSheet.avg_speed_value[Constants.X]; y:StyleSheet.avg_speed_value[Constants.Y]; width:StyleSheet.avg_speed_value[Constants.WIDTH]; height:StyleSheet.avg_speed_value[Constants.HEIGHT];color:StyleSheet.avg_speed_value[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_speed_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_speed_value[Constants.PIXELSIZE];

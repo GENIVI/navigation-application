@@ -28,6 +28,11 @@
 */
 //MainMenu
 translations["MainMenu"]="MENU PRINCIPAL";
+translations["Navigation"]="NAVI";
+translations["Mapview"]="MAP";
+translations["Poi"]="POI";
+translations["Configuration"]="CONFIG";
+translations["Trip"]="TRIP";
 
 //NavigationSearch
 translations["NavigationSearch"]="CHERCHER UN LIEU";
@@ -60,6 +65,7 @@ translations["Speed"]="VITESSE";
 translations["Preference"]="PREFERENCE";
 translations["LanguageAndUnits"]="LANG&UNITES";
 translations["Mode"]="MODE";
+translations["OnMapView"]="ON MAP VIEW";
 
 //NavigationSettingsPreferences
 translations["NavigationSettingsPreferences"]="PREFERENCES";
@@ -92,8 +98,10 @@ translations["Guidance"]="GUIDAGE";
 translations["DisplayRoute"]="AFFICHER LA ROUTE";
 translations["OnMap"]="CARTE";
 translations["InAList"]="LISTE";
-translations["CalculatedRouteInProgress"]="CALCUL EN COURS";
-translations["CalculatedRouteFailed"]="LE CALCUL A ECHOUE";
+translations["StatusTitle"]="STATUS";
+translations["CalculatedRouteInProgress"]="CALCULATION IN PROGRESS";
+translations["CalculatedRouteFailed"]="CALCULATION FAILED";
+translations["CalculatedRouteSuccess"]="ROUTE AVAILABLE";
 
 //NavigationRouteDescription
 translations["NavigationRouteDescription"]="LISTE DES MANOEUVRES";

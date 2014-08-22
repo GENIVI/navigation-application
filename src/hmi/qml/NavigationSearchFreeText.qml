@@ -35,9 +35,6 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("NavigationSearchFreeText")
 	property string pagefile:"NavigationSearchFreeText"
 	property Item searchStatusSignal;
 	property Item searchResultListSignal;
@@ -53,9 +50,9 @@ HMIMenu {
 	{
 		Genivi.dump("",args);
 		if (args[3] == 2) 
-			menu.text="FreeText (Searching)";
+            console.log("Searching");
 		else
-			menu.text="FreeText";
+            console.log("FreeText");
 	}
 
 	function searchResultList(args)

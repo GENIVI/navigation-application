@@ -67,7 +67,7 @@ Column {
         Row {
             width: parent.width; height: parent.height;
 			TextInput {
-				property real criterion
+                property real criterion
 				property Item next
 				property Item prev
 				signal mclicked()

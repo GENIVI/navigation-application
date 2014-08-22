@@ -35,9 +35,6 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("NavigationSearchAddress")
 	property string pagefile:"NavigationSearchAddress"
 	property Item currentSelectionCriterionSignal;
 	property Item searchStatusSignal;
@@ -76,9 +73,9 @@ HMIMenu {
 	function searchStatus(args)
 	{
 		if (args[3] == 2) 
-			menu.text="Search (Searching)";
+            console.log("Searching");
 		else
-			menu.text="Search";
+            console.log("Search");
 	}
 
 	function searchResultList(args)

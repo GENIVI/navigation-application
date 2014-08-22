@@ -47,6 +47,8 @@ var poi_id;
 
 var translations=new Array;
 
+var simulationPanelOnMapview=true;// simulation panel on map view by default
+
 var entryback;
 var entrydest;
 var entrycriterion;
@@ -101,8 +103,8 @@ var historyOfLastEnteredLocationOut=0; //first ouput
 
 //the default data below will be managed by the persistency component in the future
 address[NAVIGATIONCORE_COUNTRY]="Switzerland";
-address[NAVIGATIONCORE_CITY]="Genève";
-address[NAVIGATIONCORE_STREET]="Rue de l'Avenir";
+address[NAVIGATIONCORE_CITY]="Zürich";
+address[NAVIGATIONCORE_STREET]="In Lampitzäckern";
 address[NAVIGATIONCORE_HOUSENUMBER]="";
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
 tripMode="TRIP_NUMBER1";

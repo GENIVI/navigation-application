@@ -35,9 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-    text: Genivi.gettext("POI")
-    headlineFg: "grey"
-    headlineBg: "blue"
+
     DBusIf {
     	id: dbusIf
     }

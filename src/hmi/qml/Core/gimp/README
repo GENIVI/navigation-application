@@ -11,9 +11,6 @@ To generate a style sheet and the images:
 Genivi/Generate style sheet
 Choose the target (must be qml/Core)
 Press OK
-NB: No test banner by default, so, into style-constants.js the value is set to 0
-var MENU_BANNER_HEIGHT = 0; 
-It's used into HMIMenu.qml
 
 
 

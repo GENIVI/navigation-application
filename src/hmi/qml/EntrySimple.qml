@@ -29,10 +29,6 @@ import "Core/genivi.js" as Genivi;
 
 HMIMenu {
 	id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("Entry")
-
 
 	DBusIf {
                 id:dbusIf

@@ -35,9 +35,6 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("NavigationCalculatedRoute")
 	next: back
     prev: show_route_in_list
 	property Item routeCalculationSuccessfulSignal;
@@ -54,14 +51,14 @@ HMIMenu {
 		//console.log("routeCalculationFailed:");
 		//Genivi.dump("",args);
 
-        menu.text=Genivi.gettext("CalculatedRouteFailed");
+        statusValue.text=Genivi.gettext("CalculatedRouteFailed");
         // Tell the FSA that there's no route available
         Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
 	}
 
 	function routeCalculationProgressUpdate(args)
 	{
-        menu.text=Genivi.gettext("CalculatedRouteInProgress")+ " "+args[7]+"%";
+        statusValue.text=Genivi.gettext("CalculatedRouteInProgress");
 	}
 
 	function updateStartStop()
@@ -81,7 +78,7 @@ HMIMenu {
 	{
         show_route_on_map.disabled=false;
         show_route_in_list.disabled=false;
-        menu.text=Genivi.gettext("NavigationCalculatedRoute");
+        statusValue.text=Genivi.gettext("CalculatedRouteSuccess");
 
         var para=[], pref=[];
         pref=pref.concat("uint16",Genivi.NAVIGATIONCORE_TOTAL_TIME,"uint16",Genivi.NAVIGATIONCORE_TOTAL_DISTANCE);
@@ -190,6 +187,23 @@ HMIMenu {
             wrapMode: Text.WordWrap
             style: Text.Sunken;
             smooth: true
+        }
+
+        Text {
+            x:StyleSheet.statusTitle[Constants.X]; y:StyleSheet.statusTitle[Constants.Y]; width:StyleSheet.statusTitle[Constants.WIDTH]; height:StyleSheet.statusTitle[Constants.HEIGHT];color:StyleSheet.statusTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.statusTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.statusTitle[Constants.PIXELSIZE];
+            id:statusTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("StatusTitle")
+        }
+
+        Text {
+            x:StyleSheet.statusValue[Constants.X]; y:StyleSheet.statusValue[Constants.Y]; width:StyleSheet.statusValue[Constants.WIDTH]; height:StyleSheet.statusValue[Constants.HEIGHT];color:StyleSheet.statusValue[Constants.TEXTCOLOR];styleColor:StyleSheet.statusValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.statusValue[Constants.PIXELSIZE];
+            id:statusValue
+            style: Text.Sunken;
+            smooth: true
+            text: ""
+            scale: paintedWidth > width ? (width / paintedWidth) : 1
         }
 
         StdButton {

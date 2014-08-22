@@ -40,7 +40,7 @@ timeTitle[PIXELSIZE]=25;
 
 var timeValue=new Object;
 timeValue[X]=55;
-timeValue[Y]=179;
+timeValue[Y]=177;
 timeValue[WIDTH]=192;
 timeValue[HEIGHT]=42;
 timeValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
@@ -49,12 +49,30 @@ timeValue[PIXELSIZE]=35;
 
 var distanceValue=new Object;
 distanceValue[X]=55;
-distanceValue[Y]=80;
+distanceValue[Y]=78;
 distanceValue[WIDTH]=192;
 distanceValue[HEIGHT]=42;
 distanceValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 distanceValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 distanceValue[PIXELSIZE]=35;
+
+var statusTitle=new Object;
+statusTitle[X]=50;
+statusTitle[Y]=245;
+statusTitle[WIDTH]=93;
+statusTitle[HEIGHT]=30;
+statusTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+statusTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+statusTitle[PIXELSIZE]=25;
+
+var statusValue=new Object;
+statusValue[X]=52;
+statusValue[Y]=290;
+statusValue[WIDTH]=196;
+statusValue[HEIGHT]=24;
+statusValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+statusValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
+statusValue[PIXELSIZE]=20;
 
 var distanceTitle=new Object;
 distanceTitle[X]=50;

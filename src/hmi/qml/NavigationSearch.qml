@@ -35,11 +35,8 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
     id: menu
-    text: Genivi.gettext("NavigationSearch")
     next: search_by_address
     prev: back
-    headlineFg: "grey"
-    headlineBg: "blue"
     DBusIf {
         id:dbusIf;
     }

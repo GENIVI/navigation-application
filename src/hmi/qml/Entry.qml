@@ -30,9 +30,6 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("Entry")
 
     //property Item currentSelectionCriterionSignal;
     property Item searchStatusSignal;
@@ -50,9 +47,9 @@ HMIMenu {
 	{
 		if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
 			view.model.clear();
-			menu.text="Entry (Searching)";
+            text.color='red';  //(Searching)
 		} else
-			menu.text="Entry";
+            text.color='white';
 	}
 
 	function searchResultList(args)
@@ -142,7 +139,7 @@ HMIMenu {
 			anchors.topMargin: 100;
 			Rectangle {
 				color:'black';
-				width:content.width-back.width-menu.hspc/4-menu.hspc/8;
+                width:content.width-back.width-menu.hspc/4-menu.hspc/8;
 				height:back.height;
 				Text {
 					anchors.fill:parent;

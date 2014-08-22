@@ -272,7 +272,7 @@ HMIMenu {
         y:0
         height:menu.height
         width:menu.width
-        color:"#ffff7e"
+        color:"transparent"
         Rectangle {
             opacity: 0.8
             width: StyleSheetSettings.navigation_browse_map_settings_background[Constants.WIDTH]
@@ -294,7 +294,7 @@ HMIMenu {
                       }
 
                  StdButton {source:StyleSheetSettings.tiltp[Constants.SOURCE]; x:StyleSheetSettings.tiltp[StyleSheetSettings.X]; y:StyleSheetSettings.tiltp[StyleSheetSettings.Y]; width:StyleSheetSettings.tiltp[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.tiltp[StyleSheetSettings.HEIGHT];
-                            id:tiltp; explode:false; next:tiltm; prev:exit;
+                            id:tiltp; explode:false; next:tiltm; prev:daynight;
                          onPressed: {camera_start_clamp("CameraTiltAngle",-10,0);}
                          onReleased: {camera_stop();}
                  }
@@ -340,13 +340,13 @@ HMIMenu {
                  }
 
                  StdButton {source:StyleSheetSettings.distancem[Constants.SOURCE]; x:StyleSheetSettings.distancem[StyleSheetSettings.X]; y:StyleSheetSettings.distancem[StyleSheetSettings.Y]; width:StyleSheetSettings.distancem[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.distancem[StyleSheetSettings.HEIGHT];
-                            id:distancem; explode:false; next:north; prev:distancep;
+                            id:distancem; explode:false; next:exit; prev:distancep;
                          onPressed: {camera_start("CameraDistanceFromTargetPoint",-10);}
                          onReleased: {camera_stop();}
                  }
 
                  StdButton {source:StyleSheetSettings.north[Constants.SOURCE]; x:StyleSheetSettings.north[StyleSheetSettings.X]; y:StyleSheetSettings.north[StyleSheetSettings.Y]; width:StyleSheetSettings.north[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.north[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.northText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.northText[StyleSheetSettings.PIXELSIZE];
-                            id:north; text: Genivi.gettext("North"); explode:false; next:south; prev:distancem;
+                            id:north; text: Genivi.gettext("North"); explode:false; next:south; prev:exit;
                      onClicked: {
                          set_angle(0);
                      }
@@ -367,14 +367,14 @@ HMIMenu {
                  }
 
                  StdButton {source:StyleSheetSettings.west[Constants.SOURCE]; x:StyleSheetSettings.west[StyleSheetSettings.X]; y:StyleSheetSettings.west[StyleSheetSettings.Y]; width:StyleSheetSettings.west[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.west[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.westText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.westText[StyleSheetSettings.PIXELSIZE];
-                            id:west; text:Genivi.gettext("West"); explode:false; next:exit; prev:east;
+                            id:west; text:Genivi.gettext("West"); explode:false; next:split; prev:east;
                      onClicked: {
                          set_angle(270);
                      }
                  }
 
                  StdButton {source:StyleSheetSettings.exit[Constants.SOURCE]; x:StyleSheetSettings.exit[StyleSheetSettings.X]; y:StyleSheetSettings.exit[StyleSheetSettings.Y]; width:StyleSheetSettings.exit[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.exit[StyleSheetSettings.HEIGHT];
-                            id:exit; explode:false; next:tiltp; prev:west;
+                            id:exit; explode:false; next:north; prev:west;
                      onClicked: {
                          Genivi.data['show_current_position']=true;
                          move_stop();
@@ -383,18 +383,19 @@ HMIMenu {
                          pageOpen("NavigationBrowseMap");
                      }
                  }
-                 StdButton {source:StyleSheetSettings.perspective[Constants.SOURCE]; x:StyleSheetSettings.perspective[StyleSheetSettings.X]; y:StyleSheetSettings.perspective[StyleSheetSettings.Y]; width:StyleSheetSettings.perspective[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.perspective[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.perspectiveText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.perspectiveText[StyleSheetSettings.PIXELSIZE];
-                            id:perspective; text:Genivi.gettext("CameraPerspective3d"); explode:false; next:split; prev:zoom_out;
-                         onClicked: {togglePerspective();}
-                 }
 
                  StdButton {source:StyleSheetSettings.split[Constants.SOURCE]; x:StyleSheetSettings.split[StyleSheetSettings.X]; y:StyleSheetSettings.split[StyleSheetSettings.Y]; width:StyleSheetSettings.split[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.split[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.splitText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.splitText[StyleSheetSettings.PIXELSIZE];
-                            id:split; text:Genivi.gettext("Split"); explode:false; next:orientation; prev:perspective;
+                            id:split; text:Genivi.gettext("Split"); explode:false; next:perspective; prev:west;
                          onClicked: {toggleSplit();}
                  }
 
+                 StdButton {source:StyleSheetSettings.perspective[Constants.SOURCE]; x:StyleSheetSettings.perspective[StyleSheetSettings.X]; y:StyleSheetSettings.perspective[StyleSheetSettings.Y]; width:StyleSheetSettings.perspective[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.perspective[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.perspectiveText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.perspectiveText[StyleSheetSettings.PIXELSIZE];
+                            id:perspective; text:Genivi.gettext("CameraPerspective3d"); explode:false; next:daynight; prev:split;
+                         onClicked: {togglePerspective();}
+                 }
+
                  StdButton {source:StyleSheetSettings.daynight[Constants.SOURCE]; x:StyleSheetSettings.daynight[StyleSheetSettings.X]; y:StyleSheetSettings.daynight[StyleSheetSettings.Y]; width:StyleSheetSettings.daynight[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.daynight[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.daynightText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.daynightText[StyleSheetSettings.PIXELSIZE];
-                            id:daynight; text:Genivi.gettext("Day"); explode:false; next:up; prev:stop;
+                            id:daynight; text:Genivi.gettext("Day"); explode:false; next:tiltp; prev:perspective;
                      onClicked: {
                          toggleDayNight();
                      }

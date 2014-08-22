@@ -36,9 +36,7 @@ import lbs.plugin.preference 1.0
 
 HMIMenu {
 	id: menu
-    text: Genivi.gettext("NavigationSettingsPreferences")
-    headlineFg: "grey"
-    headlineBg: "blue"
+
     DBusIf {
         id: dbusIf
     }

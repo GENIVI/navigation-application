@@ -4,10 +4,10 @@ Qt.include("style-constants.js");
 
 var select_search_for_refill_in_top=new Object;
 select_search_for_refill_in_top[SOURCE]="Core/images/select-search-for-refill-in-top.png";
-select_search_for_refill_in_top[X]=350;
-select_search_for_refill_in_top[Y]=10;
-select_search_for_refill_in_top[WIDTH]=100;
-select_search_for_refill_in_top[HEIGHT]=60;
+select_search_for_refill_in_top[X]=343;
+select_search_for_refill_in_top[Y]=19;
+select_search_for_refill_in_top[WIDTH]=45;
+select_search_for_refill_in_top[HEIGHT]=42;
 
 var speedValue=new Object;
 speedValue[X]=670;

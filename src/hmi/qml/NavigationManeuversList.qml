@@ -34,9 +34,6 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("NavigationManeuversList")
 
 	Column {
                 id:content

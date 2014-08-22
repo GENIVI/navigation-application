@@ -35,9 +35,6 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
     id: menu
-    headlineFg: "grey"
-    headlineBg: "blue"
-    text: Genivi.gettext("NavigationRoute")
     next: back
     prev: calculate
     property Item mapmatchedpositionPositionUpdateSignal;
@@ -119,7 +116,7 @@ HMIMenu {
             x:StyleSheet.locationValue[Constants.X]; y:StyleSheet.locationValue[Constants.Y]; width:StyleSheet.locationValue[Constants.WIDTH]; height:StyleSheet.locationValue[Constants.HEIGHT];color:StyleSheet.locationValue[Constants.TEXTCOLOR];styleColor:StyleSheet.locationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.locationValue[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
-            wrapMode: Text.WordWrap
+            scale: paintedWidth > width ? (width / paintedWidth) : 1
             id:locationValue
         }
 
@@ -135,7 +132,7 @@ HMIMenu {
             x:StyleSheet.positionValue[Constants.X]; y:StyleSheet.positionValue[Constants.Y]; width:StyleSheet.positionValue[Constants.WIDTH]; height:StyleSheet.positionValue[Constants.HEIGHT];color:StyleSheet.positionValue[Constants.TEXTCOLOR];styleColor:StyleSheet.positionValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.positionValue[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
-            wrapMode: Text.WordWrap
+            scale: paintedWidth > width ? (width / paintedWidth) : 1
             id:positionValue
         }
 
@@ -151,7 +148,7 @@ HMIMenu {
             x:StyleSheet.destinationValue[Constants.X]; y:StyleSheet.destinationValue[Constants.Y]; width:StyleSheet.destinationValue[Constants.WIDTH]; height:StyleSheet.destinationValue[Constants.HEIGHT];color:StyleSheet.destinationValue[Constants.TEXTCOLOR];styleColor:StyleSheet.destinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.destinationValue[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true
-            wrapMode: Text.WordWrap
+            scale: paintedWidth > width ? (width / paintedWidth) : 1
             id:destinationValue
         }
 

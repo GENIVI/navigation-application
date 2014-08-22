@@ -28,8 +28,8 @@ simulationTitle[PIXELSIZE]=25;
 var speedValue=new Object;
 speedValue[X]=106;
 speedValue[Y]=130;
-speedValue[WIDTH]=29;
-speedValue[HEIGHT]=52;
+speedValue[WIDTH]=30;
+speedValue[HEIGHT]=53;
 speedValue[TEXTCOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 speedValue[STYLECOLOR]=Qt.rgba(1.00, 1.00, 1.00, 1.00);
 speedValue[PIXELSIZE]=44;
@@ -51,6 +51,29 @@ modeTitle[HEIGHT]=30;
 modeTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 modeTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
 modeTitle[PIXELSIZE]=25;
+
+var onmapview_disable=new Object;
+onmapview_disable[SOURCE]="Core/images/onmapview-disable.png";
+onmapview_disable[X]=580;
+onmapview_disable[Y]=126;
+onmapview_disable[WIDTH]=65;
+onmapview_disable[HEIGHT]=63;
+
+var onmapview_enable=new Object;
+onmapview_enable[SOURCE]="Core/images/onmapview-enable.png";
+onmapview_enable[X]=580;
+onmapview_enable[Y]=126;
+onmapview_enable[WIDTH]=65;
+onmapview_enable[HEIGHT]=63;
+
+var onmapviewTitle=new Object;
+onmapviewTitle[X]=532;
+onmapviewTitle[Y]=200;
+onmapviewTitle[WIDTH]=166;
+onmapviewTitle[HEIGHT]=30;
+onmapviewTitle[TEXTCOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+onmapviewTitle[STYLECOLOR]=Qt.rgba(0.41, 0.41, 0.41, 1.00);
+onmapviewTitle[PIXELSIZE]=25;
 
 var speed_up=new Object;
 speed_up[SOURCE]="Core/images/speed-up.png";

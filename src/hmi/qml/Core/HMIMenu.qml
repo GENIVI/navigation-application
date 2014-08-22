@@ -28,10 +28,6 @@ import "style-sheets/style-constants.js" as Constants;
 import lbs.plugin.wheelarea 1.0
 
 Rectangle {
-	property alias text: titleText.text
-	property alias headlineHeight: headline.height
-	property alias headlineFg: titleText.color
-	property alias headlineBg: headline.color
 	id: menu
 	property Item next
 	property Item prev
@@ -157,20 +153,9 @@ Rectangle {
 */
 		container.load(command);
 	}
-	Rectangle {
-		id: headline
-        width: menu.width; height: Constants.MENU_BANNER_HEIGHT
-		color: "#0000ff"
-		Text {
-			id: titleText
-            font.pixelSize: 20
-            style: Text.Sunken; color: "white"; styleColor: "black"; smooth: true
-		}	
-	}
 	states: State {
 		name: "hidden"
-		PropertyChanges { target: content; opacity: 0 }
-		PropertyChanges { target: titleText; opacity: 0 }
+        PropertyChanges { target: parent; opacity: 0 }
 	}
 	transitions: Transition {
                 NumberAnimation { properties: "scale"; easing.type: "OutExpo"; duration: 200 }
