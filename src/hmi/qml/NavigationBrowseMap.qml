@@ -27,6 +27,7 @@ import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
+import "Core/style-sheets/navigation-browse-map-css.js" as StyleSheetMap;
 import "Core/style-sheets/navigation-browse-map-bottom-css.js" as StyleSheetBottom
 import "Core/style-sheets/navigation-browse-map-route-css.js" as StyleSheetRoute
 import "Core/style-sheets/navigation-browse-map-guidance-css.js" as StyleSheetGuidance
@@ -501,8 +502,8 @@ HMIMenu {
             opacity: 0.8
             width: StyleSheetTop.navigation_browse_map_top_background[Constants.WIDTH]
             height: StyleSheetTop.navigation_browse_map_top_background[Constants.HEIGHT]
-            x: Constants.MENU_BROWSE_MAP_TOP_X
-            y: Constants.MENU_BROWSE_MAP_TOP_Y
+            x: StyleSheetMap.top_area[Constants.X]
+            y: StyleSheetMap.top_area[Constants.Y]
             HMIBgImage {
                 id: top
                 image:StyleSheetTop.navigation_browse_map_top_background[Constants.SOURCE];
@@ -553,8 +554,8 @@ HMIMenu {
             opacity: 0.8
             width: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.WIDTH]
             height: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.HEIGHT]
-            x: Constants.MENU_BROWSE_MAP_BOTTOM_X
-            y: Constants.MENU_BROWSE_MAP_BOTTOM_Y
+            x: StyleSheetMap.bottom_area[Constants.X]
+            y: StyleSheetMap.bottom_area[Constants.Y]
             HMIBgImage {
                 id: bottom
                 image:StyleSheetBottom.navigation_browse_map_bottom_background[Constants.SOURCE];
@@ -679,8 +680,8 @@ HMIMenu {
             opacity: 0.8
             width: StyleSheetRoute.navigation_browse_map_route_background[Constants.WIDTH]
             height: StyleSheetRoute.navigation_browse_map_route_background[Constants.HEIGHT]
-            x: Constants.MENU_BROWSE_MAP_ROUTE_X
-            y: Constants.MENU_BROWSE_MAP_ROUTE_Y
+            x: StyleSheetMap.route_area[Constants.X]
+            y: StyleSheetMap.route_area[Constants.Y]
             HMIBgImage {
                 id: route
                 image:StyleSheetRoute.navigation_browse_map_route_background[Constants.SOURCE]
@@ -717,8 +718,8 @@ HMIMenu {
             opacity: 0.8
             width: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.WIDTH]
             height: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.HEIGHT]
-            x: Constants.MENU_BROWSE_MAP_GUIDANCE_X
-            y: Constants.MENU_BROWSE_MAP_GUIDANCE_Y
+            x: StyleSheetMap.guidance_area[Constants.X]
+            y: StyleSheetMap.guidance_area[Constants.Y]
             HMIBgImage {
                 id: guidance
                 image:StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.SOURCE]
@@ -781,8 +782,8 @@ HMIMenu {
             opacity: 0.8
             width: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.WIDTH]
             height: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.HEIGHT]
-            x: Constants.MENU_BROWSE_MAP_SCROLL_X
-            y: Constants.MENU_BROWSE_MAP_SCROLL_Y
+            x: StyleSheetMap.scroll_area[Constants.X]
+            y: StyleSheetMap.scroll_area[Constants.Y]
             HMIBgImage {
                 property real panX: 40 //delta in pixel for x panning
                 property real panY: 40 //delta in pixel for y panning
@@ -833,8 +834,8 @@ HMIMenu {
             }
             width: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.WIDTH]
             height: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.HEIGHT]
-            x: Constants.MENU_BROWSE_MAP_SIMULATION_X
-            y: Constants.MENU_BROWSE_MAP_SIMULATION_Y
+            x: StyleSheetMap.simulation_area[Constants.X]
+            y: StyleSheetMap.simulation_area[Constants.Y]
             HMIBgImage {
                 id: simulation
                 image:StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.SOURCE];

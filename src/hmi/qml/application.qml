@@ -30,11 +30,14 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
+import "Core/style-sheets/style-constants.js" as Constants;
+import "Core/style-sheets/navigation-browse-map-css.js" as StyleSheetMap;
 import "Core/genivi.js" as Genivi;
 
 ApplicationWindow {
 	id: container
-	width: 800; height: 480
+    width: StyleSheetMap.menu[Constants.WIDTH];
+    height: StyleSheetMap.menu[Constants.HEIGHT];
 	property Item component;
 	function load(page)
 	{

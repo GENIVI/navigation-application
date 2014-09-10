@@ -47,23 +47,4 @@ class DBusIf:public QQuickItem {
 	QString m_name;
 };
 
-class Preference : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(unsigned int source READ source WRITE setSource)
-    Q_PROPERTY(unsigned int mode READ mode WRITE setMode)
-public:
-    Preference(QObject *parent = 0);
 
-    unsigned int source() const;
-    void setSource(const unsigned int &source);
-
-    unsigned int mode() const;
-    void setMode(const unsigned int &mode);
-
-private:
-    unsigned int m_source;
-    unsigned int m_mode;
-};
-
-QML_DECLARE_TYPE(Preference)

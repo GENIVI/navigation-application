@@ -230,12 +230,12 @@ HMIMenu {
         for (var i = 0 ; i < res[1].length ; i+=2) {
             var button=Qt.createQmlObject('import QtQuick 2.1 ; import "Core"; StdButton { }',content,'dynamic');
             button.source="Core/images/cost-model.png";
-            button.x=100;
-            button.y=96+i*50;
-            button.width=180;
-            button.height=60;
-            button.textColor="black";
-            button.pixelSize=34;
+            button.x=StyleSheet.cost_model[Constants.X];
+            button.y=StyleSheet.cost_model[Constants.Y] + i*50; //to be improved
+            button.width=StyleSheet.cost_model[Constants.WIDTH];
+            button.height=StyleSheet.cost_model[Constants.HEIGHT];
+            button.textColor=StyleSheet.costModelValue[Constants.TEXTCOLOR];
+            button.pixelSize=StyleSheet.costModelValue[Constants.PIXELSIZE];
             button.userdata=res[1][i+1];
             button.text=Genivi.CostModels[button.userdata];
             button.disabled=button.userdata == costmodel;

@@ -30,6 +30,7 @@ import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
+import "Core/style-sheets/navigation-browse-map-css.js" as StyleSheetMap;
 import "Core/style-sheets/navigation-browse-map-settings-css.js" as StyleSheetSettings;
 import lbs.plugin.dbusif 1.0
 
@@ -277,8 +278,8 @@ HMIMenu {
             opacity: 0.8
             width: StyleSheetSettings.navigation_browse_map_settings_background[Constants.WIDTH]
             height: StyleSheetSettings.navigation_browse_map_settings_background[Constants.HEIGHT]
-            x: Constants.MENU_CAMERA_SETTINGS_X
-            y: Constants.MENU_CAMERA_SETTINGS_Y
+            x: StyleSheetMap.settings_area[Constants.X]
+            y: StyleSheetMap.settings_area[Constants.Y]
             HMIBgImage {
                 id: content
                 image:StyleSheetSettings.navigation_browse_map_settings_background[Constants.SOURCE];

@@ -619,30 +619,3 @@ DBusIf::pid(void)
 	return getpid();
 }
 
-Preference::Preference(QObject *parent)
- : QObject(parent)
- {
-    m_source = 0;
-    m_mode = 0;
- }
-
- unsigned int Preference::source() const
- {
-     return m_source;
- }
-
- void Preference::setSource(const unsigned int &source)
- {
-     m_source = source;
- }
-
- unsigned int Preference::mode() const
- {
-     return m_mode;
- }
-
- void Preference::setMode(const unsigned int &mode)
- {
-     m_mode = mode;
- }
-

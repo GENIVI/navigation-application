@@ -11,7 +11,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     dbusif.cpp \
-    wheelareaplugin.cpp
+    wheelareaplugin.cpp \
+    preference.cpp
 unix {
         CONFIG += link_pkgconfig
         PKGCONFIG += dbus-1
@@ -23,4 +24,5 @@ DEPENDPATH += $$PWD/../../../bin/hmi/qml
 HEADERS += \
     dbusif.h \
     dbusifsignal.h \
-    wheelarea.h
+    wheelarea.h \
+    preference.h
