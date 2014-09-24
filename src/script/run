@@ -27,48 +27,46 @@
 # @licence end@
 ###########################################################################
 
+TOP_DIR=$PWD/..
+TOP_BIN_DIR=$TOP_DIR/bin
+SCRIPT_DIR=$PWD
+
+#include common settings
+source fsa-config.sh
+
 # function to start a process by freezing some of the options
 function run
 {
-	# copy options to local options
 	local x=$xterm
 	local g=$gdb
 	local l=$log
-	local v=$verbose
 	local title="$1"
 	shift
-	# manage freezing options
 	if [ "$1" = "-n" ]
-	then # freeze xterm and log
+	then
 		shift
 		x=0
-		l=0
+		log=0
 	fi
-	if [ "$1" = "-g" ]
-	then # freeze debug
+	if [ "$1" = -"g" ]
+	then
 		shift
 		g=0
 	fi
-	# manage local options
 	if [ "$x" = 1 ]
-	then # subprocess into xterm
+	then
 		if [ "$g" = 1 ]
-		then # debug mode
+		then
 			set -- gdb -ex run --args "$@"
 		fi
 		xterm -T "$title" -sb -sl 5000 -e "$@" &
-	elif [ "$l" = 1 ]
-	then # log file
+	elif [ "$log" = 1 ]
+	then
 		"$@" >"$CUR_DIR/$title.log" 2>&1 &
 	else
-		if [ "$v" = 1 ]
-		then
-			"$@" &
-		else
-			"$@" > /dev/null 2>&1 &
-		fi
+		"$@" &
 	fi
-	PIDS="$PIDS $!" #add pid to list of pid
+	PIDS="$PIDS $!"
 }
 
 # function to wait for the dbus service to be started, exit if too long
@@ -104,11 +102,6 @@ function terminate
 	fi
 }
 
-# paths
-CUR_DIR=$PWD
-BIN_DIR=$PWD/../bin
-SRC_DIR=$PWD/..
-
 # default settings
 gdb=0 #no debug
 xterm=0 #no subprocess into a separate xterm
@@ -118,9 +111,10 @@ replayer=1 #replayer enabled
 lm=0 #layer manager disabled
 wm="" #to store the current window manager (in case of start with the layer manager)
 verbose=0 #no debug or log messages
+center="4612 N 0608 E"
 
 # hmi panel launched
-app=$SRC_DIR/hmi/qml/application.qml
+app=$HMI_QML_DIR/application.qml
 
 while getopts a:c:glnorvx opt
 do
@@ -128,22 +122,34 @@ do
 	a) #select another hmi panel
 		app=$OPTARG 
 		;;
-	c) #set the map center (used by the navigation core run script)
-		plugin_args="$plugin_args -$opt $OPTARG" 
+	c) #set the map center 
+		case "$OPTARG" in
+		paris)
+			center="2.34 48.86"
+			;;
+		tokyo)
+			center="139.74 35.70"
+			;;
+		[0-9-]*)
+			center=$OPTARG
+			;;
+		*)
+			echo "Unsupported center $OPTARG" >&2
+			exit 1
+			;;
+		esac
 		;;
 	g) #enable the debugger
-		plugin_args="$plugin_args -$opt"
 		gdb=1
 		;;
-	l) #enable the layer manager (not running)
-		lm=1
+	l) #enable the layer manager (not used for the moment)
+		#lm=1
+		lm=0
 		;;
-	n) #disable the enhanced position server (used by the navigation core run script)
+	n) #disable the enhanced position server 
 		enhpos=0
-		plugin_args="$plugin_args -$opt"
 		;;
 	o) #enable the log file
-		plugin_args="$plugin_args -$opt"
 		log=1
 		;;
 	r) #disable the log replayer
@@ -153,7 +159,6 @@ do
 		verbose=1
 		;;
 	x) #enable subprocess in a separate xterm
-		plugin_args="$plugin_args -$opt"
 		xterm=1
 		;;
 	\?)
@@ -208,33 +213,42 @@ trap "terminate" EXIT INT
 set -e #exit on error now
 
 # start the automotive message broker and wait for dbus service
-cd $BIN_DIR/automotive-message-broker
-run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $SRC_DIR/genivilogreplayer/logreplayerconfig
+run "Automotive Message Broker" $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR/ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
 wait_for_service org.automotive.message.broker /
 
-# start the poi service and wait for dbus service
-cd $BIN_DIR/poi-server
-run "POI service" ./poi-server -f empty.db
+# start the poi server and wait for dbus service
+run "POI service" $POI_SERVER_BIN_DIR/$POI_SERVER -f $SCRIPT_DIR/empty.db
 wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearch
 
-# start the two instances of navit with plugins (one for navigation core and another one for map viewer)
-# we don't use the log replayer of positioning because we still need some specific data for the FSA application !
-cd $SRC_DIR/navigation-service/src/navigation/script
 if [ "$enhpos" = 1 ]
-then # start the enhanced position server
-	run "Navit Plugins" ./run -r -b $BIN_DIR $plugin_args
-	if [ "$replayer" = 1 ]
-	then # start the log replayer
-		cd $BIN_DIR/log-replayer
-		run "Log Replayer" ./log-replayer > /dev/null 2>&1 $SRC_DIR/positioning_*/log-replayer/logs/geneve-cologny.log
-	fi
-else # no enhanced position server
-	run "Navit Plugins" ./run -rn -b $BIN_DIR $plugin_args
+then # start the  enhanced position service
+	run "EnhancedPositionService" $ENHANCED_POSITION_SERVICE_BIN_DIR/src/$ENHANCED_POSITION_SERVICE 
+	wait_for_service org.genivi.positioning.EnhancedPosition /org/genivi/positioning/EnhancedPosition
 fi
+
+if [ "$replayer" = 1 ]
+then # start the log replayer (of the fsa)
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER > /dev/null 2>&1 $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+fi
+
+# start the two instances of navit with plugins (one for navigation core and another one for map viewer)
+run "MapViewer" $NAVIT_BIN_DIR/$NAVIT $NAVIT_BIN_DIR/navit_genivi_mapviewer.xml
+
+wait_for_service org.genivi.mapviewer.Configuration /org/genivi/mapviewer
+wait_for_service org.genivi.mapviewer.MapViewerControl /org/genivi/mapviewer
+wait_for_service org.genivi.mapviewer.Session /org/genivi/mapviewer
+
+run "NavigationCore" $NAVIT_BIN_DIR/$NAVIT $NAVIT_BIN_DIR/navit_genivi_navigationcore.xml
+wait_for_service org.genivi.navigationcore.Configuration /org/genivi/navigationcore
+wait_for_service org.genivi.navigationcore.Guidance /org/genivi/navigationcore
+wait_for_service org.genivi.navigationcore.LocationInput /org/genivi/navigationcore
+wait_for_service org.genivi.navigationcore.MapMatchedPosition /org/genivi/navigationcore
+wait_for_service org.genivi.navigationcore.Routing /org/genivi/navigationcore
+wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
 
 sleep 3 # need a sleep here (to be improved)
 # start the fuel stop advisor application
-run "Fuel Stop Advisor" $BIN_DIR/fuel-stop-advisor/fuel-stop-advisor
+run "Fuel Stop Advisor" $FUEL_STOP_ADVISOR_BIN_DIR/$FUEL_STOP_ADVISOR
 
 # log trace into a file
 if [ "$log" = 1 ]
@@ -243,11 +257,10 @@ then
 	exec 2>&1
 fi
 
-cd $BIN_DIR/hmi-launcher
 if [ "$lm" = 1 ]
 then # start the hmi into the layer manager (not running)
 	lmqmlviewer $app
 else # start the hmi with the launcher
-	./hmi-launcher $app 
+	$HMI_LAUNCHER_BIN_DIR/$HMI_LAUNCHER $app 
 fi
 

@@ -27,7 +27,7 @@ set (create_file cmake -E touch)
 # Check if navigation-service stuff with the right version has been cloned and do it if necessary
 set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation-service)
 set(navigation-service_URL http://git.projects.genivi.org/lbs/navigation.git)
-set(navigation-service_VERSION 08ce7e7526ea8801bad4279e500771889b7813d6)
+set(navigation-service_VERSION 8a5158d426753645bad05dca84cbf3afe3490f0a)
 
 if (EXISTS ${navigation-service_SRC_DIR})
 	execute_process(	

@@ -3,7 +3,7 @@
 *-release/
 /.project
 bin/
-build*/
+
 
 #files
 *~
