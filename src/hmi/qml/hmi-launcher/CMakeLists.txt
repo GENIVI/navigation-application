@@ -19,6 +19,7 @@ project(hmi-launcher)
 cmake_minimum_required(VERSION 2.8.11)
 
 message(STATUS "hmi-launcher")
+find_program(XSLTPROC xsltproc REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
@@ -76,6 +77,26 @@ set(LIBRARIES
     ${QT5_NETWORK_LIBRARIES}
 	${DBUS_LIBRARIES}
 )
+
+# generate constants used by the QML files
+# in order to generate it, navigation-service and positioning have to be being cloned before
+# do cmake -Dnavigation-service_API=<path to navigation-service APIs> -Dpositioning_API=<path to positioning enhanced position API>
+file (GLOB XML_TO_CONSTANTS
+	${navigation-service_API}/map-viewer/genivi-mapviewer-constants.xml
+	${navigation-service_API}/navigation-core/genivi-navigationcore-constants.xml
+	${navigation-service_API}/poi-service/genivi-poiservice-constants.xml
+	${positioning_API}/genivi-positioning-constants.xml
+)
+if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)
+	foreach (RAW_FILE ${XML_TO_CONSTANTS})
+		get_filename_component(FILE ${RAW_FILE} NAME_WE)
+		execute_process(
+			OUTPUT_VARIABLE data_flow
+			COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/../javascript.xsl ${RAW_FILE}        
+		)
+		file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/constants.js ${data_flow})
+	endforeach()
+endif()
 
 # for some reason, automoc doesn't run, so moc is made manually
 set (SRC_TO_MOC ${CMAKE_CURRENT_SOURCE_DIR}/dbusif.h

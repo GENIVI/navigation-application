@@ -16,14 +16,18 @@
 # @licence end@
 ###########################################################################
 cmake_minimum_required(VERSION 2.8)
-set (git_get_src_version git rev-parse HEAD)
-set (git_executable git)
+
+find_program(XSLTPROC xsltproc REQUIRED)
+find_program(GIT git)
+
+set (git_executable ${GIT})
+set (git_get_src_version ${git_executable} rev-parse HEAD)
 set (create_file cmake -E touch)
 
 # Check if navigation-service stuff with the right version has been cloned and do it if necessary
 set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation-service)
 set(navigation-service_URL http://git.projects.genivi.org/lbs/navigation.git)
-set(navigation-service_VERSION fb92406d88997bd20c89b094b50db8762e1a4869)
+set(navigation-service_VERSION 08ce7e7526ea8801bad4279e500771889b7813d6)
 
 if (EXISTS ${navigation-service_SRC_DIR})
 	execute_process(	
@@ -125,5 +129,4 @@ else()
 		RESULT_VARIABLE error_code
 	)
 endif()
-
 

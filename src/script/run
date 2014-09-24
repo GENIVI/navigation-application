@@ -106,7 +106,7 @@ function terminate
 
 # paths
 CUR_DIR=$PWD
-BIN_DIR=$PWD/../../bin
+BIN_DIR=$PWD/../bin
 SRC_DIR=$PWD/..
 
 # default settings
@@ -213,13 +213,13 @@ run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $SRC_DIR/g
 wait_for_service org.automotive.message.broker /
 
 # start the poi service and wait for dbus service
-cd $BIN_DIR/poi-service
+cd $BIN_DIR/poi-server
 run "POI service" ./poi-server -f empty.db
 wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearch
 
 # start the two instances of navit with plugins (one for navigation core and another one for map viewer)
 # we don't use the log replayer of positioning because we still need some specific data for the FSA application !
-cd $SRC_DIR/navigation-service*/src/navigation/script
+cd $SRC_DIR/navigation-service/src/navigation/script
 if [ "$enhpos" = 1 ]
 then # start the enhanced position server
 	run "Navit Plugins" ./run -r -b $BIN_DIR $plugin_args
@@ -243,7 +243,7 @@ then
 	exec 2>&1
 fi
 
-cd $BIN_DIR/hmi/qml
+cd $BIN_DIR/hmi-launcher
 if [ "$lm" = 1 ]
 then # start the hmi into the layer manager (not running)
 	lmqmlviewer $app
