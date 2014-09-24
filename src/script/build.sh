@@ -29,9 +29,6 @@ GENIVI_NAVIGATION_CONSTANTS_API=$NAVIGATION_SERVICE_API_DIR/navigation-core/geni
 # Compiler Flags
 #--------------------------------------------------------------------------
 # modify the following flags as needed:
-GNSS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON'
-SENSORS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON'
-ENHANCED_POSITION_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=OFF'
 #--------------------------------------------------------------------------
 
 usage() {

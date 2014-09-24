@@ -213,7 +213,8 @@ trap "terminate" EXIT INT
 set -e #exit on error now
 
 # start the automotive message broker and wait for dbus service
-run "Automotive Message Broker" $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR/ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
+cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
+run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
 wait_for_service org.automotive.message.broker /
 
 # start the poi server and wait for dbus service
@@ -226,25 +227,28 @@ then # start the  enhanced position service
 	wait_for_service org.genivi.positioning.EnhancedPosition /org/genivi/positioning/EnhancedPosition
 fi
 
-if [ "$replayer" = 1 ]
-then # start the log replayer (of the fsa)
-	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER > /dev/null 2>&1 $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
-fi
-
 # start the two instances of navit with plugins (one for navigation core and another one for map viewer)
-run "MapViewer" $NAVIT_BIN_DIR/$NAVIT $NAVIT_BIN_DIR/navit_genivi_mapviewer.xml
+cd $NAVIT_BIN_DIR
+>bookmark.txt
+echo "$center" >center.txt
+run "MapViewer" ./$NAVIT navit_genivi_mapviewer.xml
 
 wait_for_service org.genivi.mapviewer.Configuration /org/genivi/mapviewer
 wait_for_service org.genivi.mapviewer.MapViewerControl /org/genivi/mapviewer
 wait_for_service org.genivi.mapviewer.Session /org/genivi/mapviewer
 
-run "NavigationCore" $NAVIT_BIN_DIR/$NAVIT $NAVIT_BIN_DIR/navit_genivi_navigationcore.xml
+run "NavigationCore" ./$NAVIT navit_genivi_navigationcore.xml
 wait_for_service org.genivi.navigationcore.Configuration /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.Guidance /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.LocationInput /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.MapMatchedPosition /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.Routing /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
+
+if [ "$replayer" = 1 ]
+then # start the log replayer (of the fsa)
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER > /dev/null 2>&1 $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+fi
 
 sleep 3 # need a sleep here (to be improved)
 # start the fuel stop advisor application
