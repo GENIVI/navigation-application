@@ -1,22 +1,18 @@
 ###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
 # Component Name: Navit POC
+#
 # Author: Martin Schaller <martin.schaller@it-schaller.de>
 #
-# Copyright (C) 2012, GENIVI Alliance, Inc.
 # 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License version 2 as 
-# published by the Free Software Foundation.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# License:
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+# this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# @licence end@
 ###########################################################################
 cmake_minimum_required(VERSION 2.8)
 include(FindPkgConfig)

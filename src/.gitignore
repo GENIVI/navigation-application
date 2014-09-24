@@ -1,5 +1,4 @@
-automotive-message-broker_*
-navigation-service-*
-navigation-service_*
+automotive-message-broker
+navigation-service
 positioning
-positioning_*
+
