@@ -32,7 +32,7 @@ Rectangle {
 	property Item next
 	property Item prev
 //    width: Constants.MENU_WIDTH; height: Constants.MENU_HEIGHT
-    color: Constants.MENU_BACKGROUND_COLOR
+    color: "transparent"
 	focus: true
 	anchors.fill: parent
 

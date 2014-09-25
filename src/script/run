@@ -28,7 +28,7 @@
 ###########################################################################
 
 TOP_DIR=$PWD/..
-TOP_BIN_DIR=$TOP_DIR/bin
+TOP_BIN_DIR=$TOP_DIR/../bin
 SCRIPT_DIR=$PWD
 
 #include common settings

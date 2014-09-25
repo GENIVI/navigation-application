@@ -28,7 +28,7 @@
 */
 .pragma library
 
-Qt.include("../../../bin/hmi-launcher/constants.js");
+Qt.include("../../../../bin/hmi-launcher/constants.js");
 var Test;
 var dbusIf;
 var g_nav_session;

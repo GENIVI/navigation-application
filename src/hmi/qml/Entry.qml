@@ -26,10 +26,12 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
+import "Core/style-sheets/style-constants.js" as Constants;
 import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    color: Constants.MENU_BACKGROUND_COLOR
 
     //property Item currentSelectionCriterionSignal;
     property Item searchStatusSignal;

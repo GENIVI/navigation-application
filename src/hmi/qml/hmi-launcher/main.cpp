@@ -27,6 +27,7 @@
 */
 #include <QtQuick/QQuickView>
 #include <QApplication>
+#include <QPalette>
 #include <QObject>
 #include <QQmlComponent>
 #include <QQmlEngine>
@@ -49,6 +50,10 @@ int main(int argc, char ** argv)
 
     QQmlEngine engine;
     QQmlComponent *component = new QQmlComponent(&engine);
+
+    QPalette pal = app.palette();
+    pal.setColor(QPalette::Window, Qt::transparent);
+    app.setPalette(pal);
 
     QObject::connect(&engine, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
 

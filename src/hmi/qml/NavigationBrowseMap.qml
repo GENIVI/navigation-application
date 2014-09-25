@@ -499,13 +499,14 @@ HMIMenu {
         color:"transparent"
 
         Rectangle {
-            opacity: 0.8
+            color:"transparent"
             width: StyleSheetTop.navigation_browse_map_top_background[Constants.WIDTH]
             height: StyleSheetTop.navigation_browse_map_top_background[Constants.HEIGHT]
             x: StyleSheetMap.top_area[Constants.X]
             y: StyleSheetMap.top_area[Constants.Y]
             HMIBgImage {
                 id: top
+                opacity: 0.8
                 image:StyleSheetTop.navigation_browse_map_top_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
@@ -551,13 +552,14 @@ HMIMenu {
         }
 
         Rectangle {
-            opacity: 0.8
+            color:"transparent"
             width: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.WIDTH]
             height: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.HEIGHT]
             x: StyleSheetMap.bottom_area[Constants.X]
             y: StyleSheetMap.bottom_area[Constants.Y]
             HMIBgImage {
                 id: bottom
+                opacity: 0.8
                 image:StyleSheetBottom.navigation_browse_map_bottom_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
@@ -677,13 +679,14 @@ HMIMenu {
         }
 
         Rectangle {
-            opacity: 0.8
+            color:"transparent"
             width: StyleSheetRoute.navigation_browse_map_route_background[Constants.WIDTH]
             height: StyleSheetRoute.navigation_browse_map_route_background[Constants.HEIGHT]
             x: StyleSheetMap.route_area[Constants.X]
             y: StyleSheetMap.route_area[Constants.Y]
             HMIBgImage {
                 id: route
+                opacity: 0.8
                 image:StyleSheetRoute.navigation_browse_map_route_background[Constants.SOURCE]
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 MouseArea {
@@ -715,13 +718,14 @@ HMIMenu {
         }
 
         Rectangle {
-            opacity: 0.8
+            color:"transparent"
             width: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.WIDTH]
             height: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.HEIGHT]
             x: StyleSheetMap.guidance_area[Constants.X]
             y: StyleSheetMap.guidance_area[Constants.Y]
             HMIBgImage {
                 id: guidance
+                opacity: 0.8
                 image:StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.SOURCE]
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 MouseArea {
@@ -779,12 +783,13 @@ HMIMenu {
         }
 
         Rectangle {
-            opacity: 0.8
+            color:"transparent"
             width: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.WIDTH]
             height: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.HEIGHT]
             x: StyleSheetMap.scroll_area[Constants.X]
             y: StyleSheetMap.scroll_area[Constants.Y]
             HMIBgImage {
+                opacity: 0.8
                 property real panX: 40 //delta in pixel for x panning
                 property real panY: 40 //delta in pixel for y panning
                 id: scroll
@@ -822,22 +827,24 @@ HMIMenu {
         }
 
         Rectangle {
-            opacity: {
-                if (Genivi.simulationPanelOnMapview==true)
-                {
-                    opacity=0.8;
-                }
-                else
-                {
-                    opacity=0;
-                }
-            }
+            color:"transparent"
+
             width: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.WIDTH]
             height: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.HEIGHT]
             x: StyleSheetMap.simulation_area[Constants.X]
             y: StyleSheetMap.simulation_area[Constants.Y]
             HMIBgImage {
                 id: simulation
+                opacity: {
+                    if (Genivi.simulationPanelOnMapview==true)
+                    {
+                        opacity=0.8;
+                    }
+                    else
+                    {
+                        opacity=0;
+                    }
+                }
                 image:StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 Text {

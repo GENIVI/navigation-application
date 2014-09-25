@@ -46,7 +46,7 @@ if (EXISTS ${navigation-service_SRC_DIR})
 			RESULT_VARIABLE error_code
 		)
 		if(error_code)
-			message(FATAL_ERROR "Failed to checkout version: '${navigation-service_VERSION}'")
+			message(STATUS "Failed to checkout version: '${navigation-service_VERSION}'")
 		endif()	
 	endif()
 else()
@@ -66,7 +66,7 @@ else()
 		RESULT_VARIABLE error_code
 	)
 	if(error_code)
-		message(FATAL_ERROR "Failed to checkout version: '${navigation-service_VERSION}'")
+		message(STATUS "Failed to checkout version: '${navigation-service_VERSION}'")
 	endif()	
 endif()
 
@@ -122,7 +122,7 @@ if (EXISTS ${automotive-message-broker_PATCH_DUMMY_FILE})
 else()
 	message(STATUS "apply the patch")
 	execute_process(
-		COMMAND patch -d ${automotive-message-broker_SRC_DIR} -p1 -s <${automotive-message-broker_PATCH_SRC_DIR}/amb_allow_sessionbus.patch
+		COMMAND patch -d ${automotive-message-broker_SRC_DIR} -p1 -s < {automotive-message-broker_PATCH_SRC_DIR}/amb_allow_sessionbus.patch
 		COMMAND ${create_file} ${automotive-message-broker_PATCH_DUMMY_FILE}
 		TIMEOUT 0.1 #cmake -E touch never ends so add a timeout here
 		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"

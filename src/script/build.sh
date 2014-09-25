@@ -17,7 +17,7 @@
 # @licence end@
 ###########################################################################
 TOP_DIR=$PWD/..
-TOP_BIN_DIR=$TOP_DIR/bin
+TOP_BIN_DIR=$TOP_DIR/../bin
 
 #include common settings
 source fsa-config.sh
@@ -48,7 +48,7 @@ build() {
     echo ''
     echo 'Building fuel stop advisor'
 
-    cd $TOP_DIR 
+    cd $TOP_DIR/.. 
     mkdir -p bin
     cd $TOP_BIN_DIR
     cmake $TOP_DIR
