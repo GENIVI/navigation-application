@@ -19,7 +19,7 @@
 
 #settings and path used by the build.sh and run
 #these settings are related to TOP_DIR and TOP_BIN_DIR defined into the parent script
-NAVIGATION_SERVICE=navigation-service
+NAVIGATION_SERVICE=navigation
 NAVIGATION_SERVICE_SRC_DIR=$TOP_DIR/$NAVIGATION_SERVICE
 NAVIGATION_SERVICE_BIN_DIR=$TOP_BIN_DIR/$NAVIGATION_SERVICE
 NAVIGATION_SERVICE_API_DIR=$NAVIGATION_SERVICE_SRC_DIR/api

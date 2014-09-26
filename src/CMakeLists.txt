@@ -21,11 +21,11 @@ find_program(XSLTPROC xsltproc REQUIRED)
 find_program(GIT git)
 
 set (git_executable ${GIT})
-set (git_get_src_version ${git_executable} rev-parse HEAD)
+set (git_get_src_version git rev-parse HEAD)
 set (create_file cmake -E touch)
 
 # Check if navigation-service stuff with the right version has been cloned and do it if necessary
-set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation-service)
+set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation)
 set(navigation-service_URL http://git.projects.genivi.org/lbs/navigation.git)
 set(navigation-service_VERSION 8a5158d426753645bad05dca84cbf3afe3490f0a)
 
@@ -46,7 +46,7 @@ if (EXISTS ${navigation-service_SRC_DIR})
 			RESULT_VARIABLE error_code
 		)
 		if(error_code)
-			message(STATUS "Failed to checkout version: '${navigation-service_VERSION}'")
+			message(FATAL_ERROR "Failed to checkout version: '${navigation-service_VERSION}'")
 		endif()	
 	endif()
 else()
@@ -66,7 +66,7 @@ else()
 		RESULT_VARIABLE error_code
 	)
 	if(error_code)
-		message(STATUS "Failed to checkout version: '${navigation-service_VERSION}'")
+		message(FATAL_ERROR "Failed to checkout version: '${navigation-service_VERSION}'")
 	endif()	
 endif()
 
@@ -117,16 +117,18 @@ else()
 	endif()	
 endif()
 
+set (PATCH_EXECUTABLE patch -p1 -s) 
 if (EXISTS ${automotive-message-broker_PATCH_DUMMY_FILE})
 	message(STATUS "patch already applied")
 else()
 	message(STATUS "apply the patch")
 	execute_process(
-		COMMAND patch -d ${automotive-message-broker_SRC_DIR} -p1 -s < {automotive-message-broker_PATCH_SRC_DIR}/amb_allow_sessionbus.patch
+		COMMAND ${PATCH_EXECUTABLE} -i ${automotive-message-broker_PATCH_SRC_DIR}/amb_allow_sessionbus.patch
 		COMMAND ${create_file} ${automotive-message-broker_PATCH_DUMMY_FILE}
 		TIMEOUT 0.1 #cmake -E touch never ends so add a timeout here
 		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
 		RESULT_VARIABLE error_code
 	)
+	message( STATUS "Patch result: ${error_code}, PROF SOURCE DIR: ${automotive-message-broker_SRC_DIR}" )
 endif()
 
