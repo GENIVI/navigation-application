@@ -23,6 +23,7 @@
 # List of changes:
 # 
 # 5-8-2014, Philippe Colliot, Refine, add a sleep and improve comments
+# 30-9-2014, Philippe Colliot, Make it simpler and add a check for availability of hmi style-sheets
 #
 # @licence end@
 ###########################################################################
@@ -30,6 +31,7 @@
 TOP_DIR=$PWD/..
 TOP_BIN_DIR=$TOP_DIR/../bin
 SCRIPT_DIR=$PWD
+
 
 #include common settings
 source fsa-config.sh
@@ -142,9 +144,8 @@ do
 	g) #enable the debugger
 		gdb=1
 		;;
-	l) #enable the layer manager (not used for the moment)
-		#lm=1
-		lm=0
+	l) #enable the layer manager
+		lm=1
 		;;
 	n) #disable the enhanced position server 
 		enhpos=0
@@ -177,34 +178,48 @@ do
 	esac
 done
 
+# check if style sheets have been generated
+if [ ! -f $STYLE_SHEETS_GENERATED_INDICATOR ]
+then
+    echo "Please generate the style sheets before"
+	./prepare.sh -h
+	exit 1
+fi
+
 REPLAYER_LOG_FILE=none
 export REPLAYER_LOG_FILE
 
-# manage the layer manager (not running)
+# initialization for the layer manager 
 if [ "$lm" = "1" ]
 then
-	for i in metacity compiz
-	do
-		if pidof $i
-		then
-			killall $i
-			while pidof $i
-			do
-				echo "Waiting for termination of $i"
-				sleep 1
-			done
-			wm="$i"
-			break
-		fi
-	done
-	set -e
-	export LM_USE_SESSION_BUS=enable
-	PATH=$PWD/../bin/layer_management/inst/usr/local/bin:$PWD/../bin/libqtlayerman/lmqmlviewer:$PATH
-	export LD_LIBRARY_PATH=$PWD/../bin/layer_management/inst/usr/local/lib:$PWD/../bin/libqtlayerman/src
-	export LM_PLUGIN_PATH=$PWD/../bin/layer_management/inst/usr/local/lib/layermanager
-	LayerManagerService  &
-	lm_pid=$!
-	sleep 2
+	# D-Bus setup
+	#eval `dbus-launch --sh-syntax`
+	export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/5000/dbus/user_bus_socket
+	#export DBUS_SESSION_BUS_PID=335
+	#export DBUS_SESSION_BUS_PID=185
+
+	export XDG_RUNTIME_DIR=/var/run/user/5000
+
+	# Platform is wayland of drm-backend
+	export QT_QPA_PLATFORM=wayland
+
+	# Create Window OpenGL (Default gtk_drawing_area)
+	export NAVIT_GRAPHICS=opengl
+
+	# Graphics OpneGL Platfrom
+	export NAVIT_PLATFORM=wayland
+
+	# ILM library path(for hmi-launcher& genivi_mapviewer_mapviewercontrol.cxx)
+	#export LD_LIBRARY_PATH=/home/user/usrfs/lib:$LD_LIBRARY_PATH
+
+	# Create Layer(layer of navigation-application)
+	#export PATH=/home/user/usrfs/bin:$PATH
+	LAYER=2000
+	LayerManagerControl create layer $LAYER 800 480
+	LayerManagerControl set layer $LAYER source region 0 0 800 480
+	LayerManagerControl set layer $LAYER destination region 0 0 800 480
+	LayerManagerControl set layer $LAYER visibility 1
+	LayerManagerControl set screen 0 render order $LAYER
 fi
 
 export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
@@ -262,9 +277,16 @@ then
 fi
 
 if [ "$lm" = 1 ]
-then # start the hmi into the layer manager (not running)
-	lmqmlviewer $app
-else # start the hmi with the launcher
+then # start the hmi into the layer manager
+	# wait for launch hmi-launcher
+	sleep 5
+	#SURFACE=`pgrep -f hmi-launcher`
+	SURFACE=2002
+	if [ -n $SURFACE ]; then
+		LayerManagerControl set surface $SURFACE visibility 1
+		LayerManagerControl set layer $LAYER render order $SURFACE
+	fi
+else # start the hmi 
 	$HMI_LAUNCHER_BIN_DIR/$HMI_LAUNCHER $app 
 fi
 

@@ -76,3 +76,6 @@ HMI_LAUNCHER_BIN_DIR=$TOP_BIN_DIR/$HMI_LAUNCHER
 
 HMI_QML_DIR=$TOP_DIR/hmi/qml
 
+STYLE_SHEETS_GENERATED_INDICATOR=$HMI_QML_DIR/Core/style-sheets/the-style-sheets-have-been-generated-css.js
+
+

@@ -16,7 +16,13 @@
 #
 # @licence end@
 ###########################################################################
-TARGET_DIR=$PWD/../hmi/qml/Core
+TOP_DIR=$PWD/..
+TOP_BIN_DIR=$TOP_DIR/../bin
+SCRIPT_DIR=$PWD
+TARGET_DIR=$TOP_DIR/hmi/qml/Core
+
+#include common settings
+source fsa-config.sh
 
 function usage
 {
@@ -46,4 +52,8 @@ fi
 
 echo "Prepare the style sheet of fuel stop advisor"
 ./style_sheet_generator.sh -i $input_dir -o ../hmi/qml/Core/ -v -nl
+
+echo "Create the empty file as an indicator"
+touch $STYLE_SHEETS_GENERATED_INDICATOR
+
 

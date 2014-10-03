@@ -1,4 +1,4 @@
-Release date of the file: 30-07-2014 
+Release date of the file: 30-09-2014 
 Status: to be completed
 
 Project:
@@ -6,7 +6,7 @@ Navigation application based on Navit and compliant with the Navigation APIs sta
 This project is one of the navigation projects that implements the GENIVI navigation APIs.
 
 More:
-The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is made in Qml.
+The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is made in Qml (Qt5.2 and QtQuick 2.1)
 See also other navigation projects like proof of concepts implemented for poi-service, traffic-info and positioning 
 
 What is in:
@@ -46,19 +46,15 @@ export QT_SELECT=5
 Default address for the application is using a list of address accessed in english, so you need to set the locale to en_US
 export LANGUAGE=en_US
 
-Dependencies: (make all2 allows to check/install the needed packages)
-(to be completed)
-cmake xsltproc libdbus-c++-dev libdbus-1-dev libdbus-c++-bin libsqlite3-dev libglibmm-2.4-dev sqlite3 xsltproc libboost-dev libjson0-dev libtool uuid-dev qtdeclarative5-quicklayouts-plugin qtdeclarative5-dialogs-plugin qtdeclarative5-controls-plugin qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin libqt5declarative5 
+Dependencies: the script scheme is based on cmake 
  
 Build:
 
 	cd $WORKING-DIR/src/script
-	make all2
+	./build.sh make
 
-(For the first time, will install all prerequisites required to build the code)
-or, if you have already installed the prerequisites:
-
-	make all
+Prepare the HMI:
+There are two resolutions available, WVGA and XGA, please use ./prepare.sh -i <folder of the gimp files>
 
 To launch (several options available):
 
