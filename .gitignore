@@ -1,6 +1,8 @@
 #folders 
 *-debug/
 *-release/
+*-Debug/
+*-Release/
 /.project
 bin/
 

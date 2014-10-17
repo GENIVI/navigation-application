@@ -71,7 +71,8 @@ HMIMenu {
 				pageOpen(Genivi.entryback);
 			} next:back; prev:keyboard}
 			StdButton { id:back; text: "Back"; onClicked: {
-				Genivi.entrydest=null;
+                Genivi.entrycancel=true;
+                Genivi.preloadMode=true;
 				pageOpen(Genivi.entryback);
 			} next:keyboard; prev:ok}
 		}

@@ -121,4 +121,3 @@ index 0835a64..7fb48ea 100755
 +
  managerObject = bus.get_object("org.automotive.message.broker", "/");
  managerInterface = dbus.Interface(managerObject, "org.automotive.Manager")
- 

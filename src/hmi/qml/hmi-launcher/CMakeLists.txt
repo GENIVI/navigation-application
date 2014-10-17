@@ -13,6 +13,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# List of changes:
+# 13-10-2014, Tanibata, Nobuhiko, adaptation to layer management
+#
 # @licence end@
 ###########################################################################
 project(hmi-launcher)
@@ -31,6 +34,20 @@ pkg_check_modules(QT5_DBUS REQUIRED Qt5DBus)
 pkg_check_modules(QT5_WIDGETS REQUIRED Qt5Widgets)
 pkg_check_modules(QT5_GUI REQUIRED Qt5Gui)
 pkg_check_modules(QT5_NETWORK REQUIRED Qt5Network)
+pkg_check_modules(QT5_OPENGL REQUIRED glesv2)
+
+
+if (${LM} EQUAL 1 )
+	message("building with layer management")
+	set(ILM_LIBRARIES "-lilmCommon -lilmClient -lilmControl")
+	include_directories(${QT5_OPENGL_INCLUDE_DIRS})
+	include_directories(${ILM_INCLUDE_DIRS})
+	file(GLOB ILM_SOURCES lm_control.cpp lm_control.h)
+	add_definitions(-DLM)
+else()
+	message("building without layer management")
+endif()
+
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${QT5_CORE_INCLUDE_DIRS})
@@ -65,6 +82,8 @@ link_directories(
 	${QT5_GUI_LIBRARY_DIRS}
 	${QT5_NETWORK_LIBRARY_DIRS}
 	${DBUS_LIBRARY_DIRS}
+	${QT5_OPENGL_LIBRARY_DIRS}
+	${ILM_LIBRARY_DIRS}
 )
  
 set(LIBRARIES 
@@ -76,6 +95,8 @@ set(LIBRARIES
     ${QT5_GUI_LIBRARIES}
     ${QT5_NETWORK_LIBRARIES}
 	${DBUS_LIBRARIES}
+	${QT5_OPENGL_LIBRARIES}
+	${ILM_LIBRARIES}
 )
 
 # generate constants used by the QML files
@@ -135,6 +156,7 @@ add_executable(hmi-launcher
     dbusifsignal.h 
     wheelarea.h 
     preference.h
+	${ILM_SOURCES}
 )
 
 target_link_libraries(hmi-launcher ${LIBRARIES})

@@ -27,7 +27,7 @@ set (create_file cmake -E touch)
 # Check if navigation-service stuff with the right version has been cloned and do it if necessary
 set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation)
 set(navigation-service_URL http://git.projects.genivi.org/lbs/navigation.git)
-set(navigation-service_VERSION 469f4bbb8e811ee024e2f831eceec79bd65578bd)
+set(navigation-service_VERSION dfeb9609b0944109325b554cab2e50a2c7a04079)
 
 if (EXISTS ${navigation-service_SRC_DIR})
 	execute_process(	
@@ -39,8 +39,9 @@ if (EXISTS ${navigation-service_SRC_DIR})
 	if (${version} MATCHES ${navigation-service_VERSION})
 		message(STATUS "version of navigation-service up to date")	
 	else()
-		message(STATUS "get the right version")
+		message(STATUS "get the right version of navigation-service")
 	 	execute_process(
+			COMMAND "${git_executable}" pull
 			COMMAND "${git_executable}" checkout ${navigation-service_VERSION}
 			WORKING_DIRECTORY "${navigation-service_SRC_DIR}"
 			RESULT_VARIABLE error_code
@@ -59,8 +60,9 @@ else()
 		message(FATAL_ERROR "Failed to clone repository: '${navigation-service_URL}'")
 	endif()
 
-	message(STATUS "get the right version")
+	message(STATUS "get the right version of navigation-service")
  	execute_process(
+		COMMAND "${git_executable}" pull
 		COMMAND "${git_executable}" checkout ${navigation-service_VERSION}
 		WORKING_DIRECTORY "${navigation-service_SRC_DIR}"
 		RESULT_VARIABLE error_code
@@ -71,6 +73,7 @@ else()
 endif()
 
 # Check if automotive-message-broker stuff with the right version has been cloned and do it if necessary
+# please consider that patches have been applied 
 set(automotive-message-broker_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/automotive-message-broker)
 set(automotive-message-broker_URL https://github.com/otcshare/automotive-message-broker.git)
 set(automotive-message-broker_VERSION ac3fe53327a13afc571efe079a31a0472ea285a3)
@@ -87,8 +90,9 @@ if (EXISTS ${automotive-message-broker_SRC_DIR})
 	if (${version} MATCHES ${automotive-message-broker_VERSION})
 		message(STATUS "version of automotive-message-broker up to date")	
 	else()
-		message(STATUS "get the right version")
+		message(STATUS "get the right version of automotive-message-broker")
 	 	execute_process(
+			COMMAND "${git_executable}" pull
 			COMMAND "${git_executable}" checkout ${automotive-message-broker_VERSION}
 			WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
 			RESULT_VARIABLE error_code
@@ -106,8 +110,9 @@ else()
  	if(error_code)
 		message(FATAL_ERROR "Failed to clone repository: '${automotive-message-broker_URL}'")
 	endif()
-	message(STATUS "get the right version")
+	message(STATUS "get the right version of automotive-message-broker")
  	execute_process(
+		COMMAND "${git_executable}" pull
 		COMMAND "${git_executable}" checkout ${automotive-message-broker_VERSION}
 		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
 		RESULT_VARIABLE error_code
@@ -119,9 +124,9 @@ endif()
 
 set (PATCH_EXECUTABLE patch -p1 -s) 
 if (EXISTS ${automotive-message-broker_PATCH_DUMMY_FILE})
-	message(STATUS "patch already applied")
+	message(STATUS "patch already applied to automotive-message-broker")
 else()
-	message(STATUS "apply the patch")
+	message(STATUS "apply the patch to automotive-message-broker")
 	execute_process(
 		COMMAND ${PATCH_EXECUTABLE} -i ${automotive-message-broker_PATCH_SRC_DIR}/amb_allow_sessionbus.patch
 		COMMAND ${create_file} ${automotive-message-broker_PATCH_DUMMY_FILE}
@@ -129,6 +134,10 @@ else()
 		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
 		RESULT_VARIABLE error_code
 	)
-	message( STATUS "Patch result: ${error_code}, PROF SOURCE DIR: ${automotive-message-broker_SRC_DIR}" )
+	if(error_code)
+		message(FATAL_ERROR "Failed to apply the patch")
+	endif()	
 endif()
+
+
 

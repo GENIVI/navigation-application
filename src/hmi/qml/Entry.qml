@@ -159,9 +159,9 @@ HMIMenu {
 			} next:back; prev:view}
 */
 			StdButton { id:back; text: "Back"; onClicked: {
-				Genivi.entrydest=null;
 				disconnectSignals();
-                Genivi.entryselectedentry=0;
+                Genivi.entrycancel=true;
+                Genivi.preloadMode=true;
 				pageOpen(Genivi.entryback);
 			} next:view; prev:keyboard}
 		}

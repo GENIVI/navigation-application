@@ -25,6 +25,9 @@ source fsa-config.sh
 GENIVI_NAVIGATION_ROUTING_API=$NAVIGATION_SERVICE_API_DIR/navigation-core/genivi-navigationcore-routing.xml
 GENIVI_NAVIGATION_CONSTANTS_API=$NAVIGATION_SERVICE_API_DIR/navigation-core/genivi-navigationcore-constants.xml
 
+# by default no ilm 
+lm=0
+
 #--------------------------------------------------------------------------
 # Compiler Flags
 #--------------------------------------------------------------------------
@@ -32,33 +35,50 @@ GENIVI_NAVIGATION_CONSTANTS_API=$NAVIGATION_SERVICE_API_DIR/navigation-core/geni
 #--------------------------------------------------------------------------
 
 usage() {
-    echo "Usage: ./build.sh Build fuel stop advisor"
-    echo "   or: ./build.sh [command]"
+    echo "Usage: ./build.sh [command]"
     echo
     echo "command:"
     echo "  make            Build"
-    echo "  clean           Clean"
-    echo "  src-clean       Clean the cloned sources"
+    echo "  makelm          Build with layer manager"
+    echo "  clean           Clean the bin"
+    echo "  src-clean       Clean the cloned sources and the bin"
+    echo "  clone           Clone the sources"
     echo "  help            Print Help"
     echo
     echo
+}
+
+clone() {
+    echo ''
+    echo 'Clone/update version of additional sources if needed'
+
+    cd $TOP_DIR/.. 
+    mkdir -p bin
+    cd $TOP_BIN_DIR
+    cmake $TOP_DIR
+ 
+    cd $TOP_BIN_DIR
+	mkdir -p $NAVIGATION_SERVICE
+    cd $NAVIGATION_SERVICE_BUILD_SCRIPT_DIR 
+	# call the bash script of navigation, set the bin dir to navigation-service and tell it where to clone the positioning and the ilm
+	bash ./build.sh clone $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
 }
 
 build() {
     echo ''
     echo 'Building fuel stop advisor'
 
-    cd $TOP_DIR/.. 
-    mkdir -p bin
-    cd $TOP_BIN_DIR
-    cmake $TOP_DIR
+	clone
 
     cd $TOP_BIN_DIR
 	mkdir -p $NAVIGATION_SERVICE
     cd $NAVIGATION_SERVICE_BUILD_SCRIPT_DIR 
-	# call the bash script of navigation, set the bin dir to navigation-service and tell it where to clone the positioning
-	bash ./build.sh make $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR	
-
+	# call the bash script of navigation, set the bin dir to navigation-service and tell it where to clone the positioning and the ilm
+	if [ $lm -eq 0 ]; then
+		bash ./build.sh make $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
+	else
+		bash ./build.sh makelm $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
+	fi
     cd $TOP_BIN_DIR 
     mkdir -p $FUEL_STOP_ADVISOR
     cd $FUEL_STOP_ADVISOR_BIN_DIR
@@ -82,7 +102,7 @@ build() {
     cd $TOP_BIN_DIR 
     mkdir -p $HMI_LAUNCHER
     cd $HMI_LAUNCHER_BIN_DIR
-    cmake -Dnavigation-service_API=$NAVIGATION_SERVICE_API_DIR -Dpositioning_API=$ENHANCED_POSITION_SERVICE_API_DIR $HMI_LAUNCHER_SRC_DIR && make
+    cmake -DLM=$lm -Dnavigation-service_API=$NAVIGATION_SERVICE_API_DIR -Dpositioning_API=$ENHANCED_POSITION_SERVICE_API_DIR $HMI_LAUNCHER_SRC_DIR && make
 
     cd $TOP_BIN_DIR 
     mkdir -p $POI_SERVER
@@ -111,15 +131,18 @@ if [ $# -ge 1 ]; then
         usage
     elif [ $1 = make ]; then
         build
+    elif [ $1 = makelm ]; then
+        lm=1
+        build
     elif [ $1 = clean ]; then
         clean
     elif [ $1 = src-clean ]; then
         src-clean
+    elif [ $1 = clone ]; then
+        clone
     else
         usage
     fi
-elif [ $# -eq 0 ]; then
-    build
 else
     usage
 fi
