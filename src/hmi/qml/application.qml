@@ -36,7 +36,7 @@ import "Core/genivi.js" as Genivi;
 
 ApplicationWindow {
 	id: container
-	visible: true
+    visible: true
     width: StyleSheetMap.menu[Constants.WIDTH];
     height: StyleSheetMap.menu[Constants.HEIGHT];
     property Item layer_manager;

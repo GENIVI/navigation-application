@@ -412,7 +412,8 @@ HMIMenu {
 	{
 		if (!split.disabled) {
 			disconnectSignals();
-			hideSurfaces();
+            if (Genivi.g_layer_manager == true)
+                hideSurfaces();
 			pageOpen("NavigationCalculatedRoute");
 		}
 	}
@@ -554,7 +555,8 @@ HMIMenu {
                     explode: false
                     onClicked: {
                         disconnectSignals();
-                        hideSurfaces();
+                        if (Genivi.g_layer_manager == true)
+                            hideSurfaces();
                         pageOpen("POI");
                                 }
                         }
@@ -596,7 +598,8 @@ HMIMenu {
                     id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:settings;
                     onClicked: {
                         disconnectSignals();
-                        hideSurfaces();
+                        if (Genivi.g_layer_manager == true)
+                            hideSurfaces();
                         pageOpen("MainMenu");
                     }
                 }
@@ -667,7 +670,8 @@ HMIMenu {
                     id:settings; explode:false; next:menub; prev:zoomout;
                     onClicked: {
                         disconnectSignals();
-                        hideSurfaces();
+                        if (Genivi.g_layer_manager == true)
+                            hideSurfaces();
                         pageOpen("CameraSettings");
                     }
                 }
@@ -763,7 +767,8 @@ HMIMenu {
                         if (res[0] == "uint16") {
                             if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
                                 disconnectSignals();
-                                hideSurfaces();
+                                if (Genivi.g_layer_manager == true)
+                                    hideSurfaces();
                                 pageOpen("NavigationManeuversList");
                             }
                         }
@@ -995,7 +1000,8 @@ HMIMenu {
 
     Component.onCompleted: {
         Genivi.map_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
-		showSurfaces();
+        if (Genivi.g_layer_manager == true)
+            showSurfaces();
 		if (Genivi.data['show_route_handle']) {
 			Genivi.mapviewercontrol_message(dbusIf, "DisplayRoute", Genivi.data['show_route_handle'].concat("boolean",false));
 			delete(Genivi.data['show_route_handle']);
