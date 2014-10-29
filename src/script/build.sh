@@ -22,9 +22,6 @@ TOP_BIN_DIR=$TOP_DIR/../bin
 #include common settings
 source fsa-config.sh
 
-GENIVI_NAVIGATION_ROUTING_API=$NAVIGATION_SERVICE_API_DIR/navigation-core/genivi-navigationcore-routing.xml
-GENIVI_NAVIGATION_CONSTANTS_API=$NAVIGATION_SERVICE_API_DIR/navigation-core/genivi-navigationcore-constants.xml
-
 # by default no ilm 
 lm=0
 
@@ -65,24 +62,28 @@ clone() {
 }
 
 build() {
+
     echo ''
     echo 'Building fuel stop advisor'
 
-	clone
+    cd $TOP_DIR/.. 
+    mkdir -p bin
 
     cd $TOP_BIN_DIR
 	mkdir -p $NAVIGATION_SERVICE
+
+	# Build the navigation service (including DBus files generation)
     cd $NAVIGATION_SERVICE_BUILD_SCRIPT_DIR 
-	# call the bash script of navigation, set the bin dir to navigation-service and tell it where to clone the positioning and the ilm
 	if [ $lm -eq 0 ]; then
 		bash ./build.sh make $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
 	else
 		bash ./build.sh makelm $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
 	fi
+
     cd $TOP_BIN_DIR 
     mkdir -p $FUEL_STOP_ADVISOR
     cd $FUEL_STOP_ADVISOR_BIN_DIR
-    cmake -Dgenivi-navigationcore-routing_API=$GENIVI_NAVIGATION_ROUTING_API -Dgenivi-navigationcore-constants_API=$GENIVI_NAVIGATION_CONSTANTS_API $FUEL_STOP_ADVISOR_SRC_DIR && make
+    cmake -Dgenerated_api_DIR=$GENERATED_API_DIR $FUEL_STOP_ADVISOR_SRC_DIR && make
 
     cd $TOP_BIN_DIR 
     mkdir -p $AUTOMOTIVE_MESSAGE_BROKER
@@ -107,21 +108,21 @@ build() {
     cd $TOP_BIN_DIR 
     mkdir -p $POI_SERVER
     cd $POI_SERVER_BIN_DIR
-    cmake -Dpositioning_SRC_DIR=$POSITIONING_SRC_DIR $POI_SERVER_SRC_DIR && make
+    cmake -Dapi_DIR=$NAVIGATION_SERVICE_API_DIR -Dpositioning_API=$ENHANCED_POSITION_SERVICE_API_DIR -Dgenerated_api_DIR=$GENERATED_API_DIR $POI_SERVER_SRC_DIR && make
 
 }
 
 clean() {
-    echo ''
-    echo 'Clean all'
+	echo 'delete' $TOP_BIN_DIR 
     rm -rf $TOP_BIN_DIR
 }
 
 src-clean() {
-    echo ''
-    echo 'Clean cloned stuff'
+	echo 'delete' $POSITIONING_SRC_DIR 
     rm -rf $POSITIONING_SRC_DIR
+	echo 'delete' $NAVIGATION_SERVICE_SRC_DIR 
     rm -rf $NAVIGATION_SERVICE_SRC_DIR
+	echo 'delete' $AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR 
     rm -rf $AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR
 	clean
 }
