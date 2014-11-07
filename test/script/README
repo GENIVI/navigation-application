@@ -1,4 +1,4 @@
-Release date of the file: 11-08-2014 
+Release date of the file: 07-11-2014 
 Status: to be completed
 
 This test bench requires Python version >= 3.4 and uses pygame.
@@ -25,6 +25,7 @@ Launch the application without the logreplayer:
 Launch the test dashboard (keyboard interface)
 (the test dashboard calls the logreplayer and uses test log files)
 python3 simulation-dashboard.py
+NB: To launch it remotely, you can set the host address, for instance: python3 simulation-dashboard.py -r 192.168.1.202 
 
 Steps:
 'i' launches initialization.log
@@ -35,9 +36,13 @@ Steps:
 
 Test scenario:
 
-Assume no ./ambd/ambd process is still running (kill -9 if necessary)
-Assume application launched (./run -r) and test panel launched (python simulation-dashboard.py) successfully.
-The main HMI of FSA is displayed, and the test panel too, with right values displayed (Lat 46.202 Lon 6.147)
+Before launching the application, assume no ./ambd/ambd process is running (kill -9 if necessary)
+Launch the application without the log replayer
+./run -r
+The main HMI of FSA is displayed
+Launch the test panel
+python simulation-dashboard.py
+The test panel is displayed, with Lat 46.202 Lon 6.147 (Geneva area)
 
 Click on trip computer button
 (nothing is activated)
@@ -84,7 +89,7 @@ Click on REROUTE
 
 Known issues:
 
-ambd process sometimes not killed, so check it
+ambd process sometimes not killed when the application exits, so check it
 ./kill_all to kill all the process but still issue with ambd ?
 so you need to do kill -9 of the amb process
  

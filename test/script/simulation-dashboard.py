@@ -19,7 +19,7 @@
 * Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 * List of changes:
-* <date>, <name>, <description of change>
+* 7-11-2014, Philippe Colliot, Add some parameters (host address)
 *
 * @licence end@
 **************************************************************************
@@ -84,6 +84,10 @@ SIMULATION_STATUS_LOCATION = (380,175)
 FUEL_STOP_ADVISOR_WARNING_LOCATION = (380,238)
 FUEL_STOP_ADVISOR_TANK_DISTANCE_LOCATION = (380,287)
 FUEL_STOP_ADVISOR_ENHANCED_TANK_DISTANCE_LOCATION = (380,340)
+
+# Defaults
+LOCAL_HOST = '127.0.0.1'
+host = LOCAL_HOST
 
 def display(string,location,fontColor,fontBackground):
 	global args
@@ -177,16 +181,17 @@ def getKeyboard():
    
 def getDbus():
 	global step
+	global host
 
 	# manage the logreplayer depending on the step
 	if step==Step.START:
-		launch("start.log")
+		launch("start.log",host)
 	elif step==Step.INITIALIZATION:
-		launch("initialization.log")
+		launch("initialization.log",host)
 	elif step==Step.HIGH_TANK_LEVEL:
-		launch("high-tank-level.log")
+		launch("high-tank-level.log",host)
 	elif step==Step.LOW_TANK_LEVEL:
-		launch("low-tank-level.log")
+		launch("low-tank-level.log",host)
 	elif step==Step.END:
 		displayStatus( 'End simulation   ' )
 		loop.quit()
@@ -261,6 +266,7 @@ def mapMatchedPositionSimulationStatusHandler(arg):
 # Main program begins here
 parser = argparse.ArgumentParser(description='Simulation dashboard for navigation PoC and FSA.')
 parser.add_argument('-v','--ver',action='store_true', help='Print log messages')
+parser.add_argument('-r','--rem',action='store', dest='host', help='Set remote host address')
 args = parser.parse_args()
 
 # Initialize the game engine	
@@ -281,7 +287,10 @@ DBusGMainLoop(set_as_default=True)
 
 # Connect on the bus
 dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-dbusConnectionBus = dbus.SessionBus()
+if host == LOCAL_HOST:
+	dbusConnectionBus = dbus.SessionBus()
+else:
+	dbusConnectionBus = dbus.bus.BusConnection("tcp:host=" + host +",port=4000")
 
 # Automotive message broker
 try:

@@ -20,7 +20,7 @@
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 * List of changes:
-* <date>, <name>, <description of change>
+* 7-11-2014, Philippe Colliot, Pass the host address as a parameter
 *
 * @licence end@
 
@@ -32,11 +32,12 @@ from subprocess import call
 PATH_LOGREPLAYER='../../bin/log-replayer/src/'
 PATH_LOGFILES='../resource/'
 
-def launch(file): 
+def launch(file,host): 
 	FNULL = open(os.devnull,'w')
 	logreplayer=PATH_LOGREPLAYER + 'log-replayer'
 	file=PATH_LOGFILES + file
-	call([logreplayer, file], stdout=FNULL, stderr=FNULL)
+	param = file + ' ' + host
+	call([logreplayer, param], stdout=FNULL, stderr=FNULL)
 
 
 

@@ -13,6 +13,9 @@
 *				PSA Peugeot Citroen
 *		- Add vehicle data and update of gnss and sensors
 *		- test comment lines
+* Update (2014/11/09) : Philippe Colliot <philippe.colliot@mpsa.com>,
+*				PSA Peugeot Citroen
+*		- Pass the host address as an optional parameter (default localhost)
 *
 **************************************************************************/
 
@@ -34,7 +37,7 @@
 #define PORT1 9930   //port used for GNSS data
 #define PORT2 9931   //port used for sensor data
 #define PORT3 9932   //port used for vehicle data
-#define IPADDR "127.0.0.1"
+#define IPADDR_DEFAULT "127.0.0.1"
 
 DLT_DECLARE_CONTEXT(gContext);
 
@@ -120,7 +123,7 @@ int main(int argc, char* argv[])
     char * filename = 0;
     char buf[BUFLEN];
     char msgId[MSGIDLEN];
-
+	char * ipaddr = 0;
     signal(SIGTERM, sighandler);
     signal(SIGINT, sighandler);
 
@@ -129,8 +132,14 @@ int main(int argc, char* argv[])
        LOG_ERROR_MSG(gContext,"missing input parameter: logfile");
        return EXIT_FAILURE;
     }
-
-    filename = argv[1];
+	else
+	{
+    	filename = argv[1];
+		if(argc < 3)
+			ipaddr = IPADDR_DEFAULT;
+		else
+    		ipaddr = argv[2];
+	}
 
     DLT_REGISTER_APP("RPLY", "LOG-REPLAYER");
     DLT_REGISTER_CONTEXT(gContext,"RSRV", "Global Context");
@@ -148,7 +157,7 @@ int main(int argc, char* argv[])
     memset((char *) &si_other, 0, sizeof(si_other));
     si_other.sin_family = AF_INET;
     //si_other.sin_port = htons(<port number>);
-    if(inet_aton(IPADDR, &si_other.sin_addr) == 0)
+    if(inet_aton(ipaddr, &si_other.sin_addr) == 0)
     {
         LOG_ERROR_MSG(gContext,"inet_aton() failed!");
         return EXIT_FAILURE;
@@ -185,7 +194,7 @@ int main(int argc, char* argv[])
 			"GVGNSSUTCD";
         if(strstr(gnssstr, msgId) != NULL)
         {
-            LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT1);
+            LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT1);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(buf));
             LOG_DEBUG(gContext,"Data:%s", buf);
@@ -204,7 +213,7 @@ int main(int argc, char* argv[])
 			"GVSNSVEHST,GVSNSWHTK,GVSNSWHTKCONF,GVSNSWHA,GVSNSWHS,GVSNSDRVDIR,";
         if(strstr(snsstr, msgId) != NULL)
         {
-            LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT2);
+            LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT2);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(buf));
             LOG_DEBUG(gContext,"Data:%s", buf);
@@ -223,7 +232,7 @@ int main(int argc, char* argv[])
 			"GVVEHFRWHBSCONF,GVVEHRRWHBSCONF";
         if(strstr(vhlstr, msgId) != NULL)
         {
-            LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT3);
+            LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT3);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(buf));
             LOG_DEBUG(gContext,"Data:%s", buf);
