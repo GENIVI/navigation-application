@@ -101,12 +101,13 @@ set(LIBRARIES
 
 # generate constants used by the QML files
 # in order to generate it, navigation-service and positioning have to be being cloned before
-# do cmake -Dnavigation-service_API=<path to navigation-service APIs> -Dpositioning_API=<path to positioning enhanced position API>
+# do cmake -Dnavigation-service_API=<path to navigation-service APIs> -Dpositioning_API=<path to positioning enhanced position API> -Dfuel-stop-advisor_API=<path to fuel-stop-advisor APIs>
 file (GLOB XML_TO_CONSTANTS
 	${navigation-service_API}/map-viewer/genivi-mapviewer-constants.xml
 	${navigation-service_API}/navigation-core/genivi-navigationcore-constants.xml
 	${navigation-service_API}/poi-service/genivi-poiservice-constants.xml
 	${positioning_API}/genivi-positioning-constants.xml
+	${fuel-stop-advisor_API}/constants.xml
 )
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)
 	foreach (RAW_FILE ${XML_TO_CONSTANTS})

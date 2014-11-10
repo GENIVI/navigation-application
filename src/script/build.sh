@@ -103,7 +103,7 @@ build() {
     cd $TOP_BIN_DIR 
     mkdir -p $HMI_LAUNCHER
     cd $HMI_LAUNCHER_BIN_DIR
-    cmake -DLM=$lm -Dnavigation-service_API=$NAVIGATION_SERVICE_API_DIR -Dpositioning_API=$ENHANCED_POSITION_SERVICE_API_DIR $HMI_LAUNCHER_SRC_DIR && make
+    cmake -DLM=$lm -Dnavigation-service_API=$NAVIGATION_SERVICE_API_DIR -Dpositioning_API=$ENHANCED_POSITION_SERVICE_API_DIR -Dfuel-stop-advisor_API=$FUEL_STOP_ADVISOR_SRC_DIR $HMI_LAUNCHER_SRC_DIR && make
 
     cd $TOP_BIN_DIR 
     mkdir -p $POI_SERVER

@@ -36,8 +36,7 @@ def launch(file,host):
 	FNULL = open(os.devnull,'w')
 	logreplayer=PATH_LOGREPLAYER + 'log-replayer'
 	file=PATH_LOGFILES + file
-	param = file + ' ' + host
-	call([logreplayer, param], stdout=FNULL, stderr=FNULL)
+	call([logreplayer, file, host], stdout=FNULL, stderr=FNULL)
 
 
 
