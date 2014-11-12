@@ -87,7 +87,6 @@ FUEL_STOP_ADVISOR_ENHANCED_TANK_DISTANCE_LOCATION = (380,340)
 
 # Defaults
 LOCAL_HOST = '127.0.0.1'
-host = LOCAL_HOST
 
 def display(string,location,fontColor,fontBackground):
 	global args
@@ -268,6 +267,11 @@ parser = argparse.ArgumentParser(description='Simulation dashboard for navigatio
 parser.add_argument('-v','--ver',action='store_true', help='Print log messages')
 parser.add_argument('-r','--rem',action='store', dest='host', help='Set remote host address')
 args = parser.parse_args()
+
+if args.host != None:
+	host = args.host
+else:
+	host = LOCAL_HOST
 
 # Initialize the game engine	
 pygame.init()
