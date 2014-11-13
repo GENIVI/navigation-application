@@ -1,5 +1,5 @@
-Release date of the file: 30-09-2014 
-Status: to be completed
+Release date of the file: 13-11-2014 
+Status: tested from scratch on Ubuntu 14.04.1
 
 Project:
 Navigation application based on Navit and compliant with the Navigation APIs standardized by the GENIVI Alliance
@@ -16,8 +16,8 @@ FYI: the scripts for building Navit and the GENIVI plugins are located into http
 	 this repository is cloned during the build
 
 Author: 
-Martin Schaller <martin.schaller@it-schaller.de>
 Philippe Colliot philippe.colliot@mpsa.com
+Martin Schaller <martin.schaller@it-schaller.de>
 
 License: 
 See headers and LICENSE file
@@ -25,43 +25,45 @@ See headers and LICENSE file
 Test target: 
 Ubuntu 14.04 LTS
 
-After a fresh install of ubuntu, do the following:
+Dependencies:
+See $WORKING-DIR/src/script/get-apt-packets.sh
 
-	apt-get install git build-essential
+Building steps:
 
-to get the necessary tools to get the code and make the build system working
+Set $WORKING-DIR to a directory of your choice
 
-To get the code:
-(Set $WORKING-DIR here to a directory of your choice)
-
+Get the code:
 	git clone http://git.projects.genivi.org/lbs/navigation-application.git $WORKING-DIR
 
-Important notice: 
-HMI is running under Qt5
-To check your version:
-qtchooser --print-env
-To select Qt5:
-export QT_SELECT=5
-
-Default address for the application is using a list of address accessed in english, so you need to set the locale to en_US
-export LANGUAGE=en_US
-
-Dependencies: the script scheme is based on cmake 
- 
-Build:
-
+Go to script directory:
 	cd $WORKING-DIR/src/script
+
+Install needed packets:
+	./get-apt-packets.sh
+
+Configure Qt version:
+	export QT_SELECT=5
+	qtchooser --print-env
+
+Set language for the address list:
+	export LANGUAGE=en_US
+
+Clone some additional code:
+	./build.sh clone 
+
+Build the code:
 	./build.sh make
 
 Prepare the HMI:
-There are two resolutions available, WVGA and XGA, please use ./prepare.sh -i <folder of the gimp files>
+(There are two resolutions available, WVGA and XGA, please use ./prepare.sh -i <folder of the gimp files>)
+	./prepare.sh -i ../ hmi/qml/Core/gimp/greem-theme/800x480
 
-To launch (several options available):
-
+Launch in loop mode:
 	./run
 
-You can get information about the various options available with
+For the full FSA demonstration, please see $WORKING-DIR/test/script/README
 
+You can get information about the various options available with
 	./run --help
 
 Options include running each process within its own terminal (or within gdb), creating log files, or disabling logreplayer or positioning from starting.
