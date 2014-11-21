@@ -32,6 +32,11 @@ ADD_CUSTOM_COMMAND(OUTPUT constants.h
 	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${PROJECT_SOURCE_DIR}/constants.xml >constants.h
 		   DEPENDS constants.xml
 		   )
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
+
+if(WITH_DEBUG)
+    add_definitions("-DDEBUG_ENABLED=1")
+endif()
 
 include_directories(${generated_api_DIR})
 

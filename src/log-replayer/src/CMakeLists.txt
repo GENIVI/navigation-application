@@ -18,6 +18,7 @@
 
 message(STATUS "LOG-REPLAYER")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 find_package(PkgConfig)
 
@@ -31,6 +32,10 @@ if(WITH_DLT)
     add_definitions("-DDLT_ENABLED=1")
     include_directories( ${DLT_INCLUDE_DIRS} )
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
+if(WITH_DEBUG)
+    add_definitions("-DDEBUG_ENABLED=1")
 endif()
 
 add_executable(log-replayer ${LIB_SRCS})

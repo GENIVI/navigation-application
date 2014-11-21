@@ -22,6 +22,8 @@ cmake_minimum_required(VERSION 2.6.0)
 option(WITH_DLT
     "Enable the build to enable DLT logging " OFF)
 
+option(WITH_DEBUG 
+	"Enable the debug messages" OFF)
 
 message(STATUS)
 message(STATUS "---------------------------------------------------------")

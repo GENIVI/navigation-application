@@ -30,6 +30,7 @@ lm=0
 #--------------------------------------------------------------------------
 # modify the following flags as needed:
 #--------------------------------------------------------------------------
+FUEL_STOP_ADVISOR_FLAGS='-DWITH_DEBUG=OFF'
 
 usage() {
     echo "Usage: ./build.sh [command]"
@@ -83,7 +84,7 @@ build() {
     cd $TOP_BIN_DIR 
     mkdir -p $FUEL_STOP_ADVISOR
     cd $FUEL_STOP_ADVISOR_BIN_DIR
-    cmake -Dgenerated_api_DIR=$GENERATED_API_DIR $FUEL_STOP_ADVISOR_SRC_DIR && make
+    cmake -Dgenerated_api_DIR=$GENERATED_API_DIR $FUEL_STOP_ADVISOR_FLAGS $FUEL_STOP_ADVISOR_SRC_DIR && make
 
     cd $TOP_BIN_DIR 
     mkdir -p $AUTOMOTIVE_MESSAGE_BROKER

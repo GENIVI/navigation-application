@@ -15,6 +15,13 @@ static DBus::Connection *conn;
 static class FuelStopAdvisor *server;
 static GMainLoop *loop;
 
+#define dbgprintf(...) realdbgprintf (__FILE__, __LINE__, __VA_ARGS__)
+
+#if (!DEBUG_ENABLED)
+#undef dbgprintf
+#define dbgprintf(...) ;
+#endif
+
 
 /* vehicle parameter */
 static double fuel_consumption_l_100km=6.3;
@@ -301,7 +308,7 @@ class FuelStopAdvisor
 	double enhancedDistance(double level, double &remaining)
 	{
 		double distance=0;
-		printf("routeHandle %d\n",routeHandle);
+        dbgprintf("routeHandle %d\n",routeHandle);
 		if (routeHandle) {
 			std::vector< std::map< uint16_t, ::DBus::Variant > > RouteShape;
 			std::vector< uint16_t > valuesToReturn;
@@ -329,10 +336,10 @@ class FuelStopAdvisor
 					level-=fuel_consumption;
 				}
 			}
-			printf("%d segments\n",totalNumberOfSegments);
+            dbgprintf("%d segments\n",totalNumberOfSegments);
 		}
 		remaining=level/fuel_consumption_l_100km*100;
-		printf("distance_on_route %f remaining %f\n",distance/1000,remaining);
+        dbgprintf("distance_on_route %f remaining %f\n",distance/1000,remaining);
 		return distance/1000+(remaining > 0 ? remaining:0);
 	}
 	
@@ -419,9 +426,9 @@ class FuelStopAdvisor
         double remaining;
         if (advisorMode) {
             enhancedDistance(fuelLevel, remaining);
-            printf("Advisor %f vs %d\n",remaining, distanceThreshold);
+            dbgprintf("Advisor %f vs %d\n",remaining, distanceThreshold);
             if (remaining < distanceThreshold) {
-                printf("Warning %f < %d\n",remaining, distanceThreshold);
+                dbgprintf("Warning %f < %d\n",remaining, distanceThreshold);
                 destinationCantBeReached = true;
             }
             else
@@ -436,7 +443,7 @@ class FuelStopAdvisor
 	void
 	SetFuelAdvisorSettings(const bool& advisorMode, const uint8_t& distanceThreshold)
 	{
-		printf("SetFuelAdvisorSettings(%d,%d)\n",advisorMode, distanceThreshold);
+        dbgprintf("SetFuelAdvisorSettings(%d,%d)\n",advisorMode, distanceThreshold);
 		this->advisorMode=advisorMode;
 		this->distanceThreshold=distanceThreshold;
         updateEnhancedDistance();
@@ -452,14 +459,14 @@ class FuelStopAdvisor
 
 	void SetRouteHandle(const uint32_t& routeHandle)
 	{
-		printf("SetRouteHandle %d\n",routeHandle);
+        dbgprintf("SetRouteHandle %d\n",routeHandle);
 		this->routeHandle=routeHandle;
         updateEnhancedDistance();
 	}
 
     void ReleaseRouteHandle(const uint32_t& routeHandle)
     {
-        printf("ResetRouteHandle %d\n",routeHandle);
+        dbgprintf("ResetRouteHandle %d\n",routeHandle);
         this->routeHandle=0;
         updateEnhancedDistance();
     }
