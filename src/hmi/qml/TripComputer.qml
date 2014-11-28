@@ -181,7 +181,6 @@ HMIMenu {
         disableAllValue(); // By default set all the values to "--"
 		if (tripnr > 0) {         
             res=Genivi.fuel_stop_advisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
-			Genivi.dump("",res);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
                 if (res[1][i+1] == Genivi.FUELSTOPADVISOR_DISTANCE) {
 			distance_value.text=res[1][i+3][1]/10;

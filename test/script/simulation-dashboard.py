@@ -54,6 +54,8 @@ class Genivi(IntEnum):
 	NAVIGATIONCORE_SIMULATION_STATUS_RUNNING = 0x0221
 	NAVIGATIONCORE_SIMULATION_STATUS_PAUSED = 0x0222
 	NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION = 0x0223
+	NAVIGATIONCORE_LATITUDE = 0x00a0
+	NAVIGATIONCORE_LONGITUDE = 0x00a1
 
 # Define some colors
 BLACK = ( 0, 0, 0)
@@ -209,13 +211,6 @@ def getDbus():
 	odometer = ambOdometerInterface.GetOdometer()
 	displayVehicleSpeed(str(int(odometer[0])*SPEED_CONVERSION))
 
-	# get the geolocation
-	geoLocation = enhancedPositionInterface.GetData(dbus.Array([Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE,Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE]))
-	latitude=float(geoLocation[dbus.UInt16(Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE)])
-	displayLatitude("{:.3f}".format(latitude))
-	longitude=float(geoLocation[dbus.UInt16(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
-	displayLongitude("{:.3f}".format(longitude))
-
 	# get the tank distance
 	instantData = fuelStopAdvisorInterface.GetInstantData()
 	if dbus.UInt16(Genivi.FUELSTOPADVISOR_TANK_DISTANCE) in instantData:
@@ -249,6 +244,17 @@ def guidanceStatusHandler(status,handle):
 		displayGuidanceStatus('OFF')
 	else:
 		displayGuidanceStatus('---')
+
+def mapMatchedPositionPositionUpdateHandler(arg):
+	# get the mapmatched position first and check after (to be improved)
+	mapmatchedPosition = mapMatchedPositionInterface.GetPosition(dbus.Array([Genivi.NAVIGATIONCORE_LATITUDE,Genivi.NAVIGATIONCORE_LONGITUDE]))
+	for item in arg:
+		if item==Genivi.NAVIGATIONCORE_LATITUDE:
+			latitude=float(mapmatchedPosition[dbus.UInt16(Genivi.NAVIGATIONCORE_LATITUDE)])
+			displayLatitude("{:.3f}".format(latitude))
+		elif item==Genivi.NAVIGATIONCORE_LONGITUDE:
+			longitude=float(mapmatchedPosition[dbus.UInt16(Genivi.NAVIGATIONCORE_LONGITUDE)])
+			displayLongitude("{:.3f}".format(longitude))
 
 def mapMatchedPositionSimulationStatusHandler(arg):
 	if arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION:
@@ -358,6 +364,7 @@ except dbus.DBusException:
 	sys.exit(1)
 mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
 dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
+dbusConnectionBus.add_signal_receiver(mapMatchedPositionPositionUpdateHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "PositionUpdate")
 
 displayStatus( 'Start simulation' )
 

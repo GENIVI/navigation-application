@@ -115,7 +115,7 @@ translations["Entry"]="SAISIE";
 //NavigationBrowseMap
 translations["NavigationBrowseMap"]="EXPLORER LA CARTE";
 translations["NavigationCurrentStreet"]="RUE ACTUELLE";
-translations["FSAWarning"]="Destination not reached";
+translations["FSAWarning"]="Please refill to reach destination";
 translations["NoGuidance"]="No guidance";
 translations["NoManeuver"]="No maneuver";
 

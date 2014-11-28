@@ -94,7 +94,7 @@ function terminate
 	kill $PIDS 2>/dev/null
 	if [ "$gdb" = 1 ]
 	then
-		kill $PIDS 2>/dev/null
+		kill -9 $PIDS 2>/dev/null
 	fi
 	if [ -n "$wm" ]
 	then
@@ -262,7 +262,7 @@ wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
 
 if [ "$replayer" = 1 ]
 then # start the log replayer (of the fsa)
-	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER > /dev/null 2>&1 $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/src/$LOG_REPLAYER > /dev/null 2>&1 $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
 fi
 
 sleep 3 # need a sleep here (to be improved)

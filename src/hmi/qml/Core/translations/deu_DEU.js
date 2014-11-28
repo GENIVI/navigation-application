@@ -115,7 +115,7 @@ translations["Entry"]="ENTRY";
 //NavigationBrowseMap
 translations["NavigationBrowseMap"]="BROWSE MAP";
 translations["NavigationCurrentStreet"]="CURRENT STREET";
-translations["FSAWarning"]="Destination not reached";
+translations["FSAWarning"]="Please refill to reach destination";
 translations["NoGuidance"]="No guidance";
 translations["NoManeuver"]="No maneuver";
 

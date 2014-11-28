@@ -115,7 +115,7 @@ translations["Entry"]="文字入力";
 //NavigationBrowseMap
 translations["NavigationBrowseMap"]="地図を調べる";
 translations["NavigationCurrentStreet"]="現在地";
-translations["FSAWarning"]="Destination not reached";
+translations["FSAWarning"]="Please refill to reach destination";
 translations["NoGuidance"]="No guidance";
 translations["NoManeuver"]="No maneuver";
 
