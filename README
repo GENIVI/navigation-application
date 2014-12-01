@@ -1,4 +1,4 @@
-Release date of the file: 13-11-2014 
+Release date of the file: 1-12-2014 
 Status: tested from scratch on Ubuntu 14.04.1
 
 Project:
@@ -56,7 +56,7 @@ Build the code:
 
 Prepare the HMI:
 (There are two resolutions available, WVGA and XGA, please use ./prepare.sh -i <folder of the gimp files>)
-	./prepare.sh -i ../ hmi/qml/Core/gimp/greem-theme/800x480
+	./prepare.sh -i ../hmi/qml/Core/gimp/green-theme/800x480
 
 Launch in loop mode:
 	./run
