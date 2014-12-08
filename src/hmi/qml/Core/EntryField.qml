@@ -74,7 +74,9 @@ Column {
                 id:input; width: parent.width*3/4; height: parent.height; color: 'white'; font.pixelSize: parent.height*0.75
 				onMclicked: { callEntry(); }
                 text: Genivi.data[globaldata]?Genivi.data[globaldata]:""
-				MouseArea {
+                wrapMode: Text.WordWrap
+                clip: true
+                MouseArea {
 					anchors.fill: parent
 					onClicked: {
 						if (!entryfield.disabled) {

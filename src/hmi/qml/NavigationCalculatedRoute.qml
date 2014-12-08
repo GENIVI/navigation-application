@@ -165,12 +165,10 @@ HMIMenu {
             text: Genivi.gettext("RouteDistance")
         }
 
-        Text {
+        SmartText {
             x:StyleSheet.distanceValue[Constants.X]; y:StyleSheet.distanceValue[Constants.Y]; width:StyleSheet.distanceValue[Constants.WIDTH]; height:StyleSheet.distanceValue[Constants.HEIGHT];color:StyleSheet.distanceValue[Constants.TEXTCOLOR];styleColor:StyleSheet.distanceValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distanceValue[Constants.PIXELSIZE];
             id:distanceValue
-            wrapMode: Text.WordWrap
-            style: Text.Sunken;
-            smooth: true
+            text: ""
         }
 
         Text {
@@ -181,12 +179,10 @@ HMIMenu {
             text: Genivi.gettext("RouteTime")
         }
 
-        Text {
+        SmartText {
             x:StyleSheet.timeValue[Constants.X]; y:StyleSheet.timeValue[Constants.Y]; width:StyleSheet.timeValue[Constants.WIDTH]; height:StyleSheet.timeValue[Constants.HEIGHT];color:StyleSheet.timeValue[Constants.TEXTCOLOR];styleColor:StyleSheet.timeValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.timeValue[Constants.PIXELSIZE];
             id:timeValue
-            wrapMode: Text.WordWrap
-            style: Text.Sunken;
-            smooth: true
+            text: ""
         }
 
         Text {
@@ -197,13 +193,10 @@ HMIMenu {
             text: Genivi.gettext("StatusTitle")
         }
 
-        Text {
+        SmartText {
             x:StyleSheet.statusValue[Constants.X]; y:StyleSheet.statusValue[Constants.Y]; width:StyleSheet.statusValue[Constants.WIDTH]; height:StyleSheet.statusValue[Constants.HEIGHT];color:StyleSheet.statusValue[Constants.TEXTCOLOR];styleColor:StyleSheet.statusValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.statusValue[Constants.PIXELSIZE];
             id:statusValue
-            style: Text.Sunken;
-            smooth: true
             text: ""
-            scale: paintedWidth > width ? (width / paintedWidth) : 1
         }
 
         StdButton {

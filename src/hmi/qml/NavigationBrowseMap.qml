@@ -539,12 +539,10 @@ HMIMenu {
                 image:StyleSheetTop.navigation_browse_map_top_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
-                Text {
+                SmartText {
                     x:StyleSheetTop.fsamessageText[Constants.X]; y:StyleSheetTop.fsamessageText[Constants.Y]; width:StyleSheetTop.fsamessageText[Constants.WIDTH]; height:StyleSheetTop.fsamessageText[Constants.HEIGHT];color:StyleSheetTop.fsamessageText[Constants.TEXTCOLOR];styleColor:StyleSheetTop.fsamessageText[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.fsamessageText[Constants.PIXELSIZE];
                     id:fsamessageText
                     visible: true
-                    style: Text.Sunken
-                    smooth: true
                     text:""
                 }
 
@@ -628,14 +626,11 @@ HMIMenu {
                     }
                 }
 
-                Text {
+                SmartText {
                     x:StyleSheetBottom.currentroad[Constants.X]; y:StyleSheetBottom.currentroad[Constants.Y]; width:StyleSheetBottom.currentroad[Constants.WIDTH]; height:StyleSheetBottom.currentroad[Constants.HEIGHT];color:StyleSheetBottom.currentroad[Constants.TEXTCOLOR];styleColor:StyleSheetBottom.currentroad[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBottom.currentroad[Constants.PIXELSIZE];
                     visible: true
-                    style: Text.Sunken;
-                    smooth: true
                     id:currentroad
                     text: "-------"
-                    scale: paintedWidth > width ? (width / paintedWidth) : 1
                 }
 
                 StdButton {
@@ -793,14 +788,11 @@ HMIMenu {
                     text: " "
                 }
 
-                Text {
+                SmartText {
                     x:StyleSheetGuidance.roadaftermaneuverValue[Constants.X]; y:StyleSheetGuidance.roadaftermaneuverValue[Constants.Y]; width:StyleSheetGuidance.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.roadaftermaneuverValue[Constants.PIXELSIZE];
                     visible: true
-                    style: Text.Sunken;
-                    smooth: true
                     id:roadaftermaneuverValue
                     text: " "
-                    scale: paintedWidth > width ? (width / paintedWidth) : 1
                 }
 
                 Text {

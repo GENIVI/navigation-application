@@ -150,7 +150,7 @@ HMIMenu {
 			criterion: Genivi.NAVIGATIONCORE_FULL_ADDRESS
 			globaldata: 'location_input'
 			textfocus: true
-			next: ok
+            next: ok
 			prev: back
 			onLeave:{menu.leave(0)}
 		}
