@@ -10,5 +10,6 @@ bin/
 #files
 *~
 *.pro.user
-*.user
+*.user*
+*.txt.user*
 /.project

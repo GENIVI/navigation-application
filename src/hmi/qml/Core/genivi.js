@@ -104,6 +104,10 @@ var historyOfLastEnteredLat = new Array; //dirty but need to know how to do it i
 var historyOfLastEnteredLon = new Array; //dirty but need to know how to do it in qml
 var historyOfLastEnteredLocationIn=0; //next input
 var historyOfLastEnteredLocationOut=0; //first ouput
+var radius=5000; //radius in m around the vehicle to search for the refill stations
+var offset=0; //offset of the start record to get on the list of pois
+var maxWindowSize=20; //max size of elements to return as a result
+var fuelCategoryId; //unique id of fuel category
 
 //the default data below will be managed by the persistency component in the future
 address[NAVIGATIONCORE_COUNTRY]="Switzerland";
@@ -359,10 +363,24 @@ function mapviewercontrol_message2(par, func, args)
 	return map_message(par, "MapViewerControl", func, map_session(par).concat(g_map_handle2,args));
 }
 
+// -------------------- POISearch dbus messages --------------------
+
 // Send a message to poiservice (basic)
 function poi_message(par, iface, func, args)
 {
 	return par.message("org.genivi.poiservice."+iface,"/org/genivi/poiservice/"+iface,"org.genivi.poiservice."+iface, func, args);
+}
+
+// Send a message to poisearch with session handle
+function poisearch_message(par, func, args)
+{ //session handle sent
+    return poi_message(par, "POISearch", func, poisearch_handle(par).concat(args));
+}
+
+// Send a message to poisearch without session handle
+function poisearch_message_get(par, func, args)
+{
+    return poi_message(par, "POISearch", func, args);
 }
 
 // Create a new poisearch handle or get the current handle
@@ -380,18 +398,6 @@ function poisearch_handle_clear(par)
         poisearch_message(par, "DeletePoiSearchHandle", []);
         g_poisearch_handle=null;
     }
-}
-
-// Send a message to poisearch with session handle
-function poisearch_message(par, func, args)
-{ //session handle sent
-    return poi_message(par, "POISearch", func, poisearch_handle(par).concat(args));
-}
-
-// Send a message to poisearch without session handle
-function poisearch_message_get(par, func, args)
-{
-    return poi_message(par, "POISearch", func, args);
 }
 
 // Send a message to demonstrator (basic)

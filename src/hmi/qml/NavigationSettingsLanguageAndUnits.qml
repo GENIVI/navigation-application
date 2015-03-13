@@ -50,13 +50,13 @@ HMIMenu {
 		var current_lang_map;
 		var lang_nav=[];
 		var lang_map=[];
-		if (current_nav[0] == "string" && current_nav[2] == "string") {
+        if (current_nav[0] == "string" && current_nav[2] == "string" && current_nav[4] == "string") {
 			current_lang_nav=current_nav[1] + "_" + current_nav[3];
 		} else {
 			console.log("Unexpected result from GetLocale:");
 			Genivi.dump("",current_nav);
 		}
-		if (current_map[0] == "string" && current_map[2] == "string") {
+        if (current_map[0] == "string" && current_map[2] == "string" && current_nav[4] == "string") {
 			current_lang_map=current_map[1] + "_" + current_map[3];
 		} else {
 			console.log("Unexpected result from GetLocale:");
@@ -115,10 +115,10 @@ HMIMenu {
 		if (units1==Genivi.NAVIGATIONCORE_KM && units2==Genivi.MAPVIEWER_KM) unit_km.disabled=true;
 		if (units1==Genivi.NAVIGATIONCORE_MILE && units2==Genivi.MAPVIEWER_MILE) unit_mile.disabled=true;
 	}
-	function setLocale(language, country)
+    function setLocale(language, country, script)
 	{
-		Genivi.nav_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country]);
-		Genivi.map_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country]);
+        Genivi.nav_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
+        Genivi.map_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
         Genivi.setlang(language + "_" + country);
         pageOpen("NavigationSettingsLanguageAndUnits"); //reload page because of texts...
     }
@@ -143,16 +143,16 @@ HMIMenu {
              }
         StdButton { objectName:"fra_FRA";
             source:StyleSheet.french_flag[Constants.SOURCE]; x:StyleSheet.french_flag[Constants.X]; y:StyleSheet.french_flag[Constants.Y]; width:StyleSheet.french_flag[Constants.WIDTH]; height:StyleSheet.french_flag[Constants.HEIGHT];
-            id:fra_FRA; disabled:false; next:deu_DEU; prev:back; explode:false; onClicked: {setLocale("fra","FRA");}}
+            id:fra_FRA; disabled:false; next:deu_DEU; prev:back; explode:false; onClicked: {setLocale("fra","FRA","Latn");}}
         StdButton { objectName:"deu_DEU";
             source:StyleSheet.german_flag[Constants.SOURCE]; x:StyleSheet.german_flag[Constants.X]; y:StyleSheet.german_flag[Constants.Y]; width:StyleSheet.german_flag[Constants.WIDTH]; height:StyleSheet.german_flag[Constants.HEIGHT];
-             id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA; explode:false; onClicked: {setLocale("deu","DEU");}}
+             id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA; explode:false; onClicked: {setLocale("deu","DEU","Latn");}}
         StdButton { objectName:"eng_USA";
             source:StyleSheet.usa_flag[Constants.SOURCE]; x:StyleSheet.usa_flag[Constants.X]; y:StyleSheet.usa_flag[Constants.Y]; width:StyleSheet.usa_flag[Constants.WIDTH]; height:StyleSheet.usa_flag[Constants.HEIGHT];
-            id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU; explode:false; onClicked: {setLocale("eng","USA");}}
+            id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU; explode:false; onClicked: {setLocale("eng","USA","Latn");}}
         StdButton { objectName:"jpn_JPN";
             source:StyleSheet.japanese_flag[Constants.SOURCE]; x:StyleSheet.japanese_flag[Constants.X]; y:StyleSheet.japanese_flag[Constants.Y]; width:StyleSheet.japanese_flag[Constants.WIDTH]; height:StyleSheet.japanese_flag[Constants.HEIGHT];
-            id:jpn_JPN; disabled:false; next:back; prev:eng_USA; explode:false; onClicked: {setLocale("jpn","JPN");}}
+            id:jpn_JPN; disabled:false; next:back; prev:eng_USA; explode:false; onClicked: {setLocale("jpn","JPN","Hrkt");}}
 
 		Text {
             x:StyleSheet.unitsTitle[Constants.X]; y:StyleSheet.unitsTitle[Constants.Y]; width:StyleSheet.unitsTitle[Constants.WIDTH]; height:StyleSheet.unitsTitle[Constants.HEIGHT];color:StyleSheet.unitsTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[Constants.PIXELSIZE];

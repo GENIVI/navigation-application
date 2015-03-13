@@ -110,7 +110,6 @@ HMIMenu {
 				var model=view.model;
 				var ids=[];
 				var position=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
-				var category;
 				if (!position[1][3][1] && !position[1][7][1]) {
 					model.clear();
 					model.append({"name":"No position available"});
@@ -122,14 +121,15 @@ HMIMenu {
 				for (var i = 0 ; i < categories.length ; i+=2) { 
 					if (categories[i+1][1][3] == 'fuel') {
 						// Genivi.dump("",categories[i+1][1]);
-						category=categories[i+1][1][1];
+                        Genivi.fuelCategoryId=categories[i+1][1][1];
 					}
 				}
-				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));
+
+                // Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));
 				Genivi.poisearch_message(dbusIf,"SetCenter",["structure",["double",position[1][3][1],"double",position[1][7][1],"int32",0]]);
-				Genivi.poisearch_message(dbusIf,"SetCategories",["array",["structure",["uint16",category,"uint32",1000]]]);
+                Genivi.poisearch_message(dbusIf,"SetCategories",["array",["structure",["uint32",Genivi.fuelCategoryId,"uint32",Genivi.radius]]]);
 				Genivi.poisearch_message(dbusIf,"StartPoiSearch",["string","","uint16",Genivi.POISERVICE_SORT_BY_DISTANCE]);
-				var res=Genivi.poisearch_message(dbusIf,"RequestResultList",["uint16",0,"uint16",10000,"array",["string","name"]]);
+                var res=Genivi.poisearch_message(dbusIf,"RequestResultList",["uint16",Genivi.offset,"uint16",Genivi.maxWindowSize,"array",["uint32",0]]);
 				var res_win=res[5];
 				for (var i = 0 ; i < res_win.length ; i+=2) {
 					ids.push(res_win[i+1][0]);
@@ -144,8 +144,8 @@ HMIMenu {
 					var poi_details=details[1][i+1];
 					var id=poi_details[1][1];
 					Genivi.poi_data[id].name=poi_details[1][3];
-					Genivi.poi_data[id].lat=poi_details[1][5];
-					Genivi.poi_data[id].lon=poi_details[1][7];
+                    Genivi.poi_data[id].lat=poi_details[1][5][1];
+                    Genivi.poi_data[id].lon=poi_details[1][5][3];
 				}
 				// Genivi.dump("",details);
 				model.clear();
