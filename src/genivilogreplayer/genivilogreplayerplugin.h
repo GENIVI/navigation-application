@@ -20,15 +20,24 @@ public:
 	AsyncPropertyReply * setProperty(AsyncSetPropertyRequest request);
 	void subscribeToPropertyChanges(VehicleProperty::Property property);
 	void unsubscribeToPropertyChanges(VehicleProperty::Property property);
-	int supportedOperations();	
-	void supportedChanged(PropertyList) {}
+    PropertyList supported();
+    int supportedOperations();
+    void supportedChanged(const PropertyList &) {}
+    PropertyInfo getPropertyInfo(const VehicleProperty::Property & property)
+    {
+        if(propertyInfoMap.find(property) != propertyInfoMap.end())
+            return propertyInfoMap[property];
 
-    void propertyChanged(VehicleProperty::Property property, AbstractPropertyType* value, string uuid) {}
+        return PropertyInfo::invalid();
+    }
     int updateProperties();
 
-
 private:	
-	std::string device;
+    void addPropertySupport(VehicleProperty::Property property, Zone::Type zone);
+    std::map<Zone::Type, bool> acStatus;
+    std::map<VehicleProperty::Property, PropertyInfo> propertyInfoMap;
+
+    std::string device;
 	std::list<AsyncPropertyReply*> replyQueue;
     PropertyList mRequests;
     PropertyList mSupported;

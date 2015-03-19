@@ -30,13 +30,10 @@ GeniviLogReplayerPlugin::GeniviLogReplayerPlugin(AbstractRoutingEngine* re, map<
 	:AbstractSource(re, config)
 {
     // properties managed by this plugin
-    mSupported.push_back(VehicleProperty::EngineSpeed);
-    mSupported.push_back(VehicleProperty::FuelLevel);
-    mSupported.push_back(VehicleProperty::FuelConsumption);
-    mSupported.push_back(VehicleProperty::Odometer);
-
-    // Declare which properties are supported by this plug-in
-    re->setSupported(mSupported, this);
+    addPropertySupport(VehicleProperty::EngineSpeed, Zone::None);
+    addPropertySupport(VehicleProperty::FuelLevel, Zone::None);
+    addPropertySupport(VehicleProperty::FuelConsumption, Zone::None);
+    addPropertySupport(VehicleProperty::Odometer, Zone::None);
 
     // Main loop to receive data
     statusRunning = true;
@@ -70,8 +67,7 @@ void GeniviLogReplayerPlugin::getPropertyAsync(AsyncPropertyReply *reply)
     DebugOut(0)<<"GeniviLogReplayer: getPropertyAsync "<<reply->property<<endl;
 #endif
 
-    PropertyList s = mSupported;
-	if(ListPlusPlus<VehicleProperty::Property>(&s).contains(reply->property))
+    if(contains(mSupported,reply->property))
 	{
         // retrieve the value
 		replyQueue.push_back(reply);
@@ -114,7 +110,12 @@ void GeniviLogReplayerPlugin::unsubscribeToPropertyChanges(VehicleProperty::Prop
 #endif
 
     if(contains(mRequests,property))
-        mRequests.remove(property);
+        removeOne(&mRequests, property);
+}
+
+PropertyList GeniviLogReplayerPlugin::supported()
+{
+    return mSupported;
 }
 
 int GeniviLogReplayerPlugin::supportedOperations()
@@ -201,3 +202,15 @@ int GeniviLogReplayerPlugin::updateProperties()
     close(s);
 }
 
+void GeniviLogReplayerPlugin::addPropertySupport(VehicleProperty::Property property, Zone::Type zone)
+{
+    mSupported.push_back(property);
+
+    Zone::ZoneList zones;
+
+    zones.push_back(zone);
+
+    PropertyInfo info(0, zones);
+
+    propertyInfoMap[property] = info;
+}

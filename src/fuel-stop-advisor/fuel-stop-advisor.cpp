@@ -350,7 +350,7 @@ class FuelStopAdvisor
         DBus::MessageIter it;
         uint32_t odometer;
         uint16_t level;
-        uint16_t consumption;
+        uint32_t consumption;
         double time;
 
 

@@ -27,7 +27,7 @@ set (create_file cmake -E touch)
 # Check if navigation-service stuff with the right version has been cloned and do it if necessary
 set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation)
 set(navigation-service_URL http://git.projects.genivi.org/lbs/navigation.git)
-set(navigation-service_VERSION d44f863bc925bf1973fe3f1c56dd1af5699a2a60)
+set(navigation-service_VERSION 0d18b1e85db88795675235322d6c500d262410d9)
 
 if (EXISTS ${navigation-service_SRC_DIR})
 	execute_process(	
@@ -76,7 +76,7 @@ endif()
 # please consider that patches have been applied 
 set(automotive-message-broker_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/automotive-message-broker)
 set(automotive-message-broker_URL https://github.com/otcshare/automotive-message-broker.git)
-set(automotive-message-broker_VERSION ac3fe53327a13afc571efe079a31a0472ea285a3)
+set(automotive-message-broker_VERSION b8041b051cc43df0b1b339c45844369967ec99ab)
 set(automotive-message-broker_PATCH_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patches)
 set(automotive-message-broker_PATCH_DUMMY_FILE ${automotive-message-broker_SRC_DIR}/.patched)
 
