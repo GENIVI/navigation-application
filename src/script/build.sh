@@ -25,12 +25,15 @@ source fsa-config.sh
 # by default no ilm 
 lm=0
 
+# by default no debug
+dbg=0
+
+
 #--------------------------------------------------------------------------
 # Compiler Flags
 #--------------------------------------------------------------------------
 # modify the following flags as needed:
 #--------------------------------------------------------------------------
-FUEL_STOP_ADVISOR_FLAGS='-DWITH_DEBUG=OFF'
 
 usage() {
     echo "Usage: ./build.sh [command]"
@@ -38,6 +41,7 @@ usage() {
     echo "command:"
     echo "  make            Build"
     echo "  makelm          Build with layer manager"
+    echo "  maked           Build in debug mode"
     echo "  clean           Clean the bin"
     echo "  src-clean       Clean the cloned sources and the bin"
     echo "  clone           Clone the sources"
@@ -76,11 +80,14 @@ build() {
 	# Build the navigation service (including DBus files generation)
     cd $NAVIGATION_SERVICE_BUILD_SCRIPT_DIR 
 	if [ $lm -eq 0 ]; then
-		bash ./build.sh make $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
+		if [ $dbg -eq 0 ]; then
+			bash ./build.sh make $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
+		else
+			bash ./build.sh maked $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
+		fi
 	else
-		bash ./build.sh makelm $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
+			bash ./build.sh makelm $NAVIGATION_SERVICE_BIN_DIR $POSITIONING_SRC_DIR $IVI_LAYER_MANAGER_SRC_DIR
 	fi
-
     cd $TOP_BIN_DIR 
     mkdir -p $FUEL_STOP_ADVISOR
     cd $FUEL_STOP_ADVISOR_BIN_DIR
@@ -90,11 +97,12 @@ build() {
     mkdir -p $AUTOMOTIVE_MESSAGE_BROKER
     cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
     cmake $AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR && make
+	sudo make install
 
     cd $TOP_BIN_DIR 
     mkdir -p $LOG_REPLAYER
     cd $LOG_REPLAYER_BIN_DIR
-    cmake $LOG_REPLAYER_SRC_DIR && make
+    cmake $FUEL_STOP_ADVISOR_FLAGS $LOG_REPLAYER_SRC_DIR && make
 
     cd $TOP_BIN_DIR 
     mkdir -p $GENIVI_LOGREPLAYER
@@ -132,9 +140,15 @@ if [ $# -ge 1 ]; then
     if [ $1 = help ]; then
         usage
     elif [ $1 = make ]; then
+		FUEL_STOP_ADVISOR_FLAGS='-DWITH_DEBUG=OFF'
         build
     elif [ $1 = makelm ]; then
+		FUEL_STOP_ADVISOR_FLAGS='-DWITH_DEBUG=OFF'
         lm=1
+        build
+    elif [ $1 = maked ]; then
+		FUEL_STOP_ADVISOR_FLAGS='-DWITH_DEBUG=ON'
+		dbg=1
         build
     elif [ $1 = clean ]; then
         clean

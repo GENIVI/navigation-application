@@ -38,9 +38,13 @@ private:
     std::map<VehicleProperty::Property, PropertyInfo> propertyInfoMap;
 
     std::string device;
-	std::list<AsyncPropertyReply*> replyQueue;
     PropertyList mRequests;
     PropertyList mSupported;
+
+    VehicleProperty::EngineSpeedType enginespeed;
+    VehicleProperty::FuelLevelType fuellevel;
+    VehicleProperty::FuelConsumptionType fuelcons;
+    VehicleProperty::OdometerType odometer;
 
     // listening loop management and thread
     GThread *thread;

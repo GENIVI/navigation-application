@@ -2,11 +2,13 @@
 #include <glib.h>
 #include <stdio.h>
 #include <unistd.h>
+
 #include "fuel-stop-advisor.h"
 #include "constants.h"
 #include "amb.h"
 #include "ctripcomputer.h"
 #include <boost/variant/get.hpp>
+
 #include "genivi-navigationcore-constants.h"
 #include "genivi-navigationcore-routing_proxy.h"
 
@@ -15,7 +17,7 @@ static DBus::Connection *conn;
 static class FuelStopAdvisor *server;
 static GMainLoop *loop;
 
-#define dbgprintf(...) realdbgprintf (__FILE__, __LINE__, __VA_ARGS__)
+#define dbgprintf(...) printf(__VA_ARGS__);
 
 #if (!DEBUG_ENABLED)
 #undef dbgprintf
@@ -309,7 +311,7 @@ class FuelStopAdvisor
 	{
 		double distance=0;
         dbgprintf("routeHandle %d\n",routeHandle);
-		if (routeHandle) {
+        if (routeHandle) {
 			std::vector< std::map< uint16_t, ::DBus::Variant > > RouteShape;
 			std::vector< uint16_t > valuesToReturn;
 			uint32_t totalNumberOfSegments;
@@ -460,7 +462,7 @@ class FuelStopAdvisor
 	void SetRouteHandle(const uint32_t& routeHandle)
 	{
         dbgprintf("SetRouteHandle %d\n",routeHandle);
-		this->routeHandle=routeHandle;
+        this->routeHandle=routeHandle;
         updateEnhancedDistance();
 	}
 

@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: CC-BY-SA-4.0
+#Log file for the FSA simulator
+#VEH version 0.0.0 (alpha)
+#engine speed 2000 RPM
+#ignition key ON (Not Applicable)
+#fuel level 30 l
+#fuel consumption 5.4 l/h so 1500 µl/1000 ms (6 l/100)
+#step 1000 ms
+#totalodo is used for simulating distance step in cm
+0,0$GVVEHVER,0,0,0
+1000,0$GVVEHENGSPEED,2000,0X01
+1000,0$GVVEHFUELLEVEL,30,0X01
+1000,0$GVVEHFUELCONS,1500,0X01
+1000,0$GVVEHTOTALODO,2500,0x01

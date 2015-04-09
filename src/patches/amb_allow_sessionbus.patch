@@ -1,3 +1,67 @@
+diff --git a/RELEASE.md b/RELEASE.md
+index af011cd..f4f81d6 100644
+--- a/RELEASE.md
++++ b/RELEASE.md
+@@ -15,8 +15,8 @@ Changes:
+ - [websocket plugin] protocol changes: getSupportedEventTypes is getSupported.  'data' changed type to array of objects
+   instead of array of strings.  See plugins/websocket/protocol
+ - Removed old ButtonEvent interface as it conflicted with the new ButtonEvent.
+-- Extensive documentation improvements.  Plugin docs install to /usr/share/doc/packages/automotive-message-broker/0.13/plugins/.
+-- Bluemonkey JS API docs /usr/share/doc/packages/automotive-message-broker/0.13/plugins/bluemonkey/html/.
++- Extensive documentation improvements.  Plugin docs install to /usr/local/share/doc/packages/automotive-message-broker/0.13/plugins/.
++- Bluemonkey JS API docs /usr/local/share/doc/packages/automotive-message-broker/0.13/plugins/bluemonkey/html/.
+ 
+ Fixes:
+ - [DBus plugin] Fix exporting properties in zones that really don't have support
+diff --git a/plugins/common/bluetooth5.cpp b/plugins/common/bluetooth5.cpp
+index f836b42..5bdbd2f 100644
+--- a/plugins/common/bluetooth5.cpp
++++ b/plugins/common/bluetooth5.cpp
+@@ -6,6 +6,8 @@
+ #include <gio/gunixfdlist.h>
+ #include <string>
+ 
++GBusType bustype=G_BUS_TYPE_SYSTEM;
++
+ static const gchar introspection_xml[] =
+   "<node>"
+   "  <interface name='org.bluez.Profile1'>"
+@@ -121,7 +123,7 @@ std::string findDevice(std::string address, std::string adapterPath="")
+ 	std::string objectPath;
+ 
+ 	GError * proxyError = nullptr;
+-	auto managerProxy = amb::make_super(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, NULL,
++	auto managerProxy = amb::make_super(g_dbus_proxy_new_for_bus_sync(bustype, G_DBUS_PROXY_FLAGS_NONE, NULL,
+ 															  "org.bluez",
+ 															  "/",
+ 															  "org.freedesktop.DBus.ObjectManager",
+@@ -215,7 +217,7 @@ Bluetooth5::Bluetooth5()
+ 
+ 	GDBusInterfaceInfo* mInterfaceInfo = g_dbus_node_info_lookup_interface(introspection, "org.bluez.Profile1");
+ 
+-	mConnection = amb::make_super(g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, &errorBus));
++	mConnection = amb::make_super(g_bus_get_sync(bustype, nullptr, &errorBus));
+ 
+ 	auto errorBusPtr = amb::make_super(errorBus);
+ 
+@@ -308,7 +310,7 @@ void Bluetooth5::connect(ConnectedCallback onconnectedCallback)
+ 
+ 	GError* error = nullptr;
+ 
+-	auto  deviceProxyPtr = amb::make_super(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SYSTEM,G_DBUS_PROXY_FLAGS_NONE,NULL,
++	auto  deviceProxyPtr = amb::make_super(g_dbus_proxy_new_for_bus_sync(bustype,G_DBUS_PROXY_FLAGS_NONE,NULL,
+ 															  "org.bluez", mPath.c_str(), "org.bluez.Device1", nullptr, &error));
+ 
+ 	auto errorPtr = amb::make_super(error);
+@@ -341,7 +343,7 @@ void Bluetooth5::disconnect()
+ {
+ 	GError* error = nullptr;
+ 
+-	auto  deviceProxyPtr = amb::make_super(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SYSTEM,G_DBUS_PROXY_FLAGS_NONE,NULL,
++	auto  deviceProxyPtr = amb::make_super(g_dbus_proxy_new_for_bus_sync(bustype,G_DBUS_PROXY_FLAGS_NONE,NULL,
+ 															  "org.bluez", mPath.c_str(), "org.bluez.Device1", nullptr, &error));
+ 
+ 	auto errorPtr = amb::make_super(error);
 diff --git a/plugins/dbus/abstractdbusinterface.cpp b/plugins/dbus/abstractdbusinterface.cpp
 index f4c575c..684b8ff 100644
 --- a/plugins/dbus/abstractdbusinterface.cpp
@@ -122,4 +186,17 @@ index 352961b..601ff18 100755
 +
  managerObject = bus.get_object("org.automotive.message.broker", "/");
  managerInterface = dbus.Interface(managerObject, "org.automotive.Manager")
+ 
+diff --git a/xwalk/vehicle.cc b/xwalk/vehicle.cc
+index cea8480..9708341 100644
+--- a/xwalk/vehicle.cc
++++ b/xwalk/vehicle.cc
+@@ -295,7 +295,7 @@ Vehicle::Vehicle(common::Instance* instance)
+ 
+ 	GError* error = nullptr;
+ 
+-	dbus_connection_ = amb::make_super(g_bus_get_sync(G_BUS_TYPE_SYSTEM,
++	dbus_connection_ = amb::make_super(g_bus_get_sync(bustype,
+ 													  nullptr,
+ 													  &error));
  

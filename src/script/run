@@ -112,7 +112,7 @@ enhpos=1 #enhanced position server enabled
 replayer=1 #replayer enabled
 lm=0 #layer manager disabled
 wm="" #to store the current window manager (in case of start with the layer manager)
-verbose=0 #no debug or log messages
+verbose=0 #no debug or log messages displayed
 center="4612 N 0608 E"
 
 # hmi panel launched
@@ -206,7 +206,7 @@ then
 	# Create Window OpenGL (Default gtk_drawing_area)
 	export NAVIT_GRAPHICS=opengl
 
-	# Graphics OpneGL Platfrom
+	# Graphics OpenGL Platfrom
 	export NAVIT_PLATFORM=wayland
 
 	# ILM library path(for hmi-launcher& genivi_mapviewer_mapviewercontrol.cxx)
@@ -229,7 +229,12 @@ set -e #exit on error now
 
 # start the automotive message broker and wait for dbus service
 cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
-run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
+if [ "$verbose" = "1" ]
+then
+	run "Automotive Message Broker" ./ambd/ambd --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
+else
+	run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
+fi
 wait_for_service org.automotive.message.broker /
 
 # start the poi server and wait for dbus service
@@ -261,8 +266,8 @@ wait_for_service org.genivi.navigationcore.Routing /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
 
 if [ "$replayer" = 1 ]
-then # start the log replayer (of the fsa)
-	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/src/$LOG_REPLAYER > /dev/null 2>&1 $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+then # start the log replayer (of the fsa) with a sample log file
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/src/$LOG_REPLAYER  $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
 fi
 
 sleep 3 # need a sleep here (to be improved)

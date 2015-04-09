@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <boost/assert.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <listplusplus.h>
 
@@ -20,11 +21,14 @@ DLT_DECLARE_CONTEXT(gContext);
 #define BUFLEN 256
 #define PORT 9932
 
+const char* id = "326011dd-65cd-4be6-a75e-3e8d46a05510";
+
 void *updatePropertiesThread(gpointer data)
 {
     GeniviLogReplayerPlugin* src = (GeniviLogReplayerPlugin*)data;
     src->updateProperties();
 }
+
 
 GeniviLogReplayerPlugin::GeniviLogReplayerPlugin(AbstractRoutingEngine* re, map<string, string> config)
 	:AbstractSource(re, config)
@@ -55,7 +59,7 @@ extern "C" AbstractSource * create(AbstractRoutingEngine* routingengine, map<str
 
 const string GeniviLogReplayerPlugin::uuid()
 {
-    return "326011dd-65cd-4be6-a75e-3e8d46a05510";
+    return id;
 }
 
 
@@ -68,16 +72,33 @@ void GeniviLogReplayerPlugin::getPropertyAsync(AsyncPropertyReply *reply)
 #endif
 
     if(contains(mSupported,reply->property))
-	{
-        // retrieve the value
-		replyQueue.push_back(reply);
-	}
+    {
+       // retrieve the value
+        if(reply->property == VehicleProperty::EngineSpeed)
+        {
+            reply->value = &enginespeed;
+        }
+        else if(reply->property == VehicleProperty::FuelLevel)
+        {
+            reply->value = &fuellevel;
+        }
+        else if(reply->property == VehicleProperty::FuelConsumption)
+        {
+            reply->value = &fuelcons;
+        }
+        else if(reply->property == VehicleProperty::Odometer)
+        {
+            reply->value = &odometer;
+        }
+        reply->success = true;
+    }
     else  // your property request is not supported
 	{
 		reply->value = NULL;
 		reply->success = false;
-		reply->completed(reply);
+        reply->error = AsyncPropertyReply::InvalidOperation;
 	}
+    reply->completed(reply);
 }
 
 void GeniviLogReplayerPlugin::getRangePropertyAsync(AsyncRangePropertyReply *reply)
@@ -124,7 +145,7 @@ int GeniviLogReplayerPlugin::supportedOperations()
 	return Get;
 }
 
-// new values are receive through a socket from the logreplayer
+// new values are received through a socket from the logreplayer
 // data is updated when received
 int GeniviLogReplayerPlugin::updateProperties()
 {
@@ -169,7 +190,7 @@ int GeniviLogReplayerPlugin::updateProperties()
         // update AMB property accordingly to the message
         if(!strcmp(msgId, "GVVEHENGSPEED"))
         {
-            VehicleProperty::EngineSpeedType enginespeed(msgValue);
+            enginespeed.setValue(msgValue);
             routingEngine->updateProperty(&enginespeed, uuid());
 #ifdef  DLT
             LOG_DEBUG(gContext,"GeniviLogReplayer: GVVEHENGSPEED - Message ID, value: %s , %d", msgId,msgValue);
@@ -180,19 +201,19 @@ int GeniviLogReplayerPlugin::updateProperties()
         }
         else if(!strcmp(msgId, "GVVEHFUELLEVEL"))
         {
-            VehicleProperty::FuelLevelType fuellevel(msgValue);
+            fuellevel.setValue(msgValue);
             routingEngine->updateProperty(&fuellevel, uuid());
             DebugOut(0)<<"GVVEHFUELLEVEL - Message ID, value: "<<msgId<<","<<msgValue<<endl;
         }
         else if (!strcmp(msgId, "GVVEHFUELCONS"))
         {
-            VehicleProperty::FuelConsumptionType fuelcons(msgValue);
+            fuelcons.setValue(msgValue);
             routingEngine->updateProperty(&fuelcons, uuid());
             DebugOut(0)<<"GVVEHFUELCONS - Message ID, value: "<<msgId<<","<<msgValue<<endl;
         }
         else if (!strcmp(msgId, "GVVEHTOTALODO"))
         {
-            VehicleProperty::OdometerType odometer(msgValue);
+            odometer.setValue(msgValue);
             routingEngine->updateProperty(&odometer, uuid());
             DebugOut(0)<<"GVVEHTOTALODO - Message ID, value: "<<msgId<<","<<msgValue<<endl;
         }
