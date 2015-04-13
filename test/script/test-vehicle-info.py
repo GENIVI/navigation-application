@@ -102,6 +102,7 @@ def displayStatus(string):
 	display(string,STATUS_LOCATION,WHITE,BLUE)
 
 def displayStep(string):
+	display('                                ',STEP_LOCATION,YELLOW,BLACK)
 	display(string,STEP_LOCATION,YELLOW,BLACK)
 
 def displayEngineSpeed(string):

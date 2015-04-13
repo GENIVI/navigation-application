@@ -43,9 +43,9 @@ class Step(IntEnum):
 	END = 4
 
 class Genivi(IntEnum):
-	ENHANCEDPOSITIONSERVICE_LATITUDE = 0x0020
-	ENHANCEDPOSITIONSERVICE_LONGITUDE = 0x0021
-	ENHANCEDPOSITIONSERVICE_ALTITUDE = 0x0022
+	ENHANCEDPOSITIONSERVICE_LATITUDE = 0x00000001
+	ENHANCEDPOSITIONSERVICE_LONGITUDE = 0x00000002
+	ENHANCEDPOSITIONSERVICE_ALTITUDE = 0x00000004
 	FUELSTOPADVISOR_TANK_DISTANCE = 0x0022
 	FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE = 0x0024
 	NAVIGATIONCORE_ACTIVE = 0x0060
@@ -105,6 +105,7 @@ def displayStatus(string):
 	display(string,STATUS_LOCATION,WHITE,BLUE)
 
 def displayStep(string):
+	display('                                ',STEP_LOCATION,YELLOW,BLACK)
 	display(string,STEP_LOCATION,YELLOW,BLACK)
 
 def displayEngineSpeed(string):
@@ -245,16 +246,16 @@ def guidanceStatusHandler(status,handle):
 	else:
 		displayGuidanceStatus('---')
 
-def mapMatchedPositionPositionUpdateHandler(arg):
-	# get the mapmatched position first and check after (to be improved)
-	mapmatchedPosition = mapMatchedPositionInterface.GetPosition(dbus.Array([Genivi.NAVIGATIONCORE_LATITUDE,Genivi.NAVIGATIONCORE_LONGITUDE]))
-	for item in arg:
-		if item==Genivi.NAVIGATIONCORE_LATITUDE:
-			latitude=float(mapmatchedPosition[dbus.UInt16(Genivi.NAVIGATIONCORE_LATITUDE)])
-			displayLatitude("{:.3f}".format(latitude))
-		elif item==Genivi.NAVIGATIONCORE_LONGITUDE:
-			longitude=float(mapmatchedPosition[dbus.UInt16(Genivi.NAVIGATIONCORE_LONGITUDE)])
-			displayLongitude("{:.3f}".format(longitude))
+def enhancedPositionPositionUpdateHandler(arg):
+	time.sleep(.050)
+	# get the position
+	enhancedPosition = enhancedPositionInterface.GetPositionInfo(arg)
+	if (arg & Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE) == Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE:
+		latitude=float(enhancedPosition[1][dbus.UInt64(Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE)])
+		displayLatitude("{:.3f}".format(latitude))
+	if (arg & Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE) == Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE:
+		longitude=float(enhancedPosition[1][dbus.UInt64(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
+		displayLongitude("{:.3f}".format(longitude))
 
 def mapMatchedPositionSimulationStatusHandler(arg):
 	if arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION:
@@ -344,6 +345,7 @@ except dbus.DBusException:
 	print_exc()
 	sys.exit(1)
 enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
+dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.positioning.EnhancedPosition", signal_name = "PositionUpdate")
 
 # Guidance
 try:
@@ -364,7 +366,6 @@ except dbus.DBusException:
 	sys.exit(1)
 mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
 dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
-dbusConnectionBus.add_signal_receiver(mapMatchedPositionPositionUpdateHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "PositionUpdate")
 
 displayStatus( 'Start simulation' )
 
