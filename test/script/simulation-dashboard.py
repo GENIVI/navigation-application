@@ -247,7 +247,6 @@ def guidanceStatusHandler(status,handle):
 		displayGuidanceStatus('---')
 
 def enhancedPositionPositionUpdateHandler(arg):
-	time.sleep(.050)
 	# get the position
 	enhancedPosition = enhancedPositionInterface.GetPositionInfo(arg)
 	if (arg & Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE) == Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE:
