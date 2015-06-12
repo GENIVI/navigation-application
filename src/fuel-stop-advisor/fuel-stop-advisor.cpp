@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "fuel-stop-advisor.h"
+#include "fuel-stop-advisor_adaptor.h"
 #include "constants.h"
-#include "amb.h"
+#include "amb_proxy.h"
 #include "ctripcomputer.h"
 #include <boost/variant/get.hpp>
 

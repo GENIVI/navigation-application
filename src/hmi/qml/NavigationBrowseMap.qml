@@ -675,7 +675,7 @@ HMIMenu {
                     x:StyleSheetBottom.guidanceon[Constants.X]; y:StyleSheetBottom.guidanceon[Constants.Y]; width:StyleSheetBottom.guidanceon[Constants.WIDTH]; height:StyleSheetBottom.guidanceon[Constants.HEIGHT];
                     id:guidanceStatus; next:zoomin; prev:menub; explode:false; disabled:false;
                     source:StyleSheetBottom.guidanceoff[Constants.SOURCE]; //todo call get status
-                    property int status: 0;
+                    property int status: 1;
                     function setState(name)
                     {
                         if (name=="ON")

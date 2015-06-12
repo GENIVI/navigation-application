@@ -15,129 +15,39 @@
 #
 # @licence end@
 ###########################################################################
+project(fuel-stop-advisor)
 cmake_minimum_required(VERSION 2.8)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
-find_program(XSLTPROC xsltproc REQUIRED)
-find_program(GIT git)
+option(WITH_DEBUG
+        "Enable the debug messages" OFF)
 
-set (git_executable ${GIT})
-set (git_get_src_version git rev-parse HEAD)
-set (create_file cmake -E touch)
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
-# Check if navigation-service stuff with the right version has been cloned and do it if necessary
-set(navigation-service_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/navigation)
-set(navigation-service_URL http://git.projects.genivi.org/lbs/navigation.git)
-set(navigation-service_VERSION 5e5ecad2a37e4c369fd181468b056819b3432a77)
+set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
+set(AUTOMOTIVE_MESSAGE_BROKER "automotive-message-broker")
+set(AUTOMOTIVE_MESSAGE_BROKER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AUTOMOTIVE_MESSAGE_BROKER}")
+set(AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR "${AUTOMOTIVE_MESSAGE_BROKER_DIR}/src/${AUTOMOTIVE_MESSAGE_BROKER}")
+set(AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR "${AUTOMOTIVE_MESSAGE_BROKER_DIR}/src/${AUTOMOTIVE_MESSAGE_BROKER}-build")
+set(AUTOMOTIVE_MESSAGE_BROKER_LIB_DIR "${AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR}/lib")
+set(PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/patches")
 
-if (EXISTS ${navigation-service_SRC_DIR})
-	execute_process(	
-		COMMAND ${git_get_src_version}  
-		WORKING_DIRECTORY "${navigation-service_SRC_DIR}"
-		RESULT_VARIABLE result
-		OUTPUT_VARIABLE version
-	)
-	if (${version} MATCHES ${navigation-service_VERSION})
-		message(STATUS "version of navigation-service up to date")	
-	else()
-		message(STATUS "get the right version of navigation-service")
-	 	execute_process(
-			COMMAND "${git_executable}" pull
-			COMMAND "${git_executable}" checkout ${navigation-service_VERSION}
-			WORKING_DIRECTORY "${navigation-service_SRC_DIR}"
-			RESULT_VARIABLE error_code
-		)
-		if(error_code)
-			message(FATAL_ERROR "Failed to checkout version: '${navigation-service_VERSION}'")
-		endif()	
-	endif()
-else()
-	message(STATUS "clone navigation-service")
-	execute_process(
-		COMMAND "${git_executable}" clone "${navigation-service_URL}" "${navigation-service_SRC_DIR}"
-		RESULT_VARIABLE error_code
-	)
- 	if(error_code)
-		message(FATAL_ERROR "Failed to clone repository: '${navigation-service_URL}'")
-	endif()
+include(ExternalProject)
+ExternalProject_Add(${AUTOMOTIVE_MESSAGE_BROKER}
+PREFIX ${AUTOMOTIVE_MESSAGE_BROKER_DIR}
+GIT_REPOSITORY  https://github.com/otcshare/automotive-message-broker.git
+GIT_TAG c216955d16ca275159891cad296217094d972390
+UPDATE_COMMAND ""
+PATCH_COMMAND patch -p1 -i "${PATCH_DIR}/amb_allow_sessionbus.patch"
+INSTALL_COMMAND sudo make install
+)
 
-	message(STATUS "get the right version of navigation-service")
- 	execute_process(
-		COMMAND "${git_executable}" pull
-		COMMAND "${git_executable}" checkout ${navigation-service_VERSION}
-		WORKING_DIRECTORY "${navigation-service_SRC_DIR}"
-		RESULT_VARIABLE error_code
-	)
-	if(error_code)
-		message(FATAL_ERROR "Failed to checkout version: '${navigation-service_VERSION}'")
-	endif()	
-endif()
+add_subdirectory(navigation/src/navigation "${CMAKE_CURRENT_BINARY_DIR}/navigation")
 
-# Check if automotive-message-broker stuff with the right version has been cloned and do it if necessary
-# please consider that patches have been applied 
-set(automotive-message-broker_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/automotive-message-broker)
-set(automotive-message-broker_URL https://github.com/otcshare/automotive-message-broker.git)
-set(automotive-message-broker_VERSION b8041b051cc43df0b1b339c45844369967ec99ab)
-set(automotive-message-broker_PATCH_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patches)
-set(automotive-message-broker_PATCH_DUMMY_FILE ${automotive-message-broker_SRC_DIR}/.patched)
+add_subdirectory(fuel-stop-advisor)
 
-if (EXISTS ${automotive-message-broker_SRC_DIR})
-	execute_process(	
-		COMMAND ${git_get_src_version}  
-		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
-		RESULT_VARIABLE result
-		OUTPUT_VARIABLE version
-	)
-	if (${version} MATCHES ${automotive-message-broker_VERSION})
-		message(STATUS "version of automotive-message-broker up to date")	
-	else()
-		message(STATUS "get the right version of automotive-message-broker")
-	 	execute_process(
-			COMMAND "${git_executable}" pull
-			COMMAND "${git_executable}" checkout ${automotive-message-broker_VERSION}
-			WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
-			RESULT_VARIABLE error_code
-		)
-		if(error_code)
-			message(FATAL_ERROR "Failed to checkout version: '${automotive-message-broker_VERSION}'")
-		endif()	
-	endif()
-else()
-	message(STATUS "clone automotive-message-broker")
-	execute_process(
-		COMMAND "${git_executable}" clone "${automotive-message-broker_URL}" "${automotive-message-broker_SRC_DIR}"
-		RESULT_VARIABLE error_code
-	)
- 	if(error_code)
-		message(FATAL_ERROR "Failed to clone repository: '${automotive-message-broker_URL}'")
-	endif()
-	message(STATUS "get the right version of automotive-message-broker")
- 	execute_process(
-		COMMAND "${git_executable}" pull
-		COMMAND "${git_executable}" checkout ${automotive-message-broker_VERSION}
-		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
-		RESULT_VARIABLE error_code
-	)
-	if(error_code)
-		message(FATAL_ERROR "Failed to checkout version: '${automotive-message-broker_VERSION}'")
-	endif()	
-endif()
+add_subdirectory(genivilogreplayer)
 
-set (PATCH_EXECUTABLE patch -p1 -s) 
-if (EXISTS ${automotive-message-broker_PATCH_DUMMY_FILE})
-	message(STATUS "patch already applied to automotive-message-broker")
-else()
-	message(STATUS "apply the patch to automotive-message-broker")
-	execute_process(
-		COMMAND ${PATCH_EXECUTABLE} -i ${automotive-message-broker_PATCH_SRC_DIR}/amb_allow_sessionbus.patch
-		COMMAND ${create_file} ${automotive-message-broker_PATCH_DUMMY_FILE}
-		TIMEOUT 0.1 #cmake -E touch never ends so add a timeout here
-		WORKING_DIRECTORY "${automotive-message-broker_SRC_DIR}"
-		RESULT_VARIABLE error_code
-	)
-	if(error_code)
-		message(FATAL_ERROR "Failed to apply the patch")
-	endif()	
-endif()
+add_subdirectory(hmi/qml/hmi-launcher)
 
-
-
+add_subdirectory(navigation/src/poi-service "${CMAKE_CURRENT_BINARY_DIR}/poi-service")

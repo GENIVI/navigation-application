@@ -36,19 +36,6 @@ pkg_check_modules(QT5_GUI REQUIRED Qt5Gui)
 pkg_check_modules(QT5_NETWORK REQUIRED Qt5Network)
 pkg_check_modules(QT5_OPENGL REQUIRED glesv2)
 
-
-if (${LM} EQUAL 1 )
-	message("building with layer management")
-	set(ILM_LIBRARIES "-lilmCommon -lilmClient -lilmControl")
-	include_directories(${QT5_OPENGL_INCLUDE_DIRS})
-	include_directories(${ILM_INCLUDE_DIRS})
-	file(GLOB ILM_SOURCES lm_control.cpp lm_control.h)
-	add_definitions(-DLM)
-else()
-	message("building without layer management")
-endif()
-
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${QT5_CORE_INCLUDE_DIRS})
 include_directories(${QT5_QML_INCLUDE_DIRS})
@@ -83,7 +70,6 @@ link_directories(
 	${QT5_NETWORK_LIBRARY_DIRS}
 	${DBUS_LIBRARY_DIRS}
 	${QT5_OPENGL_LIBRARY_DIRS}
-	${ILM_LIBRARY_DIRS}
 )
  
 set(LIBRARIES 
@@ -96,18 +82,16 @@ set(LIBRARIES
     ${QT5_NETWORK_LIBRARIES}
 	${DBUS_LIBRARIES}
 	${QT5_OPENGL_LIBRARIES}
-	${ILM_LIBRARIES}
 )
 
 # generate constants used by the QML files
 # in order to generate it, navigation-service and positioning have to be being cloned before
-# do cmake -Dnavigation-service_API=<path to navigation-service APIs> -Dpositioning_API=<path to positioning enhanced position API> -Dfuel-stop-advisor_API=<path to fuel-stop-advisor APIs>
 file (GLOB XML_TO_CONSTANTS
-	${navigation-service_API}/map-viewer/genivi-mapviewer-constants.xml
-	${navigation-service_API}/navigation-core/genivi-navigationcore-constants.xml
-	${navigation-service_API}/poi-service/genivi-poiservice-constants.xml
-	${positioning_API}/genivi-positioning-constants.xml
-	${fuel-stop-advisor_API}/constants.xml
+    ${API_DIR_PARENT_SCOPE}/map-viewer/genivi-mapviewer-constants.xml
+    ${API_DIR_PARENT_SCOPE}/navigation-core/genivi-navigationcore-constants.xml
+    ${API_DIR_PARENT_SCOPE}/poi-service/genivi-poiservice-constants.xml
+    ${POSITIONING_API_DIR_PARENT_SCOPE}/genivi-positioning-constants.xml
+    ${FUEL_STOP_ADVISOR_API_DIR}/constants.xml
 )
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)
 	foreach (RAW_FILE ${XML_TO_CONSTANTS})
@@ -128,6 +112,7 @@ set (SRC_TO_MOC ${CMAKE_CURRENT_SOURCE_DIR}/dbusif.h
 				${CMAKE_CURRENT_SOURCE_DIR}/preference.h
 )
 execute_process(
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 	COMMAND ${cmake_create_dir} ${MOC}
 )
 foreach (RAW_FILE ${SRC_TO_MOC})
@@ -157,7 +142,6 @@ add_executable(hmi-launcher
     dbusifsignal.h 
     wheelarea.h 
     preference.h
-	${ILM_SOURCES}
 )
 
 target_link_libraries(hmi-launcher ${LIBRARIES})

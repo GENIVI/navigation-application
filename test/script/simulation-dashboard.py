@@ -203,7 +203,7 @@ def getDbus():
 		loop.quit()
 
 	# get the values on amb
-	engineSpeed = ambEngineSpeedInterface.GetEngineSpeed()
+	engineSpeed = ambEngineSpeedInterface.GetSpeed()
 	displayEngineSpeed(str(int(engineSpeed[0])))
 	fuelLevel = ambFuelInterface.GetLevel()
 	displayFuelLevel(str(int(fuelLevel[0])))

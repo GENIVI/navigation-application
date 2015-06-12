@@ -2,7 +2,7 @@
 	"sources" : [ 
 		{
 			"name" : "GeniviLogReplayer",
-			"path" : "../genivilogreplayer/genivilogreplayerplugin.so",
+			"path" : "../../../build/genivilogreplayer/genivilogreplayerplugin.so",
 			"delay" : "1000"
 		}
 	],

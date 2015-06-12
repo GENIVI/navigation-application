@@ -41,7 +41,7 @@ GeniviLogReplayerPlugin::GeniviLogReplayerPlugin(AbstractRoutingEngine* re, map<
 
     // Main loop to receive data
     statusRunning = true;
-    thread = g_thread_create((GThreadFunc)updatePropertiesThread, this, FALSE, NULL);
+    thread = g_thread_new("GeniviLogReplayerPlugin", (GThreadFunc)updatePropertiesThread, this);
 }
 
 GeniviLogReplayerPlugin::~GeniviLogReplayerPlugin()

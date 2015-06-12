@@ -28,14 +28,6 @@
 # @licence end@
 ###########################################################################
 
-TOP_DIR=$PWD/..
-TOP_BIN_DIR=$TOP_DIR/../bin
-SCRIPT_DIR=$PWD
-
-
-#include common settings
-source fsa-config.sh
-
 # function to start a process by freezing some of the options
 function run
 {
@@ -115,9 +107,54 @@ wm="" #to store the current window manager (in case of start with the layer mana
 verbose=0 #no debug or log messages displayed
 center="4612 N 0608 E"
 
-# hmi panel launched
-app=$HMI_QML_DIR/application.qml
+CUR_DIR=$PWD
+BIN_DIR=$CUR_DIR/build
+SRC_DIR=$CUR_DIR
 
+SCRIPT_DIR=$SRC_DIR/script
+HMI_QML_DIR=$SRC_DIR/hmi/qml
+app=$HMI_QML_DIR/application.qml # hmi panel launched by default
+STYLE_SHEETS_GENERATED_INDICATOR=$HMI_QML_DIR/Core/style-sheets/the-style-sheets-have-been-generated-css.js
+REPLAYER_LOG_FILE=none
+export REPLAYER_LOG_FILE
+
+# location of exe, lib and config files
+AUTOMOTIVE_MESSAGE_BROKER=automotive-message-broker
+AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR=$SRC_DIR/$AUTOMOTIVE_MESSAGE_BROKER
+AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR=$AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR/src/$AUTOMOTIVE_MESSAGE_BROKER-build
+GENIVI_LOGREPLAYER=genivilogreplayer
+GENIVI_LOGREPLAYER_SRC_DIR=$SRC_DIR/$GENIVI_LOGREPLAYER
+GENIVI_LOGREPLAYER_BIN_DIR=$BIN_DIR/$GENIVI_LOGREPLAYER
+
+NAVIGATION=navigation
+NAVIGATION_SRC_DIR=$SRC_DIR/$NAVIGATION/src/navigation
+NAVIGATION_BIN_DIR=$BIN_DIR/$NAVIGATION
+
+NAVIT=navit
+NAVIT_BIN_DIR=$NAVIGATION_BIN_DIR/navit/navit/navit
+
+POI_SERVER=poi-server
+POI_SERVER_SRC_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/$POI_SERVER
+POI_SERVER_BIN_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/bin
+
+LOG_REPLAYER=log-replayer
+LOG_REPLAYER_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$LOG_REPLAYER
+LOG_REPLAYER_BIN_DIR=$NAVIGATION_SRC_DIR/bin
+
+ENHANCED_POSITION_SERVICE=enhanced-position-service
+ENHANCED_POSITION_SERVICE_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$ENHANCED_POSITION_SERVICE
+ENHANCED_POSITION_SERVICE_BIN_DIR=$NAVIGATION_SRC_DIR/bin
+
+FUEL_STOP_ADVISOR=fuel-stop-advisor
+FUEL_STOP_ADVISOR_SRC_DIR=$SRC_DIR/$FUEL_STOP_ADVISOR
+FUEL_STOP_ADVISOR_BIN_DIR=$BIN_DIR/$FUEL_STOP_ADVISOR
+
+HMI_LAUNCHER=hmi-launcher
+HMI_LAUNCHER_SRC_DIR=$SRC_DIR/hmi/qml/$HMI_LAUNCHER
+HMI_LAUNCHER_BIN_DIR=$BIN_DIR/hmi/qml/$HMI_LAUNCHER
+
+
+# options analysis
 while getopts a:c:glnorvx opt
 do
 	case $opt in
@@ -182,47 +219,9 @@ done
 if [ ! -f $STYLE_SHEETS_GENERATED_INDICATOR ]
 then
     echo "Please generate the style sheets before"
-	./prepare.sh -h
+	$SCRIPT_DIR/prepare.sh -h
 	exit 1
 fi
-
-REPLAYER_LOG_FILE=none
-export REPLAYER_LOG_FILE
-
-# initialization for the layer manager 
-if [ "$lm" = "1" ]
-then
-	# D-Bus setup
-	#eval `dbus-launch --sh-syntax`
-	export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/5000/dbus/user_bus_socket
-	#export DBUS_SESSION_BUS_PID=335
-	#export DBUS_SESSION_BUS_PID=185
-
-	export XDG_RUNTIME_DIR=/var/run/user/5000
-
-	# Platform is wayland of drm-backend
-	export QT_QPA_PLATFORM=wayland
-
-	# Create Window OpenGL (Default gtk_drawing_area)
-	export NAVIT_GRAPHICS=opengl
-
-	# Graphics OpenGL Platfrom
-	export NAVIT_PLATFORM=wayland
-
-	# ILM library path(for hmi-launcher& genivi_mapviewer_mapviewercontrol.cxx)
-	#export LD_LIBRARY_PATH=/home/user/usrfs/lib:$LD_LIBRARY_PATH
-
-	# Create Layer(layer of navigation-application)
-	#export PATH=/home/user/usrfs/bin:$PATH
-	LAYER=2000
-	LayerManagerControl create layer $LAYER 800 480
-	LayerManagerControl set layer $LAYER source region 0 0 800 480
-	LayerManagerControl set layer $LAYER destination region 0 0 800 480
-	LayerManagerControl set layer $LAYER visibility 1
-	LayerManagerControl set screen 0 render order $LAYER
-fi
-
-export | egrep " LM_PLUGIN_PATH=|LM_USE_SESSION_BUS=| DBUS_SESSION_BUS_ADDRESS=| LD_LIBRARY_PATH=| PATH=| DISPLAY=" >env.sh
 
 trap "terminate" EXIT INT
 set -e #exit on error now
@@ -231,9 +230,9 @@ set -e #exit on error now
 cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
 if [ "$verbose" = "1" ]
 then
-	run "Automotive Message Broker" ./ambd/ambd --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
+	run "Automotive Message Broker" ./ambd/ambd --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig.in.json
 else
-	run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig
+	run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig.in.json
 fi
 wait_for_service org.automotive.message.broker /
 
@@ -243,7 +242,7 @@ wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearc
 
 if [ "$enhpos" = 1 ]
 then # start the  enhanced position service
-	run "EnhancedPositionService" $ENHANCED_POSITION_SERVICE_BIN_DIR/src/$ENHANCED_POSITION_SERVICE 
+	run "EnhancedPositionService" $ENHANCED_POSITION_SERVICE_BIN_DIR/$ENHANCED_POSITION_SERVICE 
 	wait_for_service org.genivi.positioning.EnhancedPosition /org/genivi/positioning/EnhancedPosition
 fi
 
@@ -251,6 +250,7 @@ fi
 cd $NAVIT_BIN_DIR
 >bookmark.txt
 echo "$center" >center.txt
+
 run "MapViewer" ./$NAVIT navit_genivi_mapviewer.xml
 
 wait_for_service org.genivi.mapviewer.Configuration /org/genivi/mapviewer
@@ -267,7 +267,7 @@ wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
 
 if [ "$replayer" = 1 ]
 then # start the log replayer (of the fsa) with a sample log file
-	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/src/$LOG_REPLAYER  $POSITIONING_LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER  $LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
 fi
 
 sleep 3 # need a sleep here (to be improved)
@@ -281,17 +281,6 @@ then
 	exec 2>&1
 fi
 
-if [ "$lm" = 1 ]
-then # start the hmi into the layer manager
-	# wait for launch hmi-launcher
-	sleep 5
-	#SURFACE=`pgrep -f hmi-launcher`
-	SURFACE=2002
-	if [ -n $SURFACE ]; then
-		LayerManagerControl set surface $SURFACE visibility 1
-		LayerManagerControl set layer $LAYER render order $SURFACE
-	fi
-else # start the hmi 
-	$HMI_LAUNCHER_BIN_DIR/$HMI_LAUNCHER $app 
-fi
+# start the hmi 
+$HMI_LAUNCHER_BIN_DIR/$HMI_LAUNCHER $app 
 

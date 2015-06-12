@@ -1,0 +1,169 @@
+Release date of the file: 09-06-2015 
+Status: OK
+
+Project:
+Navigation application based on Navit and compliant with the Navigation APIs standardized by the GENIVI Alliance
+This project is one of the navigation projects that implements the GENIVI navigation APIs.
+
+More:
+The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is made in Qml (Qt5.2 and QtQuick 2.1)
+See also other navigation projects like proof of concepts implemented for poi-service, traffic-info and positioning 
+
+What is in:
+This repository contains the application (with the HMI) of the navigation project
+It's possible to build and run the whole stuff (including the navit and the plugins) directly from this repository
+FYI: the scripts for building Navit and the GENIVI plugins are located into http://git.projects.genivi.org/lbs/navigation-service.git
+	 this repository is cloned during the build
+
+Author: 
+Philippe Colliot philippe.colliot@mpsa.com
+Martin Schaller <martin.schaller@it-schaller.de>
+
+License: 
+See headers and LICENSE file
+
+Test target: 
+Ubuntu 14.04 LTS
+
+===============================
+Current versions of additional code 
+===============================
+Navigation middleware:
+<current version of navigation> (git): f297227b640e6ffb1f56c1a01bc4a8c20a4ace32
+
+Additional code coming with navigation:
+<current version of positioning> (git): bf00492981d71fead8c0615fae59b73b03a4fbac
+<current version of navit> (svn): 6084
+
+Automotive message broker:
+<current version of amb> (git): c216955d16ca275159891cad296217094d972390
+
+===============================
+How to get additional code 
+===============================
+NB: automotive message broker is added by the cmake process
+
+Get navigation:
+git clone http://git.projects.genivi.org/lbs/navigation.git ./navigation
+cd navigation
+git checkout <current version of navigation>
+
+Go to the folder that contains the sources
+cd src/navigation
+
+NB: the following explanations are also included into the README under this folder
+
+Get positioning:
+git clone http://git.projects.genivi.org/lbs/positioning.git ./positioning
+cd positioning
+git checkout <current version of positioning>
+cd ../
+
+Get navit:
+svn checkout http://svn.code.sf.net/p/navit/code/trunk navit -r<current version of navit>
+
+Now apply a patch to navit (The r5549 removed the  get_unique features used by GetSpell):
+cd navit
+patch -p0 -i ../patches/search_list_get_unique.diff
+cd ../
+
+Get the sample map:
+wget -O ./map/switzerland.bin.tmp http://www.navit-project.org/switzerland.bin
+mv ./map/switzerland.bin.tmp ./map/switzerland.bin
+cd ../../../
+
+===============================
+Directory Structure
+===============================
+navigation/map-viewer/
+the plugins for the map rendering and manipulation (zoom, scroll..)
+navigation/navigation-core/
+the plugins for basic navigation features (location input, route calculation...)
+navigation/poi-cam/
+the plugins for poi content access module 
+navigation/patches/
+some patches to complete the navit code
+navigation/map/
+the map
+navigation/navit/
+basic code of navit
+navigation/positioning/
+the code of positioning
+hmi/
+the hmi in Qml
+genivilogreplayer/
+the plugin for amb that connects the logreplayer data (by using socket)
+fuel-stop-advisor/
+the code of the FSA application
+automotive-message-broker/
+the code of amb
+script/
+some scripts to build the hmi skins
+
+===============================
+How To Build
+===============================
+(you're supposed to have got additional code before)
+NB: potential issue may occur due to path change of freetype stuff. If necessary, add a link to /usr/include/freetype2/ into /usr/include 
+
+Prerequisite:
+
+Configure Qt version:
+	export QT_SELECT=5
+To check it:
+	qtchooser --print-env
+
+Set language for the address list:
+	export LANGUAGE=en_US
+
+Create and enter the build folder:
+mkdir ./build
+cd build
+
+1. Build the additional code for navigation:
+
+Build the navit code first (to be improved)
+mkdir navigation
+cd navigation
+mkdir navit
+cd navit
+mkdir navit
+cd navit
+cmake -DDISABLE_QT=1 -DSAMPLE_MAP=0 -Dvehicle/null=1 -Dgraphics/qt_qpainter=0 ../../../../navigation/src/navigation/navit/navit/
+make
+cd ../../
+cmake ../../navigation/src/navigation
+make
+cd ..
+
+2. Build the code of the FSA
+
+NB: AMB has install step, so you may be asked for sudo
+
+cmake ../
+make
+cd ../
+
+===============================
+How To Prepare the HMI
+===============================
+There are two resolutions available, WVGA and XGA.
+For instance, for VGA:
+cd script
+./prepare.sh -i ../hmi/qml/Core/gimp/green-theme/800x480
+cd ../
+
+===============================
+How To Run
+===============================
+
+Launch in loop mode:
+	./run
+
+For the full FSA demonstration, please see $WORKING-DIR/test/script/README
+
+You can get information about the various options available with
+	./run --help
+
+Options include running each process within its own terminal (or within gdb), creating log files, or disabling logreplayer or positioning from starting.
+

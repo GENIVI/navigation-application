@@ -1,6 +1,23 @@
+###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
+# Component Name: fuel stop advisor application
+#
+# Author: Philippe Colliot
+#
+# Copyright (C) 2014, PCA Peugeot Citroën
+#
+# License:
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+# this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# @licence end@
+###########################################################################
 cmake_minimum_required(VERSION 2.8)
+
 include(FindPkgConfig)
-add_definitions(-std=c++11)
 pkg_search_module(GLIB glib-2.0)
 
 set(genivilogreplayer_headers genivilogreplayerplugin.h)
@@ -8,7 +25,7 @@ set(genivilogreplayer_sources genivilogreplayerplugin.cpp)
 
 add_library(genivilogreplayerplugin MODULE ${genivilogreplayer_sources})
 set_target_properties(genivilogreplayerplugin PROPERTIES PREFIX "")
-include_directories(${automotive-message-broker_SRC}/lib ${GLIB_INCLUDE_DIRS})
-target_link_libraries(genivilogreplayerplugin amb -L${automotive-message-broker_BIN}/lib)
+include_directories(${AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR}/lib ${GLIB_INCLUDE_DIRS})
+target_link_libraries(genivilogreplayerplugin amb -L${AUTOMOTIVE_MESSAGE_BROKER_LIB_DIR})
 
 install(TARGETS genivilogreplayerplugin LIBRARY DESTINATION lib/automotive-message-broker)

@@ -1,70 +1,13 @@
-Release date of the file: 1-12-2014 
-Status: tested from scratch on Ubuntu 14.04.1
-
-Project:
-Navigation application based on Navit and compliant with the Navigation APIs standardized by the GENIVI Alliance
-This project is one of the navigation projects that implements the GENIVI navigation APIs.
-
-More:
-The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is made in Qml (Qt5.2 and QtQuick 2.1)
-See also other navigation projects like proof of concepts implemented for poi-service, traffic-info and positioning 
+Release date of the file: 09-06-2015 
+Status: OK
 
 What is in:
-This repository contains the application (with the HMI) of the navigation project
-It's possible to build and run the whole stuff (including the navit and the plugins) directly from this repository
-FYI: the scripts for building Navit and the GENIVI plugins are located into http://git.projects.genivi.org/lbs/navigation-service.git
-	 this repository is cloned during the build
+This repository gathers several sub projects hosted by GENIVI, based on a common set of APIs defined by the GENIVI Alliance
 
-Author: 
-Philippe Colliot philippe.colliot@mpsa.com
-Martin Schaller <martin.schaller@it-schaller.de>
+The client of the navigation proof of concept and the Fuel Stop Advisor are located here
+./src
 
-License: 
-See headers and LICENSE file
+Some test scripts are available here
+./test
 
-Test target: 
-Ubuntu 14.04 LTS
-
-Dependencies:
-See $WORKING-DIR/src/script/get-apt-packets.sh
-
-Building steps:
-
-Set $WORKING-DIR to a directory of your choice
-
-Get the code:
-	git clone http://git.projects.genivi.org/lbs/navigation-application.git $WORKING-DIR
-
-Go to script directory:
-	cd $WORKING-DIR/src/script
-
-Install needed packets:
-	./get-apt-packets.sh
-
-Configure Qt version:
-	export QT_SELECT=5
-	qtchooser --print-env
-
-Set language for the address list:
-	export LANGUAGE=en_US
-
-Clone some additional code:
-	./build.sh clone 
-
-Build the code:
-	./build.sh make
-
-Prepare the HMI:
-(There are two resolutions available, WVGA and XGA, please use ./prepare.sh -i <folder of the gimp files>)
-	./prepare.sh -i ../hmi/qml/Core/gimp/green-theme/800x480
-
-Launch in loop mode:
-	./run
-
-For the full FSA demonstration, please see $WORKING-DIR/test/script/README
-
-You can get information about the various options available with
-	./run --help
-
-Options include running each process within its own terminal (or within gdb), creating log files, or disabling logreplayer or positioning from starting.
-
+See the README for each of the projects for building the code

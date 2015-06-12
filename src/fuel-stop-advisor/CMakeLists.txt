@@ -15,30 +15,59 @@
 # @licence end@
 ###########################################################################
 cmake_minimum_required(VERSION 2.8)
-include(FindPkgConfig)
-pkg_search_module(DBUS_CPP dbus-c++-glib-1 dbus-c++-1)
-pkg_search_module(GLIB glib-2.0)
-include_directories(${DBUS_CPP_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_CUSTOM_COMMAND(OUTPUT fuel-stop-advisor.h
-		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/fuel-stop-advisor.xml --adaptor=fuel-stop-advisor.h
-		   DEPENDS fuel-stop-advisor.xml
-		   )
-ADD_CUSTOM_COMMAND(OUTPUT amb.h
-		   COMMAND dbusxx-xml2cpp ${PROJECT_SOURCE_DIR}/amb.xml --proxy=amb.h
-		   DEPENDS amb.xml
-		   )
-ADD_CUSTOM_COMMAND(OUTPUT constants.h
-	           COMMAND xsltproc ${PROJECT_SOURCE_DIR}/enum.xsl ${PROJECT_SOURCE_DIR}/constants.xml >constants.h
-		   DEPENDS constants.xml
-		   )
+include(FindPkgConfig)
+
+pkg_search_module(DBUS_CPP_GLIB dbus-c++-glib-1)
+pkg_search_module(DBUS_CPP dbus-c++-1)
+pkg_search_module(GLIB glib-2.0)
+
+include_directories(${GLIB_INCLUDE_DIRS})
+include_directories(${DBUS_CPP_INCLUDE_DIRS})
+include_directories(${DBUS_CPP_GLIB_INCLUDE_DIRS})
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core)
+
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 if(WITH_DEBUG)
     add_definitions("-DDEBUG_ENABLED=1")
 endif()
 
-include_directories(${generated_api_DIR})
+message(STATUS "generation of DBus files for fuel-stop-advisor")
 
-add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor.h constants.h ${generated_api_DIR}/genivi-navigationcore-routing_proxy.h amb.h ${generated_api_DIR}/genivi-navigationcore-constants.h ctripcomputer.cpp ctripcomputer.h ctripcomputertypes.h)
-target_link_libraries(fuel-stop-advisor ${DBUS_CPP_LDFLAGS} ${GLIB_LDFLAGS})
+find_program(XSLTPROC xsltproc REQUIRED)
+find_program(DBUSXML2CPP dbusxx-xml2cpp REQUIRED)
+
+file (GLOB XML_TO_DBUS 
+	${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/amb.xml
+)
+foreach (RAW_FILE ${XML_TO_DBUS})
+	get_filename_component(FILE ${RAW_FILE} NAME_WE)
+	execute_process(
+		COMMAND ${DBUSXML2CPP} ${RAW_FILE} --proxy=${CMAKE_CURRENT_BINARY_DIR}/${FILE}_proxy.h  
+		COMMAND ${DBUSXML2CPP} ${RAW_FILE} --adaptor=${CMAKE_CURRENT_BINARY_DIR}/${FILE}_adaptor.h  
+	)
+endforeach()
+
+file (GLOB XML_TO_DBUS_CONSTANT
+	${CMAKE_CURRENT_SOURCE_DIR}/constants.xml
+)
+foreach (RAW_FILE ${XML_TO_DBUS_CONSTANT})
+	get_filename_component(FILE ${RAW_FILE} NAME_WE)
+	execute_process(
+		OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.h
+		COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/enum.xsl ${RAW_FILE}        
+	)
+endforeach()
+
+add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor_adaptor.h constants.h ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core/genivi-navigationcore-routing_proxy.h amb_proxy.h ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core/genivi-navigationcore-constants.h ctripcomputer.cpp ctripcomputer.h ctripcomputertypes.h)
+
+set(LIBRARIES
+    ${DBUS_CPP_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    ${DBUS_CPP_GLIB_LIBRARIES}
+)
+
+target_link_libraries(fuel-stop-advisor ${LIBRARIES})
