@@ -34,17 +34,34 @@ pkg_check_modules(QT5_DBUS REQUIRED Qt5DBus)
 pkg_check_modules(QT5_WIDGETS REQUIRED Qt5Widgets)
 pkg_check_modules(QT5_GUI REQUIRED Qt5Gui)
 pkg_check_modules(QT5_NETWORK REQUIRED Qt5Network)
-pkg_check_modules(QT5_OPENGL REQUIRED glesv2)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${QT5_CORE_INCLUDE_DIRS})
-include_directories(${QT5_QML_INCLUDE_DIRS})
-include_directories(${QT5_QUICK_INCLUDE_DIRS})
-include_directories(${QT5_DBUS_INCLUDE_DIRS})
-include_directories(${QT5_WIDGETS_INCLUDE_DIRS})
-include_directories(${QT5_GUI_INCLUDE_DIRS})
-include_directories(${QT5_NETWORK_INCLUDE_DIRS})
-include_directories(${DBUS_INCLUDE_DIRS})
+if(${YOCTO_CONFIG})
+    message("Building with layer management")
+    pkg_check_modules(QT5_OPENGL REQUIRED glesv2)
+    set(ADDITIONAL_LIBRARIES "-lilmCommon -lilmClient -lilmControl")
+    set(ADDITIONAL_INCLUDE_DIRECTORIES ${QT5_OPENGL_INCLUDE_DIRS})
+    set(ADDITIONAL_LINK_DIRECTORIES "")
+    set(ADDITIONAL_SOURCES lm_control.cpp lm_control.h)
+    add_definitions(-DLM)
+else()
+    set(ADDITIONAL_LIBRARIES "")
+    set(ADDITIONAL_INCLUDE_DIRECTORIES "")
+    set(ADDITIONAL_LINK_DIRECTORIES "")
+    set(ADDITIONAL_SOURCES "")
+endif()
+
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${QT5_CORE_INCLUDE_DIRS}
+    ${QT5_QML_INCLUDE_DIRS}
+    ${QT5_QUICK_INCLUDE_DIRS}
+    ${QT5_DBUS_INCLUDE_DIRS}
+    ${QT5_WIDGETS_INCLUDE_DIRS}
+    ${QT5_GUI_INCLUDE_DIRS}
+    ${QT5_NETWORK_INCLUDE_DIRS}
+    ${DBUS_INCLUDE_DIRS}
+    ${ADDITIONAL_INCLUDE_DIRECTORIES}
+)
 
 set(cmake_create_dir cmake -E make_directory)
 
@@ -61,15 +78,16 @@ set(MOC moc)
 set(MOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/${MOC})
 
 link_directories(
-	${QT5_CORE_LIBRARY_DIRS}
-	${QT5_QML_LIBRARY_DIRS}
-	${QT5_QUICK_LIBRARY_DIRS}
-	${QT5_DBUS_LIBRARY_DIRS}
-	${QT5_WIDGETS_LIBRARY_DIRS}
-	${QT5_GUI_LIBRARY_DIRS}
-	${QT5_NETWORK_LIBRARY_DIRS}
-	${DBUS_LIBRARY_DIRS}
-	${QT5_OPENGL_LIBRARY_DIRS}
+    ${QT5_CORE_LIBRARY_DIRS}
+    ${QT5_QML_LIBRARY_DIRS}
+    ${QT5_QUICK_LIBRARY_DIRS}
+    ${QT5_DBUS_LIBRARY_DIRS}
+    ${QT5_WIDGETS_LIBRARY_DIRS}
+    ${QT5_GUI_LIBRARY_DIRS}
+    ${QT5_NETWORK_LIBRARY_DIRS}
+    ${DBUS_LIBRARY_DIRS}
+    ${QT5_OPENGL_LIBRARY_DIRS}
+    ${ADDITIONAL_LINK_DIRECTORIES}
 )
  
 set(LIBRARIES 
@@ -80,8 +98,9 @@ set(LIBRARIES
     ${QT5_WIDGETS_LIBRARIES}
     ${QT5_GUI_LIBRARIES}
     ${QT5_NETWORK_LIBRARIES}
-	${DBUS_LIBRARIES}
-	${QT5_OPENGL_LIBRARIES}
+    ${DBUS_LIBRARIES}
+    ${QT5_OPENGL_LIBRARIES}
+    ${ADDITIONAL_LIBRARIES}
 )
 
 # generate constants used by the QML files
@@ -94,53 +113,55 @@ file (GLOB XML_TO_CONSTANTS
     ${FUEL_STOP_ADVISOR_API_DIR}/constants.xml
 )
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)
-	foreach (RAW_FILE ${XML_TO_CONSTANTS})
-		get_filename_component(FILE ${RAW_FILE} NAME_WE)
-		execute_process(
-			OUTPUT_VARIABLE data_flow
-			COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/../javascript.xsl ${RAW_FILE}        
-		)
-		file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/constants.js ${data_flow})
-	endforeach()
+    foreach (RAW_FILE ${XML_TO_CONSTANTS})
+            get_filename_component(FILE ${RAW_FILE} NAME_WE)
+            execute_process(
+                    OUTPUT_VARIABLE data_flow
+                    COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/../javascript.xsl ${RAW_FILE}
+            )
+            file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/constants.js ${data_flow})
+    endforeach()
 endif()
 
 # for some reason, automoc doesn't run, so moc is made manually
-set (SRC_TO_MOC ${CMAKE_CURRENT_SOURCE_DIR}/dbusif.h
-				${CMAKE_CURRENT_SOURCE_DIR}/dbusifsignal.h
-				${CMAKE_CURRENT_SOURCE_DIR}/wheelarea.h
-				${CMAKE_CURRENT_SOURCE_DIR}/wheelareaplugin.h
-				${CMAKE_CURRENT_SOURCE_DIR}/preference.h
+set (SRC_TO_MOC
+    ${CMAKE_CURRENT_SOURCE_DIR}/dbusif.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/dbusifsignal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/wheelarea.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/wheelareaplugin.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/preference.h
 )
 execute_process(
-	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-	COMMAND ${cmake_create_dir} ${MOC}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMAND ${cmake_create_dir} ${MOC}
 )
 foreach (RAW_FILE ${SRC_TO_MOC})
-	get_filename_component(FILE ${RAW_FILE} NAME_WE)
-	if(NOT EXISTS ${MOC_DIR}/moc_${FILE}.cpp)
-		execute_process(
-			COMMAND ${qt_moc} "${MOC_DIR}/moc_${FILE}.cpp" ${RAW_FILE} 
-		)
-	else()
-		if(${RAW_FILE} IS_NEWER_THAN ${MOC_DIR}/moc_${FILE}.cpp)
-			execute_process(
-				COMMAND ${qt_moc} "${MOC_DIR}/moc_${FILE}.cpp" ${RAW_FILE} 
-			)
-		endif()
-	endif()
+    get_filename_component(FILE ${RAW_FILE} NAME_WE)
+    if(NOT EXISTS ${MOC_DIR}/moc_${FILE}.cpp)
+            execute_process(
+                    COMMAND ${qt_moc} "${MOC_DIR}/moc_${FILE}.cpp" ${RAW_FILE}
+            )
+    else()
+            if(${RAW_FILE} IS_NEWER_THAN ${MOC_DIR}/moc_${FILE}.cpp)
+                    execute_process(
+                            COMMAND ${qt_moc} "${MOC_DIR}/moc_${FILE}.cpp" ${RAW_FILE}
+                    )
+            endif()
+    endif()
 endforeach()
 file(GLOB MOC_SOURCES ${MOC_DIR}/moc_*.cpp)
 
 add_executable(hmi-launcher
-	${MOC_SOURCES}
-	main.cpp
+    ${MOC_SOURCES}
+    ${ADDITIONAL_SOURCES}
+    main.cpp
     dbusif.cpp
     wheelareaplugin.cpp
-	wheelareaplugin.h
+    wheelareaplugin.h
     preference.cpp
-	dbusif.h 
-    dbusifsignal.h 
-    wheelarea.h 
+    dbusif.h
+    dbusifsignal.h
+    wheelarea.h
     preference.h
 )
 

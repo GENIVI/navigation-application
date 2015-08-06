@@ -29,9 +29,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "lm_control.h"
-#include "ilm_client.h"
-#include "ilm_control.h"
-#include "ilm_common.h"
+#include <ilm/ilm_client.h>
+#include <ilm/ilm_control.h>
+#include <ilm/ilm_common.h>
 
 t_ilm_layer application;
 t_ilm_layer navit;

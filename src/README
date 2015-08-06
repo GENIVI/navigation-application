@@ -32,7 +32,7 @@ Navigation middleware:
 <current version of navigation> (git): 78b8695841ff8ec372ae50efb1faaff91a113cef
 
 Additional code coming with navigation:
-<current version of positioning> (git): bf00492981d71fead8c0615fae59b73b03a4fbac
+<current version of positioning> (git): 8bcb5aee2172bf1672b4402a2dbae480d5fbdc25
 <current version of navit> (svn): 6084
 
 Automotive message broker:
@@ -167,3 +167,10 @@ You can get information about the various options available with
 
 Options include running each process within its own terminal (or within gdb), creating log files, or disabling logreplayer or positioning from starting.
 
+
+===============================
+How To for Yocto
+===============================
+Due to a different way to manage the build, some specific settings are required:
+
+cmake -DYOCTO_BUILD=ON ../
