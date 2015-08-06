@@ -39,8 +39,6 @@ ApplicationWindow {
     visible: true
     width: StyleSheetMap.menu[Constants.WIDTH];
     height: StyleSheetMap.menu[Constants.HEIGHT];
-    property Item layer_manager;
-    property Item layer_number;
 	property Item component;
 	function load(page)
 	{
@@ -52,11 +50,6 @@ ApplicationWindow {
 
 	Component.onCompleted: {
         Genivi.setlang("eng_USA"); //by default set to english US
-        if (layer_manager)
-        {
-            Genivi.g_layer_manager = true;
-            Genivi.g_layer = layer_number;
-        }
 		load("MainMenu");
 	}
 }

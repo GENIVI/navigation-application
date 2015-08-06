@@ -39,8 +39,6 @@ var g_map_handle;
 var g_map_handle2;
 var g_poisearch_handle;
 var g_lang;
-var g_layer_manager = false; //no layer manager by default
-var g_layer;
 
 var data=new Array;
 

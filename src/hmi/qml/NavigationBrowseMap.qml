@@ -350,70 +350,10 @@ HMIMenu {
         fuelStopAdvisorSignal.destroy();
     }
 
-	function showSurfaces()
-	{
-        /****
-        Genivi.lm_message(dbusIf,"ServiceConnect",["uint32",dbusIf.pid()]);
-        if (Genivi.g_map_handle2) {
-            Genivi.lm_message(dbusIf,"SetSurfaceDestinationRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"uint32",map.x,"uint32",map.y,"uint32",map.width/2,"uint32",map.height]);
-            Genivi.lm_message(dbusIf,"SetSurfaceSourceRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"uint32",0,"uint32",0,"uint32",map.width/2,"uint32",map.height]);
-            Genivi.lm_message(dbusIf,"SetSurfaceDestinationRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle2[1],"uint32",map.x+map.width/2,"uint32",map.y,"uint32",map.width/2,"uint32",map.height]);
-            Genivi.lm_message(dbusIf,"SetSurfaceSourceRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle2[1],"uint32",0,"uint32",0,"uint32",map.width/2,"uint32",map.height]);
-            Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"boolean",true]);
-            Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle2[1],"boolean",true]);
-        } else {
-            Genivi.lm_message(dbusIf,"SetSurfaceDestinationRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"uint32",map.x,"uint32",map.y,"uint32",map.width,"uint32",map.height]);
-            Genivi.lm_message(dbusIf,"SetSurfaceSourceRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"uint32",0,"uint32",0,"uint32",map.width,"uint32",map.height]);
-            Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"boolean",true]);
-        }
-        Genivi.lm_message(dbusIf,"CommitChanges",[]);
-        Genivi.lm_message(dbusIf,"ServiceDisconnect",["uint32",dbusIf.pid()]);
-        ****/
-        if (Genivi.g_map_handle2) {
-            lm_control.surface_set_destination_rectangle(
-                Genivi.g_layer+Genivi.g_map_handle[1], map.x, map.y, map.width/2, map.height);
-            lm_control.surface_set_source_rectangle(
-                Genivi.g_layer+Genivi.g_map_handle[1], map.x, map.y, map.width/2, map.height);
-            lm_control.surface_set_destination_rectangle(
-                Genivi.g_layer+Genivi.g_map_handle2[1], map.x, map.y, map.width/2, map.height);
-            lm_control.surface_set_source_rectangle(
-                Genivi.g_layer+Genivi.g_map_handle2[1], map.x, map.y, map.width/2, map.height);
-            lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle[1], 1);
-            lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle2[1], 1);
-        } else {
-            lm_control.surface_set_destination_rectangle(
-                Genivi.g_layer+Genivi.g_map_handle[1], 7, 140, 1906/*map.width*/, 760/*map.height*/);
-            lm_control.surface_set_source_rectangle(
-                Genivi.g_layer+Genivi.g_map_handle[1], 0, 0, map.width, map.height);
-            lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle[1], 1);
-        }
-        lm_control.commit_changes();
-    }
-
-	function hideSurfaces()
-	{
-        /****
-        Genivi.lm_message(dbusIf,"ServiceConnect",["uint32",dbusIf.pid()]);
-        if (Genivi.g_map_handle2) {
-            Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle2[1],"boolean",false]);
-        }
-        Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"boolean",false]);
-        Genivi.lm_message(dbusIf,"CommitChanges",[]);
-        Genivi.lm_message(dbusIf,"ServiceDisconnect",["uint32",dbusIf.pid()]);
-        ****/
-        if (Genivi.g_map_handle2) {
-            lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle2[1], 0);
-        }
-        lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle[1], 0);
-        lm_control.commit_changes();
-    }
-
 	function routeOverview()
 	{
 		if (!split.disabled) {
 			disconnectSignals();
-            if (Genivi.g_layer_manager == true)
-                hideSurfaces();
 			pageOpen("NavigationCalculatedRoute");
 		}
 	}
@@ -553,8 +493,6 @@ HMIMenu {
                     explode: false
                     onClicked: {
                         disconnectSignals();
-                        if (Genivi.g_layer_manager == true)
-                            hideSurfaces();
                         pageOpen("POI");
                                 }
                         }
@@ -596,8 +534,6 @@ HMIMenu {
                     id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:settings;
                     onClicked: {
                         disconnectSignals();
-                        if (Genivi.g_layer_manager == true)
-                            hideSurfaces();
                         pageOpen("MainMenu");
                     }
                 }
@@ -665,8 +601,6 @@ HMIMenu {
                     id:settings; explode:false; next:menub; prev:zoomout;
                     onClicked: {
                         disconnectSignals();
-                        if (Genivi.g_layer_manager == true)
-                            hideSurfaces();
                         pageOpen("CameraSettings");
                     }
                 }
@@ -762,8 +696,6 @@ HMIMenu {
                         if (res[0] == "uint16") {
                             if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
                                 disconnectSignals();
-                                if (Genivi.g_layer_manager == true)
-                                    hideSurfaces();
                                 pageOpen("NavigationManeuversList");
                             }
                         }
@@ -992,8 +924,6 @@ HMIMenu {
 
     Component.onCompleted: {
         Genivi.map_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
-        if (Genivi.g_layer_manager == true)
-            showSurfaces();
 		if (Genivi.data['show_route_handle']) {
 			Genivi.mapviewercontrol_message(dbusIf, "DisplayRoute", Genivi.data['show_route_handle'].concat("boolean",false));
 			delete(Genivi.data['show_route_handle']);

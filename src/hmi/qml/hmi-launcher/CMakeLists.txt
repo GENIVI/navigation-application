@@ -35,21 +35,6 @@ pkg_check_modules(QT5_WIDGETS REQUIRED Qt5Widgets)
 pkg_check_modules(QT5_GUI REQUIRED Qt5Gui)
 pkg_check_modules(QT5_NETWORK REQUIRED Qt5Network)
 
-if(${YOCTO_CONFIG})
-    message("Building with layer management")
-    pkg_check_modules(QT5_OPENGL REQUIRED glesv2)
-    set(ADDITIONAL_LIBRARIES "-lilmCommon -lilmClient -lilmControl")
-    set(ADDITIONAL_INCLUDE_DIRECTORIES ${QT5_OPENGL_INCLUDE_DIRS})
-    set(ADDITIONAL_LINK_DIRECTORIES "")
-    set(ADDITIONAL_SOURCES lm_control.cpp lm_control.h)
-    add_definitions(-DLM)
-else()
-    set(ADDITIONAL_LIBRARIES "")
-    set(ADDITIONAL_INCLUDE_DIRECTORIES "")
-    set(ADDITIONAL_LINK_DIRECTORIES "")
-    set(ADDITIONAL_SOURCES "")
-endif()
-
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${QT5_CORE_INCLUDE_DIRS}
@@ -60,7 +45,6 @@ include_directories(
     ${QT5_GUI_INCLUDE_DIRS}
     ${QT5_NETWORK_INCLUDE_DIRS}
     ${DBUS_INCLUDE_DIRS}
-    ${ADDITIONAL_INCLUDE_DIRECTORIES}
 )
 
 set(cmake_create_dir cmake -E make_directory)
@@ -86,8 +70,6 @@ link_directories(
     ${QT5_GUI_LIBRARY_DIRS}
     ${QT5_NETWORK_LIBRARY_DIRS}
     ${DBUS_LIBRARY_DIRS}
-    ${QT5_OPENGL_LIBRARY_DIRS}
-    ${ADDITIONAL_LINK_DIRECTORIES}
 )
  
 set(LIBRARIES 
@@ -99,8 +81,6 @@ set(LIBRARIES
     ${QT5_GUI_LIBRARIES}
     ${QT5_NETWORK_LIBRARIES}
     ${DBUS_LIBRARIES}
-    ${QT5_OPENGL_LIBRARIES}
-    ${ADDITIONAL_LIBRARIES}
 )
 
 # generate constants used by the QML files
@@ -153,7 +133,6 @@ file(GLOB MOC_SOURCES ${MOC_DIR}/moc_*.cpp)
 
 add_executable(hmi-launcher
     ${MOC_SOURCES}
-    ${ADDITIONAL_SOURCES}
     main.cpp
     dbusif.cpp
     wheelareaplugin.cpp

@@ -39,10 +39,6 @@
 #include "wheelarea.h"
 #include "preference.h"
 
-#if LM
-	#include "lm_control.h"
-#endif
-
 int main(int argc, char ** argv)
 {
     QApplication app(argc, argv);
@@ -53,10 +49,6 @@ int main(int argc, char ** argv)
     qmlRegisterType<WheelArea>("lbs.plugin.wheelarea", 1, 0, "WheelArea");
 
     int rc = 0;
-
-#if LM
-    lm_control lmc;
-#endif
 
     QQmlEngine engine;
     QQmlComponent *component = new QQmlComponent(&engine);
@@ -76,18 +68,7 @@ int main(int argc, char ** argv)
 
     QQmlContext *context = engine.rootContext();
 
-#if LM
-    context->setContextProperty("lm_control", (QObject*)&lmc);
-#endif
-
     QObject *topLevel = component->create();
-
-#if LM
-    topLevel->setProperty("layer_manager", 1);
-    topLevel->setProperty("layer_number", argv[2]);
-#else
-    topLevel->setProperty("layer_manager", 0);
-#endif
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 

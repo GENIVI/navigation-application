@@ -21,11 +21,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 option(WITH_DEBUG
         "Enable the debug messages" OFF)
-option(YOCTO_CONFIG
-        "Build using Yocto" OFF)
 
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
-message(STATUS "YOCTO_CONFIG = ${YOCTO_CONFIG}")
 
 set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
 set(AUTOMOTIVE_MESSAGE_BROKER "automotive-message-broker")

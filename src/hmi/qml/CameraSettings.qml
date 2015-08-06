@@ -92,34 +92,6 @@ HMIMenu {
         }
     }
 
-    function showSurfaces()
-    {
-        /****
-        Genivi.lm_message(dbusIf,"ServiceConnect",["uint32",dbusIf.pid()]);
-        Genivi.lm_message(dbusIf,"SetSurfaceDestinationRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"uint32",map.x,"uint32",map.y,"uint32",map.width,"uint32",map.height]);
-        Genivi.lm_message(dbusIf,"SetSurfaceSourceRegion",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"uint32",0,"uint32",0,"uint32",map.width,"uint32",map.height]);
-        Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"boolean",true]);
-        Genivi.lm_message(dbusIf,"CommitChanges",[]);
-        Genivi.lm_message(dbusIf,"ServiceDisconnect",["uint32",dbusIf.pid()]);
-         ****/
-        lm_control.surface_set_destination_rectangle(Genivi.g_layer+Genivi.g_map_handle[1], 7, 140, 1906/*map.width*/, 760/*map.height*/);
-        lm_control.surface_set_source_rectangle(Genivi.g_layer+Genivi.g_map_handle[1], 0, 0, map.width, map.height);
-        lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle[1], 1);
-        lm_control.commit_changes();
-    }
-
-    function hideSurfaces()
-    {
-        /****
-        Genivi.lm_message(dbusIf,"ServiceConnect",["uint32",dbusIf.pid()]);
-        Genivi.lm_message(dbusIf,"SetSurfaceVisibility",["uint32",Genivi.g_layer+Genivi.g_map_handle[1],"boolean",false]);
-        Genivi.lm_message(dbusIf,"CommitChanges",[]);
-        Genivi.lm_message(dbusIf,"ServiceDisconnect",["uint32",dbusIf.pid()]);
-         ****/
-        lm_control.surface_set_visibility(Genivi.g_layer+Genivi.g_map_handle[1], 0);
-        lm_control.commit_changes();
-    }
-
     function move_start(lat, lon)
     {
         Genivi.mapviewercontrol_message(dbusIf, "SetFollowCarMode", ["boolean",false]);
@@ -228,8 +200,6 @@ HMIMenu {
 
     function toggleSplit()
     {
-        if (Genivi.g_layer_manager == true)
-            hideSurfaces();
         var res=Genivi.mapviewercontrol_message(dbusIf,"GetDisplayedRoutes",[]);
         var res3=Genivi.mapviewercontrol_message(dbusIf, "GetMapViewTheme", []);
         if (split.text == Genivi.gettext("Split")) {
@@ -267,8 +237,6 @@ HMIMenu {
                 }
             }
         }
-        if (Genivi.g_layer_manager == true)
-            showSurfaces();
         updateMapViewer();
     }
 
@@ -392,8 +360,6 @@ HMIMenu {
                          Genivi.data['show_current_position']=true;
                          move_stop();
                          camera_stop();
-                         if (Genivi.g_layer_manager == true)
-                             hideSurfaces();
                          pageOpen("NavigationBrowseMap");
                      }
                  }
@@ -420,8 +386,6 @@ HMIMenu {
      }
     Component.onCompleted: {
         Genivi.map_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
-        if (Genivi.g_layer_manager == true)
-            showSurfaces();
         updateMapViewer();
         updateDayNight();
     }
