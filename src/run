@@ -223,6 +223,13 @@ then
 	exit 1
 fi
 
+# check and kill remaining ambd process
+ambd_process_id=$(pidof ambd)
+if [ -n $ambd_process_id ] 
+then
+	kill -9 $ambd_process_id
+fi
+
 trap "terminate" EXIT INT
 set -e #exit on error now
 
