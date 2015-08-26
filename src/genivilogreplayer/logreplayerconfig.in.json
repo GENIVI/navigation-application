@@ -10,7 +10,7 @@
 		{
 			"name" : "DBusSink",
 			"path" : "plugins/dbus/dbussinkplugin.so",
-			"frequency" : "1060",
+			"frequency" : "100",
 			"sessionbus" : 1
 		}
 
