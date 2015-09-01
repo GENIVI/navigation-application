@@ -201,7 +201,7 @@ do
 		;;
 	\?)
 		echo "Usage:"
-		echo "$0 [-a application][-c center][-glnoprx]"
+		echo "$0 [-a application][-c center][-glnorvx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
 		echo "-g: Run subprocesses within gdb (only with -x)"
@@ -258,13 +258,24 @@ cd $NAVIT_BIN_DIR
 >bookmark.txt
 echo "$center" >center.txt
 
-run "MapViewer" ./$NAVIT navit_genivi_mapviewer.xml
+if [ "$verbose" = "1" ]
+then
+	run "MapViewer" ./$NAVIT -d 3 -c navit_genivi_mapviewer.xml
+else
+	run "MapViewer" ./$NAVIT -d 0 -c navit_genivi_mapviewer.xml
+fi
 
 wait_for_service org.genivi.mapviewer.Configuration /org/genivi/mapviewer
 wait_for_service org.genivi.mapviewer.MapViewerControl /org/genivi/mapviewer
 wait_for_service org.genivi.mapviewer.Session /org/genivi/mapviewer
 
-run "NavigationCore" ./$NAVIT navit_genivi_navigationcore.xml
+if [ "$verbose" = "1" ]
+then
+	run "NavigationCore" ./$NAVIT -d 3 -c navit_genivi_navigationcore.xml
+else
+	run "NavigationCore" ./$NAVIT -d 0 -c navit_genivi_navigationcore.xml
+fi
+
 wait_for_service org.genivi.navigationcore.Configuration /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.Guidance /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.LocationInput /org/genivi/navigationcore

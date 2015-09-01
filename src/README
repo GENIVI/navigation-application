@@ -29,11 +29,11 @@ Ubuntu 14.04 LTS
 Current versions of additional code 
 ===============================
 Navigation middleware:
-<current version of navigation> (git): 1da40e28957f2dbda99a1586cdbe83140f283a59
+<current version of navigation> (git): aa65e80c3bd4f69fe0344db7beec9c2af64be9e7
 
 Additional code coming with navigation:
 <current version of positioning> (git): 8bcb5aee2172bf1672b4402a2dbae480d5fbdc25
-<current version of navit> (svn): 6084
+<current version of navit> (svn): 6135
 
 Automotive message broker:
 <current version of amb> (git): c216955d16ca275159891cad296217094d972390
