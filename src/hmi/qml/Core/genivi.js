@@ -28,7 +28,9 @@
 */
 .pragma library
 
-Qt.include("../../../build/hmi/qml/hmi-launcher/constants.js");
+Qt.include("resource.js")
+
+
 var Test;
 var dbusIf;
 var g_nav_session;
@@ -57,12 +59,12 @@ var entryselectedentry;
 var entrycancel = false; //set ti true when back button is pushed without any selection
 
 var Maneuver = new Object;
-Maneuver[NAVIGATIONCORE_INVALID]="INVALID";
-Maneuver[NAVIGATIONCORE_CRUISE]="CRUISE";
-Maneuver[NAVIGATIONCORE_MANEUVER_APPEARED]="MANEUVER_APPEARED";
-Maneuver[NAVIGATIONCORE_PRE_ADVICE]="PRE_ADVICE";
-Maneuver[NAVIGATIONCORE_ADVICE]="ADVICE";
-Maneuver[NAVIGATIONCORE_PASSED]="PASSED";
+Maneuver[NAVIGATIONCORE_INVALID]="INV";
+Maneuver[NAVIGATIONCORE_CRUISE]="CRU";
+Maneuver[NAVIGATIONCORE_MANEUVER_APPEARED]="APP";
+Maneuver[NAVIGATIONCORE_PRE_ADVICE]="PRE";
+Maneuver[NAVIGATIONCORE_ADVICE]="ADV";
+Maneuver[NAVIGATIONCORE_PASSED]="PAS";
 
 
 var ManeuverType = new Object;

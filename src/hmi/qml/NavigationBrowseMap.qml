@@ -383,7 +383,7 @@ HMIMenu {
             //Guidance inactive, so inform the trip computer
             Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
             maneuverAdvice.text=Genivi.gettext("NoGuidance");
-            maneuverValue.text=Genivi.gettext("NoManeuver");
+            maneuverIcon.source=StyleSheetGuidance.maneuverIcon[Constants.SOURCE]; //no icon by default
             distancetomaneuverValue.text="----";
             distancetodestinationValue.text="----";
             timetodestinationValue.text="----";
@@ -413,7 +413,7 @@ HMIMenu {
                                if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
                                {
                                    guidanceStatus.setState("ON");
-                                   maneuverValue.text=Genivi.ManeuverDirection[subsubarray[1][3][1]];
+                                   maneuverIcon.source=Genivi.ManeuverDirectionIcon[subsubarray[1][3][1]];
                                    //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
                                    distancetomaneuverValue.text=Genivi.distance(substructure[1]);
                                    roadaftermaneuverValue.text=structure[3];
@@ -496,6 +496,13 @@ HMIMenu {
                         pageOpen("POI");
                                 }
                         }
+
+                SmartText {
+                    x:StyleSheetTop.roadaftermaneuverValue[Constants.X]; y:StyleSheetTop.roadaftermaneuverValue[Constants.Y]; width:StyleSheetTop.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetTop.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetTop.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetTop.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.roadaftermaneuverValue[Constants.PIXELSIZE];
+                    visible: true
+                    id:roadaftermaneuverValue
+                    text: " "
+                }
 
                 Text {
                     x:StyleSheetTop.speedValue[Constants.X]; y:StyleSheetTop.speedValue[Constants.Y]; width:StyleSheetTop.speedValue[Constants.WIDTH]; height:StyleSheetTop.speedValue[Constants.HEIGHT];color:StyleSheetTop.speedValue[Constants.TEXTCOLOR];styleColor:StyleSheetTop.speedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.speedValue[Constants.PIXELSIZE];
@@ -703,27 +710,11 @@ HMIMenu {
                 }
 
                 Text {
-                    x:StyleSheetGuidance.maneuverValue[Constants.X]; y:StyleSheetGuidance.maneuverValue[Constants.Y]; width:StyleSheetGuidance.maneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.maneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.maneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.maneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.maneuverValue[Constants.PIXELSIZE];
-                    visible: true
-                    style: Text.Sunken;
-                    smooth: true
-                    id:maneuverValue
-                    text: " "
-                }
-
-                Text {
                     x:StyleSheetGuidance.distancetomaneuverValue[Constants.X]; y:StyleSheetGuidance.distancetomaneuverValue[Constants.Y]; width:StyleSheetGuidance.distancetomaneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.distancetomaneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.distancetomaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.distancetomaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.distancetomaneuverValue[Constants.PIXELSIZE];
                     visible: true
                     style: Text.Sunken;
                     smooth: true
                     id:distancetomaneuverValue
-                    text: " "
-                }
-
-                SmartText {
-                    x:StyleSheetGuidance.roadaftermaneuverValue[Constants.X]; y:StyleSheetGuidance.roadaftermaneuverValue[Constants.Y]; width:StyleSheetGuidance.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetGuidance.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetGuidance.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.roadaftermaneuverValue[Constants.PIXELSIZE];
-                    visible: true
-                    id:roadaftermaneuverValue
                     text: " "
                 }
 
@@ -736,6 +727,12 @@ HMIMenu {
                     text: " "
                 }
 
+                BorderImage {
+                    id: maneuverIcon
+                    source:StyleSheetGuidance.maneuverIcon[Constants.SOURCE]; x:StyleSheetGuidance.maneuverIcon[Constants.X]; y:StyleSheetGuidance.maneuverIcon[Constants.Y]; width:StyleSheetGuidance.maneuverIcon[Constants.WIDTH]; height:StyleSheetGuidance.maneuverIcon[Constants.HEIGHT];
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                }
             }
         }
 
