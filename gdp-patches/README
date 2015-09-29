@@ -1,0 +1,3 @@
+Patches to be applied to GDP for running the FSA:
+fsa_updates_7.0.3.patch at the top of meta-ivi-demo at sha version 7cae90ffa290cb4ab0578174abfebce5579cac48
+fsa_updates_8.0.1.patch at the top of meta-genivi-demo at sha version b1980ff6fefed9957513ce0a57f6926c76421324
