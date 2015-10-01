@@ -49,7 +49,7 @@ include_directories(
 
 set(cmake_create_dir cmake -E make_directory)
 
-#settings for Qt
+# settings for Qt
 set(CMAKE_XXX_FLAGS "${CMAKE_XXX_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -102,6 +102,13 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)
             file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/constants.js ${data_flow})
     endforeach()
 endif()
+
+# set the paths into the resource.js file
+set(FILE_RESOURCE_IN ${HMI_QML_DIR}/Core/resource.js.in)
+set(FILE_RESOURCE_OUT ${HMI_QML_DIR}/Core/resource.js)
+set(CONSTANTS_PATH ${CMAKE_CURRENT_BINARY_DIR})
+set(ICON_PATH ${NAVIT_PNG_BIN_DIR})
+configure_file(${FILE_RESOURCE_IN} ${FILE_RESOURCE_OUT} @ONLY)
 
 # for some reason, automoc doesn't run, so moc is made manually
 set (SRC_TO_MOC

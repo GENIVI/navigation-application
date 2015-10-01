@@ -174,3 +174,22 @@ How To for Yocto
 Due to a different way to manage the build, some specific settings are required:
 
 cmake -DYOCTO_BUILD=ON ../
+
+===============================
+How To for CommonAPI
+===============================
+(experimental)
+
+Build the code of the FSA with CommonAPI:
+
+NB: You need CommonAPI 3.1.2 and Franca 0.9.1 installed 
+If the CommonAPI stuff has been generated into /usr/local/
+Check if the links are well set into ./lib
+ln -s libCommonAPI-DBus.so.3.1.2 libCommonAPI-DBus.so.3
+ln -s libCommonAPI.so.3.1.2 libCommonAPI.so.3
+The folder ./include/CommonAPI-3.1/CommonAPI must contain 3.1.2 includes
+
+cd build
+cmake -DWITH_FRANCA_INTERFACE=ON -DCOMMONAPI_DBUS_TOOL_GENERATOR=<common-api-dbus-tools folder>/org.genivi.commonapi.dbus.cli.product/target/products/org.genivi.commonapi.dbus.cli.product/linux/gtk/x86/commonapi-dbus-generator-linux-x86 -DCOMMONAPI_TOOL_GENERATOR=<common-api-tools folder>/org.genivi.commonapi.core.cli.product/target/products/org.genivi.commonapi.core.cli.product/linux/gtk/x86/commonapi-generator-linux-x86 -DWITH_DEBUG=ON . ../
+make 
+cd ..
