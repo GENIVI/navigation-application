@@ -48,7 +48,7 @@ HMIMenu {
 
 	function searchStatus(args)
 	{
-		Genivi.dump("",args);
+        Genivi.dump("searchStatus",args);
 		if (args[3] == 2) 
             console.log("Searching");
 		else
@@ -57,7 +57,7 @@ HMIMenu {
 
 	function searchResultList(args)
 	{
-		Genivi.dump("",args);
+        Genivi.dump("searchResultList",args);
 		Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",0]);
 	}
 
@@ -68,7 +68,7 @@ HMIMenu {
 		street="";
 		number="";
 		args=args[7];
-		Genivi.dump("",args);
+        Genivi.dump("contentUpdated",args);
 		for (var i=0 ; i < args.length ; i+=4) {
 			if (args[i+1] == Genivi.NAVIGATIONCORE_LATITUDE) lat=args[i+3][1];
 			if (args[i+1] == Genivi.NAVIGATIONCORE_LONGITUDE) lon=args[i+3][1];
@@ -120,7 +120,6 @@ HMIMenu {
             connectSignals();
 
             var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
-            Genivi.dump("",res);
             if (res[0] != "error") {
                 res=Genivi.nav_session(dbusIf);
                 res=Genivi.loc_handle(dbusIf);
