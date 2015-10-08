@@ -37,9 +37,7 @@ HMIMenu {
     property Item searchStatusSignal;
     property Item searchResultListSignal;
     //property Item contentUpdatedSignal;
-	property Item spellResultSignal;
 	property real criterion;
-	property string extraspell;
 
 	DBusIf {
                 id:dbusIf
@@ -48,20 +46,16 @@ HMIMenu {
 	function searchStatus(args)
 	{
 		if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
-			view.model.clear();
+            viewListAddress.model.clear();
+            viewListPOI.model.clear();
             text.color='red';  //(Searching)
-        } else {
-            if (args[3] == Genivi.NAVIGATIONCORE_FINISHED)
-            {
-                text.color='white';
-                Genivi.locationinput_message(dbusIf,"RequestListUpdate",["uint16",0,"uint16",10]);
-            }
-        }
+		} else
+            text.color='white';
 	}
 
-	function searchResultList(args)
+    function searchResultListAddress(args)
 	{
-		var model=view.model;
+        var model=viewListAddress.model;
 		if (args[4] == "uint16" && args[8] == "array") {
 			var offset=args[5];
 			var array=args[9];
@@ -86,34 +80,17 @@ HMIMenu {
 		}
 	}
 
-	function spellResult(args)
+    function search(input)
 	{
-		if (args[0] == "uint32" && args[2] == "string" && args[4] == "string") {
-			if (text.text.length < args[3].length) {
-				extraspell=args[3].substr(text.text.length);
-				text.text=args[3];
-				
-			}
-			keyboard.setactivekeys('\b'+args[5],true);
-		} else {
-			console.log("Unexpected result from SpellResult:");
-		}
-	}
-
-	function spell(input)
-	{
-		input=extraspell+input;
-		extraspell='';
-		Genivi.locationinput_message(dbusIf,"Spell",["string",input,"uint16",10]);
+        Genivi.locationinput_message(dbusIf,"Search",["string",input,"uint16",10]);
 	}
 
 	function connectSignals()
 	{
 		//currentSelectionCriterionSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","CurrentSelectionCriterion",menu,"currentSelectionCriterion");
 		searchStatusSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchStatus",menu,"searchStatus");
-		searchResultListSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchResultList",menu,"searchResultList");
+        searchResultListSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchResultList",menu,"searchResultListAddress");
 		//contentUpdatedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","ContentUpdated",menu,"contentUpdated");
-		spellResultSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SpellResult",menu,"spellResult");
 	}
 	
 	function disconnectSignals()
@@ -122,7 +99,6 @@ HMIMenu {
 		searchStatusSignal.destroy();
 		searchResultListSignal.destroy();
 		//contentUpdatedSignal.destroy();
-		spellResultSignal.destroy();
 	}
 
 	Keys.onPressed: {
@@ -134,10 +110,11 @@ HMIMenu {
 			} else {
 				text.text+=event.text;
 			}
-			spell(event.text);
+            search(event.text);
 		}
 	}
-	Column {
+
+    Column {
 		id:content
 		anchors { fill: parent; topMargin: menu.hspc/2 }
 		Row {
@@ -168,11 +145,11 @@ HMIMenu {
                 Genivi.entrycancel=true;
                 Genivi.preloadMode=true;
 				pageOpen(Genivi.entryback);
-			} next:view; prev:keyboard}
+            } next:viewListAddress; prev:keyboard}
 		}
 
-		Component {
-			id: listDelegate
+        Component {
+            id: listDelegateAddress
 			Text {
 				property real index:number;
 				width: 180;
@@ -187,22 +164,59 @@ HMIMenu {
 			}
 		}
 
-		HMIList {
-			property real selectedEntry
-			height:parent.height-keyboard.height-textrow.height;
-			width:parent.width;
-			id:view
-			delegate: listDelegate
-			next:keyboard
-			prev:back
-			onSelected:{
-				Genivi.entrydest=null;
-				disconnectSignals();
-				Genivi.entryselectedentry=what.index;
-				pageOpen(Genivi.entryback);
-			}
-		}
+        Column {
+            width:parent.width/2;
+            height:parent.height-keyboard.height-textrow.height;
+            HMIList {
+                id:viewListAddress
+                property real selectedEntry
+                height:parent.height;
+                width:parent.width;
+                delegate: listDelegateAddress
+                next:keyboard
+                prev:back
+                onSelected:{
+                    Genivi.entrydest=null;
+                    disconnectSignals();
+                    Genivi.entryselectedentry=what.index;
+                    pageOpen(Genivi.entryback);
+                }
+            }
+        }
 
+        Component {
+            id: listDelegatePOI
+            Text {
+                property real index:number;
+                width: 180;
+                height: 20;
+                id:text;
+                text: name;
+                font.pixelSize: 20;
+                style: Text.Sunken;
+                color: "white";
+                styleColor: "black";
+                smooth: true
+            }
+        }
+
+        Column {
+            HMIList {
+                id:viewListPOI
+                property real selectedEntry
+                height:parent.height-keyboard.height-textrow.height;
+                width:parent.width/2;
+                delegate: listDelegatePOI
+                next:keyboard
+                prev:viewListAddress
+                onSelected:{
+                    Genivi.entrydest=null;
+                    disconnectSignals();
+                    Genivi.entryselectedentry=what.index;
+                    pageOpen(Genivi.entryback);
+                }
+            }
+        }
 		Keyboard {
 			id: keyboard
 			height: 200;
@@ -211,23 +225,18 @@ HMIMenu {
 			firstLayout: "ABC";
 			secondLayout: "abc";
 			next: back;
-			prev: view;
-			onKeypress: { spell(what); }
+            prev: viewListAddress;
+            onKeypress: { search(what); }
 		}
 	}
-	Component.onCompleted: {
-		view.forceActiveFocus();
-        if (Genivi.entrycriterion) {
-            criterion=Genivi.entrycriterion;
-            Genivi.entrycriterion=0;
-            Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",criterion]);
-        }
-        extraspell='';
-        if(criterion != Genivi.NAVIGATIONCORE_STREET)
-        {
-            spell('');
-        }
 
-        connectSignals();
+    Component.onCompleted: {
+        viewListAddress.forceActiveFocus();
+		if (Genivi.entrycriterion) {
+			criterion=Genivi.entrycriterion;
+			Genivi.entrycriterion=0;	
+			Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",criterion]);
+		}
+		connectSignals();
 	}
 }

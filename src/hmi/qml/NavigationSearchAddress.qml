@@ -68,19 +68,18 @@ HMIMenu {
 
 	function currentSelectionCriterion(args)
 	{
+        Genivi.entrycriterion = args[1];
 	}
 
 	function searchStatus(args)
 	{
-		if (args[3] == 2) 
-            console.log("Searching");
-		else
-            console.log("Search");
-	}
-
+        if (args[3] == Genivi.NAVIGATIONCORE_FINISHED)
+        {
+            Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry]);
+        }
+    }
 	function searchResultList(args)
 	{
-        Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry]);
 	}
 
 	function setContent(args)

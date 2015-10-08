@@ -55,10 +55,10 @@ Column {
 		Genivi.entryback=menu.pagefile;
 		Genivi.entrydest=globaldata;
 		Genivi.entrycriterion=criterion;
-		if (criterion && criterion != Genivi.NAVIGATIONCORE_LOCATION_INPUT) {
+        if (criterion && criterion != Genivi.NAVIGATIONCORE_FULL_ADDRESS) {
 			pageOpen("Entry"); 
 		} else {
-			pageOpen("EntrySimple"); 
+            pageOpen("EntryFreeText");
 		}
 	}
 

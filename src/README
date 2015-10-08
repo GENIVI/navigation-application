@@ -1,4 +1,4 @@
-Release date of the file: 09-06-2015 
+Release date of the file: 08-10-2015 
 Status: OK
 
 Project:
@@ -29,7 +29,7 @@ Ubuntu 14.04 LTS
 Current versions of additional code 
 ===============================
 Navigation middleware:
-<current version of navigation> (git): aa65e80c3bd4f69fe0344db7beec9c2af64be9e7
+<current version of navigation> (git): 79c9942e550e855b810f9128520c4f2571f6f44d
 
 Additional code coming with navigation:
 <current version of positioning> (git): 8bcb5aee2172bf1672b4402a2dbae480d5fbdc25
