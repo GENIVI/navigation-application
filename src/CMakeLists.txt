@@ -23,9 +23,12 @@ option(WITH_DEBUG
         "Enable the debug messages" OFF)
 option(WITH_FRANCA_INTERFACE
        "Build using the Franca interfaces" OFF)
+option(AMB_ON_DBUS_SESSION
+        "Run amb on dbus session" ON)
 
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 message(STATUS "WITH_FRANCA_INTERFACE = ${WITH_FRANCA_INTERFACE}")
+message(STATUS "AMB_ON_DBUS_SESSION = ${AMB_ON_DBUS_SESSION}")
 
 set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
 set(AUTOMOTIVE_MESSAGE_BROKER "automotive-message-broker")
@@ -37,15 +40,27 @@ set(PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/patches")
 set(NAVIT_PNG_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/navigation/navit/navit/navit/xpm")
 set(HMI_QML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/hmi/qml")
 
-include(ExternalProject)
-ExternalProject_Add(${AUTOMOTIVE_MESSAGE_BROKER}
-PREFIX ${AUTOMOTIVE_MESSAGE_BROKER_DIR}
-GIT_REPOSITORY  https://github.com/otcshare/automotive-message-broker.git
-GIT_TAG c216955d16ca275159891cad296217094d972390
-UPDATE_COMMAND ""
-PATCH_COMMAND patch -p1 -i "${PATCH_DIR}/amb_allow_sessionbus.patch"
-INSTALL_COMMAND sudo make install
-)
+if(NOT ${AMB_ON_DBUS_SESSION})
+    include(ExternalProject)
+    ExternalProject_Add(${AUTOMOTIVE_MESSAGE_BROKER}
+    PREFIX ${AUTOMOTIVE_MESSAGE_BROKER_DIR}
+    GIT_REPOSITORY  https://github.com/otcshare/automotive-message-broker.git
+    GIT_TAG c216955d16ca275159891cad296217094d972390
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+    INSTALL_COMMAND sudo make install
+    )
+else()
+    include(ExternalProject)
+    ExternalProject_Add(${AUTOMOTIVE_MESSAGE_BROKER}
+    PREFIX ${AUTOMOTIVE_MESSAGE_BROKER_DIR}
+    GIT_REPOSITORY  https://github.com/otcshare/automotive-message-broker.git
+    GIT_TAG c216955d16ca275159891cad296217094d972390
+    UPDATE_COMMAND ""
+    PATCH_COMMAND patch -p1 -i "${PATCH_DIR}/amb_allow_sessionbus.patch"
+    INSTALL_COMMAND sudo make install
+    )
+endif()
 
 add_subdirectory(navigation/src/navigation "${CMAKE_CURRENT_BINARY_DIR}/navigation")
 

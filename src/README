@@ -138,7 +138,8 @@ cd ..
 
 2. Build the code of the FSA
 
-NB: AMB has install step, so you may be asked for sudo
+NB: AMB has install step, so you may be asked for sudo during make
+NB: a patch is applied by default to run amb on dbus session, not to apply it, add -DAMB_ON_DBUS_SESSION=OFF
 
 cmake ../
 make
@@ -166,14 +167,6 @@ You can get information about the various options available with
 	./run --help
 
 Options include running each process within its own terminal (or within gdb), creating log files, or disabling logreplayer or positioning from starting.
-
-
-===============================
-How To for Yocto
-===============================
-Due to a different way to manage the build, some specific settings are required:
-
-cmake -DYOCTO_BUILD=ON ../
 
 ===============================
 How To for CommonAPI

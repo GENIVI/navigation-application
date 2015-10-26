@@ -22,9 +22,6 @@ SCRIPT_DIR=$PWD
 TARGET_DIR=$TOP_DIR/hmi/qml/Core
 STYLE_SHEETS_GENERATED_INDICATOR=$TARGET_DIR/style-sheets/the-style-sheets-have-been-generated-css.js
 
-#include common settings
-source fsa-config.sh
-
 function usage
 {
  echo "Usage: prepare -i input_directory"
