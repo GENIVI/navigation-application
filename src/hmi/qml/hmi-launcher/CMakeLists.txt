@@ -21,6 +21,10 @@
 project(hmi-launcher)
 cmake_minimum_required(VERSION 2.8.11)
 
+add_definitions("-std=gnu++11")
+
+add_definitions("-fPIC")
+
 message(STATUS "hmi-launcher")
 find_program(XSLTPROC xsltproc REQUIRED)
 
@@ -50,7 +54,7 @@ include_directories(
 set(cmake_create_dir cmake -E make_directory)
 
 # settings for Qt
-set(CMAKE_XXX_FLAGS "${CMAKE_XXX_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

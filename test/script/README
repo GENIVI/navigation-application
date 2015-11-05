@@ -3,7 +3,7 @@ Status: to be completed
 
 This test bench requires Python version >= 3.4 and uses pygame.
 
-How to get pygame
+How to get pygame (for Ubuntu 14.04 LTS)
 It seems you need to build it, so follow this recipe:
 (thanks to Sir on http://heritagerobotics.wordpress.com/category/xubuntu-stuff/)
 cd  
@@ -17,6 +17,7 @@ sudo python3 setup.py install
 You need some other packages
 sudo apt-get install python3-gobject
 
+
 To test:
 
 Launch the application without the logreplayer:
@@ -24,7 +25,12 @@ Launch the application without the logreplayer:
 
 Launch the test dashboard (keyboard interface)
 (the test dashboard calls the logreplayer and uses test log files)
+For Ubuntu 14.04 LTS
 python3 simulation-dashboard.py
+
+For Ubuntu 15.10
+python simulation-dashboard.py
+
 NB: To launch it remotely, you can set the host address, for instance: python3 simulation-dashboard.py -r 192.168.1.202 
 
 Steps:

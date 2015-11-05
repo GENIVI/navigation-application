@@ -1,4 +1,4 @@
-Release date of the file: 08-10-2015 
+Release date of the file: 05-11-2015 
 Status: OK
 
 Project:
@@ -6,7 +6,7 @@ Navigation application based on Navit and compliant with the Navigation APIs sta
 This project is one of the navigation projects that implements the GENIVI navigation APIs.
 
 More:
-The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is made in Qml (Qt5.2 and QtQuick 2.1)
+The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is made in Qml (Qt5.2.1 and QtQuick 2.1)
 See also other navigation projects like proof of concepts implemented for poi-service, traffic-info and positioning 
 
 What is in:
@@ -22,8 +22,16 @@ Martin Schaller <martin.schaller@it-schaller.de>
 License: 
 See headers and LICENSE file
 
-Test target: 
-Ubuntu 14.04 LTS
+===============================
+Tested target and nota bene
+===============================
+Ubuntu 14.04 LTS 32 bits on Qt 5.2.1 gcc 32bit
+
+Ubuntu 15.10 64 bits on Qt 5.4 gcc 64bit
+For Qt version >= 5.2 with gcc 64 bits, there's an issue that needs to be fixed by compiling your code with -fPIC (-fPIE is not enough) 
+You must build your code with position independent code if Qt was built with -reduce-relocations
+For Qt version 5.4, it's needed to fix Qt 5.4 QML -> C++ QVariant issues by unboxing the QVariant-QJSValue
+
 
 ===============================
 Current versions of additional code 

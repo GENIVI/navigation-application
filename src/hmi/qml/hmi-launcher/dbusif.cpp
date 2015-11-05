@@ -53,6 +53,12 @@ void
 		QVariant v)
 {
 	QDBusMessage msg = QDBusMessage::createSignal(path, interface, method);
+
+    // unbox the QVariant-QJSValue to fix the Qt 5.4 QML -> C++ QVariant issues
+    if (v.userType() == qMetaTypeId<QJSValue>()) {
+        v = v.value<QJSValue>().toVariant();
+    }
+
 	if (v.type() == QVariant::List) {
 		QVariantList l = v.value < QVariantList > ();
 		for (int i = 0; i < l.size(); i++) {
@@ -90,6 +96,11 @@ dbus_from_qml(QVariant v)
 static QList<QVariant>
 dbus_list_from_qml_list(QVariant v)
 {
+    // unbox the QVariant-QJSValue to fix the Qt 5.4 QML -> C++ QVariant issues
+    if (v.userType() == qMetaTypeId<QJSValue>()) {
+        v = v.value<QJSValue>().toVariant();
+    }
+
     if (v.type() != QVariant::List) {
 		qDebug() << "Wrong Variant Type" << v;
 		throw("wrong variant type");
@@ -523,7 +534,14 @@ dbus_message_from_qml_list(DBusMessage *msg, QVariant v)
 {
 	DBusMessageIter iter;
 	dbus_message_iter_init_append(msg, &iter);
-	if (v.type() != QVariant::List) {
+
+    // unbox the QVariant-QJSValue to fix the Qt 5.4 QML -> C++ QVariant issues
+    if (v.userType() == qMetaTypeId<QJSValue>()) {
+        v = v.value<QJSValue>().toVariant();
+    }
+
+
+    if (v.type() != QVariant::List) {
 		qDebug() << "Wrong Variant Type" << v;
 		return false;
 	}

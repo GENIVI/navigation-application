@@ -25,9 +25,9 @@
 * @licence end@
 */
 
-Qt.include("/home/psa/Desktop/genivi/navigation-application-master/src/build/hmi/qml/hmi-launcher/constants.js");
+Qt.include("/home/psa/genivi/navigation-application/src/build/hmi/qml/hmi-launcher/constants.js");
 
-var IconPath = "/home/psa/Desktop/genivi/navigation-application-master/src/build/navigation/navit/navit/navit/xpm/"
+var IconPath = "/home/psa/genivi/navigation-application/src/build/navigation/navit/navit/navit/xpm/"
 
 var ManeuverTypeIcon = new Object;
 ManeuverTypeIcon[NAVIGATIONCORE_INVALID]=IconPath+"unknown_64_64.png";

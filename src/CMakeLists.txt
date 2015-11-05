@@ -17,7 +17,6 @@
 ###########################################################################
 project(fuel-stop-advisor)
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 option(WITH_DEBUG
         "Enable the debug messages" OFF)

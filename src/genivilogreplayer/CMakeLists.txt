@@ -17,6 +17,8 @@
 ###########################################################################
 cmake_minimum_required(VERSION 2.8)
 
+add_definitions("-std=gnu++11")
+
 include(FindPkgConfig)
 pkg_search_module(GLIB glib-2.0)
 
