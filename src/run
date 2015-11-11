@@ -233,6 +233,9 @@ fi
 trap "terminate" EXIT INT
 set -e #exit on error now
 
+# set the language to en_US for navit
+export LANGUAGE=en_US
+
 # start the automotive message broker and wait for dbus service
 cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
 if [ "$verbose" = "1" ]
