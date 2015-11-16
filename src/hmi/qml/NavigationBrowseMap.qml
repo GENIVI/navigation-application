@@ -39,6 +39,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"NavigationBrowseMap"
     next: scrollup
 	prev: menub
 	property Item guidanceWaypointReachedSignal;
@@ -352,10 +353,8 @@ HMIMenu {
 
 	function routeOverview()
 	{
-		if (!split.disabled) {
-			disconnectSignals();
-			pageOpen("NavigationCalculatedRoute");
-		}
+        disconnectSignals();
+        entryMenu("NavigationCalculatedRoute",menu);
 	}
 
 	function toggleOrientation()
@@ -493,7 +492,7 @@ HMIMenu {
                     explode: false
                     onClicked: {
                         disconnectSignals();
-                        pageOpen("POI");
+                        entryMenu("POI",menu);
                                 }
                         }
 
@@ -541,7 +540,7 @@ HMIMenu {
                     id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:settings;
                     onClicked: {
                         disconnectSignals();
-                        pageOpen("MainMenu");
+                        leaveMenu();;
                     }
                 }
 
@@ -608,7 +607,7 @@ HMIMenu {
                     id:settings; explode:false; next:menub; prev:zoomout;
                     onClicked: {
                         disconnectSignals();
-                        pageOpen("CameraSettings");
+                        entryMenu("CameraSettings",menu);
                     }
                 }
 
@@ -703,7 +702,7 @@ HMIMenu {
                         if (res[0] == "uint16") {
                             if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
                                 disconnectSignals();
-                                pageOpen("NavigationManeuversList");
+                                entryMenu("NavigationManeuversList",menu);
                             }
                         }
                     }

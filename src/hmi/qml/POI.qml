@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"POI"
 
     DBusIf {
     	id: dbusIf
@@ -198,7 +199,7 @@ HMIMenu {
 				Genivi.data['show_position']['lat']=poi_data.lat;
 				Genivi.data['show_position']['lon']=poi_data.lon;
 				Genivi.data['mapback']="POI";
-				pageOpen("NavigationBrowseMap");
+                mapMenu();
 			}
 		}
 		Text {
@@ -214,7 +215,9 @@ HMIMenu {
 			text: Genivi.gettext("Back"); 
 			disabled:false; 
             next:select_search_for_refill; prev:select_display_on_map;
-			page:"MainMenu"
+            onClicked: {
+                leaveMenu();
+            }
 		}	
 	}
 	Component.onCompleted: {

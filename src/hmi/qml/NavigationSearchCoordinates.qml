@@ -95,7 +95,7 @@ HMIMenu {
                 Genivi.data['lat']=latitudeValue.text;
                 Genivi.data['lon']=longitudeValue.text;
                 Genivi.data['description']="Latitude "+latitudeValue.text+"° Longitude "+longitudeValue.text+"°";
-                pageOpen("NavigationRoute");
+                routeMenu();
             }
         }
         StdButton {
@@ -104,7 +104,7 @@ HMIMenu {
             onClicked:{
                 Genivi.data['lat']='';
                 Genivi.data['lon']='';
-                pageOpen("NavigationSearch");
+                leaveMenu();
             }
         }
     }

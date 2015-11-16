@@ -51,7 +51,10 @@ var translations=new Array;
 
 var simulationPanelOnMapview=true;// simulation panel on map view by default
 
-var entryback;
+var entryin;
+var entryback = new Array;
+var entrybackheapsize=0;
+entryback[entrybackheapsize]="";
 var entrydest;
 var entrycriterion;
 var entryselectedentry;

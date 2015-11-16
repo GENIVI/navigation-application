@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"NavigationSettings"
     property Item simulationStatusChangedSignal;
     property Item simulationSpeedChangedSignal;
     next: back
@@ -404,16 +405,24 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.preferences[Constants.SOURCE]; x:StyleSheet.preferences[Constants.X]; y:StyleSheet.preferences[Constants.Y]; width:StyleSheet.preferences[Constants.WIDTH]; height:StyleSheet.preferences[Constants.HEIGHT];textColor:StyleSheet.preferencesText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.preferencesText[Constants.PIXELSIZE];
-            id:preferences; text: Genivi.gettext("Preference"); disabled:false; next:languageAndUnit; prev:back; page:"NavigationSettingsPreferences"}
+            id:preferences; text: Genivi.gettext("Preference"); disabled:false; next:languageAndUnit; prev:back;
+            onClicked: {
+                entryMenu("NavigationSettingsPreferences",menu);
+            }
+        }
 
         StdButton {
             source:StyleSheet.languageAndUnit[Constants.SOURCE]; x:StyleSheet.languageAndUnit[Constants.X]; y:StyleSheet.languageAndUnit[Constants.Y]; width:StyleSheet.languageAndUnit[Constants.WIDTH]; height:StyleSheet.languageAndUnit[Constants.HEIGHT];textColor:StyleSheet.languageAndUnitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.languageAndUnitText[Constants.PIXELSIZE];
-            id:languageAndUnit; text: Genivi.gettext("LanguageAndUnits"); disabled:false; next:back; prev:preferences; page:"NavigationSettingsLanguageAndUnits"}
+            id:languageAndUnit; text: Genivi.gettext("LanguageAndUnits"); disabled:false; next:back; prev:preferences;
+            onClicked: {
+                entryMenu("NavigationSettingsLanguageAndUnits",menu);
+            }
+        }
 
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:onmapview_enable; prev:languageAndUnit;
-            onClicked:{leave(); pageOpen("MainMenu");}
+            onClicked:{leave(); leaveMenu();}
         }
 
         StdButton {

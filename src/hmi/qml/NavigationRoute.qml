@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
     id: menu
+    property string pagefile:"NavigationRoute"
     next: back
     prev: calculate
     property Item mapmatchedpositionPositionUpdateSignal;
@@ -192,7 +193,7 @@ HMIMenu {
                 disconnectSignals();
                 Genivi.data['lat']='';
                 Genivi.data['lon']='';
-                pageOpen("NavigationCalculatedRoute");
+                entryMenu("NavigationCalculatedRoute",menu);
             }
             disabled:!(Genivi.data['position'] && Genivi.data['destination']); next:calculate_curr; prev:position
         }
@@ -206,7 +207,7 @@ HMIMenu {
                 disconnectSignals();
                 Genivi.data['lat']='';
                 Genivi.data['lon']='';
-                pageOpen("NavigationCalculatedRoute");
+                entryMenu("NavigationCalculatedRoute",menu);
             }
             disabled:true; next:back; prev:calculate
         }
@@ -217,7 +218,7 @@ HMIMenu {
                 disconnectSignals();
                 Genivi.data['lat']='';
                 Genivi.data['lon']='';
-                pageOpen("NavigationSearch");
+                leaveMenu();
             }
             disabled:false; next:show; prev:calculate_curr;
         }

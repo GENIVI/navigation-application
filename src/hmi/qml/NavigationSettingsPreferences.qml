@@ -36,6 +36,7 @@ import lbs.plugin.preference 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"NavigationSettingsPreferences"
 
     DBusIf {
         id: dbusIf
@@ -209,7 +210,7 @@ HMIMenu {
             id:motorways_no;  next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
 
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; onClicked:{leaveMenu();}}
 
 	}
 
@@ -229,7 +230,7 @@ HMIMenu {
         }
         for (var i = 0 ; i < res[1].length ; i+=2) {
             var button=Qt.createQmlObject('import QtQuick 2.1 ; import "Core"; StdButton { }',content,'dynamic');
-            button.source="Core/images/cost-model.png";
+            button.source=StyleSheet.cost_model[Constants.SOURCE];
             button.x=StyleSheet.cost_model[Constants.X];
             button.y=StyleSheet.cost_model[Constants.Y] + i*50; //to be improved
             button.width=StyleSheet.cost_model[Constants.WIDTH];
@@ -242,7 +243,7 @@ HMIMenu {
             button.clicked.connect(
                 function(what) {
                     Genivi.routing_message(dbusIf,"SetCostModel",["uint16",what.userdata]);
-                    pageOpen("NavigationSettingsPreferences");
+                    pageOpen(menu.pagefile); //reload the page
                 }
             );
         }

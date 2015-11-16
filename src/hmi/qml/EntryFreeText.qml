@@ -133,18 +133,11 @@ HMIMenu {
 					focus: true
 				}
 			}
-/*
-			StdButton { id:ok; text: "Ok"; onClicked: {
-				Genivi.data[Genivi.entrydest]=text.text;
-				disconnectSignals();
-				pageOpen(Genivi.entryback);
-			} next:back; prev:view}
-*/
 			StdButton { id:back; text: "Back"; onClicked: {
 				disconnectSignals();
                 Genivi.entrycancel=true;
                 Genivi.preloadMode=true;
-				pageOpen(Genivi.entryback);
+                leaveMenu();
             } next:viewListAddress; prev:keyboard}
 		}
 
@@ -179,7 +172,7 @@ HMIMenu {
                     Genivi.entrydest=null;
                     disconnectSignals();
                     Genivi.entryselectedentry=what.index;
-                    pageOpen(Genivi.entryback);
+                    leaveMenu();
                 }
             }
         }
@@ -213,7 +206,7 @@ HMIMenu {
                     Genivi.entrydest=null;
                     disconnectSignals();
                     Genivi.entryselectedentry=what.index;
-                    pageOpen(Genivi.entryback);
+                    leaveMenu();
                 }
             }
         }

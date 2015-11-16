@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"NavigationSearchHistory"
 
     DBusIf {
         id:dbusIf
@@ -72,13 +73,13 @@ HMIMenu {
                 Genivi.data['description'] = what.text;
                 Genivi.data['lat'] = Genivi.historyOfLastEnteredLat[what.index];
                 Genivi.data['lon'] = Genivi.historyOfLastEnteredLon[what.index];
-                pageOpen("NavigationRoute");
+                routeMenu();
             }
         }
 		StdButton {
 			id:back
 			text: "Back"
-            page:"NavigationSearch"
+            onClicked:{leaveMenu();}
 		}
 	}
     Component.onCompleted: {

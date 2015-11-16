@@ -360,7 +360,7 @@ HMIMenu {
                          Genivi.data['show_current_position']=true;
                          move_stop();
                          camera_stop();
-                         pageOpen("NavigationBrowseMap");
+                         leaveMenu();
                      }
                  }
 

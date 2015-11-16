@@ -52,13 +52,12 @@ Column {
 	function callEntry()
 	{
 		entryfield.leave();
-		Genivi.entryback=menu.pagefile;
 		Genivi.entrydest=globaldata;
 		Genivi.entrycriterion=criterion;
         if (criterion && criterion != Genivi.NAVIGATIONCORE_FULL_ADDRESS) {
-			pageOpen("Entry"); 
+            entryMenu("Entry",menu);
 		} else {
-            pageOpen("EntryFreeText");
+            entryMenu("EntryFreeText",menu);
 		}
 	}
 

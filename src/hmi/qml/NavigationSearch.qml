@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
     id: menu
+    property string pagefile:"NavigationSearch"
     next: search_by_address
     prev: back
     DBusIf {
@@ -57,20 +58,39 @@ HMIMenu {
             id:search_by_address;  explode:false; next:search_by_coordinates; prev:back;
             onClicked: {
                 Genivi.preloadMode=true;
-                pageOpen("NavigationSearchAddress");
+                entryMenu("NavigationSearchAddress",menu);
             }
         }
         StdButton { source:StyleSheet.search_by_coordinates[Constants.SOURCE]; x:StyleSheet.search_by_coordinates[Constants.X]; y:StyleSheet.search_by_coordinates[Constants.Y]; width:StyleSheet.search_by_coordinates[Constants.WIDTH]; height:StyleSheet.search_by_coordinates[Constants.HEIGHT];
-            id:search_by_coordinates; page:"NavigationSearchCoordinates"; explode:false; next:search_by_poi; prev:search_by_address}
+            id:search_by_coordinates; explode:false; next:search_by_poi; prev:search_by_address;
+            onClicked: {
+                entryMenu("NavigationSearchCoordinates",menu);
+            }
+        }
         StdButton { source:StyleSheet.search_by_poi[Constants.SOURCE]; x:StyleSheet.search_by_poi[Constants.X]; y:StyleSheet.search_by_poi[Constants.Y]; width:StyleSheet.search_by_poi[Constants.WIDTH]; height:StyleSheet.search_by_poi[Constants.HEIGHT];
-            id:search_by_poi; page:"POI"; explode:false; next:search_by_freetext; prev:search_by_coordinates}
+            id:search_by_poi; explode:false; next:search_by_freetext; prev:search_by_coordinates;
+            onClicked: {
+                entryMenu("POI",menu);
+            }
+        }
         StdButton { source:StyleSheet.search_by_freetext[Constants.SOURCE]; x:StyleSheet.search_by_freetext[Constants.X]; y:StyleSheet.search_by_freetext[Constants.Y]; width:StyleSheet.search_by_freetext[Constants.WIDTH]; height:StyleSheet.search_by_freetext[Constants.HEIGHT];
-            id:search_by_freetext; page:"NavigationSearchFreeText"; explode:false; next:history; prev:search_by_poi}
-
+            id:search_by_freetext; explode:false; next:history; prev:search_by_poi;
+            onClicked: {
+                entryMenu("NavigationSearchFreeText",menu);
+            }
+        }
         StdButton { source:StyleSheet.history[Constants.SOURCE]; x:StyleSheet.history[Constants.X]; y:StyleSheet.history[Constants.Y]; width:StyleSheet.history[Constants.WIDTH]; height:StyleSheet.history[Constants.HEIGHT];textColor:StyleSheet.historyText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.historyText[Constants.PIXELSIZE];
-            id:history; text: Genivi.gettext("History"); disabled:false; explode:false; next:back; prev:search_by_freetext; page:"NavigationSearchHistory"}
+            id:history; text: Genivi.gettext("History"); disabled:false; explode:false; next:back; prev:search_by_freetext;
+            onClicked: {
+                entryMenu("NavigationSearchHistory",menu);
+            }
+        }
 
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); explode:false; next:search_by_address; prev:search_by_freetext; page:"MainMenu";}
+            id:back; text: Genivi.gettext("Back"); explode:false; next:search_by_address; prev:search_by_freetext;
+            onClicked: {
+                leaveMenu();
+            }
+        }
     }
 }

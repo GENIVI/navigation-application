@@ -34,6 +34,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"NavigationManeuversList"
 
 	Column {
                 id:content
@@ -67,7 +68,7 @@ HMIMenu {
 			id:back
 			text: "Back"
 			pixelSize:Constants.MENU_ROUTE_DESCRIPTION_TEXT_PIXEL_SIZE;
-			page:"NavigationBrowseMap";
+            onClicked:{leaveMenu();}
 		}
 	}
 

@@ -24,11 +24,14 @@
 * @licence end@
 */
 import QtQuick 2.1 
+import "genivi.js" as Genivi;
 import "style-sheets/style-constants.js" as Constants;
 import lbs.plugin.wheelarea 1.0
 
 Rectangle {
 	id: menu
+    property alias loader: pageLoader
+    property string pageBack
 	property Item next
 	property Item prev
 //    width: Constants.MENU_WIDTH; height: Constants.MENU_HEIGHT
@@ -139,6 +142,43 @@ Rectangle {
         	}
 	}
 
+    function entryMenu(inmenu,outmenu)
+    {
+        Genivi.entryin = inmenu;
+        Genivi.entrybackheapsize += 1;
+        Genivi.entryback[Genivi.entrybackheapsize] = outmenu.pagefile;
+        outmenu.state = "hidden";
+        container.load(Genivi.entryin);
+        console.log(Genivi.entrybackheapsize);
+    }
+
+    function leaveMenu()
+    {
+        menu.state="hidden";
+        container.load(Genivi.entryback[Genivi.entrybackheapsize]);
+        Genivi.entrybackheapsize -= 1;
+        console.log(Genivi.entrybackheapsize);
+    }
+
+    function routeMenu()
+    { //location entered, go to route menu and reinit the heap
+        menu.state="hidden";
+        Genivi.entrybackheapsize = 1;
+        Genivi.entryback[Genivi.entrybackheapsize] = "MainMenu";
+        container.load("NavigationRoute");
+        console.log(Genivi.entrybackheapsize);
+    }
+
+    function mapMenu()
+    { //go to map view menu and reinit the heap
+        menu.state="hidden";
+        Genivi.entrybackheapsize = 1;
+        Genivi.entryback[Genivi.entrybackheapsize] = "MainMenu";
+        container.load("NavigationBrowseMap");
+        console.log(Genivi.entrybackheapsize);
+    }
+
+
 	function pageOpen(command) {
 		/*
 		console.log("pageOpen"); 
@@ -151,7 +191,7 @@ Rectangle {
 		pageLoader.opacity=0;
 		pageLoader.state="visible";
 */
-		container.load(command);
+        container.load(command);
 	}
 	states: State {
 		name: "hidden"

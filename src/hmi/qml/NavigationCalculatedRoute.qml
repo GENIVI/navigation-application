@@ -35,7 +35,8 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
-	next: back
+    property string pagefile:"NavigationCalculatedRoute"
+    next: back
     prev: show_route_in_list
 	property Item routeCalculationSuccessfulSignal;
 	property Item routeCalculationFailedSignal;
@@ -208,14 +209,16 @@ HMIMenu {
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
                 Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
                 Genivi.data["zoom_route_handle"]=Genivi.routing_handle(dbusIf);
-                pageOpen("NavigationBrowseMap");
+                mapMenu();
             }
         }
         StdButton {
             source:StyleSheet.show_route_in_list[Constants.SOURCE]; x:StyleSheet.show_route_in_list[Constants.X]; y:StyleSheet.show_route_in_list[Constants.Y]; width:StyleSheet.show_route_in_list[Constants.WIDTH]; height:StyleSheet.show_route_in_list[Constants.HEIGHT];
             id:show_route_in_list;
-            page:"NavigationRouteDescription";
-            explode:false; disabled:true; next:back; prev:show_route_on_map
+            explode:false; disabled:true; next:back; prev:show_route_on_map;
+            onClicked: {
+                entryMenu("NavigationRouteDescription",menu);
+            }
         }
 
         StdButton {
@@ -227,7 +230,7 @@ HMIMenu {
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
                 Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
                 Genivi.data["show_current_position"]=true;
-                pageOpen("NavigationBrowseMap");
+                mapMenu();
             }
         }
         StdButton {
@@ -243,7 +246,7 @@ HMIMenu {
             id:back; text: Genivi.gettext("Back"); disabled:false; next:show_route_on_map; prev:show_route_in_list;
             onClicked: {
                 disconnectSignals();
-                pageOpen("NavigationRoute");
+                leaveMenu();
             }
         }
     }

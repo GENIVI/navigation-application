@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"NavigationSettingsLanguageAndUnits"
 
 	DBusIf {
 		id: dbusIf 
@@ -120,7 +121,7 @@ HMIMenu {
         Genivi.nav_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
         Genivi.map_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
         Genivi.setlang(language + "_" + country);
-        pageOpen("NavigationSettingsLanguageAndUnits"); //reload page because of texts...
+        pageOpen(menu.pagefile); //reload page because of texts...
     }
 	function setUnits(units1,units2)
 	{
@@ -172,7 +173,7 @@ HMIMenu {
 				setUnits(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
 		}
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; page:"NavigationSettings"}
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; onClicked:{leaveMenu();}}
 
 	}
 

@@ -81,7 +81,7 @@ HMIMenu {
 		Genivi.data['lat']=lat;
 		Genivi.data['lon']=lon;
 		Genivi.data['description']=country+" "+city+" "+street+" "+number;
-		pageOpen("NavigationRoute");
+        pageOpen("NavigationRoute"); //to be fixed
 	}
 
 	function connectSignals()
@@ -174,7 +174,7 @@ HMIMenu {
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; next:textValue; prev:ok;
-            onClicked:{leave(1); pageOpen("NavigationSearch");}
+            onClicked:{leave(1); leaveMenu();}
         }
     }
 }

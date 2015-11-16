@@ -310,13 +310,13 @@ HMIMenu {
                     Genivi.data['description']+=' '+numberValue.text;
                 //save entered location into the history
                 Genivi.updateHistoryOfLastEnteredLocation(Genivi.data['description'],Genivi.data['lat'],Genivi.data['lon']);
-                pageOpen("NavigationRoute");
+                routeMenu();
             }
         }
 
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; next:countryValue; prev:ok;
-            onClicked:{leave(1); pageOpen("NavigationSearch");}
+            onClicked:{leave(1); leaveMenu();}
         }
 	}
     Component.onCompleted: {

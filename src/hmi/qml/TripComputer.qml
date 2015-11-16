@@ -35,6 +35,7 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"TripComputer"
     property Item tripDataUpdatedSignal;
 
 	DBusIf {
@@ -423,7 +424,7 @@ HMIMenu {
         }
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); explode:false; disabled:false; next:reset; prev:select_instant;
-            onClicked:{leave(); pageOpen("MainMenu");}
+            onClicked:{leave(); leaveMenu();}
         }
     }
     Component.onCompleted: {
