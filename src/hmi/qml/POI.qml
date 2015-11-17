@@ -168,7 +168,7 @@ HMIMenu {
             source:StyleSheet.select_reroute[Constants.SOURCE]; x:StyleSheet.select_reroute[Constants.X]; y:StyleSheet.select_reroute[Constants.Y]; width:StyleSheet.select_reroute[Constants.WIDTH]; height:StyleSheet.select_reroute[Constants.HEIGHT];
             id:select_reroute;
             explode:false;
-	    disabled:true;
+            disabled:true;
             next:select_display_on_map; prev:select_search_for_refill
 			onClicked: {
 				var poi_data=Genivi.poi_data[Genivi.poi_id];
@@ -177,7 +177,13 @@ HMIMenu {
 				Genivi.data['calculate_route']=true;
 				Genivi.data['lat']='';
 				Genivi.data['lon']='';
-				pageOpen("NavigationCalculatedRoute");
+                if (Genivi.guidance_activated == true)
+                {
+                    mapMenu();
+                }
+                else {
+                    pageOpen("NavigationCalculatedRoute");
+                }
 			}
 		}
 		Text {

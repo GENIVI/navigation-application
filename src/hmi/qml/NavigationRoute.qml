@@ -50,6 +50,7 @@ HMIMenu {
 
     function setLocation()
     {
+        Genivi.route_calculated = false; //position or destination changed, so needs to calculate a new route
         locationValue.text=Genivi.data['description'];
         positionValue.text=(Genivi.data['position'] ? Genivi.data['position']['description']:"");
         destinationValue.text=(Genivi.data['destination'] ? Genivi.data['destination']['description']:"");
@@ -144,7 +145,8 @@ HMIMenu {
             id:destinationValue
         }
 
-        StdButton { source:StyleSheet.show_location_on_map[Constants.SOURCE]; x:StyleSheet.show_location_on_map[Constants.X]; y:StyleSheet.show_location_on_map[Constants.Y]; width:StyleSheet.show_location_on_map[Constants.WIDTH]; height:StyleSheet.show_location_on_map[Constants.HEIGHT];
+        StdButton {
+            source:StyleSheet.show_location_on_map[Constants.SOURCE]; x:StyleSheet.show_location_on_map[Constants.X]; y:StyleSheet.show_location_on_map[Constants.Y]; width:StyleSheet.show_location_on_map[Constants.WIDTH]; height:StyleSheet.show_location_on_map[Constants.HEIGHT];
             id:show; disabled:false; next:destination; prev:back; explode:false;
             onClicked: {
                 Genivi.data['show_position']=new Array;
@@ -152,11 +154,12 @@ HMIMenu {
                 Genivi.data['show_position']['lon']=Genivi.data['lon'];
                 Genivi.data["mapback"]="NavigationRoute";
                 disconnectSignals();
-                pageOpen("NavigationBrowseMap");
+                mapMenu();
             }
         }
 
-        StdButton { source:StyleSheet.set_as_position[Constants.SOURCE]; x:StyleSheet.set_as_position[Constants.X]; y:StyleSheet.set_as_position[Constants.Y]; width:StyleSheet.set_as_position[Constants.WIDTH]; height:StyleSheet.set_as_position[Constants.HEIGHT];
+        StdButton {
+            source:StyleSheet.set_as_position[Constants.SOURCE]; x:StyleSheet.set_as_position[Constants.X]; y:StyleSheet.set_as_position[Constants.Y]; width:StyleSheet.set_as_position[Constants.WIDTH]; height:StyleSheet.set_as_position[Constants.HEIGHT];
             id:position; disabled:false; next:calculate; prev:destination; explode:false;
             onClicked: {
                 Genivi.data['position']=new Array;
@@ -169,7 +172,8 @@ HMIMenu {
             }
         }
 
-        StdButton { source:StyleSheet.set_as_destination[Constants.SOURCE]; x:StyleSheet.set_as_destination[Constants.X]; y:StyleSheet.set_as_destination[Constants.Y]; width:StyleSheet.set_as_destination[Constants.WIDTH]; height:StyleSheet.set_as_destination[Constants.HEIGHT];
+        StdButton {
+            source:StyleSheet.set_as_destination[Constants.SOURCE]; x:StyleSheet.set_as_destination[Constants.X]; y:StyleSheet.set_as_destination[Constants.Y]; width:StyleSheet.set_as_destination[Constants.WIDTH]; height:StyleSheet.set_as_destination[Constants.HEIGHT];
             id:destination; disabled:false; next:position; prev:show; explode:false;
              onClicked: {
                 Genivi.data['destination']=new Array;
@@ -183,7 +187,8 @@ HMIMenu {
             }
         }
 
-        StdButton { source:StyleSheet.route[Constants.SOURCE]; x:StyleSheet.route[Constants.X]; y:StyleSheet.route[Constants.Y]; width:StyleSheet.route[Constants.WIDTH]; height:StyleSheet.route[Constants.HEIGHT];textColor:StyleSheet.routeText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.routeText[Constants.PIXELSIZE];
+        StdButton {
+            source:StyleSheet.route[Constants.SOURCE]; x:StyleSheet.route[Constants.X]; y:StyleSheet.route[Constants.Y]; width:StyleSheet.route[Constants.WIDTH]; height:StyleSheet.route[Constants.HEIGHT];textColor:StyleSheet.routeText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.routeText[Constants.PIXELSIZE];
             id:calculate; text: Genivi.gettext("Route"); explode:false;
             onClicked: {
                 var dest=latlon_to_map(Genivi.data['destination']);
@@ -198,7 +203,8 @@ HMIMenu {
             disabled:!(Genivi.data['position'] && Genivi.data['destination']); next:calculate_curr; prev:position
         }
 
-        StdButton { source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
+        StdButton {
+            source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
             id:calculate_curr; text: Genivi.gettext("GoTo"); explode:false;
             onClicked: {
                 var dest=latlon_to_map(Genivi.data['destination']);
@@ -212,7 +218,8 @@ HMIMenu {
             disabled:true; next:back; prev:calculate
         }
 
-        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
+        StdButton {
+            source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back");
             onClicked: {
                 disconnectSignals();

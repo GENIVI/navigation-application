@@ -30,8 +30,6 @@
 
 Qt.include("resource.js")
 
-
-var Test;
 var dbusIf;
 var g_nav_session;
 var g_loc_handle;
@@ -51,7 +49,9 @@ var translations=new Array;
 
 var simulationPanelOnMapview=true;// simulation panel on map view by default
 
-var entryin;
+var guidance_activated=false; //used by the HMI to directly go to map when guidance is on (reroute use case)
+var route_calculated=false; //no route (managed by NavigationRoute and NavigationCalculatedRoute)
+
 var entryback = new Array;
 var entrybackheapsize=0;
 entryback[entrybackheapsize]="";
@@ -59,7 +59,7 @@ var entrydest;
 var entrycriterion;
 var entryselectedentry;
 
-var entrycancel = false; //set ti true when back button is pushed without any selection
+var entrycancel = false; //set to true when back button is pushed without any selection
 
 var Maneuver = new Object;
 Maneuver[NAVIGATIONCORE_INVALID]="INV";

@@ -31,6 +31,8 @@ import lbs.plugin.dbusif 1.0
 
 HMIMenu {
 	id: menu
+    property string pagefile:"Entry"
+
     color: Constants.MENU_BACKGROUND_COLOR
 
     //property Item currentSelectionCriterionSignal;

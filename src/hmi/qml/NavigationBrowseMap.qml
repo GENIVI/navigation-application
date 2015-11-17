@@ -379,6 +379,7 @@ HMIMenu {
 		}
 		if (res[1] == Genivi.NAVIGATIONCORE_INACTIVE) {
             guidanceStatus.setState("OFF");
+            Genivi.guidance_activated = false;
             //Guidance inactive, so inform the trip computer
             Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
             maneuverAdvice.text=Genivi.gettext("NoGuidance");
@@ -388,8 +389,9 @@ HMIMenu {
             timetodestinationValue.text="----";
             roadaftermaneuverValue.text="----";
 			return;
-		} else {
+		} else { 
             guidanceStatus.setState("ON");
+            Genivi.guidance_activated = true;
             //Guidance active, so inform the trip computer (refresh)
             Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
 		}
@@ -412,6 +414,7 @@ HMIMenu {
                                if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
                                {
                                    guidanceStatus.setState("ON");
+                                   Genivi.guidance_activated = true;
                                    maneuverIcon.source=Genivi.ManeuverDirectionIcon[subsubarray[1][3][1]];
                                    //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
                                    distancetomaneuverValue.text=Genivi.distance(substructure[1]);
@@ -457,6 +460,25 @@ HMIMenu {
 		Genivi.guidance_message(dbusIf,"StopGuidance",[]);
 		updateGuidance();
 	}
+
+    function startGuidance()
+    {
+        Genivi.guidance_message(dbusIf,"StartGuidance",Genivi.routing_handle(dbusIf));
+        updateGuidance();
+        updateSimulation();
+        updateAddress();
+    }
+
+    function stopSimulation()
+    {
+        Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",0]);
+    }
+
+    function startSimulation()
+    {
+        Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",1]);
+        Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
+    }
 
     Rectangle {
         id:map
@@ -622,26 +644,38 @@ HMIMenu {
                         {
                             status=1;
                             source=StyleSheetBottom.guidanceoff[Constants.SOURCE];
+                            guidance.visible=true;
+                            route.visible=true;
+                            simulation.visible=true;
                         }
                         else
                         {
                             status=0;
                             source=StyleSheetBottom.guidanceon[Constants.SOURCE];
                             guidance.visible=false;
-                            guidance.opacity=0;
                             route.visible=false;
-                            route.opacity=0;
                             simulation.visible=false;
-                            simulation.opacity=0;
-                            visible=false; //for the moment, no way to restart the current guidance
+                            if (Genivi.route_calculated == true)
+                            {
+                                visible=true; //it's possible to restart the current route
+                            }
+                            else {
+                                visible=false; //no route calculated
+                            }
                         }
                     }
                     onClicked:
                     {
-                        stopGuidance();
+                        if(status)
+                        {
+                            stopGuidance();
+                            stopSimulation();
+                        }
+                        else {
+                            startGuidance();
+                        }
                     }
                 }
-
             }
         }
 
@@ -834,7 +868,7 @@ HMIMenu {
                 StdButton {
                     x:StyleSheetSimulation.simulation_on_popup[Constants.X]; y:StyleSheetSimulation.simulation_on_popup[Constants.Y]; width:StyleSheetSimulation.simulation_on_popup[Constants.WIDTH]; height:StyleSheetSimulation.simulation_on_popup[Constants.HEIGHT];
                     id:on_off; next:simu_mode; prev:speed_up; explode:false; disabled:false;
-                    property int status: 0;
+                    property int status: 1; //by default simulation stopped
                     function setState(name)
                     {
                         if (name=="ON")
@@ -853,11 +887,10 @@ HMIMenu {
                         switch (status)
                         {
                             case 0: //start the simulation
-                                Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",1]);
-                                Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
+                                startSimulation();
                             break;
                             case 1: //stop the simulation
-                                Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",0]);
+                                stopSimulation();
                             break;
                             default:
                             break;

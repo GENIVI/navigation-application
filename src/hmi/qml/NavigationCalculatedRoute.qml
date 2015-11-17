@@ -53,6 +53,7 @@ HMIMenu {
 		//Genivi.dump("",args);
 
         statusValue.text=Genivi.gettext("CalculatedRouteFailed");
+        Genivi.route_calculated = false;
         // Tell the FSA that there's no route available
         Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
 	}
@@ -60,7 +61,8 @@ HMIMenu {
 	function routeCalculationProgressUpdate(args)
 	{
         statusValue.text=Genivi.gettext("CalculatedRouteInProgress");
-	}
+        Genivi.route_calculated = false;
+    }
 
 	function updateStartStop()
 	{
@@ -80,7 +82,7 @@ HMIMenu {
         show_route_on_map.disabled=false;
         show_route_in_list.disabled=false;
         statusValue.text=Genivi.gettext("CalculatedRouteSuccess");
-
+        Genivi.route_calculated = true;
         var para=[], pref=[];
         pref=pref.concat("uint16",Genivi.NAVIGATIONCORE_TOTAL_TIME,"uint16",Genivi.NAVIGATIONCORE_TOTAL_DISTANCE);
         para = para.concat("array",[pref]);
@@ -242,7 +244,8 @@ HMIMenu {
                 guidance_stop.disabled=true;
             }
         }
-        StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
+        StdButton {
+            source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:show_route_on_map; prev:show_route_in_list;
             onClicked: {
                 disconnectSignals();

@@ -34,7 +34,6 @@ Rectangle {
     property string pageBack
 	property Item next
 	property Item prev
-//    width: Constants.MENU_WIDTH; height: Constants.MENU_HEIGHT
     color: "transparent"
 	focus: true
 	anchors.fill: parent
@@ -144,20 +143,18 @@ Rectangle {
 
     function entryMenu(inmenu,outmenu)
     {
-        Genivi.entryin = inmenu;
         Genivi.entrybackheapsize += 1;
         Genivi.entryback[Genivi.entrybackheapsize] = outmenu.pagefile;
         outmenu.state = "hidden";
-        container.load(Genivi.entryin);
-        console.log(Genivi.entrybackheapsize);
+        container.load(inmenu);
     }
 
     function leaveMenu()
     {
-        menu.state="hidden";
-        container.load(Genivi.entryback[Genivi.entrybackheapsize]);
+        var outmenu=Genivi.entryback[Genivi.entrybackheapsize];
         Genivi.entrybackheapsize -= 1;
-        console.log(Genivi.entrybackheapsize);
+        menu.state="hidden";
+        container.load(outmenu);
     }
 
     function routeMenu()
@@ -166,7 +163,6 @@ Rectangle {
         Genivi.entrybackheapsize = 1;
         Genivi.entryback[Genivi.entrybackheapsize] = "MainMenu";
         container.load("NavigationRoute");
-        console.log(Genivi.entrybackheapsize);
     }
 
     function mapMenu()
@@ -175,25 +171,15 @@ Rectangle {
         Genivi.entrybackheapsize = 1;
         Genivi.entryback[Genivi.entrybackheapsize] = "MainMenu";
         container.load("NavigationBrowseMap");
-        console.log(Genivi.entrybackheapsize);
     }
 
 
 	function pageOpen(command) {
-		/*
-		console.log("pageOpen"); 
-		console.log(command);
-		console.log(menu);
-		*/
 		menu.state="hidden";
-/*
-		pageLoader.source="../"+command+".qml";
-		pageLoader.opacity=0;
-		pageLoader.state="visible";
-*/
         container.load(command);
 	}
-	states: State {
+
+    states: State {
 		name: "hidden"
         PropertyChanges { target: parent; opacity: 0 }
 	}
@@ -202,4 +188,7 @@ Rectangle {
                 NumberAnimation { properties: "opacity"; easing.type: "InQuad"; duration: 200 }
         }
 
+    Component.onCompleted: {
+        console.log(Genivi.entrybackheapsize,pagefile);
+    }
 }
