@@ -1,0 +1,23 @@
+[NoInterfaceObject]
+interface Version {
+	readonly attribute unsigned short versionMajor;
+	readonly attribute unsigned short versionMinor;
+	readonly attribute unsigned short versionMicro;
+	readonly attribute DOMString date;
+};
+
+enum Settings {
+    "INVALID",
+    "UNITS_OF_MEASUREMENT",
+    "LOCALE",
+    "TIME_FORMAT",
+    "COORDINATES_FORMAT"
+};
+
+interface NavigationCoreConfiguration {
+	void NavigationCoreConfiguration(long id);
+	long getInterfaceId();
+	unsigned short getVersion();
+	DOMString getDate();
+};
+

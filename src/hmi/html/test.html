@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<title>Test page for GENIVI Web API (draft)</title>
+<link rel="stylesheet" href="style-sheets/stylesheet.css">
+<script type="text/javascript" src="js/resource.js"></script>
+<script type="text/javascript" src="js/loader.js"></script>
+</head>
+
+<body>
+<h1>Test of the NavigationCoreConfiguration interface</h1>
+<hr>
+<p id="start_time"></p>
+<p id="plugin_loaded"></p>
+<p id="interface_id"></p>
+<p id="version_major"></p>
+<p id="version_date"></p>
+
+<button type="button" id="version" onclick="document.getElementById('version_major').innerHTML = navigationCoreConfiguration.getVersion()" disabled>
+Version
+</button>
+
+<button type="button" id="date" onclick="document.getElementById('version_date').innerHTML = navigationCoreConfiguration.getDate()" disabled>
+Date
+</button>
+
+<script type="text/javascript">
+var navigationCoreConfiguration;
+var id=2;
+var today=new Date();
+document.getElementById('start_time').innerHTML = today;
+var scriptLoaded=function(){
+	initInterface();
+	document.getElementById('plugin_loaded').innerHTML = "Plugin loaded";
+	version.disabled=false;
+	date.disabled=false;
+};
+loadScript(GeneratedJavascriptPath+"/hmi-html.js", scriptLoaded);
+function initInterface(){
+	navigationCoreConfiguration=new Module.NavigationCoreConfiguration(id);
+	document.getElementById('interface_id').innerHTML = navigationCoreConfiguration.getInterfaceId();
+};
+</script>
+
+</body>
+</html>

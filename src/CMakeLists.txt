@@ -20,14 +20,17 @@ cmake_minimum_required(VERSION 2.8)
 
 option(WITH_DEBUG
         "Enable the debug messages" OFF)
-option(WITH_FRANCA_INTERFACE
+option(WITH_FRANCA_DBUS_INTERFACE
        "Build using the Franca interfaces" OFF)
 option(AMB_ON_DBUS_SESSION
         "Run amb on dbus session" ON)
+option(WITH_HTML_MIGRATION
+        "Enable migration to the html based hmi" OFF)
 
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
-message(STATUS "WITH_FRANCA_INTERFACE = ${WITH_FRANCA_INTERFACE}")
+message(STATUS "WITH_FRANCA_DBUS_INTERFACE = ${WITH_FRANCA_DBUS_INTERFACE}")
 message(STATUS "AMB_ON_DBUS_SESSION = ${AMB_ON_DBUS_SESSION}")
+message(STATUS "WITH_HTML_MIGRATION = ${WITH_HTML_MIGRATION}")
 
 set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
 set(AUTOMOTIVE_MESSAGE_BROKER "automotive-message-broker")
@@ -70,3 +73,7 @@ add_subdirectory(genivilogreplayer)
 add_subdirectory(hmi/qml/hmi-launcher)
 
 add_subdirectory(navigation/src/poi-service "${CMAKE_CURRENT_BINARY_DIR}/poi-service")
+
+if(WITH_HTML_MIGRATION)
+    add_subdirectory(hmi/html)
+endif()
