@@ -55,7 +55,7 @@ HMIMenu {
         statusValue.text=Genivi.gettext("CalculatedRouteFailed");
         Genivi.route_calculated = false;
         // Tell the FSA that there's no route available
-        Genivi.fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",Genivi.g_routing_handle);
+        Genivi.fuel_stop_advisor_ReleaseRouteHandle(dbusIf,Genivi.g_routing_handle);
 	}
 
 	function routeCalculationProgressUpdate(args)
@@ -66,9 +66,8 @@ HMIMenu {
 
 	function updateStartStop()
 	{
-		var res=Genivi.nav_message(dbusIf,"Guidance","GetGuidanceStatus",[]);
-		//Genivi.dump("",res);
-		if (res[0] == "uint16" && res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
+        var res=Genivi.guidance_message_GetGuidanceStatus(dbusIf);
+        if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
             guidance_start.disabled=true;
             guidance_stop.disabled=false;
 		} else {
@@ -78,49 +77,34 @@ HMIMenu {
 	}
 
 	function routeCalculationSuccessful(args)
-	{
+    { //routeHandle 1, unfullfilledPreferences 3
         show_route_on_map.disabled=false;
         show_route_in_list.disabled=false;
         statusValue.text=Genivi.gettext("CalculatedRouteSuccess");
         Genivi.route_calculated = true;
-        var para=[], pref=[];
-        pref=pref.concat("uint16",Genivi.NAVIGATIONCORE_TOTAL_TIME,"uint16",Genivi.NAVIGATIONCORE_TOTAL_DISTANCE);
-        para = para.concat("array",[pref]);
-        var res=Genivi.routing_message_get(dbusIf,"GetRouteOverview",para);
+        var res=Genivi.routing_message_GetRouteOverviewTimeAndDistance(dbusIf);
 
         var i, time = 0, distance = 0;
-        if (res[0] == "map") {
-             for (i=0;i<res[1].length;i+=4)
+        for (i=0;i<res[1].length;i+=4)
+        {
+            if (res[1][i+1] == Genivi.NAVIGATIONCORE_TOTAL_TIME)
             {
-                if (res[1][i] == "uint16" && res[1][i+1] == Genivi.NAVIGATIONCORE_TOTAL_TIME)
+                time = res[1][i+3][3][1];
+            }
+            else
+            {
+                if (Genivi.NAVIGATIONCORE_TOTAL_DISTANCE)
                 {
-                    if (res[1][i+2] == "variant" && res[1][i+3][0] == "uint32")
-                    {
-                        time = res[1][i+3][1];
-                    }
-                }
-                else
-                {
-                    if (res[1][i] == "uint16" && res[1][i+1] == Genivi.NAVIGATIONCORE_TOTAL_DISTANCE)
-                    {
-                        if (res[1][i+2] == "variant" && res[1][i+3][0] == "uint32")
-                        {
-                            distance = res[1][i+3][1];
-                        }
-                    }
-
+                    distance = res[1][i+3][3][1];
                 }
             }
+        }
 
-            distanceValue.text =Genivi.distance(distance);
-            timeValue.text= Genivi.time(time);
+        distanceValue.text =Genivi.distance(distance);
+        timeValue.text= Genivi.time(time);
 
-		} else {
-			console.log("Unexpected result from GetRouteOverview:\n");
-			Genivi.dump("",res);
-		}
         // Give the route handle to the FSA
-        Genivi.fuel_stop_advisor_message(dbusIf,"SetRouteHandle",Genivi.g_routing_handle);
+        Genivi.fuel_stop_advisor_SetRouteHandle(dbusIf,Genivi.g_routing_handle);
 		updateStartStop();
 	}
 
@@ -228,7 +212,7 @@ HMIMenu {
             id:guidance_start; text: Genivi.gettext("On");explode:false; disabled:true; next:guidance_stop; prev:show_route_on_map
             onClicked: {
                 disconnectSignals();
-                Genivi.guidance_message(dbusIf,"StartGuidance",Genivi.routing_handle(dbusIf));
+                Genivi.guidance_message_StartGuidance(dbusIf,Genivi.routing_handle(dbusIf));
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
                 Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
                 Genivi.data["show_current_position"]=true;
@@ -239,7 +223,7 @@ HMIMenu {
             source:StyleSheet.guidance_stop[Constants.SOURCE]; x:StyleSheet.guidance_stop[Constants.X]; y:StyleSheet.guidance_stop[Constants.Y]; width:StyleSheet.guidance_stop[Constants.WIDTH]; height:StyleSheet.guidance_stop[Constants.HEIGHT];textColor:StyleSheet.stopText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.stopText[Constants.PIXELSIZE];
             id:guidance_stop;text: Genivi.gettext("Off");explode:false; disabled:true; next:show_route_on_map; prev:guidance_start
             onClicked: {
-                Genivi.guidance_message(dbusIf,"StopGuidance",[]);
+                Genivi.guidance_message_StopGuidance(dbusIf);
                 guidance_start.disabled=false;
                 guidance_stop.disabled=true;
             }
@@ -258,7 +242,7 @@ HMIMenu {
 		//console.log(Genivi.data);
 		connectSignals();
 		if (Genivi.data["calculate_route"]) {
-			Genivi.routing_message(dbusIf,"CalculateRoute",[]);
+            Genivi.routing_message_CalculateRoute(dbusIf);
 			delete(Genivi.data["calculate_route"]);
 		} else {
 			routeCalculationSuccessful("dummy");

@@ -37,7 +37,7 @@ For Qt version 5.4, it's needed to fix Qt 5.4 QML -> C++ QVariant issues by unbo
 Current versions of additional code 
 ==========================================
 Navigation middleware:
-<current version of navigation> (git): d361deff82d4c104bf41246ffa958ebd3f4feb35
+<current version of navigation> (git): 578deac8bdc971b514aa3557782514fb6f10cc39
 
 Additional code coming with navigation:
 <current version of positioning> (git): 8bcb5aee2172bf1672b4402a2dbae480d5fbdc25
@@ -74,7 +74,7 @@ svn checkout http://svn.code.sf.net/p/navit/code/trunk navit -r<current version 
 Now apply a patch to navit (The r5549 removed the  get_unique features used by GetSpell):
 cd navit
 patch -p0 -i ../patches/search_list_get_unique.diff
-cd ../
+cd ../../../../
 
 ==========================================
 Directory Structure

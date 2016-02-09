@@ -51,6 +51,8 @@ include_directories(
     ${DBUS_INCLUDE_DIRS}
 )
 
+message(STATUS "${DBUS_INCLUDE_DIRS}")
+
 set(cmake_create_dir cmake -E make_directory)
 
 # settings for Qt

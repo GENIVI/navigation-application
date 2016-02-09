@@ -84,158 +84,130 @@ HMIMenu {
 	
 	function mapmatchedpositionPositionUpdate(args)
 	{
-		var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_SPEED]]);
-		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.NAVIGATIONCORE_SPEED && res[1][2] == "variant" && res[1][3][0] == "double") {
-            vehicleSpeedValue.text=res[1][3][1];
-		} else {
-			console.log("Unexpected result from GetPosition:");
-			Genivi.dump("",res);
-		}
+        var res=Genivi.mapmatch_message_GetPosition(dbusIf);
+        for (var i=0;i<res[1].length;i+=4){
+            if (res[1][i+1]== Genivi.NAVIGATIONCORE_SPEED){
+                vehicleSpeedValue.text=res[1][i+3][3][1];
+            }
+        }
 	}
 
     function simulationSpeedChanged(args)
     {
-        if (args[0] == 'uint8')
-        {
-            if (args[1] == 0) {
-                speedValue.text="0";
-                speedValueSent=0;
-            }
-            if (args[1] == 1) {
-                speedValue.text="1/4";
-                speedValueSent=1;
-            }
-            if (args[1] == 2) {
-                speedValue.text="1/2";
-                speedValueSent=2;
-            }
-            if (args[1] == 4) {
-                speedValue.text="1";
-                speedValueSent=3;
-            }
-            if (args[1] == 8) {
-                speedValue.text="2";
-                speedValueSent=4;
-            }
-            if (args[1] == 16) {
-                speedValue.text="4";
-                speedValueSent=5;
-            }
-            if (args[1] == 32) {
-                speedValue.text="8";
-                speedValueSent=6;
-            }
-            if (args[1] == 64) {
-                speedValue.text="16";
-                speedValueSent=7;
-            }
+        if (args[1] == 0) {
+            speedValue.text="0";
+            speedValueSent=0;
         }
-        else
-        {
-            console.log("Unexpected result from SimulationSpeedChanged:");
-            Genivi.dump("",args);
+        if (args[1] == 1) {
+            speedValue.text="1/4";
+            speedValueSent=1;
         }
-
+        if (args[1] == 2) {
+            speedValue.text="1/2";
+            speedValueSent=2;
+        }
+        if (args[1] == 4) {
+            speedValue.text="1";
+            speedValueSent=3;
+        }
+        if (args[1] == 8) {
+            speedValue.text="2";
+            speedValueSent=4;
+        }
+        if (args[1] == 16) {
+            speedValue.text="4";
+            speedValueSent=5;
+        }
+        if (args[1] == 32) {
+            speedValue.text="8";
+            speedValueSent=6;
+        }
+        if (args[1] == 64) {
+            speedValue.text="16";
+            speedValueSent=7;
+        }
     }
 
     function simulationStatusChanged(args)
     {
-        if (args[0] == 'uint16')
+        if (args[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
         {
-            if (args[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+            on_off.setState("ON");
+            if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
             {
-                on_off.setState("ON");
-                if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-                {
-                    simu_mode.setState("PAUSE");
-                }
-                else
-                {
-                    if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                    {
-                        simu_mode.setState("PLAY");
-                    }
-                }
+                simu_mode.setState("PAUSE");
             }
             else
             {
-                on_off.setState("OFF");
-                simu_mode.setState("FREE");
+                if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+                {
+                    simu_mode.setState("PLAY");
+                }
             }
-        } else {
-            console.log("Unexpected result from SimulationStatusChanged:");
-            Genivi.dump("",args);
         }
-
-    }
+        else
+        {
+            on_off.setState("OFF");
+            simu_mode.setState("FREE");
+        }
+}
 
     function updateSimulation()
     {
-        var res=Genivi.mapmatch_message_get(dbusIf,"GetSimulationStatus",[]);
-        if (res[0] == 'uint16')
+        var res=Genivi.mapmatch_message_GetSimulationStatus(dbusIf);
+        if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
         {
-            if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+            on_off.setState("ON");
+            if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
             {
-                on_off.setState("ON");
-                if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-                {
-                    simu_mode.setState("PAUSE");
-                }
-                else
-                {
-                    if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                    {
-                        simu_mode.setState("PLAY");
-                    }
-                }
+                simu_mode.setState("PAUSE");
             }
             else
             {
-                on_off.setState("OFF");
-                simu_mode.setState("FREE");
+                if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+                {
+                    simu_mode.setState("PLAY");
+                }
             }
-        } else {
-            console.log("Unexpected result from GetSimulationStatus:");
-            Genivi.dump("",res);
+        }
+        else
+        {
+            on_off.setState("OFF");
+            simu_mode.setState("FREE");
         }
 
-        var res1=Genivi.mapmatch_message_get(dbusIf,"GetSimulationSpeed",[]);
-        if (res1[0] == "uint8") {
-            if (res1[1] == 0) {
-                speedValue.text="0";
-                speedValueSent=0;
-            }
-            if (res1[1] == 1) {
-                speedValue.text="1/4";
-                speedValueSent=1;
-            }
-            if (res1[1] == 2) {
-                speedValue.text="1/2";
-                speedValueSent=2;
-            }
-            if (res1[1] == 4) {
-                speedValue.text="1";
-                speedValueSent=3;
-            }
-            if (res1[1] == 8) {
-                speedValue.text="2";
-                speedValueSent=4;
-            }
-            if (res1[1] == 16) {
-                speedValue.text="4";
-                speedValueSent=5;
-            }
-            if (res1[1] == 32) {
-                speedValue.text="8";
-                speedValueSent=6;
-            }
-            if (res1[1] == 64) {
-                speedValue.text="16";
-                speedValueSent=7;
-            }
-        } else {
-            console.log("Unexpected result from GetSimulationSpeed:");
-            Genivi.dump("",res1);
+        var res1=Genivi.mapmatch_message_GetSimulationSpeed(dbusIf);
+        if (res1[1] == 0) {
+            speedValue.text="0";
+            speedValueSent=0;
+        }
+        if (res1[1] == 1) {
+            speedValue.text="1/4";
+            speedValueSent=1;
+        }
+        if (res1[1] == 2) {
+            speedValue.text="1/2";
+            speedValueSent=2;
+        }
+        if (res1[1] == 4) {
+            speedValue.text="1";
+            speedValueSent=3;
+        }
+        if (res1[1] == 8) {
+            speedValue.text="2";
+            speedValueSent=4;
+        }
+        if (res1[1] == 16) {
+            speedValue.text="4";
+            speedValueSent=5;
+        }
+        if (res1[1] == 32) {
+            speedValue.text="8";
+            speedValueSent=6;
+        }
+        if (res1[1] == 64) {
+            speedValue.text="16";
+            speedValueSent=7;
         }
     }
 
@@ -277,9 +249,9 @@ HMIMenu {
 
 	function updateAddress()
 	{
-		var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetAddress",["array",["uint16",Genivi.NAVIGATIONCORE_STREET]]);
-		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.NAVIGATIONCORE_STREET && res[1][2] == "variant" && res[1][3][0] == "string") {
-            currentroad.text=res[1][3][1];
+        var res=Genivi.mapmatch_message_GetAddress(dbusIf);
+        if (res[1][1] == Genivi.NAVIGATIONCORE_STREET) {
+            currentroad.text=res[1][3][3][1];
 		} else {
             currentroad.text="";
 		}
@@ -292,39 +264,25 @@ HMIMenu {
 
 	function showZoom()
 	{
-		var res=Genivi.mapviewercontrol_message(dbusIf, "GetMapViewScale", []);
-		if (res[0] == "uint8" && res[2] == "uint16") {
-			var text=res[1];
-			if (res[3])
-				text+="*";
-			zoomlevel.text=text;
-		} else {
-			console.log("Unexpected Result from GetMapViewScale:");
-			Genivi.dump("",res);
-		}
+        var res=Genivi.mapviewercontrol_message_GetMapViewScale(dbusIf);
+        var text=res[1];
+        if (res[3])
+            text+="*";
+        zoomlevel.text=text;
 	}
 
 	function fuelStopAdvisorWarning(args)
 	{
-        if (args[0] == 'bool')
+        if (args[1] == 1)
         {
-            if (args[1] == 1)
-            {
-                fsamessageText.text=Genivi.gettext("FSAWarning");
-                select_search_for_refill_in_top.visible=true;
-            }
-            else
-            {
-                fsamessageText.text=" ";
-                select_search_for_refill_in_top.visible=false;
-             }
+            fsamessageText.text=Genivi.gettext("FSAWarning");
+            select_search_for_refill_in_top.visible=true;
         }
         else
         {
-            console.log("Unexpected result from fuelStopAdvisorWarning:");
-            Genivi.dump("",args);
-        }
-
+            fsamessageText.text=" ";
+            select_search_for_refill_in_top.visible=false;
+         }
 	}
 
 	function connectSignals()
@@ -371,17 +329,12 @@ HMIMenu {
 
 	function updateGuidance()
 	{
-        var res=Genivi.guidance_message_get(dbusIf,"GetGuidanceStatus",[]);
-		if (res[0] != "uint16") {
-			console.log("Unexpected result from GetGuidanceStatus:");
-			Genivi.dump("",res);
-			return;
-		}
+        var res=Genivi.guidance_message_GetGuidanceStatus(dbusIf);
 		if (res[1] == Genivi.NAVIGATIONCORE_INACTIVE) {
             guidanceStatus.setState("OFF");
             Genivi.guidance_activated = false;
             //Guidance inactive, so inform the trip computer
-            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",0,"uint8",0]);
+            Genivi.fuel_stop_advisor_SetFuelAdvisorSettings(dbusIf,0,0);
             maneuverAdvice.text=Genivi.gettext("NoGuidance");
             maneuverIcon.source=StyleSheetGuidance.maneuverIcon[Constants.SOURCE]; //no icon by default
             distancetomaneuverValue.text="----";
@@ -393,77 +346,50 @@ HMIMenu {
             guidanceStatus.setState("ON");
             Genivi.guidance_activated = true;
             //Guidance active, so inform the trip computer (refresh)
-            Genivi.fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",1,"uint8",50]);
+            Genivi.fuel_stop_advisor_SetFuelAdvisorSettings(dbusIf,1,50);
 		}
 
-        var res=Genivi.guidance_message_get(dbusIf,"GetManeuversList",["uint16",1,"uint32",0]);
-
-        if (res[0] == "uint16" && res[2] == "array") {
-            var array=res[3];
-            for (var i = 0 ; i < array.length ; i+=2) {
-                if (array[i] == "structure" && array[i+1][0] == "string" && array[i+1][2] == "string" && array[i+1][4] == "uint16" && array[i+1][6] == "uint16" && array[i+1][8] == "uint32" && array[i+1][10] == "array") {
-                    var structure=array[i+1];
-                    var subarray=structure[11];
-                    for (var j = 0 ; j < subarray.length ; j+=2) {
-                        //multiple maneuvers are not managed !
-                        if (subarray[j] == "structure" && subarray[j+1][0] == "uint32" && subarray[j+1][2] == "uint32" && subarray[j+1][4] == "int32" && subarray[j+1][6] == "uint16" && subarray[j+1][8] == "array") {
-                            var substructure=subarray[j+1];
-                            var subsubarray=subarray[j+1][9];
-                            if (subsubarray[0] == "structure" && subsubarray[1][0] == "uint16")
-                            {
-                               if (subsubarray[1][1] == Genivi.NAVIGATIONCORE_DIRECTION && subsubarray[1][2] == "variant" && subsubarray[1][3][0] == "uint16")
-                               {
-                                   guidanceStatus.setState("ON");
-                                   Genivi.guidance_activated = true;
-                                   maneuverIcon.source=Genivi.ManeuverDirectionIcon[subsubarray[1][3][1]];
-                                   //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
-                                   distancetomaneuverValue.text=Genivi.distance(substructure[1]);
-                                   roadaftermaneuverValue.text=structure[3];
-
-                               }
-                            }
-                        }
-                    }
-                }
-            }
-
-        } else {
-            console.log("Unexpected result from GetManeuversList");
-            Genivi.dump("",res);
-        }
-
-        res=Genivi.guidance_message_get(dbusIf,"GetDestinationInformation",[]);
-
-        if (res[0] == "uint32")
+        var maneuversList=Genivi.guidance_message_GetManeuversList(dbusIf,1,0);
+        var numberOfManeuvers=maneuversList[1];
+        //only one maneuver is considered
+        var maneuver=maneuversList[3][1];
+        var roadNumberAfterManeuver=maneuver[1];
+        var roadNameAfterManeuver=maneuver[3];
+        var roadPropertyAfterManeuver=maneuver[5];
+        var drivingSide=maneuver[7];
+        var offsetOfNextManeuver=maneuver[9];
+        var items=maneuver[11][1];
+        var offsetOfManeuver=items[1];
+        var travelTime=items[3];
+        var direction=items[5];
+        var maneuverType=items[7];
+        var maneuverData=items[9];
+        if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
         {
-            distancetodestinationValue.text = Genivi.distance(res[1]);
-        }
-        else
-        {
-            console.log("Unexpected result from GetDestinationInformation");
-            Genivi.dump("",res);
-        }
-        if (res[2] == "uint32")
-        {
-            timetodestinationValue.text = Genivi.time(res[3]);
-        }
-        else
-        {
-            console.log("Unexpected result from GetDestinationInformation");
-            Genivi.dump("",res);
+            guidanceStatus.setState("ON");
+            Genivi.guidance_activated = true;
+            maneuverIcon.source=Genivi.ManeuverDirectionIcon[maneuverData[3][3][1]];
+            //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
+            distancetomaneuverValue.text=Genivi.distance(offsetOfManeuver);
+            roadaftermaneuverValue.text=roadNameAfterManeuver;
         }
 
+        res=Genivi.guidance_message_GetDestinationInformation(dbusIf);
+        distancetodestinationValue.text = Genivi.distance(res[1]);
+        timetodestinationValue.text = Genivi.time(res[3]);
+
+        updateAddress();
     }
 
 	function stopGuidance()
 	{
-		Genivi.guidance_message(dbusIf,"StopGuidance",[]);
+        Genivi.guidance_message_StopGuidance(dbusIf);
 		updateGuidance();
 	}
 
     function startGuidance()
     {
-        Genivi.guidance_message(dbusIf,"StartGuidance",Genivi.routing_handle(dbusIf));
+        Genivi.guidance_message_StartGuidance(dbusIf,Genivi.routing_handle(dbusIf));
         updateGuidance();
         updateSimulation();
         updateAddress();
@@ -471,13 +397,13 @@ HMIMenu {
 
     function stopSimulation()
     {
-        Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",0]);
+        Genivi.mapmatch_message_SetSimulationMode(dbusIf,0);
     }
 
     function startSimulation()
     {
-        Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",1]);
-        Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
+        Genivi.mapmatch_message_SetSimulationMode(dbusIf,1);
+        Genivi.mapmatch_message_StartSimulation(dbusIf);
     }
 
     Rectangle {
@@ -601,7 +527,7 @@ HMIMenu {
                     source:StyleSheetBottom.zoomin[Constants.SOURCE]; x:StyleSheetBottom.zoomin[Constants.X]; y:StyleSheetBottom.zoomin[Constants.Y]; width:StyleSheetBottom.zoomin[Constants.WIDTH]; height:StyleSheetBottom.zoomin[Constants.HEIGHT];
                     id:zoomin; explode:false; next:zoomout; prev:orientation;
                     onClicked: {
-                        Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",1]);
+                        Genivi.mapviewercontrol_message_SetMapViewScaleByDelta(dbusIf,1);
                         showZoom();
                     }
                 }
@@ -619,7 +545,7 @@ HMIMenu {
                     source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
                     id:zoomout; explode:false; next:settings; prev:zoomin;
                     onClicked: {
-                        Genivi.mapviewercontrol_message(dbusIf, "SetMapViewScaleByDelta", ["int16",-1]);
+                        Genivi.mapviewercontrol_message_SetMapViewScaleByDelta(dbusIf,-1);
                         showZoom();
                     }
                 }
@@ -732,12 +658,10 @@ HMIMenu {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        var res=Genivi.guidance_message(dbusIf,"GetGuidanceStatus",[]);
-                        if (res[0] == "uint16") {
-                            if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
-                                disconnectSignals();
-                                entryMenu("NavigationManeuversList",menu);
-                            }
+                        var res=Genivi.guidance_message_GetGuidanceStatus(dbusIf);
+                        if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
+                            disconnectSignals();
+                            entryMenu("NavigationManeuversList",menu);
                         }
                     }
                 }
@@ -850,7 +774,7 @@ HMIMenu {
                         {
                             speedValueSent = speedValueSent-1;
                         }
-                        Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
+                        Genivi.mapmatch_message_s(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
                     }
                 }
                 StdButton {
@@ -862,7 +786,7 @@ HMIMenu {
                         {
                             speedValueSent = speedValueSent+1;
                         }
-                        Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
+                        Genivi.mapmatch_message_s(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
                     }
                 }
                 StdButton {
@@ -936,11 +860,11 @@ HMIMenu {
                         {
                             case 2: //pause
                                 //pause to resume
-                                Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
+                                Genivi.mapmatch_message_s(dbusIf,"StartSimulation",[]);
                             break;
                             case 1: //play
                                 //play to pause
-                                Genivi.mapmatch_message(dbusIf,"PauseSimulation",[]);
+                                Genivi.mapmatch_message_s(dbusIf,"PauseSimulation",[]);
                             break;
                             default:
                             break;
@@ -954,11 +878,11 @@ HMIMenu {
     Component.onCompleted: {
         Genivi.map_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
 		if (Genivi.data['show_route_handle']) {
-			Genivi.mapviewercontrol_message(dbusIf, "DisplayRoute", Genivi.data['show_route_handle'].concat("boolean",false));
+            Genivi.mapviewercontrol_message_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
 			delete(Genivi.data['show_route_handle']);
 		}
 		if (Genivi.data['zoom_route_handle']) {
-			var res=Genivi.nav_message(dbusIf, "Routing", "GetRouteBoundingBox", Genivi.nav_session(dbusIf).concat(Genivi.data['zoom_route_handle']));
+			var res=Genivi.navigationcore_message(dbusIf, "Routing", "GetRouteBoundingBox", Genivi.nav_session(dbusIf).concat(Genivi.data['zoom_route_handle']));
 			if (res[0] == "structure") {
 				Genivi.mapviewercontrol_message(dbusIf, "SetMapViewBoundingBox", res);
 			} else {
@@ -968,23 +892,17 @@ HMIMenu {
 			delete(Genivi.data['zoom_route_handle']);
 		}
 		if (Genivi.data['show_position']) {
-			Genivi.mapviewercontrol_message(dbusIf, "SetFollowCarMode", ["boolean",false]);
-			Genivi.mapviewercontrol_message(dbusIf, "SetTargetPoint", ["structure",[
-				"double",Genivi.data['show_position']['lat'],
-				"double",Genivi.data['show_position']['lon'],
-				"int32",Genivi.data['show_position']['alt']
-				]]
-			);
+            Genivi.mapviewercontrol_message_SetFollowCarMode(dbusIf,false);
+            Genivi.mapviewercontrol_message_SetTargetPoint(dbusIf,Genivi.data['show_position']['lat'],Genivi.data['show_position']['lon'],Genivi.data['show_position']['alt']);
 			delete(Genivi.data['show_position']);
 		}
 		if (Genivi.data['show_current_position']) {
-			Genivi.mapviewercontrol_message(dbusIf, "SetFollowCarMode", ["boolean",true]);
+            Genivi.mapviewercontrol_message_SetFollowCarMode(dbusIf,true);
 			delete(Genivi.data['show_current_position']);
 		}
 		connectSignals();
 		updateGuidance();
         updateSimulation();
         showZoom();
-		updateAddress();
 	}
 }

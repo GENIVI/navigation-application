@@ -48,65 +48,52 @@ HMIMenu {
         }
 
 	function searchStatus(args)
-	{
-		if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
+    { //locationInputHandle 1, statusValue 3
+        var statusValue=args[3];
+        if (statusValue == Genivi.NAVIGATIONCORE_SEARCHING) {
 			view.model.clear();
             text.color='red';  //(Searching)
         } else {
-            if (args[3] == Genivi.NAVIGATIONCORE_FINISHED)
+            if (statusValue == Genivi.NAVIGATIONCORE_FINISHED)
             {
                 text.color='white';
-                Genivi.locationinput_message(dbusIf,"RequestListUpdate",["uint16",0,"uint16",10]);
+                Genivi.locationInput_RequestListUpdate(dbusIf,0,10);
             }
         }
 	}
 
 	function searchResultList(args)
-	{
+    {//locationInputHandle 1, totalSize 3, windowOffset 5, windowSize 7, resultListWindow 9
 		var model=view.model;
-		if (args[4] == "uint16" && args[8] == "array") {
-			var offset=args[5];
-			var array=args[9];
-			for (var i=0 ; i < array.length ; i+=2) {
-				if (array[i] == "map") {
-					var map=array[i+1];
-					for (var j = 0 ; j < map.length ; j+=4) {
-						if (map[j] == "uint16" && map[j+1] == criterion) {
-							if (map[j+2] == "variant") {
-								var variant=map[j+3];
-								if (variant[0] == "string") {
-									model.append({"name":variant[1],"number":(i/2)+offset+1});
-								}
-							}
-						}
-					}
-				}
-			}
-		} else {
-			console.log("Unexpected result from SearchResultList:");
-			Genivi.dump("",args);
-		}
+        var windowOffset=args[5];
+        var resultListWindow=args[9];
+        var offset=args[5];
+        var array=args[9];
+        for (var i=0 ; i < resultListWindow.length ; i+=2) {
+            for (var j = 0 ; j < resultListWindow[i+1].length ; j+=4) {
+                if (resultListWindow[i+1][j+1] == criterion) {
+                    model.append({"name":resultListWindow[i+1][j+3][3][1],"number":(i/2)+windowOffset+1});
+                }
+            }
+        }
 	}
 
 	function spellResult(args)
-	{
-		if (args[0] == "uint32" && args[2] == "string" && args[4] == "string") {
-			if (text.text.length < args[3].length) {
-				extraspell=args[3].substr(text.text.length);
-				text.text=args[3];
-				
-			}
-			keyboard.setactivekeys('\b'+args[5],true);
-		} else {
-			console.log("Unexpected result from SpellResult:");
-		}
+    {//locationInputHandle 1, uniqueString 3, validCharacters 5, fullMatch 7
+        var uniqueString=args[3];
+        var validCharacters=args[5];
+        if (text.text.length < uniqueString.length) {
+            extraspell=uniqueString.substr(text.text.length);
+            text.text=uniqueString;
+        }
+        keyboard.setactivekeys('\b'+validCharacters,true);
 	}
 
 	function spell(input)
 	{
 		input=extraspell+input;
 		extraspell='';
-		Genivi.locationinput_message(dbusIf,"Spell",["string",input,"uint16",10]);
+        Genivi.locationInput_Spell(dbusIf,input,10);
 	}
 
 	function connectSignals()
@@ -215,7 +202,7 @@ HMIMenu {
         if (Genivi.entrycriterion) {
             criterion=Genivi.entrycriterion;
             Genivi.entrycriterion=0;
-            Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",criterion]);
+            Genivi.locationInput_SetSelectionCriterion(dbusIf,criterion);
         }
         extraspell='';
         if(criterion != Genivi.NAVIGATIONCORE_STREET)

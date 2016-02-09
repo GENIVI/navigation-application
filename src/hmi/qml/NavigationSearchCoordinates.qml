@@ -33,6 +33,8 @@ import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/navigation-search-coordinates-menu-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
+//draft, not tested yet !!!!!
+
 HMIMenu {
 	id: menu
 	property string pagefile:"NavigationSearchCoordinates"

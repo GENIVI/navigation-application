@@ -379,7 +379,9 @@ signature_from_qml(QVariant t, QVariant v)
 		return QString(DBUS_TYPE_DOUBLE);
 	} else if (type == "int32") {
 		return QString(DBUS_TYPE_INT32);
-	} else if (type == "uint16") {
+    } else if (type == "uint8") {
+        return QString(DBUS_TYPE_BYTE);
+    } else if (type == "uint16") {
 		return QString(DBUS_TYPE_UINT16);
 	} else if (type == "uint32") {
 		return QString(DBUS_TYPE_UINT32);

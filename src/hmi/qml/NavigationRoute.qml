@@ -40,14 +40,6 @@ HMIMenu {
     prev: calculate
     property Item mapmatchedpositionPositionUpdateSignal;
 
-    function latlon_to_map(latlon)
-    {
-        return [
-            "uint16",Genivi.NAVIGATIONCORE_LATITUDE,"variant",["double",latlon['lat']],
-            "uint16",Genivi.NAVIGATIONCORE_LONGITUDE,"variant",["double",latlon['lon']]
-        ];
-    }
-
     function setLocation()
     {
         Genivi.route_calculated = false; //position or destination changed, so needs to calculate a new route
@@ -58,30 +50,23 @@ HMIMenu {
 
     function updateCurrentPosition()
     {
-        var res=Genivi.nav_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
-        if (res[0] == 'map') {
-            var map=res[1];
-            var ok=0;
-            if (map[0] == 'uint16' && (map[1] == Genivi.NAVIGATIONCORE_LATITUDE || map[1] == Genivi.NAVIGATIONCORE_LONGITUDE) && map[2] == 'variant') {
-                var variant=map[3];
-                if (variant[0] == 'double' && variant[1] != '0') {
-                    ok++;
-                }
-
-            }
-            if (map[4] == 'uint16' && (map[5] == Genivi.NAVIGATIONCORE_LATITUDE || map[5] == Genivi.NAVIGATIONCORE_LONGITUDE) && map[6] == 'variant') {
-                var variant=map[7];
-                if (variant[0] == 'double' && variant[1] != '0') {
-                    ok++;
-                }
-            }
-            if (ok == 2 && Genivi.data['destination']) {
-                calculate_curr.disabled=false;
+        var res=Genivi.mapmatch_message_GetPosition(dbusIf);
+        var oklat=0;
+        var oklong=0;
+        for (var i=0;i<res[1].length;i+=4){
+            if ((res[1][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[1][i+3][3][1] != 0)){
+                oklat=1;
             } else {
-                calculate_curr.disabled=true;
+                if ((res[1][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[1][i+3][3][1] != 0)){
+                    oklong=1;
+                }
             }
         }
-
+        if ((oklat == 1) && (oklong == 1) && Genivi.data['destination']) {
+             calculate_curr.disabled=false;
+         } else {
+             calculate_curr.disabled=true;
+         }
     }
 
     function mapmatchedpositionPositionUpdate(args)
@@ -191,9 +176,10 @@ HMIMenu {
             source:StyleSheet.route[Constants.SOURCE]; x:StyleSheet.route[Constants.X]; y:StyleSheet.route[Constants.Y]; width:StyleSheet.route[Constants.WIDTH]; height:StyleSheet.route[Constants.HEIGHT];textColor:StyleSheet.routeText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.routeText[Constants.PIXELSIZE];
             id:calculate; text: Genivi.gettext("Route"); explode:false;
             onClicked: {
-                var dest=latlon_to_map(Genivi.data['destination']);
-                var pos=latlon_to_map(Genivi.data['position']);
-                Genivi.routing_message(dbusIf,"SetWaypoints",["boolean",false,"array",["map",pos,"map",dest]]);
+                var position,destination;
+                position=Genivi.latlon_to_map(Genivi.data['position']);
+                destination=Genivi.latlon_to_map(Genivi.data['destination']);
+                Genivi.routing_message_SetWaypoints(dbusIf,false,position,destination);
                 Genivi.data['calculate_route']=true;
                 disconnectSignals();
                 Genivi.data['lat']='';
@@ -207,8 +193,10 @@ HMIMenu {
             source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
             id:calculate_curr; text: Genivi.gettext("GoTo"); explode:false;
             onClicked: {
-                var dest=latlon_to_map(Genivi.data['destination']);
-                Genivi.routing_message(dbusIf,"SetWaypoints",["boolean",true,"array",["map",dest]]);
+                var position,destination;
+                destination=Genivi.latlon_to_map(Genivi.data['destination']);
+                position="";
+                Genivi.routing_message_SetWaypoints(dbusIf,true,position,destination);
                 Genivi.data['calculate_route']=true;
                 disconnectSignals();
                 Genivi.data['lat']='';

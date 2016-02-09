@@ -174,7 +174,7 @@ HMIMenu {
 
     function updateSimulation()
 	{
-	    var res=Genivi.mapmatch_message_get(dbusIf,"GetSimulationStatus",[]);
+	    var res=Genivi.mapmatch_message(dbusIf,"GetSimulationStatus",[]);
         if (res[0] == 'uint16')
 		{
             if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
@@ -202,7 +202,7 @@ HMIMenu {
 			Genivi.dump("",res);
 		}
 
-        var res1=Genivi.mapmatch_message_get(dbusIf,"GetSimulationSpeed",[]);
+        var res1=Genivi.mapmatch_message(dbusIf,"GetSimulationSpeed",[]);
         if (res1[0] == "uint8") {
             if (res1[1] == 0) {
                 speedValue.text="0";
@@ -285,7 +285,7 @@ HMIMenu {
                 {
                     speedValueSent = speedValueSent-1;
                 }
-                Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
+                Genivi.mapmatch_message_s(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
 			}
 		}
 
@@ -298,7 +298,7 @@ HMIMenu {
                 {
                     speedValueSent = speedValueSent+1;
                 }
-                Genivi.mapmatch_message(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
+                Genivi.mapmatch_message_s(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
 			}
 		}
 
@@ -340,11 +340,11 @@ HMIMenu {
 				switch (status) 
 				{
 					case 0: //start the simulation
-						Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",1]);
-						Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
+						Genivi.mapmatch_message_s(dbusIf,"SetSimulationMode",["boolean",1]);
+						Genivi.mapmatch_message_s(dbusIf,"StartSimulation",[]);
 					break;
 					case 1: //stop the simulation
-						Genivi.mapmatch_message(dbusIf,"SetSimulationMode",["boolean",0]);
+						Genivi.mapmatch_message_s(dbusIf,"SetSimulationMode",["boolean",0]);
                     break;
 					default:
 					break;
@@ -391,11 +391,11 @@ HMIMenu {
 				{
                     case 2: //pause
 						//pause to resume
-		        		Genivi.mapmatch_message(dbusIf,"StartSimulation",[]);
+		        		Genivi.mapmatch_message_s(dbusIf,"StartSimulation",[]);
                     break;
                     case 1: //play
                         //play to pause
-            			Genivi.mapmatch_message(dbusIf,"PauseSimulation",[]);
+            			Genivi.mapmatch_message_s(dbusIf,"PauseSimulation",[]);
                     break;
 					default:
 					break;

@@ -119,7 +119,7 @@ HMIMenu {
         Component.onCompleted: {
             connectSignals();
 
-            var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
+            var res=Genivi.navigationcore_message(dbusIf,"Session","GetVersion",[]);
             if (res[0] != "error") {
                 res=Genivi.nav_session(dbusIf);
                 res=Genivi.loc_handle(dbusIf);

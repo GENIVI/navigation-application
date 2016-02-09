@@ -67,49 +67,49 @@ HMIMenu {
     }
 
 	function currentSelectionCriterion(args)
-	{
-        Genivi.entrycriterion = args[1];
+    {// locationInputHandle 1, selectionCriterion 3
+        var selectionCriterion=args[3];
+        Genivi.entrycriterion = selectionCriterion;
 	}
 
 	function searchStatus(args)
-	{
-        if (args[3] == Genivi.NAVIGATIONCORE_FINISHED)
+    { //locationInputHandle 1, statusValue 3
+        var statusValue=args[3];
+        if (statusValue == Genivi.NAVIGATIONCORE_FINISHED)
         {
-            Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry]);
+            Genivi.locationInput_SelectEntry(dbusIf,Genivi.entryselectedentry);
         }
     }
+
 	function searchResultList(args)
 	{
 	}
 
-	function setContent(args)
-	{
-        countryValue.text="";
-        cityValue.text="";
-        streetValue.text="";
-        numberValue.text="";
-		for (var i=0 ; i < args.length ; i+=4) {
-			if (args[i+1] == Genivi.NAVIGATIONCORE_LATITUDE) lat=args[i+3][1];
-			if (args[i+1] == Genivi.NAVIGATIONCORE_LONGITUDE) lon=args[i+3][1];
-            if (args[i+1] == Genivi.NAVIGATIONCORE_COUNTRY) countryValue.text=args[i+3][1];
-            if (args[i+1] == Genivi.NAVIGATIONCORE_CITY) cityValue.text=args[i+3][1];
-            if (args[i+1] == Genivi.NAVIGATIONCORE_STREET) streetValue.text=args[i+3][1];
-            if (args[i+1] == Genivi.NAVIGATIONCORE_HOUSENUMBER) numberValue.text=args[i+3][1];
-		}
-	}
+	function contentUpdated(args)
+    { //locationInputHandle 1, guidable 3, availableSelectionCriteria 5, address 7
 
-	function setDisabled(args)
-	{
+        // Check if the destination is guidable
+        var guidable=args[3];
+        if (guidable) {
+            ok.disabled=false;
+        }
+        else
+        {
+            //to do something is it's not guidable
+        }
+
+        // Manage the available entries
+        var availableSelectionCriteria=args[5];
         countryValue.disabled=true;
         cityValue.disabled=true;
         streetValue.disabled=true;
         numberValue.disabled=true;
-		for (var i=0 ; i < args.length ; i++) {
-            if (args[i] == Genivi.NAVIGATIONCORE_COUNTRY) countryValue.disabled=false;
-            if (args[i] == Genivi.NAVIGATIONCORE_CITY) cityValue.disabled=false;
-            if (args[i] == Genivi.NAVIGATIONCORE_STREET) streetValue.disabled=false;
-            if (args[i] == Genivi.NAVIGATIONCORE_HOUSENUMBER) numberValue.disabled=false;
-		}
+        for (var i=0 ; i < args.length ; i++) {
+            if (availableSelectionCriteria[i] == Genivi.NAVIGATIONCORE_COUNTRY) countryValue.disabled=false;
+            if (availableSelectionCriteria[i] == Genivi.NAVIGATIONCORE_CITY) cityValue.disabled=false;
+            if (availableSelectionCriteria[i] == Genivi.NAVIGATIONCORE_STREET) streetValue.disabled=false;
+            if (availableSelectionCriteria[i] == Genivi.NAVIGATIONCORE_HOUSENUMBER) numberValue.disabled=false;
+        }
         if (countryValue.disabled)
             countryValue.text="";
         if (cityValue.disabled)
@@ -118,11 +118,24 @@ HMIMenu {
             streetValue.text="";
         if (numberValue.disabled)
             numberValue.text="";
-	}
 
-	function setFocus()
-	{
-		var focus;
+        // Manage the content
+        var address=args[7];
+        countryValue.text="";
+        cityValue.text="";
+        streetValue.text="";
+        numberValue.text="";
+        for (var i=0 ; i < address.length ; i+=4) {
+            if (address[i+1] == Genivi.NAVIGATIONCORE_LATITUDE) lat=address[i+3][3][1];
+            if (address[i+1] == Genivi.NAVIGATIONCORE_LONGITUDE) lon=address[i+3][3][1];
+            if (address[i+1] == Genivi.NAVIGATIONCORE_COUNTRY) countryValue.text=address[i+3][3][1];
+            if (address[i+1] == Genivi.NAVIGATIONCORE_CITY) cityValue.text=address[i+3][3][1];
+            if (address[i+1] == Genivi.NAVIGATIONCORE_STREET) streetValue.text=address[i+3][3][1];
+            if (address[i+1] == Genivi.NAVIGATIONCORE_HOUSENUMBER) numberValue.text=address[i+3][3][1];
+        }
+
+        // Manage the focus
+        var focus;
         if (!countryValue.disabled)
             focus=countryValue;
         if (!cityValue.disabled)
@@ -131,18 +144,8 @@ HMIMenu {
             focus=streetValue;
         if (!numberValue.disabled)
             focus=numberValue;
-		focus.takeFocus();
-	}
-
-	function contentUpdated(args)
-	{
-		if (args[3]) {
-			ok.disabled=false;
-		}
-		setDisabled(args[5]);
-		setContent(args[7]);
-		setFocus();
-	}
+        focus.takeFocus();
+    }
 
 	function connectSignals()
 	{
@@ -163,8 +166,8 @@ HMIMenu {
 	function accept(what)
 	{
 		ok.disabled=true;
-		Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",what.criterion]);
-		Genivi.locationinput_message(dbusIf,"Search",["string",what.text,"uint16",10]);
+        Genivi.locationInput_SetSelectionCriterion(dbusIf,what.criterion);
+        Genivi.locationInput_Search(dbusIf,what.text,10);
 	}
 
 
@@ -182,7 +185,7 @@ HMIMenu {
         Component.onCompleted: {
             connectSignals();
 
-            var res=Genivi.nav_message(dbusIf,"Session","GetVersion",[]);
+            var res=Genivi.navigationcoreSession_GetVersion(dbusIf);
             if (res[0] != "error") {
                 res=Genivi.nav_session(dbusIf);
                 res=Genivi.loc_handle(dbusIf);
@@ -190,7 +193,7 @@ HMIMenu {
                 Genivi.dump("",res);
             }
             if (Genivi.entryselectedentry) {
-                Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry-1]);
+                Genivi.locationInput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
             }
             if (Genivi.entrydest == 'countryValue')
             {

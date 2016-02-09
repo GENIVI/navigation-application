@@ -80,21 +80,17 @@ HMIMenu {
     }
 
     Component.onCompleted: {
-        var res=Genivi.routing_message_get(dbusIf,"GetRouteSegments",["int16",0,"array",["uint16",Genivi.NAVIGATIONCORE_DISTANCE,"uint16",Genivi.NAVIGATIONCORE_TIME,"uint16",Genivi.NAVIGATIONCORE_ROAD_NAME],"uint32",100,"uint32",0]);
+        var res=Genivi.routing_message_GetRouteSegments(dbusIf,0,100,0)
         var array=res[3];
         var model=view.model;
         for (var i = 0 ; i < array.length ; i+=2) {
-            if (array[i] == "map") {
-                var map=array[i+1];
-                var mapresult=Array;
-                for (var j = 0 ; j < map.length ; j+=4) {
-                    if (map[j] == 'uint16') {
-                        mapresult[map[j+1]]=map[j+3][1];
-                    }
-                }
-                var text=Genivi.distance(mapresult[Genivi.NAVIGATIONCORE_DISTANCE])+" "+Genivi.time(mapresult[Genivi.NAVIGATIONCORE_TIME])+" "+mapresult[Genivi.NAVIGATIONCORE_ROAD_NAME];
-                model.append({"name":text});
+            var map=array[i+1];
+            var mapresult=Array;
+            for (var j = 0 ; j < map.length ; j+=4) {
+                mapresult[map[j+1]]=map[j+3][3][1];
             }
+            var text=Genivi.distance(mapresult[Genivi.NAVIGATIONCORE_DISTANCE])+" "+Genivi.time(mapresult[Genivi.NAVIGATIONCORE_TIME])+" "+mapresult[Genivi.NAVIGATIONCORE_ROAD_NAME];
+            model.append({"name":text});
         }
     }
 }

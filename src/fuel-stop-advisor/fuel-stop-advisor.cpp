@@ -109,15 +109,15 @@ class Routing
 	{
 	}
 
-	void RouteCalculationSuccessful(const uint32_t& routeHandle, const std::map< uint16_t, uint16_t >& unfullfilledPreferences)
+    void RouteCalculationSuccessful(const uint32_t& routeHandle, const std::map< int32_t, int32_t >& unfullfilledPreferences)
 	{
 	}
 
-	void RouteCalculationFailed(const uint32_t& routeHandle, const uint16_t& errorCode, const std::map< uint16_t, uint16_t >& unfullfilledPreferences)
+    void RouteCalculationFailed(const uint32_t& routeHandle, const int32_t& errorCode, const std::map< int32_t, int32_t >& unfullfilledPreferences)
 	{
 	}
 
-	void RouteCalculationProgressUpdate(const uint32_t& routeHandle, const uint16_t& status, const uint8_t& percentage)
+    void RouteCalculationProgressUpdate(const uint32_t& routeHandle, const int32_t& status, const uint8_t& percentage)
 	{
 	}
 
@@ -312,20 +312,21 @@ class FuelStopAdvisor
 		double distance=0;
         dbgprintf("routeHandle %d\n",routeHandle);
         if (routeHandle) {
-			std::vector< std::map< uint16_t, ::DBus::Variant > > RouteShape;
-			std::vector< uint16_t > valuesToReturn;
+            std::vector< std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > > RouteShape;
+            std::vector< int32_t > valuesToReturn;
 			uint32_t totalNumberOfSegments;
 			valuesToReturn.push_back(GENIVI_NAVIGATIONCORE_DISTANCE);
 			valuesToReturn.push_back(GENIVI_NAVIGATIONCORE_SPEED);
-			routing->GetRouteSegments(routeHandle, 1, valuesToReturn, 0xffffffff, 0, totalNumberOfSegments, RouteShape);
+
+            routing->GetRouteSegments(routeHandle, 1, valuesToReturn, 0xffffffff, 0, totalNumberOfSegments, RouteShape);
 			for (int i=0 ; i < RouteShape.size(); i++) {
 				double seg_distance;
 				uint16_t seg_speed;
 				DBus::MessageIter it;
 
-				it=RouteShape[i][GENIVI_NAVIGATIONCORE_DISTANCE].reader();
+                it=RouteShape[i][GENIVI_NAVIGATIONCORE_DISTANCE]._2.reader();
 				it >> seg_distance;
-				it=RouteShape[i][GENIVI_NAVIGATIONCORE_SPEED].reader();
+                it=RouteShape[i][GENIVI_NAVIGATIONCORE_SPEED]._2.reader();
 				it >> seg_speed;
 				if (seg_distance && seg_speed) {
 					double fuel_consumption=fuelConsumptionAtSpeed(seg_speed)*seg_distance/100000;

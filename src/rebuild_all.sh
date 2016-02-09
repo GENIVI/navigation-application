@@ -27,16 +27,16 @@ do
 done
 set -e
 
-echo 'delete the build folder'
-rm -rf build
+echo 'clean up the build folder'
+find ./build ! -name '*.cbp' -type f -exec rm -f {} +
 
-mkdir build
+mkdir -p build
 cd build
-mkdir navigation
+mkdir -p navigation
 cd navigation
-mkdir navit
+mkdir -p navit
 cd navit
-mkdir navit
+mkdir -p navit
 cd navit
 
 echo 'build navit'

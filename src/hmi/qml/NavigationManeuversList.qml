@@ -77,7 +77,7 @@ HMIMenu {
     }
 
     Component.onCompleted: {
-        var res=Genivi.guidance_message_get(dbusIf,"GetManeuversList",["uint16",0xffff,"uint32",0]);
+        var res=Genivi.guidance_message(dbusIf,"GetManeuversList",["uint16",0xffff,"uint32",0]);
         if (res[0] == "uint16" && res[2] == "array") {
             var array=res[3];
             var model=view.model;

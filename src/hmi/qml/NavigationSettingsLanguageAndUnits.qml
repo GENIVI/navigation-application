@@ -43,9 +43,9 @@ HMIMenu {
 
 	function update()
 	{
-		var available_nav=Genivi.nav_message(dbusIf,"Configuration","GetSupportedLocales",[]);
-		var available_map=Genivi.nav_message(dbusIf,"Configuration","GetSupportedLocales",[]);
-		var current_nav=Genivi.nav_message(dbusIf,"Configuration","GetLocale",[]);
+		var available_nav=Genivi.navigationcore_message(dbusIf,"Configuration","GetSupportedLocales",[]);
+		var available_map=Genivi.navigationcore_message(dbusIf,"Configuration","GetSupportedLocales",[]);
+		var current_nav=Genivi.navigationcore_message(dbusIf,"Configuration","GetLocale",[]);
 		var current_map=Genivi.map_message(dbusIf,"Configuration","GetLocale",[]);
 		var current_lang_nav;
 		var current_lang_map;
@@ -95,7 +95,7 @@ HMIMenu {
 			}
 		}
 		var units1,units2;
-		var res=Genivi.nav_message(dbusIf,"Configuration","GetUnitsOfMeasurement",[]);
+		var res=Genivi.navigationcore_message(dbusIf,"Configuration","GetUnitsOfMeasurement",[]);
 		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.MAPVIEWER_LENGTH && res[1][2] == "variant" && res[1][3][0] == "uint16") {
 			units1=res[1][3][1];
 		} else {
@@ -118,14 +118,14 @@ HMIMenu {
 	}
     function setLocale(language, country, script)
 	{
-        Genivi.nav_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
+        Genivi.navigationcore_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
         Genivi.map_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
         Genivi.setlang(language + "_" + country);
         pageOpen(menu.pagefile); //reload page because of texts...
     }
 	function setUnits(units1,units2)
 	{
-		Genivi.nav_message(dbusIf,"Configuration","SetUnitsOfMeasurement",["map",["uint16",Genivi.NAVIGATIONCORE_LENGTH,"variant",["uint16",units1]]]);
+		Genivi.navigationcore_message(dbusIf,"Configuration","SetUnitsOfMeasurement",["map",["uint16",Genivi.NAVIGATIONCORE_LENGTH,"variant",["uint16",units1]]]);
 		Genivi.map_message(dbusIf,"Configuration","SetUnitsOfMeasurement",["map",["uint16",Genivi.MAPVIEWER_LENGTH,"variant",["uint16",units2]]]);
 		update();
 	}
