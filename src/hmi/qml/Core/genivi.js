@@ -2,7 +2,7 @@
 * @licence app begin@
 * SPDX-License-Identifier: MPL-2.0
 *
-* \copyright Copyright (C) 2013-2014, PCA Peugeot Citroen
+* \copyright Copyright (C) 2013-2016, PCA Peugeot Citroen
 *
 * \file NavigationSearchAddress.qml
 *
@@ -32,11 +32,11 @@ Qt.include("resource.js")
 
 var dbusIf;
 var g_nav_session;
-var g_loc_handle;
+var g_locationinput_handle;
 var g_routing_handle;
-var g_map_session;
-var g_map_handle;
-var g_map_handle2;
+var g_mapviewer_session;
+var g_mapviewer_handle;
+var g_mapviewer_handle2;
 var g_poisearch_handle;
 var g_lang;
 
@@ -60,6 +60,13 @@ var entrycriterion;
 var entryselectedentry;
 
 var entrycancel = false; //set to true when back button is pushed without any selection
+
+var roadPreferenceList=new Object;
+roadPreferenceList[NAVIGATIONCORE_FERRY]=NAVIGATIONCORE_AVOID;
+roadPreferenceList[NAVIGATIONCORE_TOLL_ROADS]=NAVIGATIONCORE_AVOID;
+roadPreferenceList[NAVIGATIONCORE_HIGHWAYS_MOTORWAYS]=NAVIGATIONCORE_AVOID;
+var conditionPreferenceList=new Object;
+conditionPreferenceList[NAVIGATIONCORE_TRAFFIC_REALTIME]=NAVIGATIONCORE_AVOID;
 
 var Maneuver = new Object;
 Maneuver[NAVIGATIONCORE_INVALID]="INV";
@@ -184,13 +191,36 @@ function time(seconds)
 	}
 }
 
+// Language and text
+function setlang(lang)
+{
+    g_lang=lang;
+    translations = new Array;
+    Qt.include("translations/"+lang+".js");
+}
+
+function gettext(arg)
+{
+    if (!translations[arg]) {
+        if (g_lang) {
+            console.log("Translation for '" + arg + "' missing for " + g_lang);
+        }
+        return arg;
+    } else {
+        return translations[arg];
+    }
+}
+
+
+//----------------- Management of the DBus messages -----------------
+
 // Send a dbus message to layer manager
 function lm_message(par, func, args)
 {
-	return par.message("org.genivi.layermanagementservice","/org/genivi/layermanagementservice","org.genivi.layermanagementservice", func, args);
+    return par.message("org.genivi.layermanagementservice","/org/genivi/layermanagementservice","org.genivi.layermanagementservice", func, args);
 }
 
-// -------------------- NavigationCore dbus messages --------------------
+//----------------- NavigationCore dbus messages -----------------
 
 // Send a message to navigationcore (basic)
 function navigationcore_message(par, iface, func, args)
@@ -198,16 +228,41 @@ function navigationcore_message(par, iface, func, args)
 	return par.message("org.genivi.navigationcore."+iface,"/org/genivi/navigationcore","org.genivi.navigationcore."+iface, func, args);
 }
 
+// Create a new location handle or get the current handle
+function locationinput_handle(par)
+{
+    if (g_locationinput_handle)
+        return g_locationinput_handle;
+    g_locationinput_handle=navigationcore_message(par, "LocationInput","CreateLocationInput", navigationcore_session(par)).slice(0,2);
+    return g_locationinput_handle;
+}
+
+// Delete the location handle if exists
+function locationinput_handle_clear(par)
+{
+    if (g_locationinput_handle) {
+        locationinput_message(par, "DeleteLocationInput", []);
+        g_locationinput_handle=null;
+    }
+}
+
+//----------------- Navigation core Session messages -----------------
+
+function navigationcore_session_message(par, func, args)
+{
+    return navigationcore_message(par, "Session", func, navigationcore_session(par).concat(locationinput_handle(par),args));
+}
+
 // Create a new session or get the current session
-function nav_session(par) {
+function navigationcore_session(par) {
     if (g_nav_session)
         return g_nav_session;
-    g_nav_session=navigationcore_message(par, "Session", "CreateSession", ["string","TestHMI"]).slice(0,2);
+    g_nav_session=navigationcore_message(par,"Session","CreateSession", ["string","TestHMI"]).slice(0,2);
     return g_nav_session;
 }
 
 // Delete the current session if exists
-function nav_session_clear(par)
+function navigationcore_session_clear(par)
 {
     if (g_nav_session) {
         navigationcore_message(par, "Session", "DeleteSession", [g_nav_session]);
@@ -215,73 +270,95 @@ function nav_session_clear(par)
     }
 }
 
-// Create a new location handle or get the current handle
-function loc_handle(par)
-{
-    if (g_loc_handle)
-        return g_loc_handle;
-    g_loc_handle=navigationcore_message(par, "LocationInput","CreateLocationInput", nav_session(par)).slice(0,2);
-    return g_loc_handle;
-}
-
-// Delete the location handle if exists
-function loc_handle_clear(par)
-{
-    if (g_loc_handle) {
-        locationinput_message(par, "DeleteLocationInput", []);
-        g_loc_handle=null;
-    }
-}
-
-// Session messages
-function navigationcore_session_message(par, func, args)
-{
-    return navigationcore_message(par, "Session", func, nav_session(par).concat(loc_handle(par),args));
-}
-
-function navigationcoreSession_GetVersion(par)
+function navigationcore_session_GetVersion(par)
 {
     return navigationcore_session_message(par,"GetVersion",[]);
 }
 
-// LocationInput messages
-function locationinput_message(par, func, args)
+//----------------- Navigation core Configuration messages -----------------
+
+function navigationcore_configuration_message(par, func, args)
 {
-    return navigationcore_message(par, "LocationInput", func, nav_session(par).concat(loc_handle(par),args));
+    return navigationcore_message(par, "Configuration", func,args);
 }
 
-function locationInput_Spell(dbusIf,inputCharacter,maxWindowSize)
+function navigationcore_configuration_GetSupportedLocales(dbusIf)
+{
+    return navigationcore_configuration_message(dbusIf,"GetSupportedLocales",[]);
+}
+
+function navigationcore_configuration_GetLocale(dbusIf)
+{
+    return navigationcore_configuration_message(dbusIf,"GetLocale",[]);
+}
+
+function navigationcore_configuration_SetLocale(dbusIf,language,country,script)
+{
+    navigationcore_configuration_message(dbusIf,"SetLocale",["string",language,"string",country,"string",script]);
+}
+
+function navigationcore_configuration_GetUnitsOfMeasurement(dbusIf)
+{
+    return navigationcore_configuration_message(dbusIf,"GetUnitsOfMeasurement",[]);
+}
+
+function navigationcore_configuration_SetUnitsOfMeasurementLength(dbusIf,unit)
+{
+    navigationcore_configuration_message(dbusIf,"SetUnitsOfMeasurement",["map",["int32",NAVIGATIONCORE_LENGTH,"structure",["uint8",0,"variant",["uint16",unit]]]]);
+}
+
+//----------------- LocationInput messages -----------------
+
+function locationinput_message(par, func, args)
+{
+    return navigationcore_message(par, "LocationInput", func, navigationcore_session(par).concat(locationinput_handle(par),args));
+}
+
+function locationinput_Spell(dbusIf,inputCharacter,maxWindowSize)
 {
     locationinput_message(dbusIf,"Spell",["string",inputCharacter,"uint16",maxWindowSize]);
 }
 
-
-function locationInput_RequestListUpdate(dbusIf,offset,maxWindowSize)
+function locationinput_RequestListUpdate(dbusIf,offset,maxWindowSize)
 {
     locationinput_message(dbusIf,"RequestListUpdate",["uint16",offset,"uint16",maxWindowSize]);
 }
 
-function locationInput_SetSelectionCriterion(dbusIf,selectionCriterion)
+function locationinput_SetSelectionCriterion(dbusIf,selectionCriterion)
 {
     locationinput_message(dbusIf,"SetSelectionCriterion",["int32",selectionCriterion]);
 }
 
-function locationInput_Search(dbusIf,inputString,maxWindowSize)
+function locationinput_Search(dbusIf,inputString,maxWindowSize)
 {
     locationinput_message(dbusIf,"Search",["string",inputString,"uint16",maxWindowSize]);
 }
 
-function locationInput_SelectEntry(dbusIf,index)
+function locationinput_SelectEntry(dbusIf,index)
 {
     locationinput_message(dbusIf,"SelectEntry",["uint16",index]);
 }
 
+//----------------- Routing messages -----------------
+
+// Send a message to routing with session handle
+function routing_message(par, func, args)
+{ //session handle sent
+    return navigationcore_message(par, "Routing", func, navigationcore_session(par).concat(routing_handle(par),args));
+}
+
+// Send a message to routing without session handle
+function routing_get(par, func, args)
+{
+    return navigationcore_message(par, "Routing", func, routing_handle(par).concat(args));
+}
+
 // Create a new routing handle or get the current handle
-// NB: the format is [0]uint32:[1]value
+// NB: the format of the handle is [0]uint32:[1]value
 function routing_handle(par) {
     if (g_routing_handle)
         return g_routing_handle;
-    g_routing_handle=navigationcore_message(par, "Routing","CreateRoute", nav_session(par)).slice(0,2);
+    g_routing_handle=navigationcore_message(par, "Routing","CreateRoute", navigationcore_session(par)).slice(0,2);
     return g_routing_handle;
 }
 
@@ -294,32 +371,54 @@ function routing_handle_clear(par)
     }
 }
 
-// Send a message to routing with session handle
-function routing_message(par, func, args)
-{ //session handle sent
-    return navigationcore_message(par, "Routing", func, nav_session(par).concat(routing_handle(par),args));
-}
-
-// Send a message to routing without session handle
-function routing_message_get(par, func, args)
-{
-    return navigationcore_message(par, "Routing", func, routing_handle(par).concat(args));
-}
-
-function routing_message_GetRouteOverviewTimeAndDistance(dbusIf)
+function routing_GetRouteOverviewTimeAndDistance(dbusIf)
 {
     var valuesToReturn=[], pref=[];
     pref=pref.concat("int32",NAVIGATIONCORE_TOTAL_TIME,"int32",NAVIGATIONCORE_TOTAL_DISTANCE);
     valuesToReturn = valuesToReturn.concat("array",[pref]);
 
-    return routing_message_get(dbusIf,"GetRouteOverview",valuesToReturn);
+    return routing_get(dbusIf,"GetRouteOverview",valuesToReturn);
 }
 
-function routing_message_GetRouteSegments(dbusIf,detailLevel,numberOfSegments,offset)
+function routing_GetCostModel(dbusIf)
+{
+    return routing_message(dbusIf,"GetCostModel",[]);
+}
+
+function routing_SetCostModel(dbusIf,costModel)
+{
+    routing_message(dbusIf,"SetCostModel",["int32",costModel]);
+}
+
+function routing_GetSupportedCostModels(dbusIf)
+{
+    return routing_message(dbusIf,"GetSupportedCostModels",[]);
+}
+
+function routing_GetSupportedRoutePreferences(dbusIf)
+{
+    return routing_message(dbusIf,"GetSupportedRoutePreferences",[]);
+}
+
+function routing_GetRoutePreferences(dbusIf,countryCode)
+{
+    return routing_get(dbusIf,"GetRoutePreferences",["string",countryCode]);
+}
+
+function routing_SetRoutePreferences(dbusIf,countryCode)
+{
+    var roadMessage=["array",["structure",["int32",roadPreferenceList[NAVIGATIONCORE_FERRY],"int32",NAVIGATIONCORE_FERRY],"structure",["int32",roadPreferenceList[NAVIGATIONCORE_TOLL_ROADS],"int32",NAVIGATIONCORE_TOLL_ROADS],"structure",["int32",roadPreferenceList[NAVIGATIONCORE_HIGHWAYS_MOTORWAYS],"int32",NAVIGATIONCORE_HIGHWAYS_MOTORWAYS]]];
+    var conditionMessage=["array",["structure",["int32",conditionPreferenceList[NAVIGATIONCORE_TRAFFIC_REALTIME],"int32",NAVIGATIONCORE_TRAFFIC_REALTIME]]];
+    var message=["string",countryCode];
+    message=message.concat(roadMessage.concat(conditionMessage));
+    routing_message(dbusIf,"SetRoutePreferences",message);
+}
+
+function routing_GetRouteSegments(dbusIf,detailLevel,numberOfSegments,offset)
 {
     var routeSegmentType=["int32",NAVIGATIONCORE_DISTANCE,"int32",NAVIGATIONCORE_TIME,"int32",NAVIGATIONCORE_ROAD_NAME];
 
-    return routing_message_get(dbusIf,"GetRouteSegments",["int16",detailLevel,"array",routeSegmentType,"uint32",numberOfSegments,"uint32",offset]);
+    return routing_get(dbusIf,"GetRouteSegments",["int16",detailLevel,"array",routeSegmentType,"uint32",numberOfSegments,"uint32",offset]);
 }
 
 function latlon_to_map(latlon)
@@ -330,7 +429,7 @@ function latlon_to_map(latlon)
     ];
 }
 
-function routing_message_SetWaypoints(dbusIf,startFromCurrentPosition,position,destination)
+function routing_SetWaypoints(dbusIf,startFromCurrentPosition,position,destination)
 {
     var message=[];
     if(startFromCurrentPosition==false)
@@ -339,28 +438,29 @@ function routing_message_SetWaypoints(dbusIf,startFromCurrentPosition,position,d
     }
     else
     {
-        message=message.concat(["boolean",startFromCurrentPosition,"array",["map",position]]);
+        message=message.concat(["boolean",startFromCurrentPosition,"array",["map",destination]]);
     }
     routing_message(dbusIf,"SetWaypoints",message);
 }
 
-function routing_message_CalculateRoute(dbusIf)
+function routing_CalculateRoute(dbusIf)
 {
     routing_message(dbusIf,"CalculateRoute",[]);
 }
 
-function routing_message_GetRouteBoundingBox(dbusIf,routeHandle)
+function routing_GetRouteBoundingBox(dbusIf,routeHandle)
 {
     var message=[];
-    message=message.concat(nav_session(dbusIf));
+    message=message.concat(navigationcore_session(dbusIf));
     return navigationcore_message(dbusIf, "Routing", "GetRouteBoundingBox", message.concat(routeHandle));
 }
 
-//----------------Guidance messages----------------
+//----------------- Guidance messages -----------------
+
 // Send a message to guidance with session handle
-function guidance_message_s(par, func, args)
+function guidance_s(par, func, args)
 {
-    return navigationcore_message(par, "Guidance", func, nav_session(par).concat(args));
+    return navigationcore_message(par, "Guidance", func, navigationcore_session(par).concat(args));
 }
 // Send a message to guidance without session handle
 function guidance_message(par, func, args)
@@ -368,225 +468,276 @@ function guidance_message(par, func, args)
     return navigationcore_message(par, "Guidance", func, args);
 }
 
-function guidance_message_StartGuidance(dbusIf,routeHandle)
+function guidance_StartGuidance(dbusIf,routeHandle)
 {
-    guidance_message_s(dbusIf,"StartGuidance",routeHandle);
+    guidance_s(dbusIf,"StartGuidance",routeHandle);
 }
 
-function guidance_message_StopGuidance(dbusIf)
+function guidance_StopGuidance(dbusIf)
 {
-    guidance_message_s(dbusIf,"StopGuidance",[]);
+    guidance_s(dbusIf,"StopGuidance",[]);
 }
 
-function guidance_message_GetGuidanceStatus(dbusIf)
+function guidance_GetGuidanceStatus(dbusIf)
 {
     return guidance_message(dbusIf,"GetGuidanceStatus",[]);
 }
 
-function guidance_message_GetDestinationInformation(dbusIf)
+function guidance_GetDestinationInformation(dbusIf)
 {
     return guidance_message(dbusIf,"GetDestinationInformation",[]);
 }
 
-function guidance_message_GetManeuversList(dbusIf,requestedNumberOfManeuvers,maneuverOffset)
+function guidance_GetManeuversList(dbusIf,requestedNumberOfManeuvers,maneuverOffset)
 {
     return guidance_message(dbusIf,"GetManeuversList",["uint16",requestedNumberOfManeuvers,"uint32",maneuverOffset]);
 }
 
-//----------------Map matched messages----------------
+//---------------- Map matched position messages ----------------
+
 // Send a message to mapmatchedposition with session handle
-function mapmatch_message_s(par, func, args)
+function mapmatchedposition_s(par, func, args)
 {
-    return navigationcore_message(par, "MapMatchedPosition", func, nav_session(par).concat(args));
+    return navigationcore_message(par, "MapMatchedPosition", func, navigationcore_session(par).concat(args));
 }
+
 // Send a message to mapmatchedposition without session handle
-function mapmatch_message(par, func, args)
+function mapmatchedposition_message(par, func, args)
 {
     return navigationcore_message(par, "MapMatchedPosition", func, args);
 }
 
-function mapmatch_message_GetAddress(dbusIf)
+function mapmatchedposition_GetAddress(dbusIf)
 {
     var valuesToReturn=["int32",NAVIGATIONCORE_STREET];
 
-    return mapmatch_message(dbusIf,"GetAddress",["array",valuesToReturn]);
+    return mapmatchedposition_message(dbusIf,"GetAddress",["array",valuesToReturn]);
 }
 
-function mapmatch_message_SetSimulationMode(dbusIf,activate)
+function mapmatchedposition_SetSimulationMode(dbusIf,activate)
 {
-    mapmatch_message_s(dbusIf,"SetSimulationMode",["boolean",activate]);
+    mapmatchedposition_s(dbusIf,"SetSimulationMode",["boolean",activate]);
 }
 
-function mapmatch_message_StartSimulation(dbusIf)
+function mapmatchedposition_StartSimulation(dbusIf)
 {
-    mapmatch_message_s(dbusIf,"StartSimulation",[]);
+    mapmatchedposition_s(dbusIf,"StartSimulation",[]);
 }
 
-function mapmatch_message_GetSimulationStatus(dbusIf)
+function mapmatchedposition_PauseSimulation(dbusIf)
 {
-    return mapmatch_message(dbusIf,"GetSimulationStatus",[]);
+    mapmatchedposition_s(dbusIf,"PauseSimulation",[]);
 }
 
-function mapmatch_message_GetSimulationSpeed(dbusIf)
+function mapmatchedposition_GetSimulationStatus(dbusIf)
 {
-    return mapmatch_message(dbusIf,"GetSimulationSpeed",[]);
+    return mapmatchedposition_message(dbusIf,"GetSimulationStatus",[]);
 }
 
-function mapmatch_message_GetPosition(dbusIf)
+function mapmatchedposition_GetSimulationSpeed(dbusIf)
+{
+    return mapmatchedposition_message(dbusIf,"GetSimulationSpeed",[]);
+}
+
+function mapmatchedposition_SetSimulationSpeed(dbusIf,speedFactor)
+{
+    mapmatchedposition_s(dbusIf,"SetSimulationSpeed",["uint8",speedFactor]);
+}
+
+function mapmatchedposition_GetPosition(dbusIf)
 {
     var valuesToReturn=["int32",NAVIGATIONCORE_SPEED,"int32",NAVIGATIONCORE_LATITUDE,"int32",NAVIGATIONCORE_LONGITUDE];
 
-    return mapmatch_message(dbusIf,"GetPosition",["array",valuesToReturn]);
+    return mapmatchedposition_message(dbusIf,"GetPosition",["array",valuesToReturn]);
 }
 
-//----------------MapViewerControl messages----------------
+//---------------- MapViewer messages (handle 1) ----------------
+
 // Send a message to mapviewer (basic)
-function map_message(par, iface, func, args)
+function mapviewer_message(par, iface, func, args)
 {
 	return par.message("org.genivi.mapviewer."+iface,"/org/genivi/mapviewer","org.genivi.mapviewer."+iface, func, args);
 }
 
 // Create a new session or get the current session
-// NB: the format is [0]uint32:[1]value
-function map_session(par) {
-	if (g_map_session)
-		return g_map_session;
-	g_map_session=map_message(par, "Session", "CreateSession", ["string","TestHMI"]).slice(0,2);
-	return g_map_session;
+// NB: the format of the handle is [0]uint32:[1]value
+function mapviewer_session(par) {
+    if (g_mapviewer_session)
+        return g_mapviewer_session;
+    g_mapviewer_session=mapviewer_message(par, "Session", "CreateSession", ["string","TestHMI"]).slice(0,2);
+    return g_mapviewer_session;
 }
 
 // Delete the current session if exists
-function map_session_clear(par)
+function mapviewer_session_clear(par)
 {
-	if (g_map_session) {
-		map_message(par, "Session", "DeleteSession", [g_map_session]);
-		g_map_session=null;
+    if (g_mapviewer_session) {
+        mapviewer_message(par, "Session", "DeleteSession", [g_mapviewer_session]);
+        g_mapviewer_session=null;
 	}
 }
 
 // Create a new map handle or get the current handle
-// NB: the format is [0]uint32:[1]value
-function map_handle(par,w,h,type)
+// NB: the format of the handle is [0]uint32:[1]value
+function mapviewer_handle(par,w,h,type)
 {
-	if (g_map_handle)
-		return g_map_handle;
-    g_map_handle=map_message(par, "MapViewerControl","CreateMapViewInstance", map_session(par).concat(["structure",["uint16",w,"uint16",h],"int32",type])).slice(0,2);
-	return g_map_handle;
+    if (g_mapviewer_handle)
+        return g_mapviewer_handle;
+    g_mapviewer_handle=mapviewer_message(par, "MapViewerControl","CreateMapViewInstance", mapviewer_session(par).concat(["structure",["uint16",w,"uint16",h],"int32",type])).slice(0,2);
+    return g_mapviewer_handle;
 }
 
 // Delete the map handle if exists
-function map_handle_clear(par)
+function mapviewer_handle_clear(par)
 {
-    if (g_map_handle) {
+    if (g_mapviewer_handle) {
         mapviewercontrol_message(par, "ReleaseMapViewInstance", []);
-        g_map_handle=null;
+        g_mapviewer_handle=null;
     }
 }
 
 // Send a message to map viewer control with session handle
 function mapviewercontrol_message(par, func, args)
 {
-	return map_message(par, "MapViewerControl", func, map_session(par).concat(g_map_handle,args));
+    return mapviewer_message(par, "MapViewerControl", func, mapviewer_session(par).concat(g_mapviewer_handle,args));
 }
 
-function mapviewercontrol_message_GetMapViewScale(dbusIf)
+function mapviewer_GetMapViewScale(dbusIf)
 {
     return mapviewercontrol_message(dbusIf,"GetMapViewScale", []);
 }
 
-function mapviewercontrol_message_GetMapViewPerspective(dbusIf)
-{
-    return mapviewercontrol_message(dbusIf,"GetMapViewPerspective", []);
-}
-
-function mapviewercontrol_message_GetDisplayedRoutes(dbusIf)
+function mapviewer_GetDisplayedRoutes(dbusIf)
 {
     return mapviewercontrol_message(dbusIf,"GetDisplayedRoutes", []);
 }
 
-function mapviewercontrol_message_GetMapViewTheme(dbusIf)
-{
-    return mapviewercontrol_message(dbusIf,"GetMapViewTheme", []);
-}
-
-function mapviewercontrol_message_SetMapViewScaleByDelta(dbusIf,scaleDelta)
+function mapviewer_SetMapViewScaleByDelta(dbusIf,scaleDelta)
 {
     mapviewercontrol_message(dbusIf,"SetMapViewScaleByDelta", ["int16",scaleDelta]);
 }
 
-function mapviewercontrol_message_SetMapViewTheme(dbusIf,mapViewTheme)
+function mapviewer_GetMapViewTheme(dbusIf)
+{
+    return mapviewercontrol_message(dbusIf,"GetMapViewTheme", []);
+}
+
+function mapviewer_SetMapViewTheme(dbusIf,mapViewTheme)
 {
     mapviewercontrol_message(dbusIf,"SetMapViewTheme", ["int32",mapViewTheme]);
 }
 
-function mapviewercontrol_message_SetMapViewPerspective(dbusIf,perspective)
+function mapviewer_GetMapViewPerspective(dbusIf)
+{
+    return mapviewercontrol_message(dbusIf,"GetMapViewPerspective", []);
+}
+
+function mapviewer_SetMapViewPerspective(dbusIf,perspective)
 {
     mapviewercontrol_message(dbusIf,"SetMapViewPerspective", ["int32",perspective]);
 }
 
-function mapviewercontrol_message_SetFollowCarMode(dbusIf,followCarMode)
+function mapviewer_SetFollowCarMode(dbusIf,followCarMode)
 {
     mapviewercontrol_message(dbusIf,"SetFollowCarMode", ["boolean",followCarMode]);
 }
 
-function mapviewercontrol_message_DisplayRoute(dbusIf,routeHandle,highlighted)
+function mapviewer_DisplayRoute(dbusIf,routeHandle,highlighted)
 {
     var args=[];
     args=args.concat(routeHandle);
     mapviewercontrol_message(dbusIf,"DisplayRoute", args.concat("boolean",highlighted));
 }
 
-function mapviewercontrol_message_SetTargetPoint(dbusIf,latitude,longitude,altitude)
+function mapviewer_SetTargetPoint(dbusIf,latitude,longitude,altitude)
 {
     mapviewercontrol_message(dbusIf, "SetTargetPoint", ["structure",["double",latitude,"double",longitude,"double",altitude]]);
 }
 
-function mapviewercontrol_message_SetMapViewBoundingBox(dbusIf,boundingBox)
+function mapviewer_SetMapViewBoundingBox(dbusIf,boundingBox)
 {
     mapviewercontrol_message(dbusIf,"SetMapViewBoundingBox", boundingBox);
 }
 
+function mapviewer_GetTargetPoint(dbusIf)
+{
+    return mapviewercontrol_message(dbusIf,"GetTargetPoint", []);
+}
+
+//---------------- MapViewer messages (handle 2) ----------------
 
 // Create a new map handle or get the current handle
-// NB: the format is [0]uint32:[1]value
-function map_handle2(par,w,h,type)
+// NB: the format of the handle is [0]uint32:[1]value
+function mapviewer_handle2(par,w,h,type)
 {
-	if (g_map_handle2)
-		return g_map_handle2;
-	g_map_handle2=map_message(par, "MapViewerControl","CreateMapViewInstance", map_session(par).concat(["structure",["uint16",w,"uint16",h],"uint16",type])).slice(0,2);
-	return g_map_handle2;
+    if (g_mapviewer_handle2)
+        return g_mapviewer_handle2;
+    g_mapviewer_handle2=mapviewer_message(par, "MapViewerControl","CreateMapViewInstance", mapviewer_session(par).concat(["structure",["uint16",w,"uint16",h],"int32",type])).slice(0,2);
+    return g_mapviewer_handle2;
 }
 
 // Delete the map handle if exists
-function map_handle_clear2(par)
+function mapviewer_handle_clear2(par)
 {
-    if (g_map_handle2) {
+    if (g_mapviewer_handle2) {
         mapviewercontrol_message2(par, "ReleaseMapViewInstance", []);
-        g_map_handle2=null;
+        g_mapviewer_handle2=null;
     }
 }
 
 // Send a message to map viewer control with session handle on handle 2
 function mapviewercontrol_message2(par, func, args)
 {
-	return map_message(par, "MapViewerControl", func, map_session(par).concat(g_map_handle2,args));
+    return mapviewer_message(par, "MapViewerControl", func, mapviewer_session(par).concat(g_mapviewer_handle2,args));
 }
 
-function mapviewercontrol_message2_SetMapViewTheme(dbusIf,mapViewTheme)
+function mapviewer2_SetMapViewTheme(dbusIf,mapViewTheme)
 {
     mapviewercontrol_message2(dbusIf,"SetMapViewTheme", ["uint16",mapViewTheme]);
 }
 
-function mapviewercontrol_message2_SetMapViewBoundingBox(dbusIf,boundingBox)
+function mapviewer2_SetMapViewBoundingBox(dbusIf,boundingBox)
 {
     mapviewercontrol_message2(dbusIf,"SetMapViewBoundingBox", boundingBox);
 }
 
-function mapviewercontrol_message2_DisplayRoute(dbusIf,routeHandle,highlighted)
+function mapviewer2_DisplayRoute(dbusIf,routeHandle,highlighted)
 {
     var args=[];
     args=args.concat(routeHandle);
     mapviewercontrol_message2(dbusIf,"DisplayRoute", args.concat("boolean",highlighted));
+}
+
+//---------------- Mapviewer Configuration messages ----------------
+
+function mapviewer_configuration_message(par, func, args)
+{
+    return mapviewer_message(par, "Configuration", func,args);
+}
+
+function mapviewer_configuration_GetSupportedLocales(dbusIf)
+{
+    return mapviewer_configuration_message(dbusIf,"GetSupportedLocales",[]);
+}
+
+function mapviewer_configuration_GetLocale(dbusIf)
+{
+    return mapviewer_configuration_message(dbusIf,"GetLocale",[]);
+}
+
+function mapviewer_configuration_SetLocale(dbusIf,language,country,script)
+{
+    mapviewer_configuration_message(dbusIf,"SetLocale",["string",language,"string",country,"string",script]);
+}
+
+function mapviewer_configuration_GetUnitsOfMeasurement(dbusIf)
+{
+    return mapviewer_configuration_message(dbusIf,"GetUnitsOfMeasurement",[]);
+}
+
+function mapviewer_configuration_SetUnitsOfMeasurementLength(dbusIf,unit)
+{
+    mapviewer_configuration_message(dbusIf,"SetUnitsOfMeasurement",["map",["int32",NAVIGATIONCORE_LENGTH,"structure",["uint8",0,"variant",["uint16",unit]]]]);
 }
 
 // -------------------- POISearch dbus messages --------------------
@@ -610,7 +761,7 @@ function poisearch_message_get(par, func, args)
 }
 
 // Create a new poisearch handle or get the current handle
-// NB: the format is [0]uint32:[1]value
+// NB: the format of the handle is [0]uint32:[1]value
 function poisearch_handle(par) {
     if (g_poisearch_handle)
         return g_poisearch_handle;
@@ -627,6 +778,54 @@ function poisearch_handle_clear(par)
     }
 }
 
+function poisearch_StartPoiSearch(dbusIf,inputString,sortOption)
+{
+    poisearch_message(dbusIf,"StartPoiSearch",["string",inputString,"int32",sortOption]);
+}
+
+function poisearch_SetCenter(dbusIf,latitude,longitude,altitude)
+{
+    poisearch_message(dbusIf, "SetCenter", ["structure",["double",latitude,"double",longitude,"double",altitude]]);
+}
+
+function poisearch_SetCategories(dbusIf,poiCategories)
+{
+    var value=[];
+    for(var i=0;i<poiCategories.length;i+=1)
+    {
+        value=value.concat(["structure",["uint32",poiCategories[i][0],"uint32",poiCategories[i][1]]]);
+    }
+
+    poisearch_message(dbusIf, "SetCategories", ["array",value]);
+}
+
+function poisearch_GetAvailableCategories(dbusIf)
+{
+    return poisearch_message_get(dbusIf,"GetAvailableCategories",[]);
+}
+
+function poisearch_RequestResultList(dbusIf,offset,maxWindowSize,attributeList)
+{
+    var value=[];
+    for(var i=0;i<attributeList.length;i+=1)
+    {
+        value=value.concat(["uint32",attributeList[i]]);
+    }
+    return poisearch_message(dbusIf,"RequestResultList",["uint16",offset,"uint16",maxWindowSize,"array",value]);
+}
+
+function poisearch_GetPoiDetails(dbusIf,ids)
+{
+    var value=[];
+    for(var i=0;i<ids.length;i+=1)
+    {
+        value=value.concat(["uint32",ids[i]]);
+    }
+    return poisearch_message_get(dbusIf,"GetPoiDetails",["array",value]);
+}
+
+//----------------- Trip Computer messages -----------------
+
 // Send a message to demonstrator (basic)
 function demonstrator_message(par, iface, func, args)
 {
@@ -640,41 +839,23 @@ function tripcomputer_message(par, func, args)
 }
 
 // Send a message to fuel stop advisor (basic)
-function fuel_stop_advisor_message(par, func, args)
+function fuelstopadvisor_message(par, func, args)
 {
 	return demonstrator_message(par, "FuelStopAdvisor", func, args);
 }
 
-function fuel_stop_advisor_ReleaseRouteHandle(dbusIf,routeHandle)
+function fuelstopadvisor_ReleaseRouteHandle(dbusIf,routeHandle)
 {
-    fuel_stop_advisor_message(dbusIf,"ReleaseRouteHandle",routeHandle);
+    fuelstopadvisor_message(dbusIf,"ReleaseRouteHandle",routeHandle);
 }
 
-function fuel_stop_advisor_SetRouteHandle(dbusIf,routeHandle)
+function fuelstopadvisor_SetRouteHandle(dbusIf,routeHandle)
 {
-    fuel_stop_advisor_message(dbusIf,"SetRouteHandle",routeHandle);
+    fuelstopadvisor_message(dbusIf,"SetRouteHandle",routeHandle);
 }
 
-function fuel_stop_advisor_SetFuelAdvisorSettings(dbusIf,advisorMode,distanceThreshold)
+function fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,advisorMode,distanceThreshold)
 {
-    fuel_stop_advisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",advisorMode,"uint8",distanceThreshold]);
+    fuelstopadvisor_message(dbusIf,"SetFuelAdvisorSettings",["boolean",advisorMode,"uint8",distanceThreshold]);
 }
 
-function setlang(lang)
-{
-	g_lang=lang;
-    translations = new Array;
-    Qt.include("translations/"+lang+".js");
-}
-
-function gettext(arg)
-{
-    if (!translations[arg]) {
-        if (g_lang) {
-            console.log("Translation for '" + arg + "' missing for " + g_lang);
-        }
-        return arg;
-    } else {
-        return translations[arg];
-    }
-}

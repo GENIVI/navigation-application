@@ -181,7 +181,7 @@ HMIMenu {
         var res;
         disableAllValue(); // By default set all the values to "--"
 		if (tripnr > 0) {         
-            res=Genivi.fuel_stop_advisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
+            res=Genivi.fuelstopadvisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
                 if (res[1][i+1] == Genivi.FUELSTOPADVISOR_DISTANCE) {
 			distance_value.text=res[1][i+3][1]/10;
@@ -194,7 +194,7 @@ HMIMenu {
 				}
 			}
 		} else {
-            res=Genivi.fuel_stop_advisor_message(dbusIf,"GetInstantData",[]);
+            res=Genivi.fuelstopadvisor_message(dbusIf,"GetInstantData",[]);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_FUEL_LEVEL) {
 					fuel_value.text=res[1][i+3][1];
@@ -390,10 +390,10 @@ HMIMenu {
             id:reset; text: Genivi.gettext("Reset"); explode:false; disabled:false; next:select_trip1; prev:back;
             onClicked:{
 		if (Genivi.tripMode == "TRIP_NUMBER1") {
-			Genivi.fuel_stop_advisor_message(dbusIf,"ResetTripData",["uint8",0]);
+			Genivi.fuelstopadvisor_message(dbusIf,"ResetTripData",["uint8",0]);
 		}
 		if (Genivi.tripMode == "TRIP_NUMBER2") {
-			Genivi.fuel_stop_advisor_message(dbusIf,"ResetTripData",["uint8",1]);
+			Genivi.fuelstopadvisor_message(dbusIf,"ResetTripData",["uint8",1]);
 		}
     		updateTripMode();
             }

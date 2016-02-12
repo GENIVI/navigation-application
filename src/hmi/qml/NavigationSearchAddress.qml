@@ -77,7 +77,7 @@ HMIMenu {
         var statusValue=args[3];
         if (statusValue == Genivi.NAVIGATIONCORE_FINISHED)
         {
-            Genivi.locationInput_SelectEntry(dbusIf,Genivi.entryselectedentry);
+            Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry);
         }
     }
 
@@ -166,8 +166,8 @@ HMIMenu {
 	function accept(what)
 	{
 		ok.disabled=true;
-        Genivi.locationInput_SetSelectionCriterion(dbusIf,what.criterion);
-        Genivi.locationInput_Search(dbusIf,what.text,10);
+        Genivi.locationinput_SetSelectionCriterion(dbusIf,what.criterion);
+        Genivi.locationinput_Search(dbusIf,what.text,10);
 	}
 
 
@@ -175,9 +175,9 @@ HMIMenu {
 	{
 		disconnectSignals();
 		if (toOtherMenu) {
-			Genivi.loc_handle_clear(dbusIf);
+			Genivi.locationinput_handle_clear(dbusIf);
 		}
-		//Genivi.nav_session_clear(dbusIf);
+		//Genivi.navigationcore_session_clear(dbusIf);
 	}
 
 	DBusIf {
@@ -185,15 +185,15 @@ HMIMenu {
         Component.onCompleted: {
             connectSignals();
 
-            var res=Genivi.navigationcoreSession_GetVersion(dbusIf);
+            var res=Genivi.navigationcore_session_GetVersion(dbusIf);
             if (res[0] != "error") {
-                res=Genivi.nav_session(dbusIf);
-                res=Genivi.loc_handle(dbusIf);
+                res=Genivi.navigationcore_session(dbusIf);
+                res=Genivi.locationinput_handle(dbusIf);
             } else {
                 Genivi.dump("",res);
             }
             if (Genivi.entryselectedentry) {
-                Genivi.locationInput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
+                Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
             }
             if (Genivi.entrydest == 'countryValue')
             {

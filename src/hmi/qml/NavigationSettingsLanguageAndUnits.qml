@@ -43,90 +43,69 @@ HMIMenu {
 
 	function update()
 	{
-		var available_nav=Genivi.navigationcore_message(dbusIf,"Configuration","GetSupportedLocales",[]);
-		var available_map=Genivi.navigationcore_message(dbusIf,"Configuration","GetSupportedLocales",[]);
-		var current_nav=Genivi.navigationcore_message(dbusIf,"Configuration","GetLocale",[]);
-		var current_map=Genivi.map_message(dbusIf,"Configuration","GetLocale",[]);
+        var available_nav=Genivi.navigationcore_configuration_GetSupportedLocales(dbusIf);
+        var available_map=Genivi.mapviewer_configuration_GetSupportedLocales(dbusIf);
+        var current_nav=Genivi.navigationcore_configuration_GetLocale(dbusIf);
+        var current_map=Genivi.mapviewer_configuration_GetLocale(dbusIf);
 		var current_lang_nav;
 		var current_lang_map;
 		var lang_nav=[];
 		var lang_map=[];
-        if (current_nav[0] == "string" && current_nav[2] == "string" && current_nav[4] == "string") {
-			current_lang_nav=current_nav[1] + "_" + current_nav[3];
-		} else {
-			console.log("Unexpected result from GetLocale:");
-			Genivi.dump("",current_nav);
-		}
-        if (current_map[0] == "string" && current_map[2] == "string" && current_nav[4] == "string") {
-			current_lang_map=current_map[1] + "_" + current_map[3];
-		} else {
-			console.log("Unexpected result from GetLocale:");
-			Genivi.dump("",current_map);
-		}
-		if (available_nav[0] == "array") {
-			for (var i = 0 ; i < available_nav[1].length ; i+=2) {
-				lang_nav[available_nav[1][i+1][1]+"_"+available_nav[1][i+1][3]]=true;
-			}
-		} else {
-			console.log("Unexpected result from GetSupportedLocales:");
-			Genivi.dump("",available_nav);
-		}
-		if (available_map[0] == "array") {
-			for (var i = 0 ; i < available_map[1].length ; i+=2) {
-				lang_map[available_map[1][i+1][1]+"_"+available_map[1][i+1][3]]=true;
-			}
-		} else {
-			console.log("Unexpected result from GetSupportedLocales:");
-			Genivi.dump("",available_map);
-		}
-		for (var i = 0 ; i < content.children.length ; i++) {
+
+        current_lang_nav=current_nav[1] + "_" + current_nav[3];
+        current_lang_map=current_map[1] + "_" + current_map[3];
+
+        for (var i = 0 ; i < available_nav[1].length ; i+=2) {
+            lang_nav[available_nav[1][i+1][1]+"_"+available_nav[1][i+1][3]]=true;
+        }
+
+        for (var i = 0 ; i < available_map[1].length ; i+=2) {
+            lang_map[available_map[1][i+1][1]+"_"+available_map[1][i+1][3]]=true;
+        }
+
+        // only the locales for nav are used
+        for (var i = 0 ; i < content.children.length ; i++) {
 			var name=content.children[i].objectName;
 			if (name) {
-				if (lang_nav[name] && lang_map[name]) {
-					content.children[i].visible=true;
-					if (name == current_lang_nav && name == current_lang_map) {
-						content.children[i].disabled=true;
-                    } else {
-						content.children[i].disabled=false;
-					}
-				} else {
-                    content.children[i].visible=false;
-				}
-			}
+                content.children[i].visible=true;
+                if (name == current_lang_nav) {
+                    content.children[i].disabled=true;
+                }
+                else {
+                    content.children[i].disabled=false;
+                }
+            }
 		}
+
+        Genivi.dump("lang_nav",lang_nav);
+
 		var units1,units2;
-		var res=Genivi.navigationcore_message(dbusIf,"Configuration","GetUnitsOfMeasurement",[]);
-		if (res[0] == "map" && res[1][0] == "uint16" && res[1][1] == Genivi.MAPVIEWER_LENGTH && res[1][2] == "variant" && res[1][3][0] == "uint16") {
-			units1=res[1][3][1];
-		} else {
-			console.log("Unexpected result from GetUnitsOfMeasurement:");
-			Genivi.dump("",res);
-			units1=0;
-		}
-        var res1=Genivi.map_message(dbusIf,"Configuration","GetUnitsOfMeasurement",[]);
-        if (res1[0] == "map" && res1[1][0] == "uint16" && res1[1][1] == Genivi.MAPVIEWER_LENGTH && res1[1][2] == "variant" && res1[1][3][0] == "uint16") {
-            units2=res1[1][3][1];
-		} else {
-			console.log("Unexpected result from GetUnitsOfMeasurement:");
-            Genivi.dump("",res1);
-			units2=0;
-		}
+        var res=Genivi.navigationcore_configuration_GetUnitsOfMeasurement(dbusIf);
+
+        if (res[1][1] == Genivi.NAVIGATIONCORE_LENGTH) {
+            units1=res[1][3][3][1];
+        }
+        var res1=Genivi.mapviewer_configuration_GetUnitsOfMeasurement(dbusIf);
+        if (res1[1][1] == Genivi.MAPVIEWER_LENGTH) {
+            units2=res1[1][3][3][1];
+        }
 		unit_km.disabled=false;
 		unit_mile.disabled=false;
-		if (units1==Genivi.NAVIGATIONCORE_KM && units2==Genivi.MAPVIEWER_KM) unit_km.disabled=true;
-		if (units1==Genivi.NAVIGATIONCORE_MILE && units2==Genivi.MAPVIEWER_MILE) unit_mile.disabled=true;
+        if (units1==Genivi.NAVIGATIONCORE_KM) unit_km.disabled=true;
+        if (units1==Genivi.NAVIGATIONCORE_MILE) unit_mile.disabled=true;
 	}
+
     function setLocale(language, country, script)
 	{
-        Genivi.navigationcore_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
-        Genivi.map_message(dbusIf,"Configuration","SetLocale",["string",language,"string",country,"string",script]);
+        Genivi.navigationcore_configuration_SetLocale(dbusIf,language,country,script);
+        Genivi.mapviewer_configuration_SetLocale(dbusIf,language,country,script);
         Genivi.setlang(language + "_" + country);
         pageOpen(menu.pagefile); //reload page because of texts...
     }
-	function setUnits(units1,units2)
+    function setUnitsLength(units1,units2)
 	{
-		Genivi.navigationcore_message(dbusIf,"Configuration","SetUnitsOfMeasurement",["map",["uint16",Genivi.NAVIGATIONCORE_LENGTH,"variant",["uint16",units1]]]);
-		Genivi.map_message(dbusIf,"Configuration","SetUnitsOfMeasurement",["map",["uint16",Genivi.MAPVIEWER_LENGTH,"variant",["uint16",units2]]]);
+        Genivi.navigationcore_configuration_SetUnitsOfMeasurementLength(dbusIf,units1);
+        Genivi.mapviewer_configuration_SetUnitsOfMeasurementLength(dbusIf,units2);
 		update();
 	}
 
@@ -165,12 +144,12 @@ HMIMenu {
         StdButton { source:StyleSheet.unit_km[Constants.SOURCE]; x:StyleSheet.unit_km[Constants.X]; y:StyleSheet.unit_km[Constants.Y]; width:StyleSheet.unit_km[Constants.WIDTH]; height:StyleSheet.unit_km[Constants.HEIGHT];
             id:unit_km; explode:false; disabled:false; next:back; prev:back;
 			onClicked: {
-				setUnits(Genivi.NAVIGATIONCORE_KM,Genivi.MAPVIEWER_KM);}
+                setUnitsLength(Genivi.NAVIGATIONCORE_KM,Genivi.MAPVIEWER_KM);}
 		}
         StdButton { source:StyleSheet.unit_mile[Constants.SOURCE]; x:StyleSheet.unit_mile[Constants.X]; y:StyleSheet.unit_mile[Constants.Y]; width:StyleSheet.unit_mile[Constants.WIDTH]; height:StyleSheet.unit_mile[Constants.HEIGHT];
             id:unit_mile; explode:false; disabled:false; next:back; prev:back;
 			onClicked: {
-				setUnits(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
+                setUnitsLength(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
 		}
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; onClicked:{leaveMenu();}}

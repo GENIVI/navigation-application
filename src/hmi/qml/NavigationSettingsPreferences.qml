@@ -52,104 +52,81 @@ HMIMenu {
         mode: 0
     }
 
-
-    function array_contains(array, preferenceSource, preferenceMode)
-	{
-        var i;
-		for (i = 0 ; i < array.length; i+=2) {
-            if (array[i] == "structure") {
-                var structure=array[i+1];
-                if (structure[0] == "uint16" && structure[2] == "uint16") {
-                    if (structure[1] == preferenceSource && structure[3] == preferenceMode)
-                        return true;
-                }
-                else {
-                    console.log("Unexpected result from GetSupportedRoutePreferences");
-                    return false;
-                }
-            } else { return false; }
-		}
-		return false;
-	}
-
-    function update_preference(idyes, idno, supported, active, preferenceSource,preferenceMode)
-	{
-        if (array_contains(supported, preferenceSource, preferenceMode)) {
-            if (array_contains(active, preferenceSource, preferenceMode)) {
-				idyes.disabled=false;
-				idno.disabled=true;
-			} else {
-				idyes.disabled=true;
-				idno.disabled=false;
-			}
-		} else {
-			idyes.disabled=true;
-			idno.disabled=true;
-		}
-	}
-
 	function update()
-    { //only roadPreferenceList is managed
-        var supported=Genivi.routing_message_get(dbusIf,"GetSupportedRoutePreferences",[]);
-        var active=Genivi.routing_message_get(dbusIf,"GetRoutePreferences",["string",""]);
-        if (supported[0] != 'array') {
-			console.log("Unexpected result from GetSupportedRoutePreferences");
-            Genivi.dump("",supported);
-			return;
-		}
-        if (active[0] != 'array' || active[2] != 'array') {
-			console.log("Unexpected result from GetRoutePreferences");
-            Genivi.dump("",active);
-			return;
-		}
-        // only three couples managed
-        update_preference(ferries_yes,ferries_no,supported[1],active[1],Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_FERRY);
-        update_preference(toll_roads_yes,toll_roads_no,supported[1],active[1],Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_TOLL_ROADS);
-        update_preference(motorways_yes,motorways_no,supported[1],active[1],Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS);
+    {
+        Genivi.routing_SetRoutePreferences(dbusIf,""); //preferences applied to all countries
+        var active=Genivi.routing_GetRoutePreferences(dbusIf,"");
+
+        var roadPreferenceList;
+        var conditionPreferenceList;
+        roadPreferenceList=active[1];
+        conditionPreferenceList=active[3];
+        var roadPreferenceMode,roadPreferenceSource;
+        var conditionPreferenceMode,conditionPreferenceSource;
+
+        for(var i=0; i<roadPreferenceList.length; i+=2)
+        {
+            roadPreferenceMode=roadPreferenceList[i+1][1];
+            roadPreferenceSource=roadPreferenceList[i+1][3];
+            Genivi.roadPreferenceList[roadPreferenceSource]=roadPreferenceMode;
+
+            if(roadPreferenceSource == Genivi.NAVIGATIONCORE_FERRY)
+            {
+                if(roadPreferenceMode == Genivi.NAVIGATIONCORE_AVOID)
+                {
+                    ferries_yes.disabled=false;
+                    ferries_no.disabled=true;
+                }
+                else
+                {
+                    ferries_yes.disabled=true;
+                    ferries_no.disabled=false;
+                }
+            }
+            else
+            {
+                if(roadPreferenceSource == Genivi.NAVIGATIONCORE_TOLL_ROADS)
+                {
+                    if(roadPreferenceMode == Genivi.NAVIGATIONCORE_AVOID)
+                    {
+                        toll_roads_yes.disabled=false;
+                        toll_roads_no.disabled=true;
+                    }
+                    else
+                    {
+                        toll_roads_yes.disabled=true;
+                        toll_roads_no.disabled=false;
+                    }
+                }
+                else
+                {
+                    if(roadPreferenceSource == Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)
+                    {
+                        if(roadPreferenceMode == Genivi.NAVIGATIONCORE_AVOID)
+                        {
+                            motorways_yes.disabled=false;
+                            motorways_no.disabled=true;
+                        }
+                        else
+                        {
+                            motorways_yes.disabled=true;
+                            motorways_no.disabled=false;
+                        }
+                    }
+                }
+            }
+        }
 	}
 
-    function remove(preferenceSource,preferenceMode)
+    function use(preferenceSource)
 	{
-        var active=Genivi.routing_message_get(dbusIf,"GetRoutePreferences",["string",""]); //preferences applied to all countries
-        if (active[0] != 'array' || active[2] != 'array') {
-			console.log("Unexpected result from GetRoutePreferences");
-            Genivi.dump("",active);
-			return;
-		}
-
-        var i,para=[],pref=[];
-        para = para.concat("string","","array");
-
-        for (i = 0 ; i < active[1].length; i+=2) {
-            if (active[1][i] != 'structure') {
-                console.log("Unexpected result from GetRoutePreferences");
-                Genivi.dump("",active);
-                return;
-            }
-            if (active[1][i+1][1] != preferenceSource || active[1][i+1][3] != preferenceMode) {
-                pref = pref.concat(["structure"],[active[1][i+1]]);
-            }
-		}
-        para = para.concat([pref],"array",[active[3]]);
-        Genivi.routing_message(dbusIf,"SetRoutePreferences",para);
+        Genivi.roadPreferenceList[preferenceSource]=Genivi.NAVIGATIONCORE_USE;
 		update();
 	}
 
-    function add(preferenceSource,preferenceMode)
+    function avoid(preferenceSource)
 	{
-        var active=Genivi.routing_message_get(dbusIf,"GetRoutePreferences",["string",""]);
-        if (active[0] != 'array' || active[2] != 'array') {
-			console.log("Unexpected result from GetRoutePreferences");
-            Genivi.dump("",active);
-			return;
-		}
-
-        var preferences = [["uint16", preferenceSource,"uint16", preferenceMode]];
-        active[1] = active[1].concat("structure",preferences);
-
-        var para = [];
-        para = para.concat("string","",active);
-        Genivi.routing_message(dbusIf,"SetRoutePreferences",para);
+        Genivi.roadPreferenceList[preferenceSource]=Genivi.NAVIGATIONCORE_AVOID;
 		update();
 	}
 
@@ -181,9 +158,9 @@ HMIMenu {
             text: Genivi.gettext("Ferries")
         }
         StdButton { source:StyleSheet.allow_ferries[Constants.SOURCE]; x:StyleSheet.allow_ferries[Constants.X]; y:StyleSheet.allow_ferries[Constants.Y]; width:StyleSheet.allow_ferries[Constants.WIDTH]; height:StyleSheet.allow_ferries[Constants.HEIGHT];
-            id:ferries_yes; next:back; prev:back; explode:false; onClicked:{remove(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_FERRY)}}
+            id:ferries_yes; next:back; prev:back; explode:false; onClicked:{use(Genivi.NAVIGATIONCORE_FERRY)}}
         StdButton { source:StyleSheet.avoid_ferries[Constants.SOURCE]; x:StyleSheet.avoid_ferries[Constants.X]; y:StyleSheet.avoid_ferries[Constants.Y]; width:StyleSheet.avoid_ferries[Constants.WIDTH]; height:StyleSheet.avoid_ferries[Constants.HEIGHT];
-            id:ferries_no; next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_FERRY)}}
+            id:ferries_no; next:back; prev:back; explode:false; onClicked:{avoid(Genivi.NAVIGATIONCORE_FERRY)}}
 
 		Text {
             x:StyleSheet.tollRoadsText[Constants.X]; y:StyleSheet.tollRoadsText[Constants.Y]; width:StyleSheet.tollRoadsText[Constants.WIDTH]; height:StyleSheet.tollRoadsText[Constants.HEIGHT];color:StyleSheet.tollRoadsText[Constants.TEXTCOLOR];styleColor:StyleSheet.tollRoadsText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tollRoadsText[Constants.PIXELSIZE];
@@ -193,9 +170,9 @@ HMIMenu {
             text: Genivi.gettext("TollRoads")
         }
         StdButton { source:StyleSheet.allow_tollRoads[Constants.SOURCE]; x:StyleSheet.allow_tollRoads[Constants.X]; y:StyleSheet.allow_tollRoads[Constants.Y]; width:StyleSheet.allow_tollRoads[Constants.WIDTH]; height:StyleSheet.allow_tollRoads[Constants.HEIGHT];
-            id:toll_roads_yes; next:back; prev:back; explode:false; onClicked:{remove(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
+            id:toll_roads_yes; next:back; prev:back; explode:false; onClicked:{use(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
         StdButton { source:StyleSheet.avoid_tollRoads[Constants.SOURCE]; x:StyleSheet.avoid_tollRoads[Constants.X]; y:StyleSheet.avoid_tollRoads[Constants.Y]; width:StyleSheet.avoid_tollRoads[Constants.WIDTH]; height:StyleSheet.avoid_tollRoads[Constants.HEIGHT];
-            id:toll_roads_no;  next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
+            id:toll_roads_no;  next:back; prev:back; explode:false; onClicked:{avoid(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
 
 		Text {
             x:StyleSheet.motorWaysText[Constants.X]; y:StyleSheet.motorWaysText[Constants.Y]; width:StyleSheet.motorWaysText[Constants.WIDTH]; height:StyleSheet.motorWaysText[Constants.HEIGHT];color:StyleSheet.motorWaysText[Constants.TEXTCOLOR];styleColor:StyleSheet.motorWaysText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.motorWaysText[Constants.PIXELSIZE];
@@ -205,9 +182,9 @@ HMIMenu {
             text: Genivi.gettext("MotorWays")
         }
         StdButton { source:StyleSheet.allow_motorways[Constants.SOURCE]; x:StyleSheet.allow_motorways[Constants.X]; y:StyleSheet.allow_motorways[Constants.Y]; width:StyleSheet.allow_motorways[Constants.WIDTH]; height:StyleSheet.allow_motorways[Constants.HEIGHT];
-            id:motorways_yes; next:back; prev:back; explode:false; onClicked:{remove(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
+            id:motorways_yes; next:back; prev:back; explode:false; onClicked:{use(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
         StdButton { source:StyleSheet.avoid_motorways[Constants.SOURCE]; x:StyleSheet.avoid_motorways[Constants.X]; y:StyleSheet.avoid_motorways[Constants.Y]; width:StyleSheet.avoid_motorways[Constants.WIDTH]; height:StyleSheet.avoid_motorways[Constants.HEIGHT];
-            id:motorways_no;  next:back; prev:back; explode:false; onClicked:{add(Genivi.NAVIGATIONCORE_AVOID,Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
+            id:motorways_no;  next:back; prev:back; explode:false; onClicked:{avoid(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
 
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; onClicked:{leaveMenu();}}
@@ -215,20 +192,10 @@ HMIMenu {
 	}
 
     Component.onCompleted: {
-        var res=Genivi.routing_message(dbusIf,"GetCostModel",[]);
-        var costmodel=0;
-        if (res[0] == "uint16") {
-            costmodel=res[1];
-        } else {
-            console.log("Unexpected result from GetCostModel");
-            Genivi.dump("",res);
-        }
-        var res=Genivi.routing_message(dbusIf,"GetSupportedCostModels",[]);
-        if (res[0] != "array") {
-            console.log("Unexpected result from GetSupportedCostModel");
-            Genivi.dump("",res);
-        }
-        for (var i = 0 ; i < res[1].length ; i+=2) {
+        var res=Genivi.routing_GetCostModel(dbusIf);
+        var costmodel=res[1];
+        var costModelsList=Genivi.routing_GetSupportedCostModels(dbusIf);
+        for (var i = 0 ; i < costModelsList[1].length ; i+=2) {
             var button=Qt.createQmlObject('import QtQuick 2.1 ; import "Core"; StdButton { }',content,'dynamic');
             button.source=StyleSheet.cost_model[Constants.SOURCE];
             button.x=StyleSheet.cost_model[Constants.X];
@@ -237,12 +204,12 @@ HMIMenu {
             button.height=StyleSheet.cost_model[Constants.HEIGHT];
             button.textColor=StyleSheet.costModelValue[Constants.TEXTCOLOR];
             button.pixelSize=StyleSheet.costModelValue[Constants.PIXELSIZE];
-            button.userdata=res[1][i+1];
+            button.userdata=costModelsList[1][i+1];
             button.text=Genivi.CostModels[button.userdata];
             button.disabled=button.userdata == costmodel;
             button.clicked.connect(
                 function(what) {
-                    Genivi.routing_message(dbusIf,"SetCostModel",["uint16",what.userdata]);
+                    Genivi.routing_SetCostModel(dbusIf,what.userdata);
                     pageOpen(menu.pagefile); //reload the page
                 }
             );

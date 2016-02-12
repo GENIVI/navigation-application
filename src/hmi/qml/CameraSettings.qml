@@ -51,12 +51,11 @@ HMIMenu {
         property bool active;
         onTriggered: {
             if (active) {
-                var res=Genivi.mapviewercontrol_message(dbusIf, "GetTargetPoint", []);
-                if (res[0] == 'structure') {
-                    res[1][1]+=lat;
-                    res[1][3]+=lon;
-                    Genivi.mapviewercontrol_message(dbusIf, "SetTargetPoint", res);
-                }
+                var res=Genivi.mapviewer_GetTargetPoint(dbusIf);
+                var latitude=res[1][1]+lat;
+                var longitude=res[1][3]+lon;
+                var altitude=res[1][5];
+                Genivi.mapviewer_SetTargetPoint(dbusIf,latitude,longitude,altitude);
                 interval=50;
                 restart();
             }
@@ -75,18 +74,16 @@ HMIMenu {
         onTriggered: {
             if (active) {
                 var res=Genivi.mapviewercontrol_message(dbusIf, "Get"+camera_value, []);
-                if (res[0] == 'double' || res[0] == 'int32' || res[0] == 'uint32') {
-                    res[1]+=step;
-                    if (clamp) {
-                        if (step > 0 && res[1] > clamp_value) {
-                            res[1]=clamp_value;
-                        }
-                        if (step < 0 && res[1] < clamp_value) {
-                            res[1]=clamp_value;
-                        }
+                res[1]+=step;
+                if (clamp) {
+                    if (step > 0 && res[1] > clamp_value) {
+                        res[1]=clamp_value;
                     }
-                    Genivi.mapviewercontrol_message(dbusIf, "Set"+camera_value, res);
+                    if (step < 0 && res[1] < clamp_value) {
+                        res[1]=clamp_value;
+                    }
                 }
+                Genivi.mapviewercontrol_message(dbusIf, "Set"+camera_value, res);
                 interval=50;
                 restart();
             }
@@ -95,7 +92,7 @@ HMIMenu {
 
     function move_start(lat, lon)
     {
-        Genivi.mapviewercontrol_message(dbusIf, "SetFollowCarMode", ["boolean",false]);
+        Genivi.mapviewer_SetFollowCarMode(dbusIf, false);
         move_timer.lat=lat/10000;
         move_timer.lon=lon/10000;
         move_timer.active=true;
@@ -137,19 +134,19 @@ HMIMenu {
 
     function updateMapViewer()
     {
-        var res=Genivi.mapviewercontrol_message_GetMapViewPerspective(dbusIf);
+        var res=Genivi.mapviewer_GetMapViewPerspective(dbusIf);
         if (res[1] == Genivi.MAPVIEWER_2D) {
             perspective.text=Genivi.gettext("CameraPerspective3d");
         } else {
             perspective.text=Genivi.gettext("CameraPerspective2d");
         }
-        res=Genivi.mapviewercontrol_message_GetDisplayedRoutes(dbusIf);
+        res=Genivi.mapviewer_GetDisplayedRoutes(dbusIf);
         if (res[1] && res[1].length) {
             split.disabled=false;
         } else {
             split.disabled=true;
         }
-        if (Genivi.g_map_handle2) {
+        if (Genivi.g_mapviewer_handle2) {
             split.text=Genivi.gettext("Join");
         } else {
             split.text=Genivi.gettext("Split");
@@ -158,17 +155,17 @@ HMIMenu {
 
     function toggleDayNight()
     {
-        var res=Genivi.mapviewercontrol_message_GetMapViewTheme(dbusIf);
+        var res=Genivi.mapviewer_GetMapViewTheme(dbusIf);
         if (res[1] == Genivi.MAPVIEWER_THEME_1) {
-            Genivi.mapviewercontrol_message_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_2);
-            if (Genivi.g_map_handle2) {
-                Genivi.mapviewercontrol_message2_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_2);
+            Genivi.mapviewer_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_2);
+            if (Genivi.g_mapviewer_handle2) {
+                Genivi.mapviewer2_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_2);
             }
             daynight.text=Genivi.gettext("Day");
         } else {
-            Genivi.mapviewercontrol_message_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_1);
-            if (Genivi.g_map_handle2) {
-                Genivi.mapviewercontrol_message2_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_1);
+            Genivi.mapviewer_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_1);
+            if (Genivi.g_mapviewer_handle2) {
+                Genivi.mapviewer2_SetMapViewTheme(dbusIf,Genivi.MAPVIEWER_THEME_1);
             }
             daynight.text=Genivi.gettext("Night");
         }
@@ -176,7 +173,7 @@ HMIMenu {
 
     function updateDayNight()
     {
-        var res=Genivi.mapviewercontrol_message_GetMapViewTheme(dbusIf);
+        var res=Genivi.mapviewer_GetMapViewTheme(dbusIf);
         if (res[1] == Genivi.MAPVIEWER_THEME_1) {
             daynight.text=Genivi.gettext("Night");
         } else {
@@ -187,43 +184,43 @@ HMIMenu {
     function togglePerspective()
     {
         if (perspective.text == Genivi.gettext("CameraPerspective2d")) {
-            Genivi.mapviewercontrol_message_SetMapViewPerspective(dbusIf,Genivi.MAPVIEWER_2D);
+            Genivi.mapviewer_SetMapViewPerspective(dbusIf,Genivi.MAPVIEWER_2D);
         } else {
-            Genivi.mapviewercontrol_message_SetMapViewPerspective(dbusIf,Genivi.MAPVIEWER_3D);
+            Genivi.mapviewer_SetMapViewPerspective(dbusIf,Genivi.MAPVIEWER_3D);
         }
         updateMapViewer();
     }
 
     function toggleSplit()
     {
-        var displayedRoutes=Genivi.mapviewercontrol_message_GetDisplayedRoutes(dbusIf);
-        var mapViewTheme=Genivi.mapviewercontrol_message_GetMapViewTheme(dbusIf);
+        var displayedRoutes=Genivi.mapviewer_GetDisplayedRoutes(dbusIf);
+        var mapViewTheme=Genivi.mapviewer_GetMapViewTheme(dbusIf);
         if (split.text == Genivi.gettext("Split")) {
-            Genivi.map_handle_clear(dbusIf);
-            Genivi.map_handle2(dbusIf,map.width/2,map.height,Genivi.MAPVIEWER_MAIN_MAP);
-            Genivi.map_handle(dbusIf,map.width/2,map.height,Genivi.MAPVIEWER_MAIN_MAP);
+            Genivi.mapviewer_handle_clear(dbusIf);
+            Genivi.mapviewer_handle2(dbusIf,map.width/2,map.height,Genivi.MAPVIEWER_MAIN_MAP);
+            Genivi.mapviewer_handle(dbusIf,map.width/2,map.height,Genivi.MAPVIEWER_MAIN_MAP);
             if (displayedRoutes[1] && displayedRoutes[1].length) {
-                var boundingBox=Genivi.routing_message_GetRouteBoundingBox(dbusIf,[]);
-                Genivi.mapviewercontrol_message2_SetMapViewBoundingBox(dbusIf,boundingBox);
+                var boundingBox=Genivi.routing_GetRouteBoundingBox(dbusIf,[]);
+                Genivi.mapviewer2_SetMapViewBoundingBox(dbusIf,boundingBox);
             }
-            Genivi.mapviewercontrol_message_SetMapViewTheme(dbusIf,mapViewTheme);
-            Genivi.mapviewercontrol_message2_SetMapViewTheme(dbusIf,mapViewTheme);
-            Genivi.mapviewercontrol_message_SetFollowCarMode(dbusIf,true);
+            Genivi.mapviewer_SetMapViewTheme(dbusIf,mapViewTheme[1]);
+            Genivi.mapviewer2_SetMapViewTheme(dbusIf,mapViewTheme[1]);
+            Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
         } else {
-            Genivi.map_handle_clear2(dbusIf);
-            Genivi.map_handle_clear(dbusIf);
-            Genivi.map_handle(dbusIf,map.width,map.height,Genivi.MAPVIEWER_MAIN_MAP);
-            Genivi.mapviewercontrol_message_SetMapViewTheme(dbusIf,mapViewTheme);
-            Genivi.mapviewercontrol_message_SetFollowCarMode(dbusIf,true);
+            Genivi.mapviewer_handle_clear2(dbusIf);
+            Genivi.mapviewer_handle_clear(dbusIf);
+            Genivi.mapviewer_handle(dbusIf,map.width,map.height,Genivi.MAPVIEWER_MAIN_MAP);
+            Genivi.mapviewer_SetMapViewTheme(dbusIf,mapViewTheme[1]);
+            Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
         }
         if (displayedRoutes[1] && displayedRoutes[1].length) {
             var route=[];
             for (var i = 0 ; i < displayedRoutes[1].length ; i+=2) {
-                route=res[1][i+1][0];
+                route=displayedRoutes[1][i+1][0];
                 route=route.concat(res[1][i+1][1]);
-                Genivi.mapviewercontrol_message_DisplayRoute(dbusIf,route,res[1][i+1][3]);
+                Genivi.mapviewer_DisplayRoute(dbusIf,route,res[1][i+1][3]);
                 if (split.text == Genivi.gettext("Split")) {
-                    Genivi.mapviewercontrol_message2_DisplayRoute(dbusIf,route,res[1][i+1][3]);
+                    Genivi.mapviewer2_DisplayRoute(dbusIf,route,res[1][i+1][3]);
                 }
             }
         }
@@ -232,7 +229,7 @@ HMIMenu {
 
     function disableSplit()
     {
-        if (Genivi.g_map_handle2) {
+        if (Genivi.g_mapviewer_handle2) {
             toggleSplit();
         }
     }
@@ -375,7 +372,7 @@ HMIMenu {
         }
      }
     Component.onCompleted: {
-        Genivi.map_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
+        Genivi.mapviewer_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
         updateMapViewer();
         updateDayNight();
     }

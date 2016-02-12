@@ -57,7 +57,7 @@ HMIMenu {
             if (statusValue == Genivi.NAVIGATIONCORE_FINISHED)
             {
                 text.color='white';
-                Genivi.locationInput_RequestListUpdate(dbusIf,0,10);
+                Genivi.locationinput_RequestListUpdate(dbusIf,0,10);
             }
         }
 	}
@@ -93,7 +93,7 @@ HMIMenu {
 	{
 		input=extraspell+input;
 		extraspell='';
-        Genivi.locationInput_Spell(dbusIf,input,10);
+        Genivi.locationinput_Spell(dbusIf,input,10);
 	}
 
 	function connectSignals()
@@ -202,7 +202,7 @@ HMIMenu {
         if (Genivi.entrycriterion) {
             criterion=Genivi.entrycriterion;
             Genivi.entrycriterion=0;
-            Genivi.locationInput_SetSelectionCriterion(dbusIf,criterion);
+            Genivi.locationinput_SetSelectionCriterion(dbusIf,criterion);
         }
         extraspell='';
         if(criterion != Genivi.NAVIGATIONCORE_STREET)

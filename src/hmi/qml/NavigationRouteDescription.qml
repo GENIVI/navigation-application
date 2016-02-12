@@ -80,7 +80,7 @@ HMIMenu {
     }
 
     Component.onCompleted: {
-        var res=Genivi.routing_message_GetRouteSegments(dbusIf,0,100,0)
+        var res=Genivi.routing_GetRouteSegments(dbusIf,0,100,0)
         var array=res[3];
         var model=view.model;
         for (var i = 0 ; i < array.length ; i+=2) {

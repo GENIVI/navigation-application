@@ -50,7 +50,7 @@ HMIMenu {
 
     function updateCurrentPosition()
     {
-        var res=Genivi.mapmatch_message_GetPosition(dbusIf);
+        var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
         var oklat=0;
         var oklong=0;
         for (var i=0;i<res[1].length;i+=4){
@@ -179,7 +179,7 @@ HMIMenu {
                 var position,destination;
                 position=Genivi.latlon_to_map(Genivi.data['position']);
                 destination=Genivi.latlon_to_map(Genivi.data['destination']);
-                Genivi.routing_message_SetWaypoints(dbusIf,false,position,destination);
+                Genivi.routing_SetWaypoints(dbusIf,false,position,destination);
                 Genivi.data['calculate_route']=true;
                 disconnectSignals();
                 Genivi.data['lat']='';
@@ -196,7 +196,7 @@ HMIMenu {
                 var position,destination;
                 destination=Genivi.latlon_to_map(Genivi.data['destination']);
                 position="";
-                Genivi.routing_message_SetWaypoints(dbusIf,true,position,destination);
+                Genivi.routing_SetWaypoints(dbusIf,true,position,destination);
                 Genivi.data['calculate_route']=true;
                 disconnectSignals();
                 Genivi.data['lat']='';

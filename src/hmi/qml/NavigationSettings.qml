@@ -49,78 +49,64 @@ HMIMenu {
 
     function simulationSpeedChanged(args)
     {
-        if (args[0] == 'uint8')
-        {
-            if (args[1] == 0) {
-                speedValue.text="0";
-                speedValueSent=0;
-            }
-            if (args[1] == 1) {
-                speedValue.text="1/4";
-                speedValueSent=1;
-            }
-            if (args[1] == 2) {
-                speedValue.text="1/2";
-                speedValueSent=2;
-            }
-            if (args[1] == 4) {
-                speedValue.text="1";
-                speedValueSent=3;
-            }
-            if (args[1] == 8) {
-                speedValue.text="2";
-                speedValueSent=4;
-            }
-            if (args[1] == 16) {
-                speedValue.text="4";
-                speedValueSent=5;
-            }
-            if (args[1] == 32) {
-                speedValue.text="8";
-                speedValueSent=6;
-            }
-            if (args[1] == 64) {
-                speedValue.text="16";
-                speedValueSent=7;
-            }
+        var speedFactor=args[1];
+        if (speedFactor == 0) {
+            speedValue.text="0";
+            speedValueSent=0;
         }
-        else
-        {
-            console.log("Unexpected result from SimulationSpeedChanged:");
-            Genivi.dump("",args);
+        if (speedFactor == 1) {
+            speedValue.text="1/4";
+            speedValueSent=1;
         }
-
+        if (speedFactor == 2) {
+            speedValue.text="1/2";
+            speedValueSent=2;
+        }
+        if (speedFactor == 4) {
+            speedValue.text="1";
+            speedValueSent=3;
+        }
+        if (speedFactor == 8) {
+            speedValue.text="2";
+            speedValueSent=4;
+        }
+        if (speedFactor == 16) {
+            speedValue.text="4";
+            speedValueSent=5;
+        }
+        if (speedFactor == 32) {
+            speedValue.text="8";
+            speedValueSent=6;
+        }
+        if (speedFactor == 64) {
+            speedValue.text="16";
+            speedValueSent=7;
+        }
     }
 
     function simulationStatusChanged(args)
     {
-        if (args[0] == 'uint16')
+        var simulationStatus=args[1];
+        if (simulationStatus != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
         {
-            if (args[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+            on_off.setState("ON");
+            if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
             {
-                on_off.setState("ON");
-                if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-                {
-                    simu_mode.setState("PAUSE");
-                }
-                else
-                {
-                    if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                    {
-                        simu_mode.setState("PLAY");
-                    }
-                }
+                simu_mode.setState("PAUSE");
             }
             else
             {
-                on_off.setState("OFF");
-                simu_mode.setState("FREE");
+                if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+                {
+                    simu_mode.setState("PLAY");
+                }
             }
-        } else {
-            console.log("Unexpected result from SimulationStatusChanged:");
-            Genivi.dump("",args);
         }
-
+        else
+        {
+            on_off.setState("OFF");
+            simu_mode.setState("FREE");
+        }
     }
 
     function connectSignals()
@@ -174,72 +160,63 @@ HMIMenu {
 
     function updateSimulation()
 	{
-	    var res=Genivi.mapmatch_message(dbusIf,"GetSimulationStatus",[]);
-        if (res[0] == 'uint16')
-		{
-            if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
-	        {
-				on_off.setState("ON");
-                if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-				{
-					simu_mode.setState("PAUSE");
-				} 
-				else 
-				{
-					if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING) 
-					{
-						simu_mode.setState("PLAY");
-					}
-				}
-	        }
-			else
-	        {
-				on_off.setState("OFF");
-				simu_mode.setState("FREE");
-	        }
-		} else {
-            console.log("Unexpected result from GetSimulationStatus:");
-			Genivi.dump("",res);
-		}
+        var res=Genivi.mapmatchedposition_GetSimulationStatus(dbusIf);
+        var simulationStatus=res[1];
+        if (simulationStatus != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+        {
+            on_off.setState("ON");
+            if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
+            {
+                simu_mode.setState("PAUSE");
+            }
+            else
+            {
+                if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+                {
+                    simu_mode.setState("PLAY");
+                }
+            }
+        }
+        else
+        {
+            on_off.setState("OFF");
+            simu_mode.setState("FREE");
+        }
 
-        var res1=Genivi.mapmatch_message(dbusIf,"GetSimulationSpeed",[]);
-        if (res1[0] == "uint8") {
-            if (res1[1] == 0) {
-                speedValue.text="0";
-                speedValueSent=0;
-			}
-            if (res1[1] == 1) {
-                speedValue.text="1/4";
-                speedValueSent=1;
-			}
-            if (res1[1] == 2) {
-                speedValue.text="1/2";
-                speedValueSent=2;
-			}
-            if (res1[1] == 4) {
-                speedValue.text="1";
-                speedValueSent=3;
-			}
-            if (res1[1] == 8) {
-                speedValue.text="2";
-                speedValueSent=4;
-			}
-            if (res1[1] == 16) {
-                speedValue.text="4";
-                speedValueSent=5;
-			}
-            if (res1[1] == 32) {
-                speedValue.text="8";
-                speedValueSent=6;
-			}
-            if (res1[1] == 64) {
-                speedValue.text="16";
-                speedValueSent=7;
-			}
-		} else {
-			console.log("Unexpected result from GetSimulationSpeed:");
-            Genivi.dump("",res1);
-		}
+        var res1=Genivi.mapmatchedposition_GetSimulationSpeed(dbusIf);
+        var speedFactor=res1[1];
+        if (speedFactor == 0) {
+            speedValue.text="0";
+            speedValueSent=0;
+        }
+        if (speedFactor == 1) {
+            speedValue.text="1/4";
+            speedValueSent=1;
+        }
+        if (speedFactor == 2) {
+            speedValue.text="1/2";
+            speedValueSent=2;
+        }
+        if (speedFactor == 4) {
+            speedValue.text="1";
+            speedValueSent=3;
+        }
+        if (speedFactor == 8) {
+            speedValue.text="2";
+            speedValueSent=4;
+        }
+        if (speedFactor == 16) {
+            speedValue.text="4";
+            speedValueSent=5;
+        }
+        if (speedFactor == 32) {
+            speedValue.text="8";
+            speedValueSent=6;
+        }
+        if (speedFactor == 64) {
+            speedValue.text="16";
+            speedValueSent=7;
+        }
 	}
 
     function leave()
@@ -285,7 +262,7 @@ HMIMenu {
                 {
                     speedValueSent = speedValueSent-1;
                 }
-                Genivi.mapmatch_message_s(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
+                Genivi.mapmatchedposition_SetSimulationSpeed(dbusIf,getDBusSpeedValue(speedValueSent));
 			}
 		}
 
@@ -298,7 +275,7 @@ HMIMenu {
                 {
                     speedValueSent = speedValueSent+1;
                 }
-                Genivi.mapmatch_message_s(dbusIf,"SetSimulationSpeed",["uint8",getDBusSpeedValue(speedValueSent)]);
+                Genivi.mapmatchedposition_SetSimulationSpeed(dbusIf,getDBusSpeedValue(speedValueSent));
 			}
 		}
 
@@ -340,11 +317,11 @@ HMIMenu {
 				switch (status) 
 				{
 					case 0: //start the simulation
-						Genivi.mapmatch_message_s(dbusIf,"SetSimulationMode",["boolean",1]);
-						Genivi.mapmatch_message_s(dbusIf,"StartSimulation",[]);
+                        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
+                        Genivi.mapmatchedposition_StartSimulation(dbusIf);
 					break;
 					case 1: //stop the simulation
-						Genivi.mapmatch_message_s(dbusIf,"SetSimulationMode",["boolean",0]);
+                        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,false);
                     break;
 					default:
 					break;
@@ -391,11 +368,11 @@ HMIMenu {
 				{
                     case 2: //pause
 						//pause to resume
-		        		Genivi.mapmatch_message_s(dbusIf,"StartSimulation",[]);
+                        Genivi.mapmatchedposition_StartSimulation(dbusIf);
                     break;
                     case 1: //play
                         //play to pause
-            			Genivi.mapmatch_message_s(dbusIf,"PauseSimulation",[]);
+                        Genivi.mapmatchedposition_PauseSimulation(dbusIf);
                     break;
 					default:
 					break;

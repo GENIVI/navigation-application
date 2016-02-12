@@ -110,48 +110,60 @@ HMIMenu {
 			onClicked: {
 				var model=view.model;
 				var ids=[];
-				var position=Genivi.navigationcore_message(dbusIf,"MapMatchedPosition","GetPosition",["array",["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"uint16",Genivi.NAVIGATIONCORE_LONGITUDE]]);
-				if (!position[1][3][1] && !position[1][7][1]) {
+                var position=Genivi.mapmatchedposition_GetPosition(dbusIf);
+                var latitude=0;
+                var longitude=0;
+                for (var i=0;i<position[1].length;i+=4){
+                    if ((position[1][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (position[1][i+3][3][1] != 0)){
+                        latitude=position[1][i+3][3][1];
+                    } else {
+                        if ((position[1][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (position[1][i+3][3][1] != 0)){
+                            longitude=position[1][i+3][3][1];
+                        }
+                    }
+                }
+                if (!latitude && !longitude) {
 					model.clear();
 					model.append({"name":"No position available"});
 					return;
 				}
-				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetVersion",[]));
-				// Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetLanguage",[]));
-				var categories=Genivi.poisearch_message_get(dbusIf,"GetAvailableCategories",[]);
-				for (var i = 0 ; i < categories.length ; i+=2) { 
+                var categories=Genivi.poisearch_GetAvailableCategories(dbusIf);
+                for (i = 0 ; i < categories.length ; i+=2) {
 					if (categories[i+1][1][3] == 'fuel') {
-						// Genivi.dump("",categories[i+1][1]);
                         Genivi.fuelCategoryId=categories[i+1][1][1];
 					}
 				}
 
-                // Genivi.dump("",Genivi.poisearch_message_get(dbusIf,"GetRootCategory",[]));
-				Genivi.poisearch_message(dbusIf,"SetCenter",["structure",["double",position[1][3][1],"double",position[1][7][1],"int32",0]]);
-                Genivi.poisearch_message(dbusIf,"SetCategories",["array",["structure",["uint32",Genivi.fuelCategoryId,"uint32",Genivi.radius]]]);
-				Genivi.poisearch_message(dbusIf,"StartPoiSearch",["string","","uint16",Genivi.POISERVICE_SORT_BY_DISTANCE]);
-                var res=Genivi.poisearch_message(dbusIf,"RequestResultList",["uint16",Genivi.offset,"uint16",Genivi.maxWindowSize,"array",["uint32",0]]);
+                Genivi.poisearch_SetCenter(dbusIf,latitude,longitude,0);
+                var categoriesAndRadiusList=[];
+                var categoriesAndRadius=[];
+                categoriesAndRadius[0]=Genivi.fuelCategoryId;
+                categoriesAndRadius[1]=Genivi.radius;
+                categoriesAndRadiusList[0]=categoriesAndRadius;
+                Genivi.poisearch_SetCategories(dbusIf,categoriesAndRadiusList);
+                Genivi.poisearch_StartPoiSearch(dbusIf,"",Genivi.POISERVICE_SORT_BY_DISTANCE);
+                var attributeList=[];
+                attributeList[0]=0;
+                var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxWindowSize,attributeList);
 				var res_win=res[5];
-				for (var i = 0 ; i < res_win.length ; i+=2) {
-					ids.push(res_win[i+1][0]);
-					ids.push(res_win[i+1][1]);
-					var id=res_win[i+1][1];
+                for (i = 0 ; i < res_win.length ; i+=2) {
+                    var id=res_win[i+1][1];
+                    ids.push(id);
 					Genivi.poi_data[id]=[];
 					Genivi.poi_data[id].id=id;
 					Genivi.poi_data[id].distance=res_win[i+1][3];
 				}
-				var details=Genivi.poisearch_message_get(dbusIf,"GetPoiDetails",["array",ids]);
-				for (var i = 0 ; i < details[1].length ; i+=2) {
+                var details=Genivi.poisearch_GetPoiDetails(dbusIf,ids);
+                for (i = 0 ; i < details[1].length ; i+=2) {
 					var poi_details=details[1][i+1];
-					var id=poi_details[1][1];
+                    id=poi_details[1][1];
 					Genivi.poi_data[id].name=poi_details[1][3];
                     Genivi.poi_data[id].lat=poi_details[1][5][1];
                     Genivi.poi_data[id].lon=poi_details[1][5][3];
 				}
-				// Genivi.dump("",details);
 				model.clear();
-				for (var i = 0 ; i < ids.length ; i+=2) {
-					var id=ids[i+1];
+                for (i = 0 ; i < ids.length ; i+=1) {
+                    id=ids[i];
 					var poi_data=Genivi.poi_data[id];
 					model.append({"name":Genivi.distance(poi_data.distance)+" "+poi_data.name,"number":id});
 				}

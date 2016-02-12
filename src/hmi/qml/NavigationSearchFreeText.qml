@@ -109,9 +109,9 @@ HMIMenu {
 	{
 		disconnectSignals();
 		if (toOtherMenu) {
-			Genivi.loc_handle_clear(dbusIf);
+			Genivi.locationinput_handle_clear(dbusIf);
 		}
-		//Genivi.nav_session_clear(dbusIf);
+		//Genivi.navigationcore_session_clear(dbusIf);
 	}
 
 	DBusIf {
@@ -121,8 +121,8 @@ HMIMenu {
 
             var res=Genivi.navigationcore_message(dbusIf,"Session","GetVersion",[]);
             if (res[0] != "error") {
-                res=Genivi.nav_session(dbusIf);
-                res=Genivi.loc_handle(dbusIf);
+                res=Genivi.navigationcore_session(dbusIf);
+                res=Genivi.locationinput_handle(dbusIf);
             } else {
                 Genivi.dump("",res);
             }
