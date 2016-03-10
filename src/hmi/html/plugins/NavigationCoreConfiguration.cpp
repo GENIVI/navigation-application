@@ -17,7 +17,7 @@ NavigationCoreConfiguration::~NavigationCoreConfiguration()
 {
 }
 
-unsigned short NavigationCoreConfiguration::getVersion()
+char *NavigationCoreConfiguration::getVersion()
 {
 }
 

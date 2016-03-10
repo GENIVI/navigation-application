@@ -1,4 +1,4 @@
-Release date of the file: 05-11-2015 
+Release date of the file: 10-03-2016 
 Status: OK
 
 Project:
@@ -36,15 +36,16 @@ For Qt version 5.4, it's needed to fix Qt 5.4 QML -> C++ QVariant issues by unbo
 ==========================================
 Current versions of additional code 
 ==========================================
-Navigation middleware:
-<current version of navigation> (git): 578deac8bdc971b514aa3557782514fb6f10cc39
-
-Additional code coming with navigation:
-<current version of positioning> (git): 8bcb5aee2172bf1672b4402a2dbae480d5fbdc25
-<current version of navit> (svn): 6135
+Please see 'reload.sh' for <current version of navigation>, <current version of positioning>  and <current version of navit>.
 
 Automotive message broker:
 <current version of amb> (git): c216955d16ca275159891cad296217094d972390
+<current version of navigation> (git): fe2954930afdf5d70a47ac3be5f02f3e301a33a2
+
+==========================================
+All-in-one script for load and build
+==========================================
+./reload.sh
 
 ==========================================
 How to get additional code 
@@ -57,24 +58,8 @@ git clone http://git.projects.genivi.org/lbs/navigation.git ./navigation
 cd navigation
 git checkout <current version of navigation>
 
-Go to the folder that contains the sources
+Go to the folder that contains the sources and follow the indications into the README
 cd src/navigation
-
-NB: the following explanations are also included into the README under this folder
-
-Get positioning:
-git clone http://git.projects.genivi.org/lbs/positioning.git ./positioning
-cd positioning
-git checkout <current version of positioning>
-cd ../
-
-Get navit:
-svn checkout http://svn.code.sf.net/p/navit/code/trunk navit -r<current version of navit>
-
-Now apply a patch to navit (The r5549 removed the  get_unique features used by GetSpell):
-cd navit
-patch -p0 -i ../patches/search_list_get_unique.diff
-cd ../../../../
 
 ==========================================
 Directory Structure
@@ -148,11 +133,9 @@ mkdir navigation
 cd navigation
 mkdir navit
 cd navit
-mkdir navit
-cd navit
-cmake -DDISABLE_QT=1 -DSAMPLE_MAP=0 -Dvehicle/null=1 -Dgraphics/qt_qpainter=0 ../../../../navigation/src/navigation/navit/navit/
+cmake -DDISABLE_QT=1 -DSAMPLE_MAP=0 -Dvehicle/null=1 -Dgraphics/qt_qpainter=0 ../../../navigation/src/navigation/navit/
 make
-cd ../../
+cd ../
 cmake ../../navigation/src/navigation
 make
 cd ..

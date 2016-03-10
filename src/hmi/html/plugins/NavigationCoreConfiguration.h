@@ -23,7 +23,7 @@ public:
     NavigationCoreConfiguration(int interface_id);
     ~NavigationCoreConfiguration();
     int getInterfaceId() {return m_interfaceId;}
-    unsigned short getVersion();
+    char* getVersion();
     char* getDate() {return m_version.date;}
 	Version m_version;
 private:

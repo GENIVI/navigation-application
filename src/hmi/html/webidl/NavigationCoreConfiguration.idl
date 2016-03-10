@@ -1,9 +1,9 @@
 [NoInterfaceObject]
 interface Version {
-	readonly attribute unsigned short versionMajor;
-	readonly attribute unsigned short versionMinor;
-	readonly attribute unsigned short versionMicro;
-	readonly attribute DOMString date;
+        readonly attribute unsigned short versionMajor;
+        readonly attribute unsigned short versionMinor;
+        readonly attribute unsigned short versionMicro;
+        readonly attribute DOMString date;
 };
 
 enum Settings {
@@ -15,9 +15,9 @@ enum Settings {
 };
 
 interface NavigationCoreConfiguration {
-	void NavigationCoreConfiguration(long id);
-	long getInterfaceId();
-	unsigned short getVersion();
-	DOMString getDate();
+        void NavigationCoreConfiguration(long id);
+        long getInterfaceId();
+        DOMString getVersion();
+        DOMString getDate();
 };
 

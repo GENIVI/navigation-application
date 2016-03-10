@@ -68,11 +68,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-warn-absolute-paths")
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${EMSCRIPTEN_ROOT_PATH}/system/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/${HMI_HTML_LIB}
 )
 
 link_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/${HMI_HTML_LIB}
 )
 
 set(PLUGINS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/plugins)
