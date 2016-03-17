@@ -34,6 +34,7 @@ from enum import IntEnum
 from dbus.mainloop.glib import DBusGMainLoop
 from traceback import print_exc
 from gi.repository import GObject
+from time import sleep
 
 class Step(IntEnum):
 	START = 0

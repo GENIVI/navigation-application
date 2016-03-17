@@ -1,7 +1,7 @@
 #!/bin/bash
 
-navigation_version='fe2954930afdf5d70a47ac3be5f02f3e301a33a2'
-positioning_version='5b6b120d836259afb57b3ad6bf2f6ba8107c4a3e'
+navigation_version='2658eef26ffcabfeee9450bb5fef8c52c618447b'
+positioning_version='48451e36a8c21afb00575227d27e10417c27878c'
 navit_version='162a3e43d14531a7053872903674351a3142eea2'
 
 echo "version of navigation is: $navigation_version"

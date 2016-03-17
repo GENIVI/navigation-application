@@ -40,7 +40,6 @@ Please see 'reload.sh' for <current version of navigation>, <current version of 
 
 Automotive message broker:
 <current version of amb> (git): c216955d16ca275159891cad296217094d972390
-<current version of navigation> (git): fe2954930afdf5d70a47ac3be5f02f3e301a33a2
 
 ==========================================
 All-in-one script for load and build

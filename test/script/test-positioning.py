@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 **************************************************************************
@@ -65,7 +65,7 @@ YELLOW = ( 255, 222, 0)
 # Define some constants
 PI = 3.141592653
 KEYBOARD_PERIODICITY = 200 #in ms
-GET_DBUS_PERIODICITY = 1000 #in ms
+GET_DBUS_PERIODICITY = 500 #in ms
 FUEL_CONVERSION = (3.6/GET_DBUS_PERIODICITY)
 SPEED_CONVERSION = (36.0/GET_DBUS_PERIODICITY)
 
@@ -205,18 +205,6 @@ def enhancedPositionPositionUpdateHandler(arg):
 		longitude=float(enhancedPosition[1][dbus.UInt64(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
 		displayLongitude("{:.3f}".format(longitude))
 
-def mapMatchedPositionPositionUpdateHandler(arg):
-	time.sleep(.050)
-	# get the mapmatched position first and check after (to be improved)
-	mapmatchedPosition = mapMatchedPositionInterface.GetPosition(dbus.Array([Genivi.NAVIGATIONCORE_LATITUDE,Genivi.NAVIGATIONCORE_LONGITUDE]))
-	for item in arg:
-		if item==Genivi.NAVIGATIONCORE_LATITUDE:
-			latitude=float(mapmatchedPosition[dbus.UInt16(Genivi.NAVIGATIONCORE_LATITUDE)])
-			displayLatitude("{:.3f}".format(latitude))
-		elif item==Genivi.NAVIGATIONCORE_LONGITUDE:
-			longitude=float(mapmatchedPosition[dbus.UInt16(Genivi.NAVIGATIONCORE_LONGITUDE)])
-			displayLongitude("{:.3f}".format(longitude))
-
 # Main program begins here
 parser = argparse.ArgumentParser(description='Test positioning.')
 parser.add_argument('-v','--ver',action='store_true', help='Print log messages')
@@ -260,17 +248,6 @@ except dbus.DBusException:
 	sys.exit(1)
 enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
 dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.positioning.EnhancedPosition", signal_name = "PositionUpdate")
-
-# Map matched position
-try:
-	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
-except dbus.DBusException:
-	print ("connection to Map matched position failed")
-	print_exc()
-	sys.exit(1)
-mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
-dbusConnectionBus.add_signal_receiver(mapMatchedPositionPositionUpdateHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "PositionUpdate")
-
 
 displayStatus( 'Start positioning test' )
 
