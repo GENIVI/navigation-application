@@ -1,0 +1,29 @@
+{
+    "name": "node-cpp-lbs-modules",
+    "version": "0.1.0",
+ 	"description": "C++ modules used by the HTML test panel for the FSA",
+	"keywords": [
+		"npm",
+		"GENIVI",
+		"W3C",
+		"LBS-EG"
+	],
+  	"author": "Philippe Colliot <philippe.colliot@mpsa.com>",
+	"contributors": [""],
+    "main": "",
+    "license": "MPL V.2.0",
+    "dependencies": {
+        "http": "0.0.0",
+        "url": "0.11.0",
+        "fs": "0.0.2",
+        "path": "",
+        "webidl2": "2.0.11",
+        "escodegen": "1.8.0",
+        "socket.io": "1.4.5",
+        "gcontext": "0.0.2"
+    },
+    "devDependencies": {
+		"chai": "~3.5.0",
+		"mocha": "~2.4.5"
+	}
+}

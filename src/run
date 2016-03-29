@@ -268,7 +268,7 @@ if [ "$verbose" = "1" ]
 then
 	run "MapViewer" ./$NAVIT -d 3 -c navit_genivi_mapviewer.xml
 else
-	run "MapViewer" ./$NAVIT -d 0 -c navit_genivi_mapviewer.xml
+	run "MapViewer" ./$NAVIT -d 0 -c navit_genivi_mapviewer.xml 2>~/mapviewer.log
 fi
 
 wait_for_service org.genivi.mapviewer.Configuration /org/genivi/mapviewer

@@ -1,0 +1,66 @@
+body {
+    position:relative;
+    width: 800px;
+    height: 480px;
+    max-width: 800px;
+    max-height: 480px;
+    min-width: 800px;
+    min-height: 480px;
+    margin: 0;
+    padding: 0;
+    background-color: lightblue;
+    font-size: 1em;
+    border:double 2px black;
+}
+header {
+    width: 800px;
+    height: 50px;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+section {
+    color:white;
+    width:800px;
+    float:left;
+    padding:10px;
+}
+footer {
+    position:absolute;
+    bottom:0;
+    width: 800px;
+    height: 20px;
+    background-color:black;
+    color:white;
+    clear:both;
+    text-align:center;
+}
+h1 {
+    color: navy;
+    margin-left: 20px;
+    font-size: 1.5em;
+}
+h {
+    color: black;
+    margin-left: 5px;
+}
+
+p {
+	font-family: verdana;
+	color: grey; 
+}
+
+localeListButtons {
+	color: yellow; 
+}
+table {
+    table-layout: fixed;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}

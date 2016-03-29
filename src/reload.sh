@@ -16,7 +16,10 @@ then
 	exit 1
 fi
 
-rm -rf build
+if [ -d "./build" ]
+then
+	find ./build ! -name '*.cbp' -type f -exec rm -f {} +
+fi
 rm -rf navigation
 rm -rf automotive-message-broker
 
