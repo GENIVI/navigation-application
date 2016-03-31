@@ -19,7 +19,11 @@ npm install node-cpp-lbs-modules/node-cpp-lbs-modules-0.1.0.tgz
 
 To test:
 Intall additional modules for nodejs:
+<<<<<<< HEAD
+npm install http url fs path socket.io gcontext python-shell enum
+=======
 npm install http url fs path socket.io
+>>>>>>> branch 'master' of ssh://git-genivi@git.projects.genivi.org/lbs/navigation-application.git
 
 Run the server:
 

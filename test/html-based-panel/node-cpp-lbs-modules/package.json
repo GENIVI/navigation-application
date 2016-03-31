@@ -17,10 +17,17 @@
         "url": "0.11.0",
         "fs": "0.0.2",
         "path": "",
+<<<<<<< HEAD
+        "socket.io": "1.4.5",
+        "gcontext": "0.0.2",
+        "python-shell": "0.4.0",
+        "enum": "2.3.0"
+=======
         "webidl2": "2.0.11",
         "escodegen": "1.8.0",
         "socket.io": "1.4.5",
         "gcontext": "0.0.2"
+>>>>>>> branch 'master' of ssh://git-genivi@git.projects.genivi.org/lbs/navigation-application.git
     },
     "devDependencies": {
 		"chai": "~3.5.0",

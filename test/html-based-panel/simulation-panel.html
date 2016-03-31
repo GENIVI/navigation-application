@@ -19,6 +19,183 @@ VERSION: <h id="version"></h><br>
 </section>
 
 <section>
+<<<<<<< HEAD
+<form>
+STEP:
+  <input type="radio" name="step" onchange="stepChange(this);" value="START" checked> START
+  <input type="radio" name="step" onchange="stepChange(this);" value="INITIALIZATION"> INIT
+  <input type="radio" name="step" onchange="stepChange(this);" value="LOW_TANK_LEVEL"> LOW
+  <input type="radio" name="step" onchange="stepChange(this);" value="HIGH_TANK_LEVEL"> HIGH
+</form>
+<div style="float: left; width: 360px;">
+<table style="width:100%">
+  <caption>Inputs</caption>
+  <col width="200">
+  <col width="100">
+  <col width="60">
+  <tr>
+    <td>Engine speed</td>
+    <td id=engine_speed></td>
+    <td>RPM</td>
+  </tr>
+  <tr>
+    <td>Tank</td>
+    <td id=tank></td>
+    <td>L</td>
+  </tr>
+  <tr>
+    <td>Fuel instant</td>
+    <td id=fuel_instant></td>
+    <td>L/H</td>
+  </tr>
+  <tr>
+    <td>Vehicle speed</td>
+    <td id=vehicle_speed></td>
+    <td>KM/H</td>
+  </tr>
+  <tr>
+    <td>Latitude</td>
+    <td id=latitude></td>
+    <td>deg</td>
+  </tr>
+  <tr>
+    <td>Longitude</td>
+    <td id=longitude></td>
+    <td>deg</td>
+  </tr>
+</table>
+</div>
+<div style="float: left; width: 300px; padding:10px;">
+<table style="width:100%">
+  <caption>Status</caption>
+  <col width="200">
+  <col width="100">
+  <tr>
+    <td>Guidance</td>
+    <td id=guidance_status></td>
+  </tr>
+  <tr>
+    <td>Simulation</td>
+    <td id=simulation_status></td>
+  </tr>
+  <tr>
+    <td>FSA warning</td>
+    <td id=warning_status></td>
+  </tr>
+  <tr>
+    <td>Tank distance</td>
+    <td id=tank_distance></td>
+  </tr>
+  <tr>
+    <td>Enhanced tank distance</td>
+    <td id=enhanced_tank_distance></td>
+  </tr>
+</table>
+</div>
+</section>
+
+<footer>
+Copyright © PCA Peugeot Citroen
+</footer>
+
+<script type="text/javascript">
+
+<!-- sockets management -->
+var socket_simulation = io.connect('http://localhost:8080/simulation'); //namespace simulation
+socket_simulation.on('feedback', function(message) {
+    alert('Message received from the server : ' + message);
+})
+
+socket_simulation.on('positioning_answer', function(message) {
+    if(message.request === 'getPositionInfo')
+    {
+        getPositionInfoReturn(message.answer);
+    }
+})
+
+socket_simulation.on('positioning_signal', function(message) {
+    if(message.signal === 'positionUpdate')
+    {
+            positionUpdate(message.data);
+    }
+})
+
+socket_simulation.on('demonstrator_answer', function(message) {
+        if(message.request === 'getVersion')
+        {
+            getVersionReturn(message.answer);
+        } else {
+                if(message.request === 'getPositionInfo')
+                {
+                    getPositionInfoReturn(message.answer);
+                }
+        }
+})
+
+socket_simulation.on('demonstrator_signal', function(message) {
+    if(message.signal === 'tripDataUpdated')
+    {
+            tripDataUpdated(message.data);
+    }
+})
+
+
+<!-- initialization -->
+var today=new Date();
+document.getElementById("start_time").innerHTML=today;
+
+getVersion();
+
+getPositionInfo();
+
+<!-- getters -->
+function getVersion() {
+        socket_simulation.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getVersion', parameters: []});
+}
+function getVersionReturn(answer) {
+	document.getElementById("version").innerHTML=answer[3];	
+}
+function getPositionInfo() {
+        socket_simulation.emit('positioning_request', {interface: 'PositioningEnhancedPosition', method: 'getPositionInfo', parameters: [0,27]});
+}
+function getPositionInfoReturn(answer) {
+        for ( var i=1; i<answer.length; i++ ) {
+            //nb: first entry is the timestamp
+            switch(answer[i].key_lsb)
+            {
+                case 1:
+                    document.getElementById("latitude").innerHTML=answer[i].value;
+                break;
+                case 2:
+                    document.getElementById("longitude").innerHTML=answer[i].value;
+                break;
+            }
+        }
+}
+function getInstantData() {
+        socket_simulation.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getInstantData', parameters: []});
+}
+function getInstantDataReturn(answer) {
+alert('Message received from the server : ' + answer);
+}
+
+<!-- setters -->
+
+<!-- signals -->
+function positionUpdate(changedValues) {
+    getPositionInfo();
+}
+
+function tripDataUpdated(number) {
+    getInstantData();
+}
+
+<!-- some other functions -->
+function stepChange(button) {
+    var data = button.value;
+    socket_simulation.emit('panel_request', {request: 'LogReplayerScenario', parameters: [data]});
+}
+=======
 STEP: <p id="step"></p>
 <div style="float: left; width: 360px;">
 <table style="width:100%">
@@ -183,6 +360,7 @@ function tripDataUpdated(number) {
 
 <!-- some other functions -->
 
+>>>>>>> branch 'master' of ssh://git-genivi@git.projects.genivi.org/lbs/navigation-application.git
 </script>
 </body>
 </html>
