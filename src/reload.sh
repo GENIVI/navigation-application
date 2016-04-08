@@ -1,6 +1,6 @@
 #!/bin/bash
 
-navigation_version='2658eef26ffcabfeee9450bb5fef8c52c618447b'
+navigation_version='497fe70ab183c2a968c8e488fde2e3ba143b141e'
 positioning_version='48451e36a8c21afb00575227d27e10417c27878c'
 navit_version='162a3e43d14531a7053872903674351a3142eea2'
 
