@@ -1,0 +1,68 @@
+#! /bin/bash
+###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
+# \copyright Copyright (C) 2016, PCA Peugeot Citroen
+#
+# \file step1: start amb
+#
+# \brief This file is part of the Build System.
+#
+# \author # Author: Philippe COLLIOT <philippe.colliot@mpsa.com>
+#
+# \version 1.0
+#
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License (MPL), v. 2.0.
+# If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# For further information see http://www.genivi.org/.
+#
+# List of changes:
+# 
+#
+# @licence end@
+###########################################################################
+
+CUR_DIR=$PWD
+BIN_DIR=$CUR_DIR/build
+SRC_DIR=$CUR_DIR
+
+# location of exe, lib and config files
+AUTOMOTIVE_MESSAGE_BROKER=automotive-message-broker
+AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR=$SRC_DIR/$AUTOMOTIVE_MESSAGE_BROKER
+AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR=$AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR/src/$AUTOMOTIVE_MESSAGE_BROKER-build
+GENIVI_LOGREPLAYER=genivilogreplayer
+GENIVI_LOGREPLAYER_SRC_DIR=$SRC_DIR/$GENIVI_LOGREPLAYER
+GENIVI_LOGREPLAYER_BIN_DIR=$BIN_DIR/$GENIVI_LOGREPLAYER
+
+# function to wait for the dbus service to be started, exit if too long
+function wait_for_service
+{
+	for i in $(seq 1 50)
+	do
+		if dbus-send --dest=$1 $2 org.freedesktop.DBus.Introspectable.Introspect
+		then
+			return
+		fi
+		echo "Waiting for $1"
+		sleep 0.1
+	done
+	exit 1
+}
+
+# check and kill remaining ambd process
+ambd_process_id=$(pidof ambd)
+if [ -n $ambd_process_id ] 
+then
+	kill -9 $ambd_process_id
+fi
+
+# start the automotive message broker and wait for dbus service
+cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
+./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig.in.json
+
+wait_for_service org.automotive.message.broker /
+

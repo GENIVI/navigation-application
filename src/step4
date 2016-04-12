@@ -1,0 +1,68 @@
+#! /bin/bash
+###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
+# \copyright Copyright (C) 2016, PCA Peugeot Citroen
+#
+# \file step2: start map viewer
+#
+# \brief This file is part of the Build System.
+#
+# \author # Author: Philippe COLLIOT <philippe.colliot@mpsa.com>
+#
+# \version 1.0
+#
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License (MPL), v. 2.0.
+# If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# For further information see http://www.genivi.org/.
+#
+# List of changes:
+# 
+#
+# @licence end@
+###########################################################################
+
+CUR_DIR=$PWD
+BIN_DIR=$CUR_DIR/build
+SRC_DIR=$CUR_DIR
+SCRIPT_DIR=$SRC_DIR/script
+
+center="4612 N 0608 E"
+
+# location of exe, lib and config files
+NAVIGATION=navigation
+NAVIGATION_SRC_DIR=$SRC_DIR/$NAVIGATION/src/navigation
+NAVIGATION_BIN_DIR=$BIN_DIR/$NAVIGATION
+
+NAVIT=navit
+NAVIT_BIN_DIR=$NAVIGATION_BIN_DIR/navit/navit
+
+# function to wait for the dbus service to be started, exit if too long
+function wait_for_service
+{
+	for i in $(seq 1 50)
+	do
+		if dbus-send --dest=$1 $2 org.freedesktop.DBus.Introspectable.Introspect
+		then
+			return
+		fi
+		echo "Waiting for $1"
+		sleep 0.1
+	done
+	exit 1
+}
+
+cd $NAVIT_BIN_DIR
+>bookmark.txt
+echo "$center" >center.txt
+
+./$NAVIT -d 0 -c navit_genivi_mapviewer.xml
+
+wait_for_service org.genivi.mapviewer.Configuration /org/genivi/mapviewer
+wait_for_service org.genivi.mapviewer.MapViewerControl /org/genivi/mapviewer
+wait_for_service org.genivi.mapviewer.Session /org/genivi/mapviewer
+

@@ -37,14 +37,6 @@ v8::Persistent<v8::Function> PositioningEnhancedPositionWrapper::signalPositionU
 void PositioningEnhancedPositionWrapper::PositionUpdate(const uint64_t& changedValues) {
     v8::HandleScope scope;
 
-<<<<<<< HEAD
-    const int argc = 2;
-    uint64to32 data;
-    data.full = changedValues;
-    v8::Handle<v8::Value> argv[argc];
-    argv[0] = v8::Local<v8::Value>::New(v8::Uint32::New(data.p.high));
-    argv[1] = v8::Local<v8::Value>::New(v8::Uint32::New(data.p.low));
-=======
     const unsigned argc = 2;
     uint64to32 data;
     data.full = changedValues;
@@ -52,7 +44,6 @@ void PositioningEnhancedPositionWrapper::PositionUpdate(const uint64_t& changedV
     argv[0] = v8::Local<v8::Value>::New(v8::Uint32::New(data.p.high));
     argv[1] = v8::Local<v8::Value>::New(v8::Uint32::New(data.p.low));
 
->>>>>>> branch 'master' of ssh://git-genivi@git.projects.genivi.org/lbs/navigation-application.git
     v8::Persistent<v8::Function> fct = static_cast<v8::Function*>(*signalPositionUpdate);
     fct->Call(v8::Context::GetCurrent()->Global(), argc, argv);
 }

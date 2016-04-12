@@ -1,0 +1,10 @@
+#!/bin/sh
+echo 'kill all remaining process created by step*'
+kill -TERM -$(pgrep -o step1)
+kill -TERM -$(pgrep -o step2)
+kill -TERM -$(pgrep -o step3)
+kill -TERM -$(pgrep -o step4)
+kill -TERM -$(pgrep -o step5)
+kill -TERM -$(pgrep -o step6)
+kill -TERM -$(pgrep -o step7)
+
