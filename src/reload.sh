@@ -1,6 +1,6 @@
 #!/bin/bash
 
-navigation_version='497fe70ab183c2a968c8e488fde2e3ba143b141e'
+navigation_version='5240ff33da9c821d6b36afb30f0d3e3897b0ad76'
 positioning_version='48451e36a8c21afb00575227d27e10417c27878c'
 navit_version='162a3e43d14531a7053872903674351a3142eea2'
 
@@ -35,6 +35,7 @@ git clone https://github.com/navit-gps/navit.git
 cd navit
 git checkout $navit_version
 patch -p0 -i ../patches/search_list_get_unique.diff
+patch -p0 -i ../patches/fsa_issue_padding.diff
 cd ../../../../
 
 ./rebuild_all.sh -c
