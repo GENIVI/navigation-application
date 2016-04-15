@@ -39,21 +39,6 @@ HMI_QML_DIR=$SRC_DIR/hmi/qml
 app=$HMI_QML_DIR/application.qml # hmi panel launched by default
 STYLE_SHEETS_GENERATED_INDICATOR=$HMI_QML_DIR/Core/style-sheets/the-style-sheets-have-been-generated-css.js
 
-# function to wait for the dbus service to be started, exit if too long
-function wait_for_service
-{
-	for i in $(seq 1 50)
-	do
-		if dbus-send --dest=$1 $2 org.freedesktop.DBus.Introspectable.Introspect
-		then
-			return
-		fi
-		echo "Waiting for $1"
-		sleep 0.1
-	done
-	exit 1
-}
-
 # check if style sheets have been generated
 if [ ! -f $STYLE_SHEETS_GENERATED_INDICATOR ]
 then

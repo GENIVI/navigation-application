@@ -5,7 +5,7 @@
 #
 # \copyright Copyright (C) 2016, PCA Peugeot Citroen
 #
-# \file step2: start fsa application
+# \file step: step given step numbers
 #
 # \brief This file is part of the Build System.
 #
@@ -26,17 +26,8 @@
 # @licence end@
 ###########################################################################
 
-CUR_DIR=$PWD
-BIN_DIR=$CUR_DIR/build
-SRC_DIR=$CUR_DIR
-
-# location of exe, lib and config files
-FUEL_STOP_ADVISOR=fuel-stop-advisor
-FUEL_STOP_ADVISOR_SRC_DIR=$SRC_DIR/$FUEL_STOP_ADVISOR
-FUEL_STOP_ADVISOR_BIN_DIR=$BIN_DIR/$FUEL_STOP_ADVISOR
-
-sleep 3 # need a sleep here (to be improved)
-
-# start the fuel stop advisor application
-$FUEL_STOP_ADVISOR_BIN_DIR/$FUEL_STOP_ADVISOR
+for param in "$@"
+do
+	./step$param &
+done
 
