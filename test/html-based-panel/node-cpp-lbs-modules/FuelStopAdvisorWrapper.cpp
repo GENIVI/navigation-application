@@ -149,6 +149,10 @@ void FuelStopAdvisorWrapper::Init(v8::Handle<v8::Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "setTripDataUpdatedListener", SetTripDataUpdatedListener);
     NODE_SET_PROTOTYPE_METHOD(constructor, "setFuelStopAdvisorWarningListener", SetFuelStopAdvisorWarningListener);
     NODE_SET_PROTOTYPE_METHOD(constructor, "setTripDataResettedListener", SetTripDataResettedListener);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getSpeed", GetSpeed);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getLevel", GetLevel);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getInstantConsumption", GetInstantConsumption);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getOdometer", GetOdometer);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -205,25 +209,94 @@ v8::Handle<v8::Value> FuelStopAdvisorWrapper::GetInstantData(const v8::Arguments
 
     std::map< uint16_t, ::DBus::Variant > instant_data = obj->mp_demonstratorProxy->mp_fuelStopAdvisorProxy->GetInstantData();
 
+
     v8::Local<v8::Array> ret = v8::Array::New();
 
     for (std::map< uint16_t, ::DBus::Variant >::iterator iter = instant_data.begin(); iter != instant_data.end(); iter++) {
         v8::Local<v8::Object> data = v8::Object::New();
-        ::DBus::Variant value;
-        value = iter->second;
+        ::DBus::Variant value = iter->second;
+        printf("GetInstantData%d\n",iter->first);
+        printf("GetInstantData%s\n",value.signature().c_str());
         data->Set(v8::String::New("key"), v8::Uint32::New(iter->first));
         switch (iter->first) {
-            case GENIVI_FUELSTOPADVISOR_DISTANCE:
-            case GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE:
-                data->Set(v8::String::New("value"), v8::Number::New(value));
-            default:
-                break;
+        case GENIVI_FUELSTOPADVISOR_FUEL_LEVEL:
+            data->Set(v8::String::New("value"), v8::Int32::New(15));
+            break;
+        case GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE:
+            data->Set(v8::String::New("value"), v8::Int32::New(55));
+            break;
+        case GENIVI_FUELSTOPADVISOR_TANK_DISTANCE:
+            data->Set(v8::String::New("value"), v8::Int32::New(300));
+            break;
+        case GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE:
+            data->Set(v8::String::New("value"), v8::Int32::New(400));
+            break;
+        default:
+            break;
         }
         ret->Set(ret->Length(), data);
     }
 
     return scope.Close(ret);
 }
+
+v8::Handle<v8::Value> FuelStopAdvisorWrapper::GetSpeed(const v8::Arguments& args) {
+    v8::HandleScope scope; //to properly clean up v8 handles
+
+    // Retrieves the pointer to the wrapped object instance.
+    FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
+
+    v8::Local<v8::Object> ret = v8::Object::New();
+
+    return scope.Close(ret);
+}
+
+v8::Handle<v8::Value> FuelStopAdvisorWrapper::GetLevel(const v8::Arguments& args) {
+    v8::HandleScope scope; //to properly clean up v8 handles
+
+    // Retrieves the pointer to the wrapped object instance.
+    FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
+
+    DBus::Variant variant = obj->mp_demonstratorProxy->mp_managerProxy->GetLevel();
+    DBus::MessageIter it = variant.reader();
+    uint16_t level;
+    it >> level;
+
+    v8::Local<v8::Object> ret = v8::Object::New();
+    ret->Set( 0, v8::Uint32::New(level) );
+
+    return scope.Close(ret);
+}
+
+v8::Handle<v8::Value> FuelStopAdvisorWrapper::GetInstantConsumption(const v8::Arguments& args) {
+    v8::HandleScope scope; //to properly clean up v8 handles
+
+    // Retrieves the pointer to the wrapped object instance.
+    FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
+
+    DBus::Variant variant = obj->mp_demonstratorProxy->mp_managerProxy->GetInstantConsumption();
+    DBus::MessageIter it = variant.reader();
+    uint32_t consumption;
+    it >> consumption;
+
+    v8::Local<v8::Object> ret = v8::Object::New();
+    ret->Set( 0, v8::Uint32::New(consumption) );
+
+    return scope.Close(ret);
+}
+
+v8::Handle<v8::Value> FuelStopAdvisorWrapper::GetOdometer(const v8::Arguments& args) {
+    v8::HandleScope scope; //to properly clean up v8 handles
+
+    // Retrieves the pointer to the wrapped object instance.
+    FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
+
+    v8::Local<v8::Object> ret = v8::Object::New();
+
+    return scope.Close(ret);
+}
+
+
 
 void RegisterModule(v8::Handle<v8::Object> target) {
     FuelStopAdvisorWrapper::Init(target);

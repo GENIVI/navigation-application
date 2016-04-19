@@ -36,10 +36,35 @@ import lbs.plugin.dbusif 1.0
 HMIMenu {
 	id: menu
     property string pagefile:"NavigationSettingsLanguageAndUnits"
+    property Item configurationChangedSignal;
 
 	DBusIf {
 		id: dbusIf 
 	}
+
+    function configurationChanged(args)
+    { //to be improved !
+        for (var i=0; i < args[1].length;i+=2) {
+            switch (args[1][i+1]) {
+            case Genivi.NAVIGATIONCORE_LOCALE:
+                update();
+                break;
+            case Genivi.NAVIGATIONCORE_UNITS_OF_MEASUREMENT:
+                update();
+                break;
+            }
+        }
+    }
+
+    function connectSignals()
+    {
+        configurationChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Configuration","ConfigurationChanged",menu,"configurationChanged");
+    }
+
+    function disconnectSignals()
+    {
+        configurationChangedSignal.destroy();
+    }
 
 	function update()
 	{
@@ -152,11 +177,17 @@ HMIMenu {
                 setUnitsLength(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
 		}
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; onClicked:{leaveMenu();}}
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back;
+            onClicked:{
+                disconnectSignals();
+                leaveMenu();
+            }
+        }
 
 	}
 
     Component.onCompleted: {
+        connectSignals();
         update();
     }
 }

@@ -131,12 +131,31 @@ v8::Handle<v8::Value> PositioningEnhancedPositionWrapper::GetVersion(const v8::A
 v8::Handle<v8::Value> PositioningEnhancedPositionWrapper::GetPositionInfo(const v8::Arguments& args) {
     v8::HandleScope scope; //to properly clean up v8 handles
 
+    uint64to32 valuesToReturn;
+
+    if (args.Length() < 1) {
+        return v8::ThrowException(
+        v8::Exception::TypeError(v8::String::New("getPositionInfo requires at least 1 argument"))
+        );
+    }
+
+    if (args[0]->IsArray()) {
+        v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(args[0]);
+        v8::Handle<v8::Value> msb = v8::Handle<v8::Object>::Cast(array->Get(0));
+        v8::Handle<v8::Value> lsb = v8::Handle<v8::Object>::Cast(array->Get(1));
+        valuesToReturn.p.high = msb->ToInt32()->Int32Value();
+        valuesToReturn.p.low = lsb->ToInt32()->Int32Value();
+    } else {
+        return v8::ThrowException(
+        v8::Exception::TypeError(v8::String::New("getPositionInfo requires an array as argument"))
+        );
+    }
+
     // Retrieves the pointer to the wrapped object instance.
     PositioningEnhancedPositionWrapper* obj = ObjectWrap::Unwrap<PositioningEnhancedPositionWrapper>(args.This());
-    uint64_t valuesToReturn=GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE | GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE | GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE;
     uint64_t timestamp;
     std::map< uint64_t, ::DBus::Variant > position;
-    obj->mp_positioningProxy->mp_enhancedPositionProxy->GetPositionInfo(valuesToReturn, timestamp, position);
+    obj->mp_positioningProxy->mp_enhancedPositionProxy->GetPositionInfo(valuesToReturn.full, timestamp, position);
 
 
     v8::Local<v8::Array> ret = v8::Array::New();

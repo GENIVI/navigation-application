@@ -98,6 +98,11 @@ public:
     Properties *mp_odometer_properties;
     Properties *mp_engine_speed_properties;
 
+    DBus::Variant GetLevel();
+    DBus::Variant GetSpeed();
+    DBus::Variant GetInstantConsumption();
+    DBus::Variant GetOdometer();
+
 private:
     DemonstratorProxy* mp_demonstratorProxy;
 

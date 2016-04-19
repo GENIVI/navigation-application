@@ -54,6 +54,27 @@ var fuelStopAdvisorWrapper = require(resource.generatedNodejsModulePath+'/FuelSt
 var i_positioningEnhancedPositionWrapper = new positioningEnhancedPositionWrapper.PositioningEnhancedPositionWrapper();
 var i_fuelStopAdvisorWrapper = new fuelStopAdvisorWrapper.FuelStopAdvisorWrapper();
 
+var poll = 0;
+// Scan arguments if exists
+if (process.argv[2] === 'poll'){
+    poll = 1;
+    console.log('Polling activated, no signal used');
+    if (process.argv[3] === 'silent'){
+        // Silentize console
+        console.log('Silent mode now');
+        console.log = function() {
+        }
+    }
+} else {
+    if (process.argv[2] === 'silent'){
+        // Silentize console
+        console.log('Silent mode now');
+        console.log = function() {
+        }
+    }
+}
+
+
 // Create and init server
 var port = 8080;
 var hostname = '127.0.0.1';
@@ -91,27 +112,30 @@ server.listen(port);
 // Load socket.io and connect it to the server
 var io = require('socket.io').listen(server);
 
-// Manage socket for the namespace /simulation
-var socket_simulation = io.of('/simulation');
+// Manage sockets
+var socket_simulation_get = io.of('/simulation_get');
+var socket_simulation_signal = io.of('/simulation_signal');
+var socket_simulation_warning = io.of('/simulation_warning');
+
 // signals
 function positionUpdate(changedValues) {
     console.log('positionUpdate: ' + changedValues);
-    socket_simulation.emit('positioning_signal', {signal: 'positionUpdate', data: changedValues});
+    if(!poll) { socket_simulation_signal.emit('positioning_signal', {signal: 'positionUpdate', data: changedValues});}
 }
 var setPositionUpdateListener = i_positioningEnhancedPositionWrapper.setPositionUpdateListener(positionUpdate);
 function tripDataUpdated(changedValues) {
     console.log('tripDataUpdated: ' + changedValues);
-    socket_simulation.emit('demonstrator_signal', {signal: 'tripDataUpdated', data: changedValues});
+    if(!poll) { socket_simulation_signal.emit('demonstrator_signal', {signal: 'tripDataUpdated', data: changedValues});}
 }
 var setTripDataUpdatedListener = i_fuelStopAdvisorWrapper.setTripDataUpdatedListener(tripDataUpdated);
 function fuelStopAdvisorWarning(changedValues) {
     console.log('fuelStopAdvisorWarning: ' + changedValues);
-    socket_simulation.emit('demonstrator_signal', {signal: 'fuelStopAdvisorWarning', data: changedValues});
+    if(!poll) { socket_simulation_signal.emit('demonstrator_signal', {signal: 'fuelStopAdvisorWarning', data: changedValues});}
 }
 var setFuelStopAdvisorWarningListener = i_fuelStopAdvisorWrapper.setFuelStopAdvisorWarningListener(fuelStopAdvisorWarning);
 function tripDataResetted(changedValues) {
     console.log('tripDataResetted: ' + changedValues);
-    socket_simulation.emit('demonstrator_signal', {signal: 'tripDataResetted', data: changedValues});
+    if(!poll) { socket_simulation_signal.emit('demonstrator_signal', {signal: 'tripDataResetted', data: changedValues});}
 }
 var setTripDataResettedListener = i_fuelStopAdvisorWrapper.setTripDataResettedListener(tripDataResetted);
 
@@ -119,8 +143,8 @@ var setTripDataResettedListener = i_fuelStopAdvisorWrapper.setTripDataResettedLi
 gcontext.init();
 
 // connection
-socket_simulation.on('connection', function (client) {
-    console.log('Client connected');
+socket_simulation_get.on('connection', function (client) {
+    console.log('Socket simulation started');
     client.on('positioning_request', function (message) {
         switch(message.interface) {
         case "PositioningEnhancedPosition":
@@ -133,12 +157,12 @@ socket_simulation.on('connection', function (client) {
             }
             else {
                 console.log("Could not find " + message.method + " function");
-                client.emit('feedback', "Could not find " + message.method + " function");
+                socket_simulation_warning.emit('feedback', "Could not find " + message.method + " function");
             }
             break;
         default:
             console.log("Could not find " + message.interface);
-            client.emit('feedback', "Could not find " + message.interface);
+            socket_simulation_warning.emit('feedback', "Could not find " + message.interface);
         }
     });
     client.on('demonstrator_request', function (message) {
@@ -154,12 +178,12 @@ socket_simulation.on('connection', function (client) {
             }
             else {
                 console.log("Could not find " + message.method + " function");
-                client.emit('feedback', "Could not find " + message.method + " function");
+                socket_simulation_warning.emit('feedback', "Could not find " + message.method + " function");
             }
             break;
         default:
             console.log("Could not find " + message.interface);
-            client.emit('feedback', "Could not find " + message.interface);
+            socket_simulation_warning.emit('feedback', "Could not find " + message.interface);
         }
     });
     client.on('panel_request', function (message) {
@@ -170,7 +194,7 @@ socket_simulation.on('connection', function (client) {
             break;
         default:
             console.log("Could not find " + message.interface);
-            client.emit('feedback', "Could not find " + message.interface);
+            socket_simulation_warning.emit('feedback', "Could not find " + message.interface);
         }
     });
 });
@@ -181,7 +205,10 @@ setInterval(function(){
         if (err) throw err;
 //        console.log('results: %j', results);
         });
-    console.log('Refresh simulated values')
+    if(poll) {
+        socket_simulation_signal.emit('positioning_signal', {signal: 'positionUpdate', data: 0});
+        socket_simulation_signal.emit('demonstrator_signal', {signal: 'tripDataUpdated', data: 0});
+    }
 }, 1000);
 
 // Log info

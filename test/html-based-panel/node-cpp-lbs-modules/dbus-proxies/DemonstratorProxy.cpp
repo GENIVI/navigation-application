@@ -68,6 +68,26 @@ ManagerProxy::ManagerProxy(DBus::Connection &connection, DemonstratorProxy *demo
     mp_demonstratorProxy = demonstratorProxy;
 }
 
+DBus::Variant ManagerProxy::GetLevel()
+{
+    return (mp_fuel_properties->Get("org.automotive.Fuel","Level"));
+}
+
+DBus::Variant ManagerProxy::GetSpeed()
+{
+    return (mp_engine_speed_properties->Get("org.automotive.EngineSpeed","EngineSpeed"));
+}
+
+DBus::Variant ManagerProxy::GetInstantConsumption()
+{
+    return (mp_fuel_properties->Get("org.automotive.Fuel","InstantConsumption"));
+}
+
+DBus::Variant ManagerProxy::GetOdometer()
+{
+    return(mp_odometer_properties->Get("org.automotive.Odometer","Odometer"));
+}
+
 DemonstratorProxy::DemonstratorProxy(FuelStopAdvisorWrapper *fuelStopAdvisorWrapper)
 {
     dispatcher = new DBus::Glib::BusDispatcher();
@@ -102,6 +122,8 @@ DemonstratorProxy::~DemonstratorProxy()
     delete mp_managerProxy;
     delete connection;
     delete dispatcher;
+    delete amb_connection;
+    delete amb_dispatcher;
 }
 
 void DemonstratorProxy::TripDataResetted(const uint8_t& number)

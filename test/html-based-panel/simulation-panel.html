@@ -101,26 +101,30 @@ Copyright © PCA Peugeot Citroen
 <script type="text/javascript">
 
 <!-- sockets management -->
-var socket_simulation = io.connect('http://localhost:8080/simulation'); //namespace simulation
-socket_simulation.on('feedback', function(message) {
+var socket_simulation_get = io.connect('http://localhost:8080/simulation_get'); //namespace simulation_get
+var socket_simulation_signal = io.connect('http://localhost:8080/simulation_signal'); //namespace simulation_signal
+var socket_simulation_warning = io.connect('http://localhost:8080/simulation_warning'); //namespace simulation_warning
+
+socket_simulation_warning.on('feedback', function(message) {
     alert('Message received from the server : ' + message);
 })
 
-socket_simulation.on('positioning_answer', function(message) {
+socket_simulation_get.on('positioning_answer', function(message) {
     if(message.request === 'getPositionInfo')
     {
         getPositionInfoReturn(message.answer);
     }
 })
 
-socket_simulation.on('positioning_signal', function(message) {
+socket_simulation_signal.on('positioning_signal', function(message) {
+console.log(message);
     if(message.signal === 'positionUpdate')
     {
             positionUpdate(message.data);
     }
 })
 
-socket_simulation.on('demonstrator_answer', function(message) {
+socket_simulation_get.on('demonstrator_answer', function(message) {
         if(message.request === 'getVersion')
         {
             getVersionReturn(message.answer);
@@ -128,11 +132,26 @@ socket_simulation.on('demonstrator_answer', function(message) {
                 if(message.request === 'getPositionInfo')
                 {
                     getPositionInfoReturn(message.answer);
+                } else {
+                        if(message.request === 'getInstantData')
+                        {
+                            getInstantDataReturn(message.answer);
+                        } else {
+                                if(message.request === 'getLevel')
+                                {
+                                    getLevelReturn(message.answer);
+                                } else {
+                                        if(message.request === 'getInstantConsumption')
+                                        {
+                                            getInstantConsumptionReturn(message.answer);
+                                        }
+                                }
+                        }
                 }
         }
 })
 
-socket_simulation.on('demonstrator_signal', function(message) {
+socket_simulation_signal.on('demonstrator_signal', function(message) {
     if(message.signal === 'tripDataUpdated')
     {
             tripDataUpdated(message.data);
@@ -142,9 +161,23 @@ socket_simulation.on('demonstrator_signal', function(message) {
 <!-- scenarii -->
 var scenarii = new Enum({'START': 1, 'INITIALIZATION': 2, 'HIGH_TANK_LEVEL': 3, 'LOW_TANK_LEVEL': 4});
 
+<!-- DBus GENIVI constants -->
+var genivi_constants = new Enum({'GENIVI_FUELSTOPADVISOR_FUEL_LEVEL': 33, 'GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE': 35, 'GENIVI_FUELSTOPADVISOR_TANK_DISTANCE': 34, 'GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE': 36});
+
 <!-- initialization -->
 var today=new Date();
 document.getElementById("start_time").innerHTML=today;
+document.getElementById("engine_speed").innerHTML='---';
+document.getElementById("tank").innerHTML='---';
+document.getElementById("fuel_instant").innerHTML='---';
+document.getElementById("vehicle_speed").innerHTML='---';
+document.getElementById("latitude").innerHTML='---';
+document.getElementById("longitude").innerHTML='---';
+document.getElementById("guidance_status").innerHTML='---';
+document.getElementById("simulation_status").innerHTML='---';
+document.getElementById("warning_status").innerHTML='---';
+document.getElementById("tank_distance").innerHTML='---';
+document.getElementById("enhanced_tank_distance").innerHTML='---';
 
 getVersion();
 
@@ -152,13 +185,15 @@ getPositionInfo();
 
 <!-- getters -->
 function getVersion() {
-        socket_simulation.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getVersion', parameters: []});
+    socket_simulation_get.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getVersion', parameters: []});
 }
 function getVersionReturn(answer) {
 	document.getElementById("version").innerHTML=answer[3];	
 }
 function getPositionInfo() {
-        socket_simulation.emit('positioning_request', {interface: 'PositioningEnhancedPosition', method: 'getPositionInfo', parameters: [0,27]});
+        var data = [0,7]; //GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE | GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE | GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE
+        // NB: getPositionInfo uses a 64 bits wide bitfield, split into two 16 bits, [msb,lsb]
+    socket_simulation_get.emit('positioning_request', {interface: 'PositioningEnhancedPosition', method: 'getPositionInfo', parameters: data});
 }
 function getPositionInfoReturn(answer) {
         for ( var i=1; i<answer.length; i++ ) {
@@ -175,10 +210,37 @@ function getPositionInfoReturn(answer) {
         }
 }
 function getInstantData() {
-        socket_simulation.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getInstantData', parameters: []});
+    socket_simulation_get.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getInstantData', parameters: []});
 }
 function getInstantDataReturn(answer) {
-alert('Message received from the server : ' + answer);
+        for ( var i=0; i<answer.length; i++ ) {
+            switch(answer[i].key)
+            {
+                case genivi_constants.get('GENIVI_FUELSTOPADVISOR_FUEL_LEVEL').value:
+                    document.getElementById("tank").innerHTML=answer[i].value;
+                break;
+                case genivi_constants.get('GENIVI_FUELSTOPADVISOR_TANK_DISTANCE').value:
+                    document.getElementById("tank_distance").innerHTML=answer[i].value;
+                break;
+                case genivi_constants.get('GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE').value:
+                    document.getElementById("fuel_instant").innerHTML=answer[i].value/10;
+                break;
+                case genivi_constants.get('GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE').value:
+                    document.getElementById("enhanced_tank_distance").innerHTML=answer[i].value;
+                break;
+            }
+        }
+}
+function getLevel() {
+    socket_simulation_get.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getLevel', parameters: []});
+}
+function getLevelReturn(answer) {
+    document.getElementById("tank").innerHTML = answer[0];
+}
+function getInstantConsumption() {
+    socket_simulation_get.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getInstantConsumption', parameters: []});
+}
+function getInstantConsumptionReturn(answer) {
 }
 
 <!-- setters -->
@@ -190,12 +252,14 @@ function positionUpdate(changedValues) {
 
 function tripDataUpdated(number) {
     getInstantData();
+    getLevel();
+    getInstantConsumption();
 }
 
 <!-- some other functions -->
 function stepChange(button) {
     var data = scenarii.get(button.value).key;
-    socket_simulation.emit('panel_request', {request: 'LogReplayerScenario', parameters: [data]});
+    socket_simulation_get.emit('panel_request', {request: 'LogReplayerScenario', parameters: [data]});
 }
 
 </script>

@@ -43,6 +43,15 @@
 // header file.
 // using namespace v8;
 
+static int32_t
+int32_variant(DBus::Variant variant)
+{
+    int32_t ret;
+    DBus::MessageIter iter=variant.reader();
+    iter >> ret;
+    return ret;
+}
+
 class FuelStopAdvisorWrapper : public node::ObjectWrap {
     friend void DemonstratorProxy::TripDataResetted(const uint8_t &number);
     friend void DemonstratorProxy::TripDataUpdated(const uint8_t &number);
@@ -69,6 +78,11 @@ protected:
     void TripDataUpdated(const uint8_t& number);
     static v8::Handle<v8::Value> SetFuelStopAdvisorWarningListener(const v8::Arguments& args);
     void FuelStopAdvisorWarning(const bool& destinationCantBeReached);
+
+    static v8::Handle<v8::Value> GetSpeed(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetLevel(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetInstantConsumption(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetOdometer(const v8::Arguments& args);
 
 private:
     DemonstratorProxy* mp_demonstratorProxy;
