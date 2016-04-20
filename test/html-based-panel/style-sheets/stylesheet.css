@@ -8,7 +8,7 @@ body {
     min-height: 480px;
     margin: 0;
     padding: 0;
-    background-color: lightblue;
+    background-color: blue;
     font-size: 1em;
     border:double 2px black;
 }
@@ -36,7 +36,7 @@ footer {
     text-align:center;
 }
 h1 {
-    color: navy;
+    color: yellow;
     margin-left: 20px;
     font-size: 1.5em;
 }

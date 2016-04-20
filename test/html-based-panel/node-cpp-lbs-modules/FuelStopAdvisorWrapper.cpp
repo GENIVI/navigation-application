@@ -4,7 +4,7 @@
 *
 * \copyright Copyright (C) 2016, PCA Peugeot Citroen
 *
-* \file main.cpp
+* \file FuelStopAdvisorWrapper.cpp
 *
 * \brief This file is part of the Navigation Web API proof of concept.
 *

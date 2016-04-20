@@ -44,6 +44,9 @@
 #include "amb_proxy.h"
 #include "constants.h"
 #include "fuel-stop-advisor_proxy.h"
+#include "genivi-navigationcore-guidance_proxy.h"
+#include "genivi-navigationcore-constants.h"
+#include "genivi-navigationcore-mapmatchedposition_proxy.h"
 
 typedef uint32_t poiId_t;
 typedef uint32_t categoryId_t;

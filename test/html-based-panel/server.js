@@ -49,10 +49,12 @@ var python_script_options = {
 // Requirements of LBS add-on modules
 var positioningEnhancedPositionWrapper = require(resource.generatedNodejsModulePath+'/PositioningEnhancedPositionWrapper');
 var fuelStopAdvisorWrapper = require(resource.generatedNodejsModulePath+'/FuelStopAdvisorWrapper');
+var navigationCoreWrapper = require(resource.generatedNodejsModulePath+'/NavigationCoreWrapper');
 
 // Create instances
 var i_positioningEnhancedPositionWrapper = new positioningEnhancedPositionWrapper.PositioningEnhancedPositionWrapper();
 var i_fuelStopAdvisorWrapper = new fuelStopAdvisorWrapper.FuelStopAdvisorWrapper();
+var i_navigationCoreWrapper = new navigationCoreWrapper.NavigationCoreWrapper();
 
 var poll = 0;
 // Scan arguments if exists
@@ -118,6 +120,11 @@ var socket_simulation_signal = io.of('/simulation_signal');
 var socket_simulation_warning = io.of('/simulation_warning');
 
 // signals
+function guidanceStatusChanged(changedValues) {
+    console.log('guidanceStatusChanged: ' + changedValues);
+    if(!poll) { socket_simulation_signal.emit('navigationcore_signal', {signal: 'guidanceStatusChanged', data: changedValues});}
+}
+var setGuidanceStatusChangedListener = i_navigationCoreWrapper.setGuidanceStatusChangedListener(guidanceStatusChanged);
 function positionUpdate(changedValues) {
     console.log('positionUpdate: ' + changedValues);
     if(!poll) { socket_simulation_signal.emit('positioning_signal', {signal: 'positionUpdate', data: changedValues});}
@@ -145,6 +152,26 @@ gcontext.init();
 // connection
 socket_simulation_get.on('connection', function (client) {
     console.log('Socket simulation started');
+    client.on('navigationcore_request', function (message) {
+        switch(message.interface) {
+        case "NavigationCoreGuidance":
+            console.log('Message received: Interface-->' + message.interface +' Method-->', message.method +' Parameters-->' + message.parameters);
+            if (message.method in i_navigationCoreWrapper && typeof i_navigationCoreWrapper[message.method] === "function") {
+                var data = i_navigationCoreWrapper[message.method](message.parameters);
+                if(data) {
+                    client.emit('navigationcore_answer', {request: message.method, answer: data});
+                }
+            }
+            else {
+                console.log("Could not find " + message.method + " function");
+                client.emit('feedback', "Could not find " + message.method + " function");
+            }
+            break;
+        default:
+            console.log("Could not find " + message.interface);
+            client.emit('feedback', "Could not find " + message.interface);
+        }
+    });
     client.on('positioning_request', function (message) {
         switch(message.interface) {
         case "PositioningEnhancedPosition":
@@ -208,6 +235,7 @@ setInterval(function(){
     if(poll) {
         socket_simulation_signal.emit('positioning_signal', {signal: 'positionUpdate', data: 0});
         socket_simulation_signal.emit('demonstrator_signal', {signal: 'tripDataUpdated', data: 0});
+       socket_simulation_signal.emit('navigationcore_signal', {signal: 'guidanceStatusChanged', data: 0});
     }
 }, 1000);
 

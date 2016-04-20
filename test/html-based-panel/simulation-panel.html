@@ -124,6 +124,21 @@ console.log(message);
     }
 })
 
+socket_simulation_get.on('navigationcore_answer', function(message) {
+    if(message.request === 'getGuidanceStatus')
+    {
+        getGuidanceStatusReturn(message.answer);
+    }
+})
+
+socket_simulation_signal.on('navigationcore_signal', function(message) {
+console.log(message);
+    if(message.signal === 'guidanceStatusChanged')
+    {
+            guidanceStatusChanged(message.data);
+    }
+})
+
 socket_simulation_get.on('demonstrator_answer', function(message) {
         if(message.request === 'getVersion')
         {
@@ -162,7 +177,7 @@ socket_simulation_signal.on('demonstrator_signal', function(message) {
 var scenarii = new Enum({'START': 1, 'INITIALIZATION': 2, 'HIGH_TANK_LEVEL': 3, 'LOW_TANK_LEVEL': 4});
 
 <!-- DBus GENIVI constants -->
-var genivi_constants = new Enum({'GENIVI_FUELSTOPADVISOR_FUEL_LEVEL': 33, 'GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE': 35, 'GENIVI_FUELSTOPADVISOR_TANK_DISTANCE': 34, 'GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE': 36});
+var genivi_constants = new Enum({'GENIVI_FUELSTOPADVISOR_FUEL_LEVEL': 33, 'GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE': 35, 'GENIVI_FUELSTOPADVISOR_TANK_DISTANCE': 34, 'GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE': 36,'GENIVI_NAVIGATIONCORE_ACTIVE':96,'GENIVI_NAVIGATIONCORE_INACTIVE':97});
 
 <!-- initialization -->
 var today=new Date();
@@ -189,6 +204,17 @@ function getVersion() {
 }
 function getVersionReturn(answer) {
 	document.getElementById("version").innerHTML=answer[3];	
+}
+function getGuidanceStatus() {
+    socket_simulation_get.emit('navigationcore_request', {interface: 'NavigationCoreGuidance', method: 'getGuidanceStatus', parameters: []});
+}
+function getGuidanceStatusReturn(answer) {
+    if (answer[0] === genivi_constants.get('GENIVI_NAVIGATIONCORE_ACTIVE').value) {
+        document.getElementById("guidance_status").innerHTML= 'ON';
+    }
+    else {
+        document.getElementById("guidance_status").innerHTML= 'OFF';
+    }
 }
 function getPositionInfo() {
         var data = [0,7]; //GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE | GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE | GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE
@@ -254,6 +280,10 @@ function tripDataUpdated(number) {
     getInstantData();
     getLevel();
     getInstantConsumption();
+}
+
+function guidanceStatusChanged(changedValues) {
+    getGuidanceStatus();
 }
 
 <!-- some other functions -->
