@@ -54,11 +54,13 @@ variant_int32(int32_t i)
 
 class NavigationCoreWrapper : public node::ObjectWrap {
     friend void NavigationCoreProxy::GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle);
+    friend void NavigationCoreProxy::SimulationStatusChanged(const int32_t &simulationStatus);
 
 public:
     static v8::Persistent<v8::FunctionTemplate> constructor;
     static void Init(v8::Handle<v8::Object> target);
     static v8::Persistent<v8::Function> signalGuidanceStatusChanged;
+    static v8::Persistent<v8::Function> signalSimulationStatusChanged;
 
 protected:
     NavigationCoreWrapper();
@@ -66,9 +68,12 @@ protected:
 
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
     static v8::Handle<v8::Value> GetGuidanceStatus(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetSimulationStatus(const v8::Arguments& args);
 
     static v8::Handle<v8::Value> SetGuidanceStatusChangedListener(const v8::Arguments& args);
     void GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle);
+    static v8::Handle<v8::Value> SetSimulationStatusChangedListener(const v8::Arguments& args);
+    void SimulationStatusChanged(const int32_t& simulationStatus);
 
 private:
     NavigationCoreProxy* mp_navigationCoreProxy;

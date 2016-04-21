@@ -64,6 +64,26 @@ private:
     NavigationCoreProxy* mp_navigationCoreProxy;
 };
 
+class NavigationCoreMapMatchedPositionProxy
+        : public org::genivi::navigationcore::MapMatchedPosition_proxy,
+          public DBus::ObjectProxy
+{
+
+public:
+
+    NavigationCoreMapMatchedPositionProxy(DBus::Connection &connection,NavigationCoreProxy* navigationCoreProxy);
+    void SimulationStatusChanged(const int32_t& simulationStatus);
+    void SimulationSpeedChanged(const uint8_t& speedFactor);
+    void PositionUpdate(const std::vector< int32_t >& changedValues);
+    void AddressUpdate(const std::vector< int32_t >& changedValues);
+    void PositionOnSegmentUpdate(const std::vector< int32_t >& changedValues);
+    void StatusUpdate(const std::vector< int32_t >& changedValues);
+    void OffRoadPositionChanged(const uint32_t& distance, const int32_t& direction);
+
+private:
+    NavigationCoreProxy* mp_navigationCoreProxy;
+};
+
 class NavigationCoreWrapper;
 class NavigationCoreProxy
 {
@@ -71,9 +91,12 @@ class NavigationCoreProxy
 public:
     NavigationCoreProxy(NavigationCoreWrapper *navigationCoreWrapper);
     ~NavigationCoreProxy();
+
     void GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle);
+    void SimulationStatusChanged(const int32_t& simulationStatus);
 
     NavigationCoreGuidanceProxy* mp_navigationCoreGuidanceProxy;
+    NavigationCoreMapMatchedPositionProxy* mp_navigationCoreMapMatchedPositionProxy;
 
 private:
     NavigationCoreWrapper* mp_navigationCoreWrapper;

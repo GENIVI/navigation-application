@@ -128,6 +128,11 @@ socket_simulation_get.on('navigationcore_answer', function(message) {
     if(message.request === 'getGuidanceStatus')
     {
         getGuidanceStatusReturn(message.answer);
+    } else {
+        if(message.request === 'getSimulationStatus')
+        {
+            getSimulationStatusReturn(message.answer);
+        }
     }
 })
 
@@ -136,6 +141,11 @@ console.log(message);
     if(message.signal === 'guidanceStatusChanged')
     {
             guidanceStatusChanged(message.data);
+    } else {
+        if(message.signal === 'simulationStatusChanged')
+        {
+                simulationStatusChanged(message.data);
+        }
     }
 })
 
@@ -170,6 +180,11 @@ socket_simulation_signal.on('demonstrator_signal', function(message) {
     if(message.signal === 'tripDataUpdated')
     {
             tripDataUpdated(message.data);
+    } else {
+        if(message.signal === 'fuelStopAdvisorWarning')
+        {
+                fuelStopAdvisorWarning(message.data);
+        }
     }
 })
 
@@ -177,7 +192,7 @@ socket_simulation_signal.on('demonstrator_signal', function(message) {
 var scenarii = new Enum({'START': 1, 'INITIALIZATION': 2, 'HIGH_TANK_LEVEL': 3, 'LOW_TANK_LEVEL': 4});
 
 <!-- DBus GENIVI constants -->
-var genivi_constants = new Enum({'GENIVI_FUELSTOPADVISOR_FUEL_LEVEL': 33, 'GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE': 35, 'GENIVI_FUELSTOPADVISOR_TANK_DISTANCE': 34, 'GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE': 36,'GENIVI_NAVIGATIONCORE_ACTIVE':96,'GENIVI_NAVIGATIONCORE_INACTIVE':97});
+var genivi_constants = new Enum({'GENIVI_FUELSTOPADVISOR_FUEL_LEVEL': 33, 'GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE': 35, 'GENIVI_FUELSTOPADVISOR_TANK_DISTANCE': 34, 'GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE': 36,'GENIVI_NAVIGATIONCORE_ACTIVE':96,'GENIVI_NAVIGATIONCORE_INACTIVE':97,'GENIVI_NAVIGATIONCORE_SIMULATION_STATUS_RUNNING': 545});
 
 <!-- initialization -->
 var today=new Date();
@@ -204,6 +219,17 @@ function getVersion() {
 }
 function getVersionReturn(answer) {
 	document.getElementById("version").innerHTML=answer[3];	
+}
+function getSimulationStatus() {
+    socket_simulation_get.emit('navigationcore_request', {interface: 'NavigationCoreMapMatchedPosition', method: 'getSimulationStatus', parameters: []});
+}
+function getSimulationStatusReturn(answer) {
+    if (answer[0] === genivi_constants.get('GENIVI_NAVIGATIONCORE_SIMULATION_STATUS_RUNNING').value) {
+        document.getElementById("simulation_status").innerHTML= 'ON';
+    }
+    else {
+        document.getElementById("simulation_status").innerHTML= 'OFF';
+    }
 }
 function getGuidanceStatus() {
     socket_simulation_get.emit('navigationcore_request', {interface: 'NavigationCoreGuidance', method: 'getGuidanceStatus', parameters: []});
@@ -273,17 +299,34 @@ function getInstantConsumptionReturn(answer) {
 
 <!-- signals -->
 function positionUpdate(changedValues) {
+//for the moment, the changedValues is not used
     getPositionInfo();
 }
 
 function tripDataUpdated(number) {
+//for the moment, the changedValues is not used
     getInstantData();
     getLevel();
     getInstantConsumption();
 }
 
 function guidanceStatusChanged(changedValues) {
+//for the moment, the changedValues is not used
     getGuidanceStatus();
+}
+
+function simulationStatusChanged(changedValues) {
+//for the moment, the changedValues is not used
+    getSimulationStatus();
+}
+
+function fuelStopAdvisorWarning(changedValues) {
+    if (changedValues === true) {
+        document.getElementById("warning_status").innerHTML='ON';
+    }
+    else {
+        document.getElementById("warning_status").innerHTML='OFF';
+    }
 }
 
 <!-- some other functions -->

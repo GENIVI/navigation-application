@@ -35,6 +35,49 @@ using namespace std;
 static DBus::Glib::BusDispatcher *dispatcher;
 static DBus::Connection *connection;
 
+NavigationCoreMapMatchedPositionProxy::NavigationCoreMapMatchedPositionProxy(DBus::Connection &connection, NavigationCoreProxy *navigationCoreProxy)
+    :    DBus::ObjectProxy(connection,
+                           "/org/genivi/navigationcore",
+                           "org.genivi.navigationcore.MapMatchedPosition")
+{
+    mp_navigationCoreProxy = navigationCoreProxy;
+}
+
+void NavigationCoreMapMatchedPositionProxy::SimulationStatusChanged(const int32_t& simulationStatus)
+{
+    mp_navigationCoreProxy->SimulationStatusChanged(simulationStatus);
+}
+
+void NavigationCoreMapMatchedPositionProxy::SimulationSpeedChanged(const uint8_t& speedFactor)
+{
+
+}
+
+void NavigationCoreMapMatchedPositionProxy::PositionUpdate(const std::vector< int32_t >& changedValues)
+{
+
+}
+
+void NavigationCoreMapMatchedPositionProxy::AddressUpdate(const std::vector< int32_t >& changedValues)
+{
+
+}
+
+void NavigationCoreMapMatchedPositionProxy::PositionOnSegmentUpdate(const std::vector< int32_t >& changedValues)
+{
+
+}
+
+void NavigationCoreMapMatchedPositionProxy::StatusUpdate(const std::vector< int32_t >& changedValues)
+{
+
+}
+
+void NavigationCoreMapMatchedPositionProxy::OffRoadPositionChanged(const uint32_t& distance, const int32_t& direction)
+{
+
+}
+
 NavigationCoreGuidanceProxy::NavigationCoreGuidanceProxy(DBus::Connection &connection, NavigationCoreProxy *navigationCoreProxy)
     :    DBus::ObjectProxy(connection,
                            "/org/genivi/navigationcore",
@@ -42,7 +85,6 @@ NavigationCoreGuidanceProxy::NavigationCoreGuidanceProxy(DBus::Connection &conne
 {
     mp_navigationCoreProxy = navigationCoreProxy;
 }
-
 
 void NavigationCoreGuidanceProxy::VehicleLeftTheRoadNetwork()
 {
@@ -93,6 +135,7 @@ NavigationCoreProxy::NavigationCoreProxy(NavigationCoreWrapper *navigationCoreWr
     connection->setup(dispatcher);
     mp_navigationCoreWrapper = navigationCoreWrapper;
     mp_navigationCoreGuidanceProxy = new NavigationCoreGuidanceProxy(*connection,this);
+    mp_navigationCoreMapMatchedPositionProxy = new NavigationCoreMapMatchedPositionProxy(*connection,this);
 }
 
 NavigationCoreProxy::~NavigationCoreProxy()
@@ -105,4 +148,9 @@ NavigationCoreProxy::~NavigationCoreProxy()
 void NavigationCoreProxy::GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle)
 {
     mp_navigationCoreWrapper->GuidanceStatusChanged(guidanceStatus,routeHandle);
+}
+
+void NavigationCoreProxy::SimulationStatusChanged(const int32_t& simulationStatus)
+{
+   mp_navigationCoreWrapper->SimulationStatusChanged(simulationStatus);
 }

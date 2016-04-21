@@ -1,8 +1,8 @@
-all: clean configure.release build pack
+all: clean configure.release build pack install
 
-release: configure.release build pack
+release: configure.release build pack install
 
-debug: configure.debug build pack
+debug: configure.debug build pack install
 
 configure.%:
 	@node-gyp configure --$*
@@ -12,6 +12,9 @@ build:
 
 pack:
 	npm pack
+
+install:	
+	cd .. ; npm install node-cpp-lbs-modules/node-cpp-lbs-modules-0.1.0.tgz
 
 clean:
 	@node-gyp clean

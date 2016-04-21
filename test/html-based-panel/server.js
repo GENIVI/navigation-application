@@ -120,6 +120,11 @@ var socket_simulation_signal = io.of('/simulation_signal');
 var socket_simulation_warning = io.of('/simulation_warning');
 
 // signals
+function simulationStatusChanged(changedValues) {
+    console.log('simulationStatusChanged: ' + changedValues);
+    if(!poll) { socket_simulation_signal.emit('navigationcore_signal', {signal: 'simulationStatusChanged', data: changedValues});}
+}
+var setSimulationStatusChangedListener = i_navigationCoreWrapper.setSimulationStatusChangedListener(simulationStatusChanged);
 function guidanceStatusChanged(changedValues) {
     console.log('guidanceStatusChanged: ' + changedValues);
     if(!poll) { socket_simulation_signal.emit('navigationcore_signal', {signal: 'guidanceStatusChanged', data: changedValues});}
@@ -137,7 +142,7 @@ function tripDataUpdated(changedValues) {
 var setTripDataUpdatedListener = i_fuelStopAdvisorWrapper.setTripDataUpdatedListener(tripDataUpdated);
 function fuelStopAdvisorWarning(changedValues) {
     console.log('fuelStopAdvisorWarning: ' + changedValues);
-    if(!poll) { socket_simulation_signal.emit('demonstrator_signal', {signal: 'fuelStopAdvisorWarning', data: changedValues});}
+    socket_simulation_signal.emit('demonstrator_signal', {signal: 'fuelStopAdvisorWarning', data: changedValues});
 }
 var setFuelStopAdvisorWarningListener = i_fuelStopAdvisorWrapper.setFuelStopAdvisorWarningListener(fuelStopAdvisorWarning);
 function tripDataResetted(changedValues) {
@@ -155,6 +160,7 @@ socket_simulation_get.on('connection', function (client) {
     client.on('navigationcore_request', function (message) {
         switch(message.interface) {
         case "NavigationCoreGuidance":
+        case "NavigationCoreMapMatchedPosition":
             console.log('Message received: Interface-->' + message.interface +' Method-->', message.method +' Parameters-->' + message.parameters);
             if (message.method in i_navigationCoreWrapper && typeof i_navigationCoreWrapper[message.method] === "function") {
                 var data = i_navigationCoreWrapper[message.method](message.parameters);
@@ -235,7 +241,8 @@ setInterval(function(){
     if(poll) {
         socket_simulation_signal.emit('positioning_signal', {signal: 'positionUpdate', data: 0});
         socket_simulation_signal.emit('demonstrator_signal', {signal: 'tripDataUpdated', data: 0});
-       socket_simulation_signal.emit('navigationcore_signal', {signal: 'guidanceStatusChanged', data: 0});
+        socket_simulation_signal.emit('navigationcore_signal', {signal: 'guidanceStatusChanged', data: 0});
+        socket_simulation_signal.emit('navigationcore_signal', {signal: 'simulationStatusChanged', data: 0});
     }
 }, 1000);
 

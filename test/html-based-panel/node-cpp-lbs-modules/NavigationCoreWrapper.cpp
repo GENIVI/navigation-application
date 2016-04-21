@@ -32,6 +32,7 @@
 v8::Persistent<v8::FunctionTemplate> NavigationCoreWrapper::constructor;
 
 v8::Persistent<v8::Function> NavigationCoreWrapper::signalGuidanceStatusChanged;
+v8::Persistent<v8::Function> NavigationCoreWrapper::signalSimulationStatusChanged;
 
 void NavigationCoreWrapper::GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle)
 {
@@ -65,6 +66,37 @@ v8::Handle<v8::Value> NavigationCoreWrapper::SetGuidanceStatusChangedListener(co
     return scope.Close(ret);
 }
 
+void NavigationCoreWrapper::SimulationStatusChanged(const int32_t& simulationStatus)
+{
+    v8::HandleScope scope();
+
+    const unsigned argc = 1;
+    v8::Local<v8::Value> argv[argc];
+
+    argv[0]=v8::Local<v8::Value>::New(v8::Int32::New(simulationStatus));
+
+    v8::Persistent<v8::Function> fct = static_cast<v8::Function*>(*signalSimulationStatusChanged);
+    fct->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+}
+
+v8::Handle<v8::Value> NavigationCoreWrapper::SetSimulationStatusChangedListener(const v8::Arguments& args)
+{
+    v8::HandleScope scope; //to properly clean up v8 handles
+
+    if (!args[0]->IsFunction()) {
+        return v8::ThrowException(
+        v8::Exception::TypeError(v8::String::New("Requires a function as parameter"))
+        );
+    }
+
+    signalSimulationStatusChanged = v8::Persistent<v8::Function>::New(v8::Handle<v8::Function>::Cast(args[0]));
+
+    v8::Local<v8::Object> ret = v8::Object::New();
+    ret->Set( 0, v8::Boolean::New(signalSimulationStatusChanged->IsFunction()) );
+
+    return scope.Close(ret);
+}
+
 void NavigationCoreWrapper::Init(v8::Handle<v8::Object> target) {
     v8::HandleScope scope;
 
@@ -79,6 +111,8 @@ void NavigationCoreWrapper::Init(v8::Handle<v8::Object> target) {
     // Add all prototype methods, getters and setters here.
     NODE_SET_PROTOTYPE_METHOD(constructor, "setGuidanceStatusChangedListener", SetGuidanceStatusChangedListener);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getGuidanceStatus", GetGuidanceStatus);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setSimulationStatusChangedListener", SetSimulationStatusChangedListener);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getSimulationStatus", GetSimulationStatus);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -127,6 +161,22 @@ v8::Handle<v8::Value> NavigationCoreWrapper::GetGuidanceStatus(const v8::Argumen
     v8::Local<v8::Object> ret = v8::Object::New();
     ret->Set( 0, v8::Int32::New(guidanceStatus) );
     ret->Set( 1, v8::Uint32::New(routeHandle) );
+
+    return scope.Close(ret);
+
+}
+
+v8::Handle<v8::Value> NavigationCoreWrapper::GetSimulationStatus(const v8::Arguments& args)
+{
+    v8::HandleScope scope; //to properly clean up v8 handles
+
+    // Retrieves the pointer to the wrapped object instance.
+    NavigationCoreWrapper* obj = ObjectWrap::Unwrap<NavigationCoreWrapper>(args.This());
+    int32_t simulationStatus;
+    simulationStatus = obj->mp_navigationCoreProxy->mp_navigationCoreMapMatchedPositionProxy->GetSimulationStatus();
+
+    v8::Local<v8::Object> ret = v8::Object::New();
+    ret->Set( 0, v8::Int32::New(simulationStatus) );
 
     return scope.Close(ret);
 
