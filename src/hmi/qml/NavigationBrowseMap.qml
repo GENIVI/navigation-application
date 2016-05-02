@@ -710,29 +710,29 @@ HMIMenu {
                 StdButton {
                     source:StyleSheetScroll.scrollup[Constants.SOURCE]; x:StyleSheetScroll.scrollup[Constants.X]; y:StyleSheetScroll.scrollup[Constants.Y]; width:StyleSheetScroll.scrollup[Constants.WIDTH]; height:StyleSheetScroll.scrollup[Constants.HEIGHT];
                     id:scrollup; explode:false; next:scrollleft; prev:scrolldown;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 + scroll.panY]]]);}
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 + scroll.panY]]]);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrollleft[Constants.SOURCE]; x:StyleSheetScroll.scrollleft[Constants.X]; y:StyleSheetScroll.scrollleft[Constants.Y]; width:StyleSheetScroll.scrollleft[Constants.WIDTH]; height:StyleSheetScroll.scrollleft[Constants.HEIGHT];
                     id:scrollleft; explode:false; next:scrollright; prev:scrollup;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 + scroll.panX,"uint16",map.height/2]]]);}
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 + scroll.panX,"uint16",map.height/2]]]);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrollright[Constants.SOURCE]; x:StyleSheetScroll.scrollright[Constants.X]; y:StyleSheetScroll.scrollright[Constants.Y]; width:StyleSheetScroll.scrollright[Constants.WIDTH]; height:StyleSheetScroll.scrollright[Constants.HEIGHT];
                     id:scrollright; explode:false; next:scrolldown; prev:scrollleft;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 - scroll.panX,"uint16",map.height/2]]]);}
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 - scroll.panX,"uint16",map.height/2]]]);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrolldown[Constants.SOURCE]; x:StyleSheetScroll.scrolldown[Constants.X]; y:StyleSheetScroll.scrolldown[Constants.Y]; width:StyleSheetScroll.scrolldown[Constants.WIDTH]; height:StyleSheetScroll.scrolldown[Constants.HEIGHT];
                     id:scrolldown; explode:false; next:scrollup; prev:scrollright;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["uint16",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 - scroll.panY]]]);}
+                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
+                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 - scroll.panY]]]);}
                 }
             }
         }

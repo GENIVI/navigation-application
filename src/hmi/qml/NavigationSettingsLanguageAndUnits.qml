@@ -102,17 +102,17 @@ HMIMenu {
             }
 		}
 
-        Genivi.dump("lang_nav",lang_nav);
+        Genivi.setlang(current_lang_nav);
 
 		var units1,units2;
         var res=Genivi.navigationcore_configuration_GetUnitsOfMeasurement(dbusIf);
 
         if (res[1][1] == Genivi.NAVIGATIONCORE_LENGTH) {
-            units1=res[1][3][3][1];
+            units1=res[1][3];
         }
         var res1=Genivi.mapviewer_configuration_GetUnitsOfMeasurement(dbusIf);
         if (res1[1][1] == Genivi.MAPVIEWER_LENGTH) {
-            units2=res1[1][3][3][1];
+            units2=res1[1][3];
         }
 		unit_km.disabled=false;
 		unit_mile.disabled=false;

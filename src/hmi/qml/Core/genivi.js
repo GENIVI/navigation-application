@@ -304,7 +304,7 @@ function navigationcore_configuration_GetUnitsOfMeasurement(dbusIf)
 
 function navigationcore_configuration_SetUnitsOfMeasurementLength(dbusIf,unit)
 {
-    navigationcore_configuration_message(dbusIf,"SetUnitsOfMeasurement",["map",["int32",NAVIGATIONCORE_LENGTH,"structure",["uint8",0,"variant",["uint16",unit]]]]);
+    navigationcore_configuration_message(dbusIf,"SetUnitsOfMeasurement",["map",["int32",NAVIGATIONCORE_LENGTH,"int32",unit]]);
 }
 
 //----------------- LocationInput messages -----------------
@@ -737,7 +737,7 @@ function mapviewer_configuration_GetUnitsOfMeasurement(dbusIf)
 
 function mapviewer_configuration_SetUnitsOfMeasurementLength(dbusIf,unit)
 {
-    mapviewer_configuration_message(dbusIf,"SetUnitsOfMeasurement",["map",["int32",NAVIGATIONCORE_LENGTH,"structure",["uint8",0,"variant",["uint16",unit]]]]);
+    mapviewer_configuration_message(dbusIf,"SetUnitsOfMeasurement",["map",["int32",NAVIGATIONCORE_LENGTH,"int32",unit]]);
 }
 
 // -------------------- POISearch dbus messages --------------------
