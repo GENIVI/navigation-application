@@ -43,15 +43,6 @@
 // header file.
 // using namespace v8;
 
-static int32_t
-int32_variant(DBus::Variant variant)
-{
-    int32_t ret;
-    DBus::MessageIter iter=variant.reader();
-    iter >> ret;
-    return ret;
-}
-
 class FuelStopAdvisorWrapper : public node::ObjectWrap {
     friend void DemonstratorProxy::TripDataResetted(const uint8_t &number);
     friend void DemonstratorProxy::TripDataUpdated(const uint8_t &number);

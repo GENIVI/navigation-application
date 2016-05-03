@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Viewer panel for the FSA (draft)</title>
+<link rel="stylesheet" href="style-sheets/stylesheet.css">
+<!-- to be fixed, use relative paths -->
+<script type="text/javascript" src="./node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
+<script type="text/javascript" src="./node_modules/enum/enum-2.3.0.js"></script>
+</head>
+<body>
+<header>
+<h1>Viewer</h1>
+</header>
+
+<section>
+START TIME: <h id="start_time"></h><br>
+VERSION: <h id="version"></h><br>
+</section>
+
+<section>
+<div style="float: left; width: 360px;">
+<table style="width:100%">
+  <caption>Inputs</caption>
+  <col width="200">
+  <col width="100">
+  <col width="60">
+  <tr>
+    <td>Latitude</td>
+    <td id=latitude></td>
+    <td>deg</td>
+  </tr>
+  <tr>
+    <td>Longitude</td>
+    <td id=longitude></td>
+    <td>deg</td>
+  </tr>
+</table>
+</div>
+</section>
+
+<footer>
+Copyright © PCA Peugeot Citroen
+</footer>
+
+<script type="text/javascript">
+
+<!-- sockets management -->
+var socket_simulation_get = io.connect('http://localhost:8080/simulation_get'); //namespace simulation_get
+var socket_simulation_signal = io.connect('http://localhost:8080/simulation_signal'); //namespace simulation_signal
+var socket_simulation_warning = io.connect('http://localhost:8080/simulation_warning'); //namespace simulation_warning
+
+socket_simulation_warning.on('feedback', function(message) {
+    alert('Message received from the server : ' + message);
+})
+
+socket_simulation_get.on('navigationcore_answer', function(message) {
+    if(message.request === 'getPosition')
+    {
+        getPositionReturn(message.answer);
+    }
+})
+
+socket_simulation_signal.on('positioning_signal', function(message) {
+console.log(message);
+    if(message.signal === 'positionUpdate')
+    {
+            positionUpdate(message.data);
+    }
+})
+
+<!-- DBus GENIVI constants -->
+var genivi_constants = new Enum({'GENIVI_NAVIGATIONCORE_LATITUDE': 160, 'GENIVI_NAVIGATIONCORE_LONGITUDE': 161});
+
+<!-- initialization -->
+var today=new Date();
+document.getElementById("start_time").innerHTML=today;
+
+getPosition();
+
+<!-- getters -->
+function getPosition() {
+        var data = [160,161]; //
+    socket_simulation_get.emit('navigationcore_request', {interface: 'NavigationCoreMapMatchedPosition', method: 'getPosition', parameters: data});
+}
+function getPositionReturn(answer) {
+        for ( var i=0; i<answer.length; i++ ) {
+            switch(answer[i].key)
+            {
+                case 160:
+                    document.getElementById("latitude").innerHTML=answer[i].value.toFixed(6);
+                break;
+                case 161:
+                    document.getElementById("longitude").innerHTML=answer[i].value.toFixed(6);
+                break;
+            }
+        }
+}
+
+<!-- setters -->
+
+<!-- signals -->
+function positionUpdate(changedValues) {
+//for the moment, the changedValues is not used
+    getPosition();
+}
+
+</script>
+</body>
+</html>

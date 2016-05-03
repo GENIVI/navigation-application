@@ -113,6 +113,7 @@ void NavigationCoreWrapper::Init(v8::Handle<v8::Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "getGuidanceStatus", GetGuidanceStatus);
     NODE_SET_PROTOTYPE_METHOD(constructor, "setSimulationStatusChangedListener", SetSimulationStatusChangedListener);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getSimulationStatus", GetSimulationStatus);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getPosition", GetPosition);
 
     // This has to be last, otherwise the properties won't show up on the
     // object in JavaScript.
@@ -180,6 +181,58 @@ v8::Handle<v8::Value> NavigationCoreWrapper::GetSimulationStatus(const v8::Argum
 
     return scope.Close(ret);
 
+}
+
+v8::Handle<v8::Value> NavigationCoreWrapper::GetPosition(const v8::Arguments& args)
+{
+    v8::HandleScope scope; //to properly clean up v8 handles
+    std::vector< int32_t > valuesToReturn;
+    std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > position;
+
+    if (args.Length() < 1) {
+        return v8::ThrowException(
+        v8::Exception::TypeError(v8::String::New("getPosition requires at least 1 argument"))
+        );
+    }
+
+    if (args[0]->IsArray()) {
+        v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(args[0]);
+        for(uint32_t i=0;i<array->Length();i++)
+        {
+           v8::Handle<v8::Value> value = v8::Handle<v8::Object>::Cast(array->Get(i));
+           valuesToReturn.push_back(value->ToInt32()->Int32Value());
+        }
+    } else {
+        return v8::ThrowException(
+        v8::Exception::TypeError(v8::String::New("getPosition requires an array as argument"))
+        );
+    }
+
+    // Retrieves the pointer to the wrapped object instance.
+    NavigationCoreWrapper* obj = ObjectWrap::Unwrap<NavigationCoreWrapper>(args.This());
+    position = obj->mp_navigationCoreProxy->mp_navigationCoreMapMatchedPositionProxy->GetPosition(valuesToReturn);
+
+    v8::Local<v8::Array> ret = v8::Array::New();
+
+    for (std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > >::iterator iter = position.begin(); iter != position.end(); iter++) {
+        v8::Local<v8::Object> data = v8::Object::New();
+        ::DBus::Struct< uint8_t, ::DBus::Variant > value;
+        data->Set(v8::String::New("key"), v8::Int32::New(iter->first));
+        value = iter->second;
+        switch (iter->first) {
+            case GENIVI_NAVIGATIONCORE_LATITUDE:
+            case GENIVI_NAVIGATIONCORE_LONGITUDE:
+            case GENIVI_NAVIGATIONCORE_ALTITUDE:
+            case GENIVI_NAVIGATIONCORE_SPEED:
+            case GENIVI_NAVIGATIONCORE_HEADING:
+            default:
+                data->Set(v8::String::New("value"), v8::Number::New(value._2));
+                break;
+        }
+        ret->Set(ret->Length(), data);
+    }
+
+    return scope.Close(ret);
 }
 
 NODE_MODULE(NavigationCoreWrapper, RegisterModule);

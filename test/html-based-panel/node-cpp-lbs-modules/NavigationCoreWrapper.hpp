@@ -43,15 +43,6 @@
 // header file.
 // using namespace v8;
 
-static DBus::Variant
-variant_int32(int32_t i)
-{
-    DBus::Variant variant;
-    DBus::MessageIter iter=variant.writer();
-    iter << i;
-    return variant;
-}
-
 class NavigationCoreWrapper : public node::ObjectWrap {
     friend void NavigationCoreProxy::GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle);
     friend void NavigationCoreProxy::SimulationStatusChanged(const int32_t &simulationStatus);
@@ -69,6 +60,7 @@ protected:
     static v8::Handle<v8::Value> New(const v8::Arguments& args);
     static v8::Handle<v8::Value> GetGuidanceStatus(const v8::Arguments& args);
     static v8::Handle<v8::Value> GetSimulationStatus(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetPosition(const v8::Arguments& args);
 
     static v8::Handle<v8::Value> SetGuidanceStatusChangedListener(const v8::Arguments& args);
     void GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle);
