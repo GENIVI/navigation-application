@@ -179,19 +179,23 @@ HMIMenu {
 	function update(tripnr)
     {
         var res;
+        var value;
         disableAllValue(); // By default set all the values to "--"
 		if (tripnr > 0) {         
             res=Genivi.fuelstopadvisor_message(dbusIf,"GetTripData",["uint8",tripnr-1]);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
                 if (res[1][i+1] == Genivi.FUELSTOPADVISOR_DISTANCE) {
-			distance_value.text=res[1][i+3][1]/10;
-				}
+                    value=res[1][i+3][1]/10;
+                    distance_value.text=value.toFixed(1);
+                }
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_AVERAGE_SPEED) {
-			avg_speed_value.text=res[1][i+3][1]/10;
-				}
+                    value=res[1][i+3][1]/10;
+                    avg_speed_value.text=value.toFixed(0);
+                }
 				if (res[1][i+1] == Genivi.FUELSTOPADVISOR_AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE) {
-			avg_fuel_value.text=res[1][i+3][1]/10;
-				}
+                    value=res[1][i+3][1]/10;
+                    avg_fuel_value.text=value.toFixed(1);
+                }
 			}
 		} else {
             res=Genivi.fuelstopadvisor_message(dbusIf,"GetInstantData",[]);

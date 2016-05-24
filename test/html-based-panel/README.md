@@ -1,41 +1,28 @@
-Preliminary code for testing the implementation of a set of navigation Web API based on GENIVI API 
-Technology used: nodejs
+# HTML based interface to test the FSA
 
-To get a given version of nodejs (e.g. 0.12):
-curl -sL https://deb.nodesource.com/setup_0.12 | sudo -E bash
-sudo apt-get install -y nodejs
-NB: not supported by my trusty :-(
+## Synopsis
+This folder contains the HTML version of the test panel
 
-For the time being, version is v0.10.25:
-sudo apt-get install nodejs npm
-npm install -g node-gyp
+##Tested targets
+Desktop: Tested under Ubuntu 16.04 LTS 64 bits
 
+## Prerequisites
+nodejs version is v4.2.6
+
+Some additional modules are required for nodejs:
+npm install http url fs path socket.io gcontext python-shell enum
+
+## How to build
 To build the c++ add-on in C++ and install the module localy for nodejs:
 cd ./node-cpp-lbs-modules 
-npm build .
-npm pack
+make
 cd ..
 npm install node-cpp-lbs-modules/node-cpp-lbs-modules-0.1.0.tgz
 
-To test:
-Intall additional modules for nodejs:
-npm install http url fs path socket.io gcontext python-shell enum
-
+## How to test
 Run the server:
 
 nodejs server.js
 
 In your browser open the file ./index.html
 
-Annex:
-To debug the C++ add-on:
-cd ./node-cpp-lbs-modules 
-node-gyp configure --debug
-node-gyp build --debug
-npm pack
-cd ..
-npm install node-cpp-lbs-modules/node-cpp-lbs-modules-0.1.0.tgz
-To see where the issue is in the js file:
-nodejs debug server.js
-To debug the c++ addon:
-gdb --args /usr/bin/nodejs server.js

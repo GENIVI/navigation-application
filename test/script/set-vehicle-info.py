@@ -38,7 +38,7 @@ class Step(IntEnum):
 	END = 4
 
 # Define some constants
-KEYBOARD_PERIODICITY = 1000 #in ms
+KEYBOARD_PERIODICITY = 200 #in ms
 LOCAL_HOST = '127.0.0.1'
 
 def getKeyboard():
