@@ -35,6 +35,8 @@ var path = require('path');
 var gcontext = require('gcontext');
 var python_shell = require('python-shell');
 var Enum = require('enum');
+var segfault_handler = require('segfault-handler');
+segfault_handler.registerHandler('crash.log');
 
 // Configuration of the python script for simulating log replayer data
 var python_script_enum = new Enum({'START': 1, 'INITIALIZATION': 2, 'HIGH_TANK_LEVEL': 3, 'LOW_TANK_LEVEL': 4});

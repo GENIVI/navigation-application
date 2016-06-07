@@ -18,7 +18,8 @@
         "fs": "0.0.2",
         "path": "",
         "socket.io": "1.4.5",
-        "gcontext": "0.0.2",
+        "gcontext": "0.0.3",
+        "nan": "^2.3.5",
         "python-shell": "0.4.0",
         "enum": "2.3.0"
     },

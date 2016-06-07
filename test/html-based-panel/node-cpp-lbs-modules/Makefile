@@ -1,4 +1,4 @@
-all: clean configure.release build pack install
+all: clean configure.release build pack
 
 release: configure.release build pack install
 

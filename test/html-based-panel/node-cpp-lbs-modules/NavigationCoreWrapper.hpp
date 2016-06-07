@@ -31,6 +31,7 @@
 
 #include <node.h>
 #include <node_buffer.h>
+#include <node_object_wrap.h>
 
 #include "./dbus-proxies/NavigationCoreProxy.hpp"
 
@@ -48,8 +49,9 @@ class NavigationCoreWrapper : public node::ObjectWrap {
     friend void NavigationCoreProxy::SimulationStatusChanged(const int32_t &simulationStatus);
 
 public:
-    static v8::Persistent<v8::FunctionTemplate> constructor;
-    static void Init(v8::Handle<v8::Object> target);
+    static v8::Persistent<v8::Function> constructor;
+    static void Init(v8::Local<v8::Object> target);
+    static void NewInstance(const v8::FunctionCallbackInfo<v8::Value>& args);
     static v8::Persistent<v8::Function> signalGuidanceStatusChanged;
     static v8::Persistent<v8::Function> signalSimulationStatusChanged;
 
@@ -57,14 +59,14 @@ protected:
     NavigationCoreWrapper();
     ~NavigationCoreWrapper();
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetGuidanceStatus(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetSimulationStatus(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetPosition(const v8::Arguments& args);
+    static void New(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetGuidanceStatus(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetSimulationStatus(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetPosition(const v8::FunctionCallbackInfo<v8::Value> &args);
 
-    static v8::Handle<v8::Value> SetGuidanceStatusChangedListener(const v8::Arguments& args);
+    static void SetGuidanceStatusChangedListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     void GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle);
-    static v8::Handle<v8::Value> SetSimulationStatusChangedListener(const v8::Arguments& args);
+    static void SetSimulationStatusChangedListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     void SimulationStatusChanged(const int32_t& simulationStatus);
 
 private:

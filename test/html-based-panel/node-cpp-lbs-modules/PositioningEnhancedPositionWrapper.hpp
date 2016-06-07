@@ -31,6 +31,7 @@
 
 #include <node.h>
 #include <node_buffer.h>
+#include <node_object_wrap.h>
 
 #include "./dbus-proxies/PositioningProxy.hpp"
 
@@ -47,8 +48,9 @@ class PositioningEnhancedPositionWrapper : public node::ObjectWrap {
     friend void PositioningProxy::PositionUpdate(const uint64_t &changedValues);
 
 public:
-    static v8::Persistent<v8::FunctionTemplate> constructor;
-    static void Init(v8::Handle<v8::Object> target);
+    static v8::Persistent<v8::Function> constructor;
+    static void Init(v8::Local<v8::Object> target);
+    static void NewInstance(const v8::FunctionCallbackInfo<v8::Value>& args);
     static v8::Persistent<v8::Function> signalPositionUpdate;
 
 protected:
@@ -63,11 +65,11 @@ protected:
       } p;
     } uint64to32;
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetVersion(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetPositionInfo(const v8::Arguments& args);
+    static void New(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetVersion(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetPositionInfo(const v8::FunctionCallbackInfo<v8::Value> &args);
 
-    static v8::Handle<v8::Value> SetPositionUpdateListener(const v8::Arguments& args);
+    static void SetPositionUpdateListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void PositionUpdate(const uint64_t& changedValues);
 
 private:

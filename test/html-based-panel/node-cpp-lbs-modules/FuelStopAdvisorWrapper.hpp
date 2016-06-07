@@ -31,6 +31,7 @@
 
 #include <node.h>
 #include <node_buffer.h>
+#include <node_object_wrap.h>
 
 #include "./dbus-proxies/DemonstratorProxy.hpp"
 
@@ -49,8 +50,9 @@ class FuelStopAdvisorWrapper : public node::ObjectWrap {
     friend void DemonstratorProxy::FuelStopAdvisorWarning(const bool &destinationCantBeReached);
 
 public:
-    static v8::Persistent<v8::FunctionTemplate> constructor;
-    static void Init(v8::Handle<v8::Object> target);
+    static v8::Persistent<v8::Function> constructor;
+    static void Init(v8::Local<v8::Object> target);
+    static void NewInstance(const v8::FunctionCallbackInfo<v8::Value>& args);
     static v8::Persistent<v8::Function> signalTripDataUpdated;
     static v8::Persistent<v8::Function> signalFuelStopAdvisorWarning;
     static v8::Persistent<v8::Function> signalTripDataResetted;
@@ -59,21 +61,21 @@ protected:
     FuelStopAdvisorWrapper();
     ~FuelStopAdvisorWrapper();
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetVersion(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetInstantData(const v8::Arguments& args);
+    static void New(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetVersion(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetInstantData(const v8::FunctionCallbackInfo<v8::Value> &args);
 
-    static v8::Handle<v8::Value> SetTripDataResettedListener(const v8::Arguments& args);
+    static void SetTripDataResettedListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     void TripDataResetted(const uint8_t& number);
-    static v8::Handle<v8::Value> SetTripDataUpdatedListener(const v8::Arguments& args);
+    static void SetTripDataUpdatedListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     void TripDataUpdated(const uint8_t& number);
-    static v8::Handle<v8::Value> SetFuelStopAdvisorWarningListener(const v8::Arguments& args);
+    static void SetFuelStopAdvisorWarningListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     void FuelStopAdvisorWarning(const bool& destinationCantBeReached);
 
-    static v8::Handle<v8::Value> GetSpeed(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetLevel(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetInstantConsumption(const v8::Arguments& args);
-    static v8::Handle<v8::Value> GetOdometer(const v8::Arguments& args);
+    static void GetSpeed(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetLevel(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetInstantConsumption(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetOdometer(const v8::FunctionCallbackInfo<v8::Value> &args);
 
 private:
     DemonstratorProxy* mp_demonstratorProxy;
