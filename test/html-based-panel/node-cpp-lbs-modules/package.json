@@ -21,7 +21,8 @@
         "gcontext": "0.0.3",
         "nan": "^2.3.5",
         "python-shell": "0.4.0",
-        "enum": "2.3.0"
+        "enum": "2.3.0",
+        "segfault-handler": "1.0.0"
     },
     "devDependencies": {
 		"chai": "~3.5.0",

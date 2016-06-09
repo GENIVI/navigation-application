@@ -75,7 +75,7 @@ DBus::Variant ManagerProxy::GetLevel()
 
 DBus::Variant ManagerProxy::GetSpeed()
 {
-    return (mp_engine_speed_properties->Get("org.automotive.EngineSpeed","EngineSpeed"));
+    return (mp_engine_speed_properties->Get("org.automotive.EngineSpeed","Speed"));
 }
 
 DBus::Variant ManagerProxy::GetInstantConsumption()

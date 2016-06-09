@@ -150,7 +150,7 @@ void FuelStopAdvisorWrapper::Init(v8::Local<v8::Object> target) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTripDataUpdatedListener", SetTripDataUpdatedListener);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setFuelStopAdvisorWarningListener", SetFuelStopAdvisorWarningListener);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTripDataResettedListener", SetTripDataResettedListener);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getSpeed", GetSpeed);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getEngineSpeed", GetEngineSpeed);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getLevel", GetLevel);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getInstantConsumption", GetInstantConsumption);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getOdometer", GetOdometer);
@@ -222,7 +222,6 @@ void FuelStopAdvisorWrapper::GetVersion(const v8::FunctionCallbackInfo<v8::Value
 
 void FuelStopAdvisorWrapper::GetInstantData(const v8::FunctionCallbackInfo<v8::Value> &args) {
     v8::Isolate* isolate = args.GetIsolate();
-
     // Retrieves the pointer to the wrapped object instance.
     FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
 
@@ -234,21 +233,19 @@ void FuelStopAdvisorWrapper::GetInstantData(const v8::FunctionCallbackInfo<v8::V
     for (std::map< uint16_t, ::DBus::Variant >::iterator iter = instant_data.begin(); iter != instant_data.end(); iter++) {
         v8::Local<v8::Object> data = v8::Object::New(isolate);
         ::DBus::Variant value = iter->second;
-        printf("GetInstantData%d\n",iter->first);
-        printf("GetInstantData%s\n",value.signature().c_str());
         data->Set(v8::String::NewFromUtf8(isolate,"key"), v8::Uint32::New(isolate,iter->first));
         switch (iter->first) {
         case GENIVI_FUELSTOPADVISOR_FUEL_LEVEL:
-            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Int32::New(isolate,15));
+            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Uint32::New(isolate,value.reader().get_uint16()));
             break;
         case GENIVI_FUELSTOPADVISOR_INSTANT_FUEL_CONSUMPTION_PER_DISTANCE:
-            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Int32::New(isolate,55));
+            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Uint32::New(isolate,value.reader().get_uint16()));
             break;
         case GENIVI_FUELSTOPADVISOR_TANK_DISTANCE:
-            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Int32::New(isolate,300));
+            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Uint32::New(isolate,value.reader().get_uint16()));
             break;
         case GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE:
-            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Int32::New(isolate,400));
+            data->Set(v8::String::NewFromUtf8(isolate,"value"), v8::Uint32::New(isolate,value.reader().get_uint16()));
             break;
         default:
             break;
@@ -259,13 +256,19 @@ void FuelStopAdvisorWrapper::GetInstantData(const v8::FunctionCallbackInfo<v8::V
     args.GetReturnValue().Set(ret);
 }
 
-void FuelStopAdvisorWrapper::GetSpeed(const v8::FunctionCallbackInfo<v8::Value> &args) {
+void FuelStopAdvisorWrapper::GetEngineSpeed(const v8::FunctionCallbackInfo<v8::Value> &args) {
     v8::Isolate* isolate = args.GetIsolate();
 
     // Retrieves the pointer to the wrapped object instance.
     FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
 
+    DBus::Variant variant = obj->mp_demonstratorProxy->mp_managerProxy->GetSpeed();
+    DBus::MessageIter it = variant.reader();
+    uint16_t engineSpeed;
+    it >> engineSpeed;
+
     v8::Local<v8::Object> ret = v8::Object::New(isolate);
+    ret->Set( 0, v8::Uint32::New(isolate, engineSpeed) );
 
     args.GetReturnValue().Set(ret);
 }
@@ -300,6 +303,7 @@ void FuelStopAdvisorWrapper::GetInstantConsumption(const v8::FunctionCallbackInf
 
     v8::Local<v8::Object> ret = v8::Object::New(isolate);
     ret->Set( 0, v8::Uint32::New(isolate,consumption) );
+    printf("GetInstantConsumption\n");
 
     args.GetReturnValue().Set(ret);
 }
@@ -311,6 +315,7 @@ void FuelStopAdvisorWrapper::GetOdometer(const v8::FunctionCallbackInfo<v8::Valu
     FuelStopAdvisorWrapper* obj = ObjectWrap::Unwrap<FuelStopAdvisorWrapper>(args.This());
 
     v8::Local<v8::Object> ret = v8::Object::New(isolate);
+    printf("GetOdometer\n");
 
     args.GetReturnValue().Set(ret);
 }

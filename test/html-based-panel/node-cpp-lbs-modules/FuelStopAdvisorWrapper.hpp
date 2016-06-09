@@ -72,7 +72,7 @@ protected:
     static void SetFuelStopAdvisorWarningListener(const v8::FunctionCallbackInfo<v8::Value> &args);
     void FuelStopAdvisorWarning(const bool& destinationCantBeReached);
 
-    static void GetSpeed(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void GetEngineSpeed(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void GetLevel(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void GetInstantConsumption(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void GetOdometer(const v8::FunctionCallbackInfo<v8::Value> &args);

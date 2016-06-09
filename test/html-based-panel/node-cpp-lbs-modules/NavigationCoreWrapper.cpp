@@ -37,15 +37,14 @@ v8::Persistent<v8::Function> NavigationCoreWrapper::signalSimulationStatusChange
 void NavigationCoreWrapper::GuidanceStatusChanged(const int32_t& guidanceStatus, const uint32_t& routeHandle)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-
+    v8::HandleScope handleScope(isolate);
     const unsigned argc = 2;
     v8::Local<v8::Value> argv[argc];
 
     argv[0]=v8::Local<v8::Value>::New(isolate,v8::Int32::New(isolate,guidanceStatus));
     argv[1]=v8::Local<v8::Value>::New(isolate,v8::Uint32::New(isolate,routeHandle));
 
-    v8::Local<v8::Function> fct;
-    fct.New(isolate,signalGuidanceStatusChanged);
+    v8::Local<v8::Function> fct = v8::Local<v8::Function>::New(isolate,signalGuidanceStatusChanged);
     fct->Call(isolate->GetCurrentContext()->Global(), argc, argv);
 }
 
@@ -71,14 +70,13 @@ void NavigationCoreWrapper::SetGuidanceStatusChangedListener(const v8::FunctionC
 void NavigationCoreWrapper::SimulationStatusChanged(const int32_t& simulationStatus)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-
+    v8::HandleScope handleScope(isolate);
     const unsigned argc = 1;
     v8::Local<v8::Value> argv[argc];
 
     argv[0]=v8::Local<v8::Value>::New(isolate,v8::Int32::New(isolate,simulationStatus));
 
-    v8::Local<v8::Function> fct;
-    fct.New(isolate,signalSimulationStatusChanged);
+    v8::Local<v8::Function> fct = v8::Local<v8::Function>::New(isolate,signalSimulationStatusChanged);
     fct->Call(isolate->GetCurrentContext()->Global(), argc, argv);
 }
 

@@ -36,6 +36,8 @@ v8::Persistent<v8::Function> PositioningEnhancedPositionWrapper::constructor;
 v8::Persistent<v8::Function> PositioningEnhancedPositionWrapper::signalPositionUpdate;
 void PositioningEnhancedPositionWrapper::PositionUpdate(const uint64_t& changedValues) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope handleScope(isolate);
+    printf("PositionUpdate\n");
 
     const unsigned argc = 2;
     uint64to32 data;
@@ -43,8 +45,7 @@ void PositioningEnhancedPositionWrapper::PositionUpdate(const uint64_t& changedV
     v8::Local<v8::Value> argv[argc];
     argv[0] = v8::Local<v8::Value>::New(isolate,v8::Uint32::New(isolate,data.p.high));
     argv[1] = v8::Local<v8::Value>::New(isolate,v8::Uint32::New(isolate,data.p.low));
-    v8::Local<v8::Function> fct;
-    fct.New(isolate,signalPositionUpdate);
+    v8::Local<v8::Function> fct= v8::Local<v8::Function>::New(isolate,signalPositionUpdate);
     fct->Call(isolate->GetCurrentContext()->Global(), argc, argv);
 }
 void PositioningEnhancedPositionWrapper::SetPositionUpdateListener(const v8::FunctionCallbackInfo<v8::Value> &args)
@@ -203,7 +204,7 @@ void PositioningEnhancedPositionWrapper::GetPositionInfo(const v8::FunctionCallb
         ret->Set(ret->Length(), data);
     }
 
-    args.GetReturnValue().Set(v8::DEFAULT);
+    args.GetReturnValue().Set(ret);
 }
 
 

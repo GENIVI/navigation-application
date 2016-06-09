@@ -46,7 +46,7 @@ STEP:
   <tr>
     <td>Fuel instant</td>
     <td id=fuel_instant></td>
-    <td>L/H</td>
+    <td>L/100</td>
   </tr>
   <tr>
     <td>Vehicle speed</td>
@@ -110,82 +110,33 @@ socket_simulation_warning.on('feedback', function(message) {
 })
 
 socket_simulation_get.on('positioning_answer', function(message) {
-    if(message.request === 'getPositionInfo')
-    {
-        getPositionInfoReturn(message.answer);
-    }
+    var funcCall = message.request + "Return";
+    window[funcCall](message.answer);
 })
 
 socket_simulation_signal.on('positioning_signal', function(message) {
-console.log(message);
-    if(message.signal === 'positionUpdate')
-    {
-            positionUpdate(message.data);
-    }
+    var funcCall = message.signal;
+    window[funcCall](message.data);
 })
 
 socket_simulation_get.on('navigationcore_answer', function(message) {
-    if(message.request === 'getGuidanceStatus')
-    {
-        getGuidanceStatusReturn(message.answer);
-    } else {
-        if(message.request === 'getSimulationStatus')
-        {
-            getSimulationStatusReturn(message.answer);
-        }
-    }
+    var funcCall = message.request + "Return";
+    window[funcCall](message.answer);
 })
 
 socket_simulation_signal.on('navigationcore_signal', function(message) {
-console.log(message);
-    if(message.signal === 'guidanceStatusChanged')
-    {
-            guidanceStatusChanged(message.data);
-    } else {
-        if(message.signal === 'simulationStatusChanged')
-        {
-                simulationStatusChanged(message.data);
-        }
-    }
+    var funcCall = message.signal;
+    window[funcCall](message.data);
 })
 
 socket_simulation_get.on('demonstrator_answer', function(message) {
-        if(message.request === 'getVersion')
-        {
-            getVersionReturn(message.answer);
-        } else {
-                if(message.request === 'getPositionInfo')
-                {
-                    getPositionInfoReturn(message.answer);
-                } else {
-                        if(message.request === 'getInstantData')
-                        {
-                            getInstantDataReturn(message.answer);
-                        } else {
-                                if(message.request === 'getLevel')
-                                {
-                                    getLevelReturn(message.answer);
-                                } else {
-                                        if(message.request === 'getInstantConsumption')
-                                        {
-                                            getInstantConsumptionReturn(message.answer);
-                                        }
-                                }
-                        }
-                }
-        }
+    var funcCall = message.request + "Return";
+    window[funcCall](message.answer);
 })
 
 socket_simulation_signal.on('demonstrator_signal', function(message) {
-    if(message.signal === 'tripDataUpdated')
-    {
-            tripDataUpdated(message.data);
-    } else {
-        if(message.signal === 'fuelStopAdvisorWarning')
-        {
-                fuelStopAdvisorWarning(message.data);
-        }
-    }
+    var funcCall = message.signal;
+    window[funcCall](message.data);
 })
 
 <!-- scenarii -->
@@ -289,6 +240,12 @@ function getLevel() {
 function getLevelReturn(answer) {
     document.getElementById("tank").innerHTML = answer[0];
 }
+function getEngineSpeed() {
+    socket_simulation_get.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getEngineSpeed', parameters: []});
+}
+function getEngineSpeedReturn(answer) {
+    document.getElementById("engine_speed").innerHTML = answer[0];
+}
 function getInstantConsumption() {
     socket_simulation_get.emit('demonstrator_request', {interface: 'FuelStopAdvisor', method: 'getInstantConsumption', parameters: []});
 }
@@ -307,6 +264,7 @@ function tripDataUpdated(number) {
 //for the moment, the changedValues is not used
     getInstantData();
     getLevel();
+    getEngineSpeed();
     getInstantConsumption();
 }
 
