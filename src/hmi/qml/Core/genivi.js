@@ -250,7 +250,7 @@ function locationinput_handle_clear(par)
 
 function navigationcore_session_message(par, func, args)
 {
-    return navigationcore_message(par, "Session", func, navigationcore_session(par).concat(locationinput_handle(par),args));
+    return navigationcore_message(par, "Session", func, args);
 }
 
 // Create a new session or get the current session
@@ -270,9 +270,9 @@ function navigationcore_session_clear(par)
     }
 }
 
-function navigationcore_session_GetVersion(par)
+function navigationcore_session_GetVersion(dbusIf)
 {
-    return navigationcore_session_message(par,"GetVersion",[]);
+    return navigationcore_session_message(dbusIf,"GetVersion",[]);
 }
 
 //----------------- Navigation core Configuration messages -----------------
