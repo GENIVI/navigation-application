@@ -1,0 +1,221 @@
+// SPDX-License-Identifier: MPL-2.0
+// Copyright (C) 2014, PCA Peugeot Citro�n, XS Embedded GmbH, TomTom International B.V., Continental Automotive GmbH, BMW Car IT GmbH,  Alpine Electronics R&D Europe GmbH, AISIN AW CO., LTD.,  Neusoft Technology Solutions GmbH, Jaguar Land Rover Limited, Visteon Corporation, Elektrobit Automotive GmbH
+// This Source Code Form is subject to the terms of the
+// Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+// this file, you can obtain one at http://mozilla.org/MPL/2.0/.
+
+package org.genivi.demonstrator
+
+<** 
+	@description : FuelStopAdvisor = This interface offers functionalities to access the fuel  stop advisor features
+	This interface is defined for the FSA demonstrator and not included into the GENIVI compliance
+**>
+interface FuelStopAdvisor {
+	version {
+		major 1 
+		minor 0
+	}
+	
+	enumeration BasicEnum {
+		INVALID = 0
+	}
+	
+	enumeration TripNumber {
+		TRIP1 = 0
+		TRIP2 = 1
+	}
+	
+	enumeration UnitAttribute {
+		ODOMETER = 32
+		FUEL_LEVEL = 33
+		TANK_DISTANCE = 34
+		INSTANT_FUEL_CONSUMPTION_PER_DISTANCE = 35
+		ENHANCED_TANK_DISTANCE = 36
+		DISTANCE = 48
+		TIME = 49
+		AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE = 50
+		AVERAGE_SPEED = 51
+		ALL = 1
+	}
+	
+	enumeration Unit extends BasicEnum {
+		METRICS = 16
+		NON_METRICS = 17
+	}
+	
+	map Units {
+		UnitAttribute to Unit
+	}
+
+	enumeration InstantDataAttribute extends BasicEnum {
+		ODOMETER = 32
+		FUEL_LEVEL = 33
+		INSTANT_SPEED = 34
+		INSTANT_FUEL_CONSUMPTION_PER_DISTANCE = 35
+	}
+	
+    union InstantDataValue {
+	    UInt16 uint16Value
+	    UInt32 uint32Value
+    }
+	
+	map InstantData {
+		InstantDataAttribute to InstantDataValue
+	}
+
+	enumeration TripDataAttribute extends BasicEnum {
+		DISTANCE = 48
+		TIME = 49
+		AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE = 50
+		AVERAGE_SPEED = 51
+		TANK_DISTANCE = 52
+		ENHANCED_TANK_DISTANCE = 53
+	}
+		
+    union TripDataValue {
+    	UInt16 uint16Value
+    	UInt32 uint32Value
+    }
+	
+	map TripData {
+		TripDataAttribute to TripDataValue
+	}
+
+	<** @description: version.**>			
+	struct Version {
+		<** @description : when the major changes, then backward compatibility with previous releases is not granted.**>
+		UInt16 ^versionMajor
+		<** @description : when the minor changes, then backward compatibility with previous releases is granted, but something changed in the implementation of the API (e.g. new methods may have been added).**>
+		UInt16 ^versionMinor
+		<** @description : when the micro changes, then backward compatibility with previous releases is granted (bug fixes or documentation modifications).**>
+		UInt16 ^versionMicro
+		<** @description : release date (e.g. 21-06-2011).**>
+		String date
+	}
+
+	<**
+		@description : getVersion = This method returns the API version implemented by the server application
+	**>
+	method getVersion {
+		out {
+			Version ^version
+		}
+	}
+	
+	<**
+		@description : setUnits = This method sets the calculation unit for a given value
+	**>
+	method setUnits {
+		in {
+			<** @description : for each key, the value of type 'q' expresses the unit used **>
+			Units unit	
+		}	
+	}
+
+	<**
+		@description : getInstantData = This method returns a given set of global (not related to a trip number) trip computer data (e.g. odometer, fuel level, tank distance... )
+	**>
+	method getInstantData {
+		out {
+			<** 
+			@description : data = dictionary[key,value]
+			key = key = enum(INVALID,ODOMETER,FUEL_LEVEL,INSTANT_FUEL_CONSUMPTION_PER_DISTANCE,...,ALL)
+          	key = ODOMETER, value = value of type 'u', that expresses the total distance counter in: METRIC->tenth of kilometers NON_METRIC->tenth of miles  
+          	key = INSTANT_SPEED, value = value of type 'q', that expresses the instant speed in METRIC->tenth of kilometers per hour or in NON_METRIC->tenth of miles per hour 
+          	key = FUEL_LEVEL, value = value of type 'q', that expresses fuel level in: METRIC->tenth of liters NON_METRIC->hundreth of gallon
+          	key = INSTANT_FUEL_CONSUMPTION_PER_DISTANCE, value = value of type 'q', that expresses the instant fuel consumption per distance in METRIC->tenth of liters per 100 kilometers or the instant distance per fuel consumption in NON_METRIC->tenth of miles per gallon
+          	**>			
+			InstantData	data	
+		}	
+	}
+
+	<**
+		@description : getTripData = This method returns the data of a given trip number
+	**>
+	method getTripData {
+		in {
+			<** @description : number= value of type 'y' that expresses the trip number (start number is 0) **>
+			TripNumber number	
+		}
+		out {
+			<** @description : 
+			data = dictionary[key,value]
+			key = enum(INVALID,DISTANCE,TIME,AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE,AVERAGE_SPEED,TANK_DISTANCE,ENHANCED_TANK_DISTANCE,...,ALL)
+          	key = DISTANCE, value = value of type 'q', that expresses the distance since the last reset of the trip computer in METRIC->tenth of kilometers or in NON_METRIC->tenth of miles  
+          	key = TIME, value = value of type 'u', that expresses the elapsed time since the last reset of the trip computer in seconds
+          	key = AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE, value = value of type 'q', that expresses the average fuel consumption per distance since the last reset of the trip computer in METRIC->tenth of liters per 100 kilometers or the average distance per fuel consumption in NON_METRIC->tenth of miles per gallon
+          	key = AVERAGE_SPEED, value = value of type 'q', that expresses the average speed since the last reset of the trip computer in METRIC->tenth of kilometers per hour or in NON_METRIC->tenth of miles per hour 
+          	key = TANK_DISTANCE, value = value of type 'q', that expresses the tank distance since the last reset of the trip computer in METRIC->kilometers or in NON_METRIC->miles
+          	key = ENHANCED_TANK_DISTANCE, value = value of type 'q', that expresses the tank distance since the last reset of the trip computer in METRIC->kilometers or in NON_METRIC->miles
+          	**>			
+			TripData data
+		}	
+	}
+
+	<**
+		@description : getSupportedTripNumbers = This method returns the number of supported trips
+	**>
+	method getSupportedTripNumbers {
+		out {
+			UInt8 	tripNumbers
+		}	
+	}
+
+	<**
+		@description : setFuelAdvisorSettings = This method configures the fuel stop advisor settings
+	**>
+	method setFuelAdvisorSettings {
+		in {
+			<** @description : advisorMode = flag. TRUE means that the advisor is activated **>
+			Boolean	advisorMode
+
+			<** @description : distanceThreshold= value of type 'y' that expresses the distance threshold in METRIC->kilometers or in NON_METRIC->miles **>
+			UInt8	distanceThreshold
+		}	
+	}
+
+	<**
+		@description : getFuelAdvisorSettings = This method gets the fuel stop advisor settings
+	**>
+	method getFuelAdvisorSettings {
+		out {
+			<** @description : advisorMode = flag. TRUE means that the advisor is activated **>
+			Boolean	advisorMode
+
+			<** @description : distanceThreshold= value of type 'y' that expresses the distance threshold in METRIC->kilometers or in NON_METRIC->miles **>
+			UInt8	distanceThreshold
+			
+			<** @description : destinationCantBeReached= TRUE means that there's a risk of not reaching the destination **>
+			Boolean destinationCantBeReached
+		}	
+	}
+
+	<**
+		@description : setRouteHandle = This method configures the route handle for the enhanced tank distance
+	**>
+	method setRouteHandle {
+		in {
+			UInt32 	routeHandle
+		}	
+	}
+
+	<**
+		@description : releaseRouteHandle = This method release the route handle for the enhanced tank distance
+	**>
+	method releaseRouteHandle {
+		in {
+			UInt32 	routeHandle
+		}	
+	}
+
+	<**
+		@description : fuelStopAdvisorWarning = This signal is emitted to notify a client application whether there's a risk of not reaching the destination
+	**>
+	broadcast fuelStopAdvisorWarning {
+		out {
+			<** @description : destinationCantBeReached= TRUE means that there's a risk of not reaching the destination, FALSE means that there's no risk yet **>
+			Boolean destinationCantBeReached
+		}
+	}
+
+}

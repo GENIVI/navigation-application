@@ -1,8 +1,8 @@
 #!/bin/bash
 
-navigation_version='5ca0a6e28cf8dfcba41c299cc2b5340c7a0444f3'
-positioning_version='9e65831eed02cc8a1b2e2e73787d6007b54214b4'
-navit_version='42f9d3484516c88c7cdf647817a6d6a2acac53c2'
+navigation_version='1cfa51e76ba173166c113eccf6a61a5904ff7e7d'
+positioning_version='f341b4a2cb216d6204136794d33076170ab1bf80'
+navit_version='0a8f85666a3b849d70ed450d74bed3cf85466630'
 
 echo "version of navigation is: $navigation_version"
 echo "version of positioning is: $positioning_version"

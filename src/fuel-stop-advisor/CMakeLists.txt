@@ -24,11 +24,14 @@ pkg_search_module(DBUS_CPP_GLIB dbus-c++-glib-1)
 pkg_search_module(DBUS_CPP dbus-c++-1)
 pkg_search_module(GLIB glib-2.0)
 
-include_directories(${GLIB_INCLUDE_DIRS})
-include_directories(${DBUS_CPP_INCLUDE_DIRS})
-include_directories(${DBUS_CPP_GLIB_INCLUDE_DIRS})
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core)
+include_directories(
+    ${GLIB_INCLUDE_DIRS}
+    ${DBUS_CPP_INCLUDE_DIRS}
+    ${DBUS_CPP_GLIB_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core
+    ${TRIPCOMPUTER_DIR}
+    )
 
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
@@ -64,7 +67,7 @@ foreach (RAW_FILE ${XML_TO_DBUS_CONSTANT})
 	)
 endforeach()
 
-add_executable(fuel-stop-advisor fuel-stop-advisor.cpp fuel-stop-advisor_adaptor.h constants.h ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core/genivi-navigationcore-routing_proxy.h amb_proxy.h ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core/genivi-navigationcore-constants.h ctripcomputer.cpp ctripcomputer.h ctripcomputertypes.h)
+add_executable(fuel-stop-advisor fuel-stop-advisor.cpp  ${TRIPCOMPUTER_DIR}/ctripcomputer.cpp)
 
 set(LIBRARIES
     ${DBUS_CPP_LIBRARIES}

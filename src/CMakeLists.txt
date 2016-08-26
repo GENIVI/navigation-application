@@ -20,15 +20,15 @@ cmake_minimum_required(VERSION 2.8)
 
 option(WITH_DEBUG
         "Enable the debug messages" OFF)
-option(WITH_FRANCA_DBUS_INTERFACE
-       "Build using the Franca interfaces" OFF)
+option(WITH_PLUGIN_MIGRATION
+        "Enable navit plugin migration to commonapi" OFF)
 option(AMB_ON_DBUS_SESSION
         "Run amb on dbus session" ON)
 option(WITH_HTML_MIGRATION
         "Enable migration to the html based hmi" OFF)
 
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
-message(STATUS "WITH_FRANCA_DBUS_INTERFACE = ${WITH_FRANCA_DBUS_INTERFACE}")
+message(STATUS "WITH_PLUGIN_MIGRATION = ${WITH_PLUGIN_MIGRATION}")
 message(STATUS "AMB_ON_DBUS_SESSION = ${AMB_ON_DBUS_SESSION}")
 message(STATUS "WITH_HTML_MIGRATION = ${WITH_HTML_MIGRATION}")
 
@@ -40,6 +40,7 @@ set(AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR "${AUTOMOTIVE_MESSAGE_BROKER_DIR}/src/${AU
 set(AUTOMOTIVE_MESSAGE_BROKER_LIB_DIR "${AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR}/lib")
 set(PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/patches")
 set(NAVIT_PNG_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/navigation/navit/navit/xpm")
+set(TRIPCOMPUTER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tripcomputer")
 
 if(NOT EXISTS ${AUTOMOTIVE_MESSAGE_BROKER_DIR})
     if(NOT ${AMB_ON_DBUS_SESSION})
