@@ -133,7 +133,7 @@ public:
      *  \param data : dictionary of unit per value
      *
      */
-    void SetUnits(const tupleUint16_t &data);
+    void SetUnits(const tupleInt32_t &data);
 
     /*!
      *  \brief Get the basic data of a given trip (for testing)
@@ -149,7 +149,7 @@ private:
     version_t m_version;
     uint8_t m_tripNumbers;
     vector<trip_t> m_tripData;
-    tupleUint16_t m_units;
+    tupleInt32_t m_units;
     bool m_firstRefresh;
     tripComputerInput_t m_lastTripComputerInput;
 };

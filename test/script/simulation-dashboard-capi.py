@@ -25,8 +25,8 @@
 **************************************************************************
 """
 import sys,tty,termios,select,pygame,gi,time,dbus,re,argparse
-#import pdb
-#pdb.set_trace() 
+import pdb
+ 
 from pygame.locals import *
 from threading import Timer
 from configTests import *
@@ -216,12 +216,12 @@ def getDbus():
 	# get the tank distance
 	instantData = fuelStopAdvisorInterface.GetInstantData()
 	if dbus.Int32(Genivi.FUELSTOPADVISOR_TANK_DISTANCE) in instantData:
-		tankDistance = int(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_TANK_DISTANCE)][1])	
+		tankDistance = int(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_TANK_DISTANCE)])	
 		displayFuelStopAdvisorTankDistance(str(tankDistance) + ' ')
 	else:
 		displayFuelStopAdvisorTankDistance("-----")
 	if dbus.Int32(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE) in instantData:
-		enhancedTankDistance = int(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE)][1])	
+		enhancedTankDistance = int(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE)])	
 		displayFuelStopAdvisorEnhancedTankDistance(str(enhancedTankDistance) + ' ')
 	else:
 		displayFuelStopAdvisorEnhancedTankDistance('-----')
@@ -349,13 +349,13 @@ dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbu
 
 # Guidance
 try:
-	guidanceObject = dbusConnectionBus.get_object("org.genivi.navigationcore.Guidance","/org/genivi/navigationcore")
+	guidanceObject = dbusConnectionBus.get_object('org.genivi.navigation.navigationcore.Guidance_Guidance','/Guidance')
 except dbus.DBusException:
 	print ("connection to Guidance failed")
 	print_exc()
 	sys.exit(1)
-guidanceInterface = dbus.Interface(guidanceObject, "org.genivi.navigationcore.Guidance")
-dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigationcore.Guidance", signal_name = "GuidanceStatusChanged")
+guidanceInterface = dbus.Interface(guidanceObject, 'org.genivi.navigation.navigationcore.Guidance')
+dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.Guidance", signal_name = "guidanceStatusChanged")
 
 # Map matched position
 try:

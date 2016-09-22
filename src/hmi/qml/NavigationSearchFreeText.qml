@@ -86,10 +86,10 @@ HMIMenu {
 
 	function connectSignals()
 	{
-		searchStatusSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchStatus",menu,"searchStatus");
-		searchResultListSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchResultList",menu,"searchResultList");
-		contentUpdatedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","ContentUpdated",menu,"contentUpdated");
-	}
+        searchStatusSignal=Genivi.connect_searchStatusSignal(dbusIf,menu);
+        searchResultListSignal=Genivi.connect_searchResultListSignal(dbusIf,menu);
+        contentUpdatedSignal=Genivi.connect_contentUpdatedSignal(dbusIf,menu);
+    }
 	
 	function disconnectSignals()
 	{
@@ -119,7 +119,7 @@ HMIMenu {
         Component.onCompleted: {
             connectSignals();
 
-            var res=Genivi.navigationcore_message(dbusIf,"Session","GetVersion",[]);
+            var res=Genivi.navigationcore_session_GetVersion(dbusIf);
             if (res[0] != "error") {
                 res=Genivi.navigationcore_session(dbusIf);
                 res=Genivi.locationinput_handle(dbusIf);

@@ -85,7 +85,6 @@ HMIMenu {
     Component.onCompleted: {
         var model=view.model;
         var array=Genivi.historyOfLastEnteredLocation;
-        Genivi.dump("",array.length);
         // display list of locations (fifo)
         var i = Genivi.historyOfLastEnteredLocationOut;
         while (i !== Genivi.historyOfLastEnteredLocationIn)

@@ -58,7 +58,7 @@ HMIMenu {
 
     function connectSignals()
     {
-        configurationChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Configuration","ConfigurationChanged",menu,"configurationChanged");
+        configurationChangedSignal=Genivi.connect_configurationChangedSignal(dbusIf,menu);
     }
 
     function disconnectSignals()

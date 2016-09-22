@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.8)
 option(WITH_DEBUG
         "Enable the debug messages" OFF)
 option(WITH_PLUGIN_MIGRATION
-        "Enable navit plugin migration to commonapi" OFF)
+        "Enable navit plugins and fuel-stop-advisor migration to commonapi" OFF)
 option(AMB_ON_DBUS_SESSION
         "Run amb on dbus session" ON)
 option(WITH_HTML_MIGRATION
@@ -32,7 +32,10 @@ message(STATUS "WITH_PLUGIN_MIGRATION = ${WITH_PLUGIN_MIGRATION}")
 message(STATUS "AMB_ON_DBUS_SESSION = ${AMB_ON_DBUS_SESSION}")
 message(STATUS "WITH_HTML_MIGRATION = ${WITH_HTML_MIGRATION}")
 
+set(NAVIGATION_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/api")
+set(POSITIONING_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/src/navigation/positioning/enhanced-position-service/dbus/api")
 set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
+
 set(AUTOMOTIVE_MESSAGE_BROKER "automotive-message-broker")
 set(AUTOMOTIVE_MESSAGE_BROKER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AUTOMOTIVE_MESSAGE_BROKER}")
 set(AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR "${AUTOMOTIVE_MESSAGE_BROKER_DIR}/src/${AUTOMOTIVE_MESSAGE_BROKER}")
@@ -41,6 +44,7 @@ set(AUTOMOTIVE_MESSAGE_BROKER_LIB_DIR "${AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR}/lib"
 set(PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/patches")
 set(NAVIT_PNG_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/navigation/navit/navit/xpm")
 set(TRIPCOMPUTER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tripcomputer")
+set(COMMONAPI_GEN_DIR_POSITIONING "${CMAKE_CURRENT_BINARY_DIR}/enhanced-position-service/franca/api")
 
 if(NOT EXISTS ${AUTOMOTIVE_MESSAGE_BROKER_DIR})
     if(NOT ${AMB_ON_DBUS_SESSION})
@@ -67,8 +71,13 @@ if(NOT EXISTS ${AUTOMOTIVE_MESSAGE_BROKER_DIR})
 endif()
 
 add_subdirectory(navigation/src/navigation "${CMAKE_CURRENT_BINARY_DIR}/navigation")
+set(DBUS_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/navigation/dbus-include")
 
-add_subdirectory(fuel-stop-advisor)
+if (WITH_PLUGIN_MIGRATION)
+    add_subdirectory(fuel-stop-advisor-capi)
+else()
+    add_subdirectory(fuel-stop-advisor)
+endif()
 
 add_subdirectory(genivilogreplayer)
 

@@ -98,19 +98,15 @@ HMIMenu {
 
 	function connectSignals()
 	{
-		//currentSelectionCriterionSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","CurrentSelectionCriterion",menu,"currentSelectionCriterion");
-		searchStatusSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchStatus",menu,"searchStatus");
-		searchResultListSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchResultList",menu,"searchResultList");
-		//contentUpdatedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","ContentUpdated",menu,"contentUpdated");
-		spellResultSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SpellResult",menu,"spellResult");
+        searchStatusSignal=Genivi.connect_searchStatusSignal(dbusIf,menu);
+        searchResultListSignal=Genivi.connect_searchResultListSignal(dbusIf,menu);
+        spellResultSignal=Genivi.connect_spellResultSignal(dbusIf,menu);
 	}
 	
 	function disconnectSignals()
 	{
-		//currentSelectionCriterionSignal.destroy();
 		searchStatusSignal.destroy();
 		searchResultListSignal.destroy();
-		//contentUpdatedSignal.destroy();
 		spellResultSignal.destroy();
 	}
 

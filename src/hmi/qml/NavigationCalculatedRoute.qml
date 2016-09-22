@@ -110,9 +110,9 @@ HMIMenu {
 
 	function connectSignals()
     {
-        routeCalculationSuccessfulSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Routing","RouteCalculationSuccessful",menu,"routeCalculationSuccessful");
-        routeCalculationFailedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Routing","RouteCalculationFailed",menu,"routeCalculationFailed");
-        routeCalculationProgressUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Routing","RouteCalculationProgressUpdate",menu,"routeCalculationProgressUpdate");
+        routeCalculationSuccessfulSignal=Genivi.connect_routeCalculationSuccessfulSignal(dbusIf,menu);
+        routeCalculationFailedSignal=Genivi.connect_routeCalculationFailedSignal(dbusIf,menu);
+        routeCalculationProgressUpdateSignal=Genivi.connect_routeCalculationProgressUpdateSignal(dbusIf,menu);
     }
 
     function disconnectSignals()

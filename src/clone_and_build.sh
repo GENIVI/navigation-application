@@ -1,8 +1,9 @@
 #!/bin/bash
 
-navigation_version='1cfa51e76ba173166c113eccf6a61a5904ff7e7d'
+build_option=""
+navigation_version='4c5be944a506f64427a25ada714a4a6f64e5ebf3'
 positioning_version='f341b4a2cb216d6204136794d33076170ab1bf80'
-navit_version='0a8f85666a3b849d70ed450d74bed3cf85466630'
+navit_version='c1b0faace0e241f743a1421e8826d84aacb2d153'
 
 echo "version of navigation is: $navigation_version"
 echo "version of positioning is: $positioning_version"
@@ -15,6 +16,20 @@ if [ "$input" = 'n' ]
 then
 	exit 1
 fi
+
+while getopts m opt
+do
+	case $opt in
+	m)
+		build_option="-m"
+		;;
+	\?)
+		echo "Usage:"
+		echo "$0 [-m]"
+		echo "-m: build with commonAPI plugins "
+		exit 1
+	esac
+done
 
 if [ -d "./build" ]
 then
@@ -38,7 +53,7 @@ patch -p0 -i ../patches/search_list_get_unique.diff
 patch -p0 -i ../patches/fsa_issue_padding.diff
 cd ../../../../
 
-./build.sh -c
+./build.sh -c $build_option
 
 
 

@@ -92,10 +92,10 @@ set(LIBRARIES
 # generate constants used by the QML files
 # in order to generate it, navigation-service and positioning have to be being cloned before
 file (GLOB XML_TO_CONSTANTS
-    ${API_DIR_PARENT_SCOPE}/map-viewer/genivi-mapviewer-constants.xml
-    ${API_DIR_PARENT_SCOPE}/navigation-core/genivi-navigationcore-constants.xml
-    ${API_DIR_PARENT_SCOPE}/poi-service/genivi-poiservice-constants.xml
-    ${POSITIONING_API_DIR_PARENT_SCOPE}/genivi-positioning-constants.xml
+    ${NAVIGATION_API_DIR}/map-viewer/genivi-mapviewer-constants.xml
+    ${NAVIGATION_API_DIR}/navigation-core/genivi-navigationcore-constants.xml
+    ${NAVIGATION_API_DIR}/poi-service/genivi-poiservice-constants.xml
+    ${POSITIONING_API_DIR}/genivi-positioning-constants.xml
     ${FUEL_STOP_ADVISOR_API_DIR}/constants.xml
 )
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)

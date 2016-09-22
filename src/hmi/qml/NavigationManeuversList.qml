@@ -78,7 +78,7 @@ HMIMenu {
 
     Component.onCompleted: {
         var res=Genivi.guidance_GetManeuversList(dbusIf,0xffff,0);
-        var maneuversList=res[3];
+        var maneuversList=res[5];
         var model=view.model;
         for (var i = 0 ; i < maneuversList.length ; i+=2) {
             var roadNameAfterManeuver=maneuversList[i+1][3];

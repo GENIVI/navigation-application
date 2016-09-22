@@ -31,7 +31,7 @@
         <line>SetUnits = This method sets the calculation unit for a given value</line>
       </doc>
 
-      <arg name="data" type="a{qq}" direction="in">
+      <arg name="data" type="a{ii}" direction="in">
         <doc>
           <line>data = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
@@ -48,7 +48,7 @@
         <line>GetInstantData = This method returns a given set of global (not related to a trip number) trip computer data (e.g. odometer, fuel level, tank distance... )</line>
       </doc>
 
-      <arg name="data" type="a{qv}" direction="out">
+      <arg name="data" type="a{i(yv)}" direction="out">
         <doc>
           <line>data = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
@@ -85,7 +85,7 @@
         </doc>
       </arg>
 
-      <arg name="tripData" type="a{qv}" direction="out">
+      <arg name="tripData" type="a{i(yv)}" direction="out">
         <doc>
           <line>data = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>

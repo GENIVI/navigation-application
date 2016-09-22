@@ -51,14 +51,14 @@ typedef boost::variant<uint32_t,uint16_t> variantTripComputer_t;
  * \brief Dictionary for getting the trip computer output values.
  *
  */
-typedef map<uint16_t,variantTripComputer_t > tupleVariantTripComputer_t;
+typedef map<int32_t,variantTripComputer_t > tupleVariantTripComputer_t;
 
 /**
  * \union tupleUint16_t
  * \brief Dictionary for setting the trip computer units.
  *
  */
-typedef map<uint16_t,uint16_t> tupleUint16_t;
+typedef map<int32_t,int32_t> tupleInt32_t;
 
 /**
  * \struct version_t

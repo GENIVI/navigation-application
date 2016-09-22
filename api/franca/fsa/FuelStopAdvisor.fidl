@@ -52,6 +52,8 @@ interface FuelStopAdvisor {
 		FUEL_LEVEL = 33
 		INSTANT_SPEED = 34
 		INSTANT_FUEL_CONSUMPTION_PER_DISTANCE = 35
+		TANK_DISTANCE = 52
+		ENHANCED_TANK_DISTANCE = 53
 	}
 	
     union InstantDataValue {
@@ -68,8 +70,6 @@ interface FuelStopAdvisor {
 		TIME = 49
 		AVERAGE_FUEL_CONSUMPTION_PER_DISTANCE = 50
 		AVERAGE_SPEED = 51
-		TANK_DISTANCE = 52
-		ENHANCED_TANK_DISTANCE = 53
 	}
 		
     union TripDataValue {
@@ -172,6 +172,36 @@ interface FuelStopAdvisor {
 			<** @description : distanceThreshold= value of type 'y' that expresses the distance threshold in METRIC->kilometers or in NON_METRIC->miles **>
 			UInt8	distanceThreshold
 		}	
+	}
+
+	<**
+		@description : resetTripData = This method resets the data of a given trip
+	**>
+    method resetTripData {
+    	in {
+			<** @description : number = value of type 'y' that expresses the trip number **>
+    		UInt8 number
+    	}
+    }
+
+	<**
+		@description : tripDataResetted = This signal is emitted to notify a client application that the data of the given trip number has been resetted
+	**>
+     broadcast tripDataResetted {
+     	out {
+			<** @description : number = value of type 'y' that expresses the trip number **>
+     		UInt8 number	
+     	}
+     }
+
+	<**
+		@description : tripDataUpdated = This signal is emitted to notifiy a client application that the data has been updated
+	**>
+	broadcast tripDataUpdated {
+		out {
+			<** @description : number = value of type 'y' that expresses the trip number **>
+			UInt8 number
+		}
 	}
 
 	<**

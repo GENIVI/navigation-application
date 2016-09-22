@@ -45,22 +45,26 @@ static double fuel_consumption_speed[]={
 };
 
 
-static DBus::Variant
+static ::DBus::Struct< uint8_t, ::DBus::Variant >
 variant_uint16(uint16_t i)
 {
 	DBus::Variant variant;
+    ::DBus::Struct< uint8_t, ::DBus::Variant > ret;
 	DBus::MessageIter iter=variant.writer();
 	iter << i;
-	return variant;
+    ret._2 = variant;
+    return ret;
 }
 
-static DBus::Variant
+static ::DBus::Struct< uint8_t, ::DBus::Variant >
 variant_uint32(uint32_t i)
 {
 	DBus::Variant variant;
-	DBus::MessageIter iter=variant.writer();
+    ::DBus::Struct< uint8_t, ::DBus::Variant > ret;
+    DBus::MessageIter iter=variant.writer();
 	iter << i;
-	return variant;
+    ret._2 = variant;
+    return ret;
 }
 
 
@@ -208,15 +212,15 @@ class FuelStopAdvisor
     }
 
 	void
-	SetUnits(const std::map< uint16_t, uint16_t >& data)
+    SetUnits(const std::map< int32_t, int32_t >& data)
 	{
         mp_tripComputer->SetUnits(data); //Set units of the basic trip computer
     }
 
-	std::map< uint16_t, ::DBus::Variant >
+    std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > >
     GetInstantData()
 	{
-		std::map< uint16_t, ::DBus::Variant > ret;
+        std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > ret;
         tupleVariantTripComputer_t tripComputerData;
         tupleVariantTripComputer_t::iterator iter;
         variantTripComputer_t value;
@@ -255,10 +259,10 @@ class FuelStopAdvisor
         return (mp_tripComputer->GetSupportedTripNumbers());
     }
 
-	std::map< uint16_t, ::DBus::Variant >
+    std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > >
 	GetTripData(const uint8_t& number)
 	{
-        std::map< uint16_t, ::DBus::Variant > ret;
+        std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > ret;
         tupleVariantTripComputer_t tripComputerData;
         tupleVariantTripComputer_t::iterator iter;
         variantTripComputer_t value;

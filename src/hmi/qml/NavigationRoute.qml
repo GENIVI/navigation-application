@@ -53,11 +53,11 @@ HMIMenu {
         var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
         var oklat=0;
         var oklong=0;
-        for (var i=0;i<res[1].length;i+=4){
-            if ((res[1][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[1][i+3][3][1] != 0)){
+        for (var i=0;i<res[3].length;i+=4){
+            if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[3][i+3][3][1] != 0)){
                 oklat=1;
             } else {
-                if ((res[1][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[1][i+3][3][1] != 0)){
+                if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[3][i+3][3][1] != 0)){
                     oklong=1;
                 }
             }
@@ -76,11 +76,12 @@ HMIMenu {
 
     function connectSignals()
     {
-        mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
+        mapmatchedpositionPositionUpdateSignal=Genivi.connect_mapmatchedpositionPositionUpdateSignal(dbusIf,menu);
     }
 
     function disconnectSignals()
     {
+        mapmatchedpositionPositionUpdateSignal.destroy();
     }
 
     DBusIf {

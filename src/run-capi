@@ -1,0 +1,281 @@
+#! /bin/bash
+###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
+# \copyright Copyright (C) 2013-2014, PCA Peugeot Citroen
+#
+# \file run
+#
+# \brief This file is part of the Build System.
+#
+# \author # Author: Martin Schaller <martin.schaller@it-schaller.de>
+#
+# \version 1.0
+#
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License (MPL), v. 2.0.
+# If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# For further information see http://www.genivi.org/.
+#
+# List of changes:
+# 
+# 5-8-2014, Philippe Colliot, Refine, add a sleep and improve comments
+# 30-9-2014, Philippe Colliot, Make it simpler and add a check for availability of hmi style-sheets
+#
+# @licence end@
+###########################################################################
+
+# function to start a process by freezing some of the options
+function run
+{
+	local x=$xterm
+	local g=$gdb
+	local l=$log
+	local title="$1"
+	shift
+	if [ "$1" = "-n" ]
+	then
+		shift
+		x=0
+		log=0
+	fi
+	if [ "$1" = -"g" ]
+	then
+		shift
+		g=0
+	fi
+	if [ "$x" = 1 ]
+	then
+		if [ "$g" = 1 ]
+		then
+			set -- gdb -ex run --args "$@"
+		fi
+		xterm -T "$title" -sb -sl 5000 -e "$@" &
+	elif [ "$log" = 1 ]
+	then
+		"$@" >"$CUR_DIR/$title.log" 2>&1 &
+	else
+		"$@" &
+	fi
+	PIDS="$PIDS $!"
+}
+
+# function to catch the ctrl C or exit and to stop cleanly
+function terminate
+{
+	set +e
+	trap "" EXIT INT
+	kill $PIDS 2>/dev/null
+	if [ "$gdb" = 1 ]
+	then
+		kill -9 $PIDS 2>/dev/null
+	fi
+	if [ -n "$wm" ]
+	then
+		sleep 2
+		cd
+		nohup $wm >/dev/null 2>/dev/null &
+	fi
+}
+
+# default settings
+gdb=0 #no debug
+xterm=0 #no subprocess into a separate xterm
+log=0 #no log file 
+enhpos=1 #enhanced position server enabled 
+replayer=1 #replayer enabled
+lm=0 #layer manager disabled
+wm="" #to store the current window manager (in case of start with the layer manager)
+verbose=0 #no debug or log messages displayed
+center="4612 N 0608 E"
+
+CUR_DIR=$PWD
+BIN_DIR=$CUR_DIR/build
+SRC_DIR=$CUR_DIR
+
+SCRIPT_DIR=$SRC_DIR/script
+HMI_QML_DIR=$SRC_DIR/hmi/qml
+app=$HMI_QML_DIR/application.qml # hmi panel launched by default
+STYLE_SHEETS_GENERATED_INDICATOR=$HMI_QML_DIR/Core/style-sheets/the-style-sheets-have-been-generated-css.js
+REPLAYER_LOG_FILE=none
+export REPLAYER_LOG_FILE
+
+# location of exe, lib and config files
+AUTOMOTIVE_MESSAGE_BROKER=automotive-message-broker
+AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR=$SRC_DIR/$AUTOMOTIVE_MESSAGE_BROKER
+AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR=$AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR/src/$AUTOMOTIVE_MESSAGE_BROKER-build
+GENIVI_LOGREPLAYER=genivilogreplayer
+GENIVI_LOGREPLAYER_SRC_DIR=$SRC_DIR/$GENIVI_LOGREPLAYER
+GENIVI_LOGREPLAYER_BIN_DIR=$BIN_DIR/$GENIVI_LOGREPLAYER
+
+NAVIGATION=navigation
+NAVIGATION_SRC_DIR=$SRC_DIR/$NAVIGATION/src/navigation
+NAVIGATION_BIN_DIR=$BIN_DIR/$NAVIGATION
+
+NAVIT=navit
+NAVIT_BIN_DIR=$NAVIGATION_BIN_DIR/navit/navit
+
+POI_SERVER=poi-server
+POI_SERVER_SRC_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/$POI_SERVER
+POI_SERVER_BIN_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/poi-server-capi/bin
+
+LOG_REPLAYER=log-replayer
+LOG_REPLAYER_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$LOG_REPLAYER
+LOG_REPLAYER_BIN_DIR=$NAVIGATION_SRC_DIR/bin
+
+ENHANCED_POSITION_SERVICE=enhanced-position-service
+ENHANCED_POSITION_SERVICE_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$ENHANCED_POSITION_SERVICE
+ENHANCED_POSITION_SERVICE_BIN_DIR=$NAVIGATION_SRC_DIR/bin
+
+FUEL_STOP_ADVISOR=fuel-stop-advisor-capi
+FUEL_STOP_ADVISOR_SRC_DIR=$SRC_DIR/$FUEL_STOP_ADVISOR
+FUEL_STOP_ADVISOR_BIN_DIR=$BIN_DIR/$FUEL_STOP_ADVISOR
+
+HMI_LAUNCHER=hmi-launcher
+HMI_LAUNCHER_SRC_DIR=$SRC_DIR/hmi/qml/$HMI_LAUNCHER
+HMI_LAUNCHER_BIN_DIR=$BIN_DIR/hmi/qml/$HMI_LAUNCHER
+
+
+# options analysis
+while getopts a:c:glnorvx opt
+do
+	case $opt in
+	a) #select another hmi panel
+		app=$OPTARG 
+		;;
+	c) #set the map center 
+		case "$OPTARG" in
+		paris)
+			center="2.34 48.86"
+			;;
+		tokyo)
+			center="139.74 35.70"
+			;;
+		[0-9-]*)
+			center=$OPTARG
+			;;
+		*)
+			echo "Unsupported center $OPTARG" >&2
+			exit 1
+			;;
+		esac
+		;;
+	g) #enable the debugger
+		gdb=1
+		;;
+	l) #enable the layer manager
+		lm=1
+		;;
+	n) #disable the enhanced position server 
+		enhpos=0
+		;;
+	o) #enable the log file
+		log=1
+		;;
+	r) #disable the log replayer
+		replayer=0
+		;;
+	v) #enable log messages
+		verbose=1
+		;;
+	x) #enable subprocess in a separate xterm
+		xterm=1
+		;;
+	\?)
+		echo "Usage:"
+		echo "$0 [-a application][-c center][-glnorvx]"
+		echo "-a: Set application (default application.qml)"
+		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
+		echo "-g: Run subprocesses within gdb (only with -x)"
+		echo "-l: Use layermanager"
+		echo "-n: Don't start enhanced positioning service"
+		echo "-o: Create log file of subprocess output"
+		echo "-r: Don't start replayer"
+		echo "-v: Enable the output of log or debug messages"
+		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
+		exit 1
+	esac
+done
+
+# check if style sheets have been generated
+if [ ! -f $STYLE_SHEETS_GENERATED_INDICATOR ]
+then
+    echo "Please generate the style sheets before"
+	$SCRIPT_DIR/prepare.sh -h
+	exit 1
+fi
+
+# check and kill remaining ambd process
+ambd_process_id=$(pidof ambd)
+if [ -n $ambd_process_id ] 
+then
+	kill -9 $ambd_process_id
+fi
+
+trap "terminate" EXIT INT
+set -e #exit on error now
+
+echo "the graphic for navit is based on sdl"
+export NAVIT_GRAPHICS='sdl'
+
+# set the language to en_US for navit
+export LANGUAGE=en_US
+
+# start the automotive message broker and wait for dbus service
+cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
+if [ "$verbose" = "1" ]
+then
+	run "Automotive Message Broker" ./ambd/ambd --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig.in.json
+else
+	run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig.in.json
+fi
+
+# start the poi server and wait for dbus service
+run "POI service" $POI_SERVER_BIN_DIR/$POI_SERVER -f $SCRIPT_DIR/empty.db
+
+if [ "$enhpos" = 1 ]
+then # start the  enhanced position service
+	run "EnhancedPositionService" $ENHANCED_POSITION_SERVICE_BIN_DIR/EnhancedPositionServiceDBus 
+fi
+
+# start the two instances of navit with plugins (one for navigation core and another one for map viewer)
+cd $NAVIT_BIN_DIR
+>bookmark.txt
+echo "$center" >center.txt
+
+if [ "$verbose" = "1" ]
+then
+	run "MapViewer" ./$NAVIT -d 3 -c navit_genivi_mapviewer.xml
+else
+	run "MapViewer" ./$NAVIT -d 0 -c navit_genivi_mapviewer.xml 2>~/mapviewer.log
+fi
+
+if [ "$verbose" = "1" ]
+then
+	run "NavigationCore" ./$NAVIT -d 3 -c navit_genivi_navigationcore.xml
+else
+	run "NavigationCore" ./$NAVIT -d 0 -c navit_genivi_navigationcore.xml
+fi
+
+if [ "$replayer" = 1 ]
+then # start the log replayer (of the fsa) with a sample log file
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER  $LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+fi
+
+sleep 3 # need a sleep here (to be improved)
+# start the fuel stop advisor application
+run "Fuel Stop Advisor" $FUEL_STOP_ADVISOR_BIN_DIR/fuel-stop-advisor
+
+# log trace into a file
+if [ "$log" = 1 ]
+then
+	exec >$CUR_DIR/fsa.log
+	exec 2>&1
+fi
+
+# start the hmi 
+$HMI_LAUNCHER_BIN_DIR/$HMI_LAUNCHER $app 
+

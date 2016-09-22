@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: MPL-2.0
+// Copyright (C) 2014, PCA Peugeot Citro�n, XS Embedded GmbH, TomTom International B.V., Continental Automotive GmbH, BMW Car IT GmbH,  Alpine Electronics R&D Europe GmbH, AISIN AW CO., LTD.,  Neusoft Technology Solutions GmbH, Jaguar Land Rover Limited, Visteon Corporation, Elektrobit Automotive GmbH
+// This Source Code Form is subject to the terms of the
+// Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+// this file, you can obtain one at http://mozilla.org/MPL/2.0/.
+
+package org.freedesktop.DBus
+
+interface Properties {
+	version {
+		major 1 
+		minor 0
+	}
+	
+	union PropertyValue {
+		UInt16 uint16Value
+		UInt32 uint32Value
+		Double doubleValue 
+	}
+	
+	enumeration PropertyAttribute {
+		LEVEL = 0
+		TIME = 1
+		ODOMETER = 2
+	}
+	
+	map Value {
+		PropertyAttribute to PropertyValue
+	}
+	 
+	enumeration interfaceKey {
+		ODOMETER = 0
+		FUEL = 1
+	}
+	
+	struct Property {
+		String name
+		Value value
+	}
+	
+    method Get {
+    	in {
+    		String interface_name
+    		String property_name
+    	}
+    	out {
+    		Value value
+    	}
+    }
+
+    method GetAll {
+    	in {
+    		String interface_name
+    		String property_name
+    	}
+    	out {
+    		Property[] value
+    	}
+    }
+
+    method Set {
+    	in {
+    		String interface_name
+    		String property_name
+    		Value value
+    	}	
+    } 
+    
+    broadcast PropertiesChanged {
+    	out {
+    		String interface_name
+    		Property[] changed_properties
+    		String[] invalidated_properties
+    	}
+    }
+}

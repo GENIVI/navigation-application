@@ -254,7 +254,7 @@ void CTripComputer::ResetTrip(const uint8_t &number)
     }
 }
 
-void CTripComputer::SetUnits(const tupleUint16_t &data)
+void CTripComputer::SetUnits(const tupleInt32_t &data)
 {
     //to do
     m_units = data;

@@ -113,12 +113,12 @@ HMIMenu {
                 var position=Genivi.mapmatchedposition_GetPosition(dbusIf);
                 var latitude=0;
                 var longitude=0;
-                for (var i=0;i<position[1].length;i+=4){
-                    if ((position[1][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (position[1][i+3][3][1] != 0)){
-                        latitude=position[1][i+3][3][1];
+                for (var i=0;i<position[3].length;i+=4){
+                    if ((position[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (position[3][i+3][3][1] != 0)){
+                        latitude=position[3][i+3][3][1];
                     } else {
-                        if ((position[1][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (position[1][i+3][3][1] != 0)){
-                            longitude=position[1][i+3][3][1];
+                        if ((position[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (position[3][i+3][3][1] != 0)){
+                            longitude=position[3][i+3][3][1];
                         }
                     }
                 }
@@ -145,6 +145,7 @@ HMIMenu {
                 var attributeList=[];
                 attributeList[0]=0;
                 var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxWindowSize,attributeList);
+                Genivi.dump("poisearch_RequestResultList",res)
 				var res_win=res[5];
                 for (i = 0 ; i < res_win.length ; i+=2) {
                     var id=res_win[i+1][1];
@@ -183,9 +184,9 @@ HMIMenu {
             disabled:true;
             next:select_display_on_map; prev:select_search_for_refill
 			onClicked: {
-				var poi_data=Genivi.poi_data[Genivi.poi_id];
-				var dest=["uint16",Genivi.NAVIGATIONCORE_LATITUDE,"variant",["double",poi_data.lat],"uint16",Genivi.NAVIGATIONCORE_LONGITUDE,"variant",["double",poi_data.lon]];
-				Genivi.routing_message(dbusIf,"SetWaypoints",["boolean",true,"array",["map",dest]]);
+                var destination=Genivi.latlon_to_map(Genivi.poi_data[Genivi.poi_id]);
+                var position="";
+                Genivi.routing_SetWaypoints(dbusIf,true,position,destination);
 				Genivi.data['calculate_route']=true;
 				Genivi.data['lat']='';
 				Genivi.data['lon']='';

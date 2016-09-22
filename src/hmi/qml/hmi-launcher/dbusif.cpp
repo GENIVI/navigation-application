@@ -608,9 +608,10 @@ QVariant
 			dbus_error_free(&error);
 			return QVariant(l);
 		}
-		//fprintf(stderr,"res=%p\n",rmsg);
+        //fprintf(stderr,"res=%p\n",rmsg);
 		dbus_error_free(&error);
 		ret=qml_list_from_dbus_message(rmsg);
+        //qDebug() << ret;
 		dbus_message_unref(rmsg);
 	} else {
 		dbus_message_unref(msg);

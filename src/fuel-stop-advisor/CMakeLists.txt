@@ -29,7 +29,7 @@ include_directories(
     ${DBUS_CPP_INCLUDE_DIRS}
     ${DBUS_CPP_GLIB_INCLUDE_DIRS}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${DBUS_GENERATED_INCLUDE_DIR_PARENT_SCOPE}/navigation-core
+    ${DBUS_GENERATED_INCLUDE_DIR}/navigation-core
     ${TRIPCOMPUTER_DIR}
     )
 

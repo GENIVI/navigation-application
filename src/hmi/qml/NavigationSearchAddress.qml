@@ -149,10 +149,10 @@ HMIMenu {
 
 	function connectSignals()
 	{
-		currentSelectionCriterionSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","CurrentSelectionCriterion",menu,"currentSelectionCriterion");
-		searchStatusSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchStatus",menu,"searchStatus");
-		searchResultListSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","SearchResultList",menu,"searchResultList");
-		contentUpdatedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.LocationInput","ContentUpdated",menu,"contentUpdated");
+        currentSelectionCriterionSignal=Genivi.connect_currentSelectionCriterionSignal(dbusIf,menu);
+        searchStatusSignal=Genivi.connect_searchStatusSignal(dbusIf,menu);
+        searchResultListSignal=Genivi.connect_searchResultListSignal(dbusIf,menu);
+        contentUpdatedSignal=Genivi.connect_contentUpdatedSignal(dbusIf,menu);
 	}
 	
 	function disconnectSignals()

@@ -85,9 +85,9 @@ HMIMenu {
 	function mapmatchedpositionPositionUpdate(args)
 	{
         var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
-        for (var i=0;i<res[1].length;i+=4){
-            if (res[1][i+1]== Genivi.NAVIGATIONCORE_SPEED){
-                vehicleSpeedValue.text=res[1][i+3][3][1];
+        for (var i=0;i<res[3].length;i+=4){
+            if (res[3][i+1]== Genivi.NAVIGATIONCORE_SPEED){
+                vehicleSpeedValue.text=res[3][i+3][3][1];
             }
         }
 	}
@@ -249,9 +249,9 @@ HMIMenu {
 
 	function updateAddress()
 	{
-        var res=Genivi.mapmatchedposition_GetAddress(dbusIf);
-        if (res[1][1] == Genivi.NAVIGATIONCORE_STREET) {
-            currentroad.text=res[1][3][3][1];
+        var res=Genivi.mapmatchedposition_GetCurrentAddress(dbusIf);
+        if (res[3][1] == Genivi.NAVIGATIONCORE_STREET) {
+            currentroad.text=res[3][3][3][1];
 		} else {
             currentroad.text="";
 		}
@@ -287,14 +287,14 @@ HMIMenu {
 
 	function connectSignals()
     {
-        guidanceWaypointReachedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","WaypointReached",menu,"guidanceWaypointReached");
-        guidanceManeuverChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","ManeuverChanged",menu,"guidanceManeuverChanged");
-        guidancePositionOnRouteChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.Guidance","PositionOnRouteChanged",menu,"guidancePositionOnRouteChanged");
-        simulationStatusChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","SimulationStatusChanged",menu,"simulationStatusChanged");
-        simulationSpeedChangedSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","SimulationSpeedChanged",menu,"simulationSpeedChanged");
-        mapmatchedpositionPositionUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","PositionUpdate",menu,"mapmatchedpositionPositionUpdate");
-        mapmatchedpositionAddressUpdateSignal=dbusIf.connect("","/org/genivi/navigationcore","org.genivi.navigationcore.MapMatchedPosition","AddressUpdate",menu,"mapmatchedpositionAddressUpdate");
-        fuelStopAdvisorSignal=dbusIf.connect("","/org/genivi/demonstrator/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor","FuelStopAdvisorWarning",menu,"fuelStopAdvisorWarning");
+        guidanceWaypointReachedSignal=Genivi.connect_guidanceWaypointReachedSignal(dbusIf,menu);
+        guidanceManeuverChangedSignal=Genivi.connect_guidanceManeuverChangedSignal(dbusIf,menu);
+        guidancePositionOnRouteChangedSignal=Genivi.connect_guidancePositionOnRouteChangedSignal(dbusIf,menu);
+        simulationStatusChangedSignal=Genivi.connect_simulationStatusChangedSignal(dbusIf,menu);
+        simulationSpeedChangedSignal=Genivi.connect_simulationSpeedChangedSignal(dbusIf,menu);
+        mapmatchedpositionPositionUpdateSignal=Genivi.connect_mapmatchedpositionPositionUpdateSignal(dbusIf,menu);
+        mapmatchedpositionAddressUpdateSignal=Genivi.connect_mapmatchedpositionAddressUpdateSignal(dbusIf,menu);
+        fuelStopAdvisorSignal=Genivi.connect_fuelStopAdvisorSignal(dbusIf,menu);
     }
 
     function disconnectSignals()
@@ -350,9 +350,9 @@ HMIMenu {
 		}
 
         var maneuversList=Genivi.guidance_GetManeuversList(dbusIf,1,0);
-        var numberOfManeuvers=maneuversList[1];
+        var numberOfManeuvers=maneuversList[3];
         //only one maneuver is considered
-        var maneuver=maneuversList[3][1];
+        var maneuver=maneuversList[5][1];
         var roadNumberAfterManeuver=maneuver[1];
         var roadNameAfterManeuver=maneuver[3];
         var roadPropertyAfterManeuver=maneuver[5];
@@ -882,7 +882,7 @@ HMIMenu {
 			delete(Genivi.data['show_route_handle']);
 		}
 		if (Genivi.data['zoom_route_handle']) {
-            var res=Genivi.navigationcore_message(dbusIf, "Routing", "GetRouteBoundingBox", Genivi.navigationcore_session(dbusIf).concat(Genivi.data['zoom_route_handle']));
+            var res=Genivi.routing_GetRouteBoundingBox(dbusIf,Genivi.data['zoom_route_handle']);
 			if (res[0] == "structure") {
 				Genivi.mapviewercontrol_message(dbusIf, "SetMapViewBoundingBox", res);
 			} else {
