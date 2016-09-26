@@ -145,7 +145,6 @@ HMIMenu {
                 var attributeList=[];
                 attributeList[0]=0;
                 var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxWindowSize,attributeList);
-                Genivi.dump("poisearch_RequestResultList",res)
 				var res_win=res[5];
                 for (i = 0 ; i < res_win.length ; i+=2) {
                     var id=res_win[i+1][1];

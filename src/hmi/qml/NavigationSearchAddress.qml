@@ -75,7 +75,8 @@ HMIMenu {
 	function searchStatus(args)
     { //locationInputHandle 1, statusValue 3
         var statusValue=args[3];
-        if (statusValue == Genivi.NAVIGATIONCORE_FINISHED)
+        Genivi.dump("searchStatus",args);
+        if (statusValue === Genivi.NAVIGATIONCORE_FINISHED)
         {
             Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry);
         }
@@ -181,38 +182,7 @@ HMIMenu {
 	}
 
 	DBusIf {
-                id: dbusIf
-        Component.onCompleted: {
-            connectSignals();
-
-            var res=Genivi.navigationcore_session_GetVersion(dbusIf);
-            if (res[0] != "error") {
-                res=Genivi.navigationcore_session(dbusIf);
-                res=Genivi.locationinput_handle(dbusIf);
-            } else {
-                Genivi.dump("",res);
-            }
-            if (Genivi.entryselectedentry) {
-                Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
-            }
-            if (Genivi.entrydest == 'countryValue')
-            {
-                accept(countryValue);
-            }
-            if (Genivi.entrydest == 'cityValue')
-            {
-                accept(cityValue);
-            }
-            if (Genivi.entrydest == 'streetValue')
-            {
-                accept(streetValue);
-            }
-            if (Genivi.entrydest == 'numberValue')
-            {
-                accept(numberValue);
-            }
-            Genivi.entrydest=null;
-        }
+        id: dbusIf
     }
 
     HMIBgImage {
@@ -323,6 +293,36 @@ HMIMenu {
         }
 	}
     Component.onCompleted: {
+        connectSignals();
+
+        var res=Genivi.navigationcore_session_GetVersion(dbusIf);
+        if (res[0] != "error") {
+            res=Genivi.navigationcore_session(dbusIf);
+            res=Genivi.locationinput_handle(dbusIf);
+        } else {
+            Genivi.dump("",res);
+        }
+        if (Genivi.entryselectedentry) {
+            Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
+        }
+        if (Genivi.entrydest == 'countryValue')
+        {
+            accept(countryValue);
+        }
+        if (Genivi.entrydest == 'cityValue')
+        {
+            accept(cityValue);
+        }
+        if (Genivi.entrydest == 'streetValue')
+        {
+            accept(streetValue);
+        }
+        if (Genivi.entrydest == 'numberValue')
+        {
+            accept(numberValue);
+        }
+        Genivi.entrydest=null;
+
         if (Genivi.preloadMode==true)
         {
             Genivi.preloadMode=false;

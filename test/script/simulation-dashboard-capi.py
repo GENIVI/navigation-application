@@ -25,8 +25,8 @@
 **************************************************************************
 """
 import sys,tty,termios,select,pygame,gi,time,dbus,re,argparse
-import pdb
- 
+#import pdb
+#pdb.set_trace()  
 from pygame.locals import *
 from threading import Timer
 from configTests import *
@@ -214,15 +214,15 @@ def getDbus():
 	displayVehicleSpeed(str(int(odometer[0])*SPEED_CONVERSION))
 
 	# get the tank distance
-	instantData = fuelStopAdvisorInterface.GetInstantData()
+	instantData = fuelStopAdvisorInterface.getInstantData()
 	if dbus.Int32(Genivi.FUELSTOPADVISOR_TANK_DISTANCE) in instantData:
-		tankDistance = int(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_TANK_DISTANCE)])	
-		displayFuelStopAdvisorTankDistance(str(tankDistance) + ' ')
+		tankDistance = dbus.Struct(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_TANK_DISTANCE)])	
+		displayFuelStopAdvisorTankDistance(str(int(tankDistance[1])) + ' ')
 	else:
 		displayFuelStopAdvisorTankDistance("-----")
 	if dbus.Int32(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE) in instantData:
-		enhancedTankDistance = int(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE)])	
-		displayFuelStopAdvisorEnhancedTankDistance(str(enhancedTankDistance) + ' ')
+		enhancedTankDistance = dbus.Struct(instantData[dbus.Int32(Genivi.FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE)])	
+		displayFuelStopAdvisorEnhancedTankDistance(str(int(enhancedTankDistance[1])) + ' ')
 	else:
 		displayFuelStopAdvisorEnhancedTankDistance('-----')
 
@@ -251,11 +251,11 @@ def enhancedPositionPositionUpdateHandler(arg):
 	# get the position
 	enhancedPosition = enhancedPositionInterface.GetPositionInfo(arg)
 	if (arg & Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE) == Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE:
-		latitude=float(enhancedPosition[1][dbus.UInt64(Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE)])
-		displayLatitude("{:.3f}".format(latitude))
+		latitude=dbus.Struct(enhancedPosition[1][Genivi.ENHANCEDPOSITIONSERVICE_LATITUDE])
+		displayLatitude("{:.3f}".format(float(latitude[1])))
 	if (arg & Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE) == Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE:
-		longitude=float(enhancedPosition[1][dbus.UInt64(Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE)])
-		displayLongitude("{:.3f}".format(longitude))
+		longitude=dbus.Struct(enhancedPosition[1][Genivi.ENHANCEDPOSITIONSERVICE_LONGITUDE])
+		displayLongitude("{:.3f}".format(float(longitude[1])))
 
 def mapMatchedPositionSimulationStatusHandler(arg):
 	if arg==Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION:
@@ -329,7 +329,7 @@ ambOdometerInterface = dbus.Interface(ambOdometer, "org.automotive.Odometer")
 
 # Fuel Stop Advisor
 try:
-	fuelStopAdvisorObject = dbusConnectionBus.get_object("org.genivi.demonstrator.FuelStopAdvisor","/org/genivi/demonstrator/FuelStopAdvisor")
+	fuelStopAdvisorObject = dbusConnectionBus.get_object("org.genivi.demonstrator.FuelStopAdvisor_FuelStopAdvisor","/FuelStopAdvisor")
 except dbus.DBusException:
 	print ("connection to Fuel Stop Advisor failed")
 	print_exc()
@@ -339,13 +339,13 @@ dbusConnectionBus.add_signal_receiver(fuelStopAdvisorWarningHandler, dbus_interf
 
 # Enhanced position
 try:
-	enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.positioning.EnhancedPosition", "/org/genivi/positioning/EnhancedPosition")
+	enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.EnhancedPositionService.EnhancedPosition_EnhancedPositionService", "/EnhancedPositionService")
 except dbus.DBusException:
 	print ("connection to Enhanced position failed")
 	print_exc()
 	sys.exit(1)
-enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
-dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.positioning.EnhancedPosition", signal_name = "PositionUpdate")
+enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.EnhancedPositionService.EnhancedPosition")
+dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.EnhancedPositionService.EnhancedPosition", signal_name = "PositionUpdate")
 
 # Guidance
 try:
@@ -359,7 +359,7 @@ dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "o
 
 # Map matched position
 try:
-	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
+	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.MapMatchedPosition_MapMatchedPosition","/MapMatchedPosition")
 except dbus.DBusException:
 	print ("connection to Map matched position failed")
 	print_exc()

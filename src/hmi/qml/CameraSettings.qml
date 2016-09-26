@@ -73,7 +73,7 @@ HMIMenu {
         property real clamp_value;
         onTriggered: {
             if (active) {
-                var res=Genivi.mapviewercontrol_message(dbusIf, "Get"+camera_value, []);
+                var res=Genivi.mapviewer_GetCameraValue(dbusIf,camera_value);
                 res[1]+=step;
                 if (clamp) {
                     if (step > 0 && res[1] > clamp_value) {
@@ -83,7 +83,7 @@ HMIMenu {
                         res[1]=clamp_value;
                     }
                 }
-                Genivi.mapviewercontrol_message(dbusIf, "Set"+camera_value, res);
+                Genivi.mapviewer_SetCameraValue(dbusIf,camera_value, res);
                 interval=50;
                 restart();
             }
@@ -129,7 +129,7 @@ HMIMenu {
 
     function set_angle(angle)
     {
-        Genivi.mapviewercontrol_message(dbusIf, "SetMapViewRotation", ["int32",angle,"int32",15]);
+        Genivi.mapviewer_SetMapViewRotation(dbusIf,angle);
     }
 
     function updateMapViewer()

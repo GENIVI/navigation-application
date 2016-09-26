@@ -265,9 +265,13 @@ HMIMenu {
 	function showZoom()
 	{
         var res=Genivi.mapviewer_GetMapViewScale(dbusIf);
-        var text=res[1];
-        if (res[3])
+        var text=res[1].toString();
+        if (res[3] === Genivi.MAPVIEWER_MAX) {
             text+="*";
+        } else {
+            if (res[3] === Genivi.MAPVIEWER_MIN)
+                text="*"+text;
+        }
         zoomlevel.text=text;
 	}
 
@@ -319,10 +323,10 @@ HMIMenu {
 	{
 		north=!north;
 		if (north) {
-			Genivi.mapviewercontrol_message(dbusIf, "SetCameraHeadingAngle", ["int32",0]);
+            Genivi.mapviewer_SetCameraHeadingAngle(dbusIf,0);
             orientation.setState("D");
 		} else {
-			Genivi.mapviewercontrol_message(dbusIf, "SetCameraHeadingTrackUp", []);
+            Genivi.mapviewer_SetCameraHeadingTrackUp(dbusIf);
             orientation.setState("N");
 		}
 	}
@@ -710,29 +714,29 @@ HMIMenu {
                 StdButton {
                     source:StyleSheetScroll.scrollup[Constants.SOURCE]; x:StyleSheetScroll.scrollup[Constants.X]; y:StyleSheetScroll.scrollup[Constants.Y]; width:StyleSheetScroll.scrollup[Constants.WIDTH]; height:StyleSheetScroll.scrollup[Constants.HEIGHT];
                     id:scrollup; explode:false; next:scrollleft; prev:scrolldown;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 + scroll.panY]]]);}
+                    onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
+                    onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2,map.height/2 + scroll.panY);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrollleft[Constants.SOURCE]; x:StyleSheetScroll.scrollleft[Constants.X]; y:StyleSheetScroll.scrollleft[Constants.Y]; width:StyleSheetScroll.scrollleft[Constants.WIDTH]; height:StyleSheetScroll.scrollleft[Constants.HEIGHT];
                     id:scrollleft; explode:false; next:scrollright; prev:scrollup;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 + scroll.panX,"uint16",map.height/2]]]);}
+                    onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
+                    onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2 + scroll.panX,map.height/2);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrollright[Constants.SOURCE]; x:StyleSheetScroll.scrollright[Constants.X]; y:StyleSheetScroll.scrollright[Constants.Y]; width:StyleSheetScroll.scrollright[Constants.WIDTH]; height:StyleSheetScroll.scrollright[Constants.HEIGHT];
                     id:scrollright; explode:false; next:scrolldown; prev:scrollleft;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2 - scroll.panX,"uint16",map.height/2]]]);}
+                    onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
+                    onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2 - scroll.panX,map.height/2);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrolldown[Constants.SOURCE]; x:StyleSheetScroll.scrolldown[Constants.X]; y:StyleSheetScroll.scrolldown[Constants.Y]; width:StyleSheetScroll.scrolldown[Constants.WIDTH]; height:StyleSheetScroll.scrolldown[Constants.HEIGHT];
                     id:scrolldown; explode:false; next:scrollup; prev:scrollright;
-                    onPressed: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_START,"array",["structure",["uint16",map.width/2,"uint16",map.height/2]]]);}
-                    onReleased: {Genivi.mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",Genivi.MAPVIEWER_PAN_END,"array",["structure",["uint16",map.width/2,"uint16",map.height/2 - scroll.panY]]]);}
+                    onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
+                    onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2,map.height/2 - scroll.panY);}
                 }
             }
         }
@@ -884,7 +888,7 @@ HMIMenu {
 		if (Genivi.data['zoom_route_handle']) {
             var res=Genivi.routing_GetRouteBoundingBox(dbusIf,Genivi.data['zoom_route_handle']);
 			if (res[0] == "structure") {
-				Genivi.mapviewercontrol_message(dbusIf, "SetMapViewBoundingBox", res);
+                Genivi.mapviewer_SetMapViewBoundingBox(dbusIf,res);
 			} else {
                 console.log("Unexpected result from GetRouteBoundingBox:");
 				Genivi.dump("",res);

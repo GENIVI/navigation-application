@@ -84,7 +84,7 @@ HMIMenu {
 
     function search(input)
 	{
-        Genivi.locationinput_message(dbusIf,"Search",["string",input,"uint16",10]);
+        Genivi.locationinput_Search(dbusIf,input,10);
 	}
 
 	function connectSignals()
@@ -226,7 +226,7 @@ HMIMenu {
 		if (Genivi.entrycriterion) {
 			criterion=Genivi.entrycriterion;
 			Genivi.entrycriterion=0;	
-			Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",criterion]);
+            Genivi.locationinput_SetSelectionCriterion(dbusIf,criterion);
 		}
 		connectSignals();
 	}

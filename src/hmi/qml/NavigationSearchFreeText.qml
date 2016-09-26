@@ -58,7 +58,7 @@ HMIMenu {
 	function searchResultList(args)
 	{
         Genivi.dump("searchResultList",args);
-		Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",0]);
+        Genivi.locationinput_SelectEntry(dbusIf,0);
 	}
 
 	function contentUpdated(args)
@@ -100,8 +100,8 @@ HMIMenu {
 
 	function accept(what)
 	{
-		Genivi.locationinput_message(dbusIf,"SetSelectionCriterion",["uint16",what.criterion]);
-		Genivi.locationinput_message(dbusIf,"Search",["string",what.text,"uint16",10]);
+        Genivi.locationinput_SetSelectionCriterion(dbusIf,what.criterion);
+        Genivi.locationinput_Search(dbusIf,what.text,10);
 	}
 
 
@@ -127,7 +127,7 @@ HMIMenu {
                 Genivi.dump("",res);
             }
             if (Genivi.entryselectedentry) {
-                Genivi.locationinput_message(dbusIf,"SelectEntry",["uint16",Genivi.entryselectedentry-1]);
+                Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
             }
         }
         }

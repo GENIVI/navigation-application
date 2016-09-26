@@ -20,10 +20,7 @@ interface FuelStopAdvisor {
 		INVALID = 0
 	}
 	
-	enumeration TripNumber {
-		TRIP1 = 0
-		TRIP2 = 1
-	}
+	typedef TripNumber is UInt8 
 	
 	enumeration UnitAttribute {
 		ODOMETER = 32
@@ -50,10 +47,10 @@ interface FuelStopAdvisor {
 	enumeration InstantDataAttribute extends BasicEnum {
 		ODOMETER = 32
 		FUEL_LEVEL = 33
-		INSTANT_SPEED = 34
+		TANK_DISTANCE = 34
 		INSTANT_FUEL_CONSUMPTION_PER_DISTANCE = 35
-		TANK_DISTANCE = 52
-		ENHANCED_TANK_DISTANCE = 53
+		ENHANCED_TANK_DISTANCE = 36
+		INSTANT_SPEED = 37
 	}
 	
     union InstantDataValue {
