@@ -224,7 +224,7 @@ export NAVIT_GRAPHICS='sdl'
 # set the language to en_US for navit
 export LANGUAGE=en_US
 
-# start the automotive message broker and wait for dbus service
+# start the automotive message broker
 cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR
 if [ "$verbose" = "1" ]
 then
@@ -233,8 +233,12 @@ else
 	run "Automotive Message Broker" ./ambd/ambd > /dev/null 2>&1 --config $GENIVI_LOGREPLAYER_SRC_DIR/logreplayerconfig.in.json
 fi
 
-# start the poi server and wait for dbus service
+sleep 1
+
+# start the poi server
 run "POI service" $POI_SERVER_BIN_DIR/$POI_SERVER -f $SCRIPT_DIR/empty.db
+
+sleep 1 # need a sleep here (to be improved)
 
 if [ "$enhpos" = 1 ]
 then # start the  enhanced position service

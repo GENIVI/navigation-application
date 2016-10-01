@@ -48,6 +48,7 @@ HMIMenu {
 
 	function searchStatus(args)
 	{
+        Genivi.hookSignal("searchStatus");
         Genivi.dump("searchStatus",args);
 		if (args[3] == 2) 
             console.log("Searching");
@@ -57,13 +58,15 @@ HMIMenu {
 
 	function searchResultList(args)
 	{
+        Genivi.hookSignal("searchResultList");
         Genivi.dump("searchResultList",args);
         Genivi.locationinput_SelectEntry(dbusIf,0);
 	}
 
 	function contentUpdated(args)
 	{
-		country="";
+        Genivi.hookSignal("contentUpdated");
+        country="";
 		city="";
 		street="";
 		number="";

@@ -43,7 +43,7 @@ HMIMenu {
 	property real lat
 	property real lon
 
-    function loadWithAddress()
+    function loadWithCountry()
     {
         //load the field with saved values
         if (Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY] !== "")
@@ -51,44 +51,75 @@ HMIMenu {
             countryValue.text=Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY];
             accept(countryValue);
             cityValue.disabled=false;
-            if (Genivi.address[Genivi.NAVIGATIONCORE_CITY] !== "")
-            {
-                cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
-                accept(cityValue);
-                streetValue.disabled=false;
-                if (Genivi.address[Genivi.NAVIGATIONCORE_STREET] !== "")
-                {
-                    streetValue.text=Genivi.address[Genivi.NAVIGATIONCORE_STREET];
-                    accept(streetValue);
-                    numberValue.disabled=false;
-                }
-            }
         }
+        else
+            Genivi.preloadMode=false;
     }
 
 	function currentSelectionCriterion(args)
     {// locationInputHandle 1, selectionCriterion 3
+        Genivi.hookSignal("currentSelectionCriterion");
         var selectionCriterion=args[3];
         Genivi.entrycriterion = selectionCriterion;
 	}
 
 	function searchStatus(args)
     { //locationInputHandle 1, statusValue 3
+        Genivi.hookSignal("searchStatus");
         var statusValue=args[3];
-        Genivi.dump("searchStatus",args);
         if (statusValue === Genivi.NAVIGATIONCORE_FINISHED)
         {
             Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry);
+            if (Genivi.preloadMode === true)
+            {
+                if (Genivi.entrycriterion === countryValue.criterion)
+                {
+                    if (Genivi.address[Genivi.NAVIGATIONCORE_CITY] !== "")
+                    {
+                        cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
+                        accept(cityValue);
+                        streetValue.disabled=false;
+                    }
+                    else
+                        Genivi.preloadMode=false;
+                }
+                else
+                {
+                    if (Genivi.entrycriterion === cityValue.criterion)
+                    {
+                        if (Genivi.address[Genivi.NAVIGATIONCORE_STREET] !== "")
+                        {
+                            streetValue.text=Genivi.address[Genivi.NAVIGATIONCORE_STREET];
+                            accept(streetValue);
+                            numberValue.disabled=false;
+                        }
+
+                    }
+                    else
+                    {
+                        if (Genivi.entrycriterion === streetValue.criterion)
+                        {
+                           Genivi.preloadMode=false;
+                        }
+                        else
+                        {
+                            Genivi.preloadMode=false;
+                            console.log("Error when load a preloaded address");
+                        }
+                    }
+                }
+            }
         }
     }
 
 	function searchResultList(args)
 	{
-	}
+        Genivi.hookSignal("searchResultList");
+    }
 
 	function contentUpdated(args)
     { //locationInputHandle 1, guidable 3, availableSelectionCriteria 5, address 7
-
+        Genivi.hookSignal("contentUpdated");
         // Check if the destination is guidable
         var guidable=args[3];
         if (guidable) {
@@ -169,7 +200,7 @@ HMIMenu {
 		ok.disabled=true;
         Genivi.locationinput_SetSelectionCriterion(dbusIf,what.criterion);
         Genivi.locationinput_Search(dbusIf,what.text,10);
-	}
+    }
 
 
 	function leave(toOtherMenu)
@@ -325,8 +356,7 @@ HMIMenu {
 
         if (Genivi.preloadMode==true)
         {
-            Genivi.preloadMode=false;
-            loadWithAddress();
+            loadWithCountry();
         }
     }
 }

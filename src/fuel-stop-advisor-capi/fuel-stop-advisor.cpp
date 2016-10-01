@@ -47,26 +47,6 @@ static double fuel_consumption_speed[]={
 	7.0, /* 120-129 km/h */
 };
 
-
-static DBus::Variant
-variant_uint16(uint16_t i)
-{
-	DBus::Variant variant;
-	DBus::MessageIter iter=variant.writer();
-	iter << i;
-	return variant;
-}
-
-static DBus::Variant
-variant_uint32(uint32_t i)
-{
-	DBus::Variant variant;
-	DBus::MessageIter iter=variant.writer();
-	iter << i;
-	return variant;
-}
-
-
 class Properties
 : public ::DBus::InterfaceProxy,
   public ::DBus::ObjectProxy

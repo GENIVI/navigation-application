@@ -47,7 +47,8 @@ HMIMenu {
 
 	function searchStatus(args)
 	{
-		if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
+        Genivi.hookSignal("searchStatus");
+        if (args[3] == Genivi.NAVIGATIONCORE_SEARCHING) {
             viewListAddress.model.clear();
             viewListPOI.model.clear();
             text.color='red';  //(Searching)
@@ -57,6 +58,7 @@ HMIMenu {
 
     function searchResultListAddress(args)
 	{
+        Genivi.hookSignal("searchResultListAddress");
         var model=viewListAddress.model;
 		if (args[4] == "uint16" && args[8] == "array") {
 			var offset=args[5];

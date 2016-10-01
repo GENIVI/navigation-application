@@ -49,6 +49,7 @@ HMIMenu {
 
 	function searchStatus(args)
     { //locationInputHandle 1, statusValue 3
+        Genivi.hookSignal("searchStatus");
         var statusValue=args[3];
         if (statusValue == Genivi.NAVIGATIONCORE_SEARCHING) {
 			view.model.clear();
@@ -64,7 +65,8 @@ HMIMenu {
 
 	function searchResultList(args)
     {//locationInputHandle 1, totalSize 3, windowOffset 5, windowSize 7, resultListWindow 9
-		var model=view.model;
+        Genivi.hookSignal("searchResultList");
+        var model=view.model;
         var windowOffset=args[5];
         var resultListWindow=args[9];
         var offset=args[5];
@@ -80,6 +82,7 @@ HMIMenu {
 
 	function spellResult(args)
     {//locationInputHandle 1, uniqueString 3, validCharacters 5, fullMatch 7
+        Genivi.hookSignal("spellResult");
         var uniqueString=args[3];
         var validCharacters=args[5];
         if (text.text.length < uniqueString.length) {

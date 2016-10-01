@@ -44,6 +44,7 @@ HMIMenu {
 
     function tripDataUpdated(args)
     {
+        Genivi.hookSignal("tripDataUpdated");
         updateTripMode();
     }
 

@@ -71,6 +71,7 @@ HMIMenu {
 
     function mapmatchedpositionPositionUpdate(args)
     {
+        Genivi.hookSignal("mapmatchedpositionPositionUpdate");
         updateCurrentPosition();
     }
 

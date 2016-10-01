@@ -49,7 +49,8 @@ HMIMenu {
 
 	function routeCalculationFailed(args)
 	{
-		//console.log("routeCalculationFailed:");
+        Genivi.hookSignal("routeCalculationFailed");
+        //console.log("routeCalculationFailed:");
 		//Genivi.dump("",args);
 
         statusValue.text=Genivi.gettext("CalculatedRouteFailed");
@@ -60,6 +61,7 @@ HMIMenu {
 
 	function routeCalculationProgressUpdate(args)
 	{
+        Genivi.hookSignal("routeCalculationProgressUpdate");
         statusValue.text=Genivi.gettext("CalculatedRouteInProgress");
         Genivi.route_calculated = false;
     }
@@ -78,6 +80,7 @@ HMIMenu {
 
 	function routeCalculationSuccessful(args)
     { //routeHandle 1, unfullfilledPreferences 3
+        Genivi.hookSignal("routeCalculationSuccessful");
         show_route_on_map.disabled=false;
         show_route_in_list.disabled=false;
         statusValue.text=Genivi.gettext("CalculatedRouteSuccess");

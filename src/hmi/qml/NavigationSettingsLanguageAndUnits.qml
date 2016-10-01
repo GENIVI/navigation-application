@@ -44,6 +44,7 @@ HMIMenu {
 
     function configurationChanged(args)
     { //to be improved !
+        Genivi.hookSignal("configurationChanged");
         for (var i=0; i < args[1].length;i+=2) {
             switch (args[1][i+1]) {
             case Genivi.NAVIGATIONCORE_LOCALE:

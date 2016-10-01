@@ -55,7 +55,7 @@ var route_calculated=false; //no route (managed by NavigationRoute and Navigatio
 var entryback = new Array;
 var entrybackheapsize=0;
 entryback[entrybackheapsize]="";
-var entrydest;
+var entrydest=null;
 var entrycriterion;
 var entryselectedentry;
 
@@ -216,34 +216,44 @@ function gettext(arg)
 // Send a dbus message to layer manager
 function lm_message(par, func, args)
 {
+//    console.log("Method: ",func);
     return par.message("org.genivi.layermanagementservice","/org/genivi/layermanagementservice","org.genivi.layermanagementservice", func, args);
 }
 
 // Send a message to navigationcore (basic)
 function navigationcore_message(par, iface, func, args)
 {
+    console.log("Method: ",func);
     return par.message("org.genivi.navigation.navigationcore."+iface+"_"+iface,"/"+iface,"org.genivi.navigation.navigationcore."+iface, func, args);
 }
 
 // Send a message to mapviewer (basic)
 function mapviewer_message(par, iface, func, args)
 {
+    console.log("Method: ",func);
     return par.message("org.genivi.navigation.mapviewer."+iface+"_"+iface,"/"+iface,"org.genivi.navigation.mapviewer."+iface, func, args);
 }
 
 // Send a message to poiservice (basic)
 function poi_message(par, iface, func, args)
 {
+    console.log("Method: ",func);
     return par.message("org.genivi.navigation.poiservice."+iface+"_"+iface,"/"+iface,"org.genivi.navigation.poiservice."+iface, func, args);
 }
 
 // Send a message to demonstrator (basic)
 function demonstrator_message(par, iface, func, args)
 {
+    console.log("Method: ",func);
     return par.message("org.genivi.demonstrator."+iface+"_"+iface,"/"+iface,"org.genivi.demonstrator."+iface, func, args);
 }
 
 //----------------- DBus signals -----------------
+function hookSignal(arg)
+{
+    console.log("Signal: ",arg);
+}
+
 function connect_simulationStatusChangedSignal(interface,menu)
 {
     return interface.connect("","/MapMatchedPosition","org.genivi.navigation.navigationcore.MapMatchedPosition","simulationStatusChanged",menu,"simulationStatusChanged");
@@ -544,8 +554,8 @@ function routing_GetRouteSegments(dbusIf,detailLevel,numberOfSegments,offset)
 function latlon_to_map(latlon)
 {
     return [
-        "int32",NAVIGATIONCORE_LATITUDE,"structure",["uint8",0,"variant",["double",latlon['lat']]],
-        "int32",NAVIGATIONCORE_LONGITUDE,"structure",["uint8",0,"variant",["double",latlon['lon']]]
+        "int32",NAVIGATIONCORE_LATITUDE,"structure",["uint8",3,"variant",["double",latlon['lat']]],
+        "int32",NAVIGATIONCORE_LONGITUDE,"structure",["uint8",3,"variant",["double",latlon['lon']]]
     ];
 }
 
@@ -571,7 +581,6 @@ function routing_CalculateRoute(dbusIf)
 function routing_GetRouteBoundingBox(dbusIf,routeHandle)
 {
     var message=[];
-    message=message.concat(navigationcore_session(dbusIf));
     return navigationcore_message(dbusIf, "Routing", "getRouteBoundingBox", message.concat(routeHandle));
 }
 
@@ -846,7 +855,7 @@ function mapviewercontrol_message2(par, func, args)
 
 function mapviewer2_SetMapViewTheme(dbusIf,mapViewTheme)
 {
-    mapviewercontrol_message2(dbusIf,"setMapViewTheme", ["uint16",mapViewTheme]);
+    mapviewercontrol_message2(dbusIf,"setMapViewTheme", ["int32",mapViewTheme]);
 }
 
 function mapviewer2_SetMapViewBoundingBox(dbusIf,boundingBox)

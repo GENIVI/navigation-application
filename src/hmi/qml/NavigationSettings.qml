@@ -49,6 +49,7 @@ HMIMenu {
 
     function simulationSpeedChanged(args)
     {
+        Genivi.hookSignal("simulationSpeedChanged");
         var speedFactor=args[1];
         if (speedFactor == 0) {
             speedValue.text="0";
@@ -86,6 +87,7 @@ HMIMenu {
 
     function simulationStatusChanged(args)
     {
+        Genivi.hookSignal("simulationStatusChanged");
         var simulationStatus=args[1];
         if (simulationStatus != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
         {

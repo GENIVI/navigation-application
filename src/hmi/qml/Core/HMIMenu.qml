@@ -189,6 +189,6 @@ Rectangle {
         }
 
     Component.onCompleted: {
-        console.log(Genivi.entrybackheapsize,pagefile);
+        console.log("Level: ",Genivi.entrybackheapsize," Menu: ",pagefile);
     }
 }
