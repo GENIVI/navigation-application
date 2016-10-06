@@ -380,6 +380,7 @@ HMIMenu {
         {
             guidanceStatus.setState("ON");
             Genivi.guidance_activated = true;
+            console.log(maneuverData[3][3][1]);
             maneuverIcon.source=Genivi.ManeuverDirectionIcon[maneuverData[3][3][1]];
             //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
             distancetomaneuverValue.text=Genivi.distance(offsetOfManeuver);

@@ -238,7 +238,7 @@ sleep 1
 # start the poi server
 run "POI service" $POI_SERVER_BIN_DIR/$POI_SERVER -f $SCRIPT_DIR/empty.db
 
-sleep 1 # need a sleep here (to be improved)
+sleep 2 # need a sleep here (to be improved)
 
 if [ "$enhpos" = 1 ]
 then # start the  enhanced position service

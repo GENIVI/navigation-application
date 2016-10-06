@@ -74,10 +74,18 @@ fi
 
 if [ "$clean" = 1 ]
 then
-	echo 'clean up the build folder and regenerate all the stuff'
 	if [ -d "./build" ]
 	then
-		find ./build ! -name '*.cbp' -type f -exec rm -f {} +
+		if [ "$navit" = 1 ]
+		then
+			echo 'clean up the build folder and regenerate all the stuff'
+			find ./build ! -name '*.cbp' -type f -exec rm -f {} +
+		else
+			echo 'clean up the build folder and regenerate all the stuff except navit '
+			rm ./build/CMakeCache.txt
+			rm ./build/cmake_install.cmake
+			rm ./build/Makefile
+		fi
 	fi
 else
 	echo 'just build without generation of the hmi'

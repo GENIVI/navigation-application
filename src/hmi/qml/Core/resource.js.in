@@ -42,7 +42,7 @@ ManeuverTypeIcon[NAVIGATIONCORE_WAYPOINT]=IconPath+"unknown_64_64.png";
 
 var ManeuverDirectionIcon = new Object;
 ManeuverDirectionIcon[NAVIGATIONCORE_INVALID]=IconPath+"nav_straight_wh.png";
-ManeuverDirectionIcon[NAVIGATIONCORE_STRAIGHT_ON]=IconPath+"nav_straight_bk.png";
+ManeuverDirectionIcon[NAVIGATIONCORE_STRAIGHT]=IconPath+"nav_straight_bk.png";
 ManeuverDirectionIcon[NAVIGATIONCORE_LEFT]=IconPath+"nav_left_1_bk.png";
 ManeuverDirectionIcon[NAVIGATIONCORE_SLIGHT_LEFT]=IconPath+"nav_left_2_bk.png";
 ManeuverDirectionIcon[NAVIGATIONCORE_HARD_LEFT]=IconPath+"nav_left_3_bk.png";
