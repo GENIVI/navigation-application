@@ -728,7 +728,7 @@ function mapviewercontrol_message(par, func, args)
 // Send a message to map viewer control without session handle
 function mapviewercontrol_get(par, func, args)
 {
-    return mapviewer_message(par, "MapViewerControl", func, mapviewer_session(par).concat(g_mapviewer_handle,args));
+    return mapviewer_message(par, "MapViewerControl", func, g_mapviewer_handle,args);
 }
 
 function mapviewer_GetMapViewScale(dbusIf)

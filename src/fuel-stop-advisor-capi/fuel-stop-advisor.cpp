@@ -179,7 +179,7 @@ public:
 		advisorMode=false;
 		distanceThreshold=0;
         destinationCantBeReached=false;
-		routeHandle=0;
+        m_routeHandle=0;
         initFlag=true;
         }
 
@@ -214,7 +214,6 @@ public:
         tupleVariantTripComputer_t tripComputerData;
         tupleVariantTripComputer_t::iterator iter;
         variantTripComputer_t value;
-        uint16_t level;
         double remaining;
 
         tripComputerData= mp_tripComputer->GetInstantData();
@@ -232,7 +231,7 @@ public:
                 { //tank distance is valid, so it means that fuel level is valid too
                     _data[FuelStopAdvisor::InstantDataAttribute::TANK_DISTANCE]=boost::get<uint16_t>(iter->second);
                     _data[FuelStopAdvisor::InstantDataAttribute::FUEL_LEVEL]=fuelLevel;
-                    if (this->routeHandle != 0)
+                    if (this->m_routeHandle != 0)
                     { // a route is valid so it makes sense to calculate enhanced tank distance
                         _data[FuelStopAdvisor::InstantDataAttribute::ENHANCED_TANK_DISTANCE]=(uint16_t)(enhancedDistance(fuelLevel,remaining)+0.5);
                     }
@@ -330,7 +329,7 @@ public:
      */
     void setRouteHandle(const std::shared_ptr<CommonAPI::ClientId> _client, uint32_t _routeHandle, setRouteHandleReply_t _reply) {
         dbgprintf("SetRouteHandle %d\n",_routeHandle);
-        routeHandle=_routeHandle;
+        m_routeHandle=_routeHandle;
         updateEnhancedDistance();
         _reply();
     }
@@ -341,7 +340,7 @@ public:
      */
     void releaseRouteHandle(const std::shared_ptr<CommonAPI::ClientId> _client, uint32_t _routeHandle, releaseRouteHandleReply_t _reply) {
         dbgprintf("ResetRouteHandle %d\n",_routeHandle);
-        routeHandle=0;
+        m_routeHandle=0;
         updateEnhancedDistance();
         _reply();
     }
@@ -357,22 +356,22 @@ public:
 	double enhancedDistance(double level, double &remaining)
 	{
 		double distance=0;
-        dbgprintf("routeHandle %d\n",routeHandle);
-        if (routeHandle) {
+        dbgprintf("routeHandle %d\n",m_routeHandle);
+        if (m_routeHandle) {
             std::vector< Routing::RouteSegment > RouteShape;
             std::vector< Routing::RouteSegmentType > valuesToReturn;
 			uint32_t totalNumberOfSegments;
             valuesToReturn.push_back(Routing::RouteSegmentType::DISTANCE);
             valuesToReturn.push_back(Routing::RouteSegmentType::SPEED);
             CommonAPI::CallStatus _internalCallStatus;
-            mp_routingClientProxy->myServiceRouting->getRouteSegments(routeHandle, 1, valuesToReturn, 0xffffffff, 0,_internalCallStatus, totalNumberOfSegments, RouteShape);
+            mp_routingClientProxy->myServiceRouting->getRouteSegments(m_routeHandle, 1, valuesToReturn, 0xffffffff, 0,_internalCallStatus, totalNumberOfSegments, RouteShape);
             for (size_t i=0 ; i < RouteShape.size(); i++) {
 				double seg_distance;
 				uint16_t seg_speed;
 
                 seg_distance=RouteShape[i][Routing::RouteSegmentType::DISTANCE].get<double>();
                 seg_speed=RouteShape[i][Routing::RouteSegmentType::SPEED].get<uint16_t>();
-				if (seg_distance && seg_speed) {
+                if (seg_distance && seg_speed) {
 					double fuel_consumption=fuelConsumptionAtSpeed(seg_speed)*seg_distance/100000;
 					if (fuel_consumption > level && level > 0) {
 						seg_distance=seg_distance*level/fuel_consumption;
@@ -500,7 +499,7 @@ public:
 	bool advisorMode;
 	uint8_t distanceThreshold;
     bool destinationCantBeReached;
-	uint32_t routeHandle;
+    uint32_t m_routeHandle;
     bool initFlag;
     double lastTime;
     uint16_t timeCounter;
