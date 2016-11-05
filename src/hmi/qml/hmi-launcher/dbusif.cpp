@@ -596,8 +596,17 @@ QVariant
 	if (dbus_message_from_qml_list(msg, v)) {
 		DBusError error;
 		dbus_error_init(&error);
-		DBusMessage *rmsg=dbus_connection_send_with_reply_and_block((DBusConnection *)QDBusConnection::sessionBus().internalPointer(), msg, DBUS_TIMEOUT_USE_DEFAULT, &error);
-		dbus_message_unref(msg);
+        DBusConnection *session;
+        session = dbus_bus_get(DBUS_BUS_SESSION, &error);
+        if(!session) {
+            QVariantList l,le;
+            l.append(QString("error"));
+            le.append((QString("Cannot access session bus")));
+            l.append(QVariant(le));
+            return QVariant(l);
+        }
+        DBusMessage *rmsg=dbus_connection_send_with_reply_and_block(session, msg, DBUS_TIMEOUT_USE_DEFAULT, &error);
+        dbus_message_unref(msg);
 		if (!rmsg) {
 			QVariantList l,le;
 			// qDebug() << "Message call failed";

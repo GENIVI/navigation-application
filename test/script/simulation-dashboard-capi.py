@@ -329,43 +329,43 @@ ambOdometerInterface = dbus.Interface(ambOdometer, "org.automotive.Odometer")
 
 # Fuel Stop Advisor
 try:
-	fuelStopAdvisorObject = dbusConnectionBus.get_object("org.genivi.demonstrator.FuelStopAdvisor_FuelStopAdvisor","/FuelStopAdvisor")
+	fuelStopAdvisorObject = dbusConnectionBus.get_object("org.genivi.demonstrator.FuelStopAdvisor.v1_0_FuelStopAdvisor","/FuelStopAdvisor")
 except dbus.DBusException:
 	print ("connection to Fuel Stop Advisor failed")
 	print_exc()
 	sys.exit(1)
-fuelStopAdvisorInterface = dbus.Interface(fuelStopAdvisorObject, "org.genivi.demonstrator.FuelStopAdvisor")
-dbusConnectionBus.add_signal_receiver(fuelStopAdvisorWarningHandler, dbus_interface = "org.genivi.demonstrator.FuelStopAdvisor", signal_name = "FuelStopAdvisorWarning")
+fuelStopAdvisorInterface = dbus.Interface(fuelStopAdvisorObject, "org.genivi.demonstrator.FuelStopAdvisor.v1_0")
+dbusConnectionBus.add_signal_receiver(fuelStopAdvisorWarningHandler, dbus_interface = "org.genivi.demonstrator.FuelStopAdvisor.v1_0", signal_name = "FuelStopAdvisorWarning")
 
 # Enhanced position
 try:
-	enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.EnhancedPositionService.EnhancedPosition_EnhancedPositionService", "/EnhancedPositionService")
+	enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.EnhancedPositionService.EnhancedPosition.v0_0_EnhancedPositionService", "/EnhancedPositionService")
 except dbus.DBusException:
 	print ("connection to Enhanced position failed")
 	print_exc()
 	sys.exit(1)
-enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.EnhancedPositionService.EnhancedPosition")
-dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.EnhancedPositionService.EnhancedPosition", signal_name = "PositionUpdate")
+enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.EnhancedPositionService.EnhancedPosition.v0_0")
+dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.EnhancedPositionService.EnhancedPosition.v0_0", signal_name = "PositionUpdate")
 
 # Guidance
 try:
-	guidanceObject = dbusConnectionBus.get_object('org.genivi.navigation.navigationcore.Guidance_Guidance','/Guidance')
+	guidanceObject = dbusConnectionBus.get_object('org.genivi.navigation.navigationcore.Guidance.v4_0_Guidance','/Guidance')
 except dbus.DBusException:
 	print ("connection to Guidance failed")
 	print_exc()
 	sys.exit(1)
-guidanceInterface = dbus.Interface(guidanceObject, 'org.genivi.navigation.navigationcore.Guidance')
-dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.Guidance", signal_name = "guidanceStatusChanged")
+guidanceInterface = dbus.Interface(guidanceObject, 'org.genivi.navigation.navigationcore.Guidance.v4_0')
+dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.Guidance.v4_0", signal_name = "guidanceStatusChanged")
 
 # Map matched position
 try:
-	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.MapMatchedPosition_MapMatchedPosition","/MapMatchedPosition")
+	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.MapMatchedPosition.v4_0_MapMatchedPosition","/MapMatchedPosition")
 except dbus.DBusException:
 	print ("connection to Map matched position failed")
 	print_exc()
 	sys.exit(1)
-mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
-dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
+mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition.v4_0")
+dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition.v4_0", signal_name = "SimulationStatusChanged")
 
 displayStatus( 'Start simulation' )
 
