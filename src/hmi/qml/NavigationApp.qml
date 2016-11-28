@@ -48,6 +48,6 @@ ApplicationWindow {
 
 	Component.onCompleted: {
         Genivi.setlang("eng_USA"); //by default set to english US
-        load("navigationAppMain");
+        load("NavigationAppMain");
 	}
 }

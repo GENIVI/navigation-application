@@ -30,10 +30,10 @@ import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
-import "Core/style-sheets/fsa-poi-menu-css.js" as StyleSheet;
+import "Core/style-sheets/NavigationAppPOI-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"POI"
 
@@ -46,7 +46,7 @@ HMIMenu {
         selectedStationValue.text="See details of \nthe station \nhere"
     }
     HMIBgImage {
-        image:StyleSheet.fsa_poi_menu_background[Constants.SOURCE];
+        image:StyleSheet.navigation_app_poi_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight }
 		Text {
             x:StyleSheet.searchResultTitle[Constants.X]; y:StyleSheet.searchResultTitle[Constants.Y]; width:StyleSheet.searchResultTitle[Constants.WIDTH]; height:StyleSheet.searchResultTitle[Constants.HEIGHT];color:StyleSheet.searchResultTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.searchResultTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultTitle[Constants.PIXELSIZE];
@@ -194,7 +194,7 @@ HMIMenu {
                     mapMenu();
                 }
                 else {
-                    pageOpen("NavigationCalculatedRoute");
+                    pageOpen("NavigationAppSearch");
                 }
 			}
 		}

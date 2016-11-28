@@ -159,7 +159,7 @@ while getopts a:c:glnorvx opt
 do
 	case $opt in
 	a) #select another hmi panel
-		app=$OPTARG 
+		app=$(readlink -f $OPTARG) 
 		;;
 	c) #set the map center 
 		case "$OPTARG" in
