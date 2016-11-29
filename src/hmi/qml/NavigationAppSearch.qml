@@ -45,6 +45,7 @@ NavigationAppHMIMenu {
     property string routeText:" "
     property real lat
     property real lon
+    property bool vehicleLocated
 
     function loadWithCountry()
     {
@@ -82,9 +83,9 @@ NavigationAppHMIMenu {
             }
         }
         if ((oklat == 1) && (oklong == 1) && Genivi.data['destination']) {
-             calculate_curr.disabled=false;
+             vehicleLocated=true;
          } else {
-             calculate_curr.disabled=true;
+             vehicleLocated=false;
          }
     }
 
@@ -225,7 +226,7 @@ NavigationAppHMIMenu {
         // Check if the destination is guidable
         var guidable=args[3];
         if (guidable) {
-            ok.disabled=false;
+            calculate_curr.disabled=false;
         }
         else
         {
@@ -307,7 +308,7 @@ NavigationAppHMIMenu {
 
     function accept(what)
     {
-        ok.disabled=true;
+        calculate_curr.disabled=true;
         Genivi.locationinput_SetSelectionCriterion(dbusIf,what.criterion);
         Genivi.locationinput_Search(dbusIf,what.text,10);
     }
@@ -338,7 +339,14 @@ NavigationAppHMIMenu {
             id: countryTitle
             text: Genivi.gettext("Country");
         }
-        EntryField {
+        StdButton {
+            source:StyleSheet.countryKeyboard[Constants.SOURCE]; x:StyleSheet.countryKeyboard[Constants.X]; y:StyleSheet.countryKeyboard[Constants.Y]; width:StyleSheet.countryKeyboard[Constants.WIDTH]; height:StyleSheet.countryKeyboard[Constants.HEIGHT];
+            id:countryKeyboard; disabled:false; next:cityKeyboard; prev:back; explode:false;
+            onClicked: {
+                countryValue.callEntry()
+            }
+        }
+        NavigationAppEntryField {
             x:StyleSheet.countryValue[Constants.X]; y:StyleSheet.countryValue[Constants.Y]; width: StyleSheet.countryValue[Constants.WIDTH]; height: StyleSheet.countryValue[Constants.HEIGHT];
             id: countryValue
             criterion: Genivi.NAVIGATIONCORE_COUNTRY
@@ -349,30 +357,20 @@ NavigationAppHMIMenu {
             onLeave:{menu.leave(0)}
         }
         Text {
-            x:StyleSheet.streetTitle[Constants.X]; y:StyleSheet.streetTitle[Constants.Y]; width:StyleSheet.streetTitle[Constants.WIDTH]; height:StyleSheet.streetTitle[Constants.HEIGHT];color:StyleSheet.streetTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.streetTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.streetTitle[Constants.PIXELSIZE];
-            style: Text.Sunken;
-            smooth: true;
-            id:streetTitle
-            text: Genivi.gettext("Street");
-        }
-        EntryField {
-            x:StyleSheet.streetValue[Constants.X]; y:StyleSheet.streetValue[Constants.Y]; width: StyleSheet.streetValue[Constants.WIDTH]; height: StyleSheet.streetValue[Constants.HEIGHT];
-            id:streetValue
-            criterion: Genivi.NAVIGATIONCORE_STREET
-            globaldata: 'streetValue'
-            next: numberValue
-            prev: cityValue
-            disabled: true
-            onLeave:{menu.leave(0)}
-        }
-        Text {
             x:StyleSheet.cityTitle[Constants.X]; y:StyleSheet.cityTitle[Constants.Y]; width:StyleSheet.cityTitle[Constants.WIDTH]; height:StyleSheet.cityTitle[Constants.HEIGHT];color:StyleSheet.cityTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.cityTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.cityTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true;
             id:cityTitle
             text: Genivi.gettext("City");
         }
-        EntryField {
+        StdButton {
+            source:StyleSheet.cityKeyboard[Constants.SOURCE]; x:StyleSheet.cityKeyboard[Constants.X]; y:StyleSheet.cityKeyboard[Constants.Y]; width:StyleSheet.cityKeyboard[Constants.WIDTH]; height:StyleSheet.cityKeyboard[Constants.HEIGHT];
+            id:cityKeyboard; disabled:false; next:streetKeyboard; prev:countryKeyboard; explode:false;
+            onClicked: {
+                cityValue.callEntry()
+            }
+        }
+        NavigationAppEntryField {
             x:StyleSheet.cityValue[Constants.X]; y:StyleSheet.cityValue[Constants.Y]; width: StyleSheet.cityValue[Constants.WIDTH]; height: StyleSheet.cityValue[Constants.HEIGHT];
             id:cityValue
             criterion: Genivi.NAVIGATIONCORE_CITY
@@ -383,13 +381,44 @@ NavigationAppHMIMenu {
             onLeave:{menu.leave(0)}
         }
         Text {
+            x:StyleSheet.streetTitle[Constants.X]; y:StyleSheet.streetTitle[Constants.Y]; width:StyleSheet.streetTitle[Constants.WIDTH]; height:StyleSheet.streetTitle[Constants.HEIGHT];color:StyleSheet.streetTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.streetTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.streetTitle[Constants.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id:streetTitle
+            text: Genivi.gettext("Street");
+        }
+        StdButton {
+            source:StyleSheet.streetKeyboard[Constants.SOURCE]; x:StyleSheet.streetKeyboard[Constants.X]; y:StyleSheet.streetKeyboard[Constants.Y]; width:StyleSheet.streetKeyboard[Constants.WIDTH]; height:StyleSheet.streetKeyboard[Constants.HEIGHT];
+            id:streetKeyboard; disabled:false; next:numberKeyboard; prev:cityKeyboard; explode:false;
+            onClicked: {
+                streetValue.callEntry()
+            }
+        }
+        NavigationAppEntryField {
+            x:StyleSheet.streetValue[Constants.X]; y:StyleSheet.streetValue[Constants.Y]; width: StyleSheet.streetValue[Constants.WIDTH]; height: StyleSheet.streetValue[Constants.HEIGHT];
+            id:streetValue
+            criterion: Genivi.NAVIGATIONCORE_STREET
+            globaldata: 'streetValue'
+            next: numberValue
+            prev: cityValue
+            disabled: true
+            onLeave:{menu.leave(0)}
+        }
+        Text {
             x:StyleSheet.numberTitle[Constants.X]; y:StyleSheet.numberTitle[Constants.Y]; width:StyleSheet.numberTitle[Constants.WIDTH]; height:StyleSheet.numberTitle[Constants.HEIGHT];color:StyleSheet.numberTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.numberTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.numberTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
             smooth: true;
             id:numberTitle
             text: Genivi.gettext("Number");
         }
-        EntryField {
+        StdButton {
+            source:StyleSheet.numberKeyboard[Constants.SOURCE]; x:StyleSheet.numberKeyboard[Constants.X]; y:StyleSheet.numberKeyboard[Constants.Y]; width:StyleSheet.numberKeyboard[Constants.WIDTH]; height:StyleSheet.numberKeyboard[Constants.HEIGHT];
+            id:numberKeyboard; disabled:false; next:back; prev:streetKeyboard; explode:false;
+            onClicked: {
+                numberValue.callEntry()
+            }
+        }
+        NavigationAppEntryField {
             x:StyleSheet.numberValue[Constants.X]; y:StyleSheet.numberValue[Constants.Y]; width: StyleSheet.numberValue[Constants.WIDTH]; height: StyleSheet.numberValue[Constants.HEIGHT];
             id:numberValue
             criterion: Genivi.NAVIGATIONCORE_HOUSENUMBER
@@ -510,6 +539,7 @@ NavigationAppHMIMenu {
         StdButton {
             source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
             id:calculate_curr; text: Genivi.gettext("GoTo"); explode:false;
+            visible: (vehicleLocated);
             onClicked: {
                 var position,destination;
                 //save address for next time
@@ -537,9 +567,15 @@ NavigationAppHMIMenu {
                 disconnectSignals();
                 Genivi.data['lat']='';
                 Genivi.data['lon']='';
-                entryMenu("NavigationCalculatedRoute",menu);
             }
-            disabled:true; next:back; prev:calculate_curr
+            disabled:true; next:back; prev:numberKeyboard
+        }
+
+        StdButton {
+            source:StyleSheet.settings[Constants.SOURCE]; x:StyleSheet.settings[Constants.X]; y:StyleSheet.settings[Constants.Y]; width:StyleSheet.settings[Constants.WIDTH]; height:StyleSheet.settings[Constants.HEIGHT];
+            id:settings; explode:false; next:back; prev:calculate_curr; onClicked: {
+                entryMenu("NavigationAppSettings",menu);
+            }
         }
 
         StdButton {
@@ -557,6 +593,8 @@ NavigationAppHMIMenu {
     }
     Component.onCompleted: {
         connectSignals();
+
+        vehicleLocated = false;
 
         //Test if the navigation server is connected
         var res=Genivi.navigationcore_session_GetVersion(dbusIf);
@@ -592,6 +630,8 @@ NavigationAppHMIMenu {
         {
             loadWithCountry();
         }
+
+        updateCurrentPosition();
 /*
         // Check is route is active
         if (Genivi.data["calculate_route"]) {

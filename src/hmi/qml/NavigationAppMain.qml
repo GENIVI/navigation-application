@@ -56,6 +56,8 @@ HMIMenu {
         StdButton {
             source:StyleSheet.select_navigation[Constants.SOURCE]; x:StyleSheet.select_navigation[Constants.X]; y:StyleSheet.select_navigation[Constants.Y]; width:StyleSheet.select_navigation[Constants.WIDTH]; height:StyleSheet.select_navigation[Constants.HEIGHT];
             id:navigation; explode:false; next:mapview; prev:quit; onClicked: {
+                Genivi.preloadMode=true;
+                Genivi.route_calculated = false;
                 entryMenu("NavigationAppSearch",menu);
             }
         }

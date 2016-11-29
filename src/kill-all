@@ -1,0 +1,8 @@
+#!/bin/sh
+echo 'kill all remaining process'
+kill -9 `ps -ef | grep navit | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep poi-server | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep hmi-launcher | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep fuel-stop-advis | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep ambd | grep -v grep | awk '{print $2}'`
+
