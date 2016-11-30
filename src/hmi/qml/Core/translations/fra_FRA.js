@@ -162,5 +162,6 @@ translations["On"]="ON";
 translations["Off"]="OFF";
 translations["Back"]="RETOUR";
 translations["Menu"]="MENU";
+translations["Cancel"]="ANNUL";
 translations["Quit"]="QUITTER";
 

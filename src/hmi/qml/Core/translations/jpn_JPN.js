@@ -161,6 +161,7 @@ translations["On"]="ON";
 translations["Off"]="OFF";
 translations["Back"]="BACK";
 translations["Menu"]="MENU";
+translations["Cancel"]="キャンセル";
 translations["Quit"]="QUIT";
 
 
