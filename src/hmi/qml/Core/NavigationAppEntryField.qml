@@ -55,7 +55,7 @@ Column {
 		Genivi.entrydest=globaldata;
 		Genivi.entrycriterion=criterion;
         if (criterion && criterion != Genivi.NAVIGATIONCORE_FULL_ADDRESS) {
-            keyboardActivated = true;
+            showKeyboard();
             keyboardArea.destination = this;
             input.text = "";
 		} else {
