@@ -429,14 +429,14 @@ HMIMenu {
 
         Rectangle {
             color:"transparent"
-            width: StyleSheetTop.navigation_browse_map_top_background[Constants.WIDTH]
-            height: StyleSheetTop.navigation_browse_map_top_background[Constants.HEIGHT]
+            width: StyleSheetTop.navigation_app_browse_map_top_background[Constants.WIDTH]
+            height: StyleSheetTop.navigation_app_browse_map_top_background[Constants.HEIGHT]
             x: StyleSheetMap.top_area[Constants.X]
             y: StyleSheetMap.top_area[Constants.Y]
             HMIBgImage {
                 id: top
                 opacity: 0.8
-                image:StyleSheetTop.navigation_browse_map_top_background[Constants.SOURCE];
+                image:StyleSheetTop.navigation_app_browse_map_top_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
                 SmartText {
@@ -453,7 +453,7 @@ HMIMenu {
                     explode: false
                     onClicked: {
                         disconnectSignals();
-                        entryMenu("POI",menu);
+                        entryMenu("NavigationAppPOI",menu);
                                 }
                         }
 
@@ -486,14 +486,14 @@ HMIMenu {
 
         Rectangle {
             color:"transparent"
-            width: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.WIDTH]
-            height: StyleSheetBottom.navigation_browse_map_bottom_background[Constants.HEIGHT]
+            width: StyleSheetBottom.navigation_app_browse_map_bottom_background[Constants.WIDTH]
+            height: StyleSheetBottom.navigation_app_browse_map_bottom_background[Constants.HEIGHT]
             x: StyleSheetMap.bottom_area[Constants.X]
             y: StyleSheetMap.bottom_area[Constants.Y]
             HMIBgImage {
                 id: bottom
                 opacity: 0.8
-                image:StyleSheetBottom.navigation_browse_map_bottom_background[Constants.SOURCE];
+                image:StyleSheetBottom.navigation_app_browse_map_bottom_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
                 StdButton {
@@ -620,14 +620,14 @@ HMIMenu {
 
         Rectangle {
             color:"transparent"
-            width: StyleSheetRoute.navigation_browse_map_route_background[Constants.WIDTH]
-            height: StyleSheetRoute.navigation_browse_map_route_background[Constants.HEIGHT]
+            width: StyleSheetRoute.navigation_app_browse_map_route_background[Constants.WIDTH]
+            height: StyleSheetRoute.navigation_app_browse_map_route_background[Constants.HEIGHT]
             x: StyleSheetMap.route_area[Constants.X]
             y: StyleSheetMap.route_area[Constants.Y]
             HMIBgImage {
                 id: route
                 opacity: 0.8
-                image:StyleSheetRoute.navigation_browse_map_route_background[Constants.SOURCE]
+                image:StyleSheetRoute.navigation_app_browse_map_route_background[Constants.SOURCE]
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 MouseArea {
                     anchors.fill: parent
@@ -659,14 +659,14 @@ HMIMenu {
 
         Rectangle {
             color:"transparent"
-            width: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.WIDTH]
-            height: StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.HEIGHT]
+            width: StyleSheetGuidance.navigation_app_browse_map_guidance_background[Constants.WIDTH]
+            height: StyleSheetGuidance.navigation_app_browse_map_guidance_background[Constants.HEIGHT]
             x: StyleSheetMap.guidance_area[Constants.X]
             y: StyleSheetMap.guidance_area[Constants.Y]
             HMIBgImage {
                 id: guidance
                 opacity: 0.8
-                image:StyleSheetGuidance.navigation_browse_map_guidance_background[Constants.SOURCE]
+                image:StyleSheetGuidance.navigation_app_browse_map_guidance_background[Constants.SOURCE]
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 MouseArea {
                     anchors.fill: parent
@@ -708,8 +708,8 @@ HMIMenu {
 
         Rectangle {
             color:"transparent"
-            width: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.WIDTH]
-            height: StyleSheetScroll.navigation_browse_map_scroll_background[Constants.HEIGHT]
+            width: StyleSheetScroll.navigation_app_browse_map_scroll_background[Constants.WIDTH]
+            height: StyleSheetScroll.navigation_app_browse_map_scroll_background[Constants.HEIGHT]
             x: StyleSheetMap.scroll_area[Constants.X]
             y: StyleSheetMap.scroll_area[Constants.Y]
             HMIBgImage {
@@ -717,7 +717,7 @@ HMIMenu {
                 property real panX: 40 //delta in pixel for x panning
                 property real panY: 40 //delta in pixel for y panning
                 id: scroll
-                image:StyleSheetScroll.navigation_browse_map_scroll_background[Constants.SOURCE];
+                image:StyleSheetScroll.navigation_app_browse_map_scroll_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
                 StdButton {
@@ -753,8 +753,8 @@ HMIMenu {
         Rectangle {
             color:"transparent"
 
-            width: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.WIDTH]
-            height: StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.HEIGHT]
+            width: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.WIDTH]
+            height: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.HEIGHT]
             x: StyleSheetMap.simulation_area[Constants.X]
             y: StyleSheetMap.simulation_area[Constants.Y]
             HMIBgImage {
@@ -769,7 +769,7 @@ HMIMenu {
                         opacity=0;
                     }
                 }
-                image:StyleSheetSimulation.navigation_browse_map_simulation_background[Constants.SOURCE];
+                image:StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 Text {
                     x:StyleSheetSimulation.speedValue_popup[Constants.X]; y:StyleSheetSimulation.speedValue_popup[Constants.Y]; width:StyleSheetSimulation.speedValue_popup[Constants.WIDTH]; height:StyleSheetSimulation.speedValue_popup[Constants.HEIGHT];color:StyleSheetSimulation.speedValue_popup[Constants.TEXTCOLOR];styleColor:StyleSheetSimulation.speedValue_popup[Constants.STYLECOLOR]; font.pixelSize:StyleSheetSimulation.speedValue_popup[Constants.PIXELSIZE];
