@@ -257,7 +257,7 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.speed_down[Constants.SOURCE]; x:StyleSheet.speed_down[Constants.X]; y:StyleSheet.speed_down[Constants.Y]; width:StyleSheet.speed_down[Constants.WIDTH]; height:StyleSheet.speed_down[Constants.HEIGHT];
-            id:speed_down; explode:false; disabled:false; next:back; prev:back;
+            id:speed_down;  disabled:false; next:back; prev:back;
 			onClicked:
 			{
                 if (speedValueSent > 0)
@@ -270,7 +270,7 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.speed_up[Constants.SOURCE]; x:StyleSheet.speed_up[Constants.X]; y:StyleSheet.speed_up[Constants.Y]; width:StyleSheet.speed_up[Constants.WIDTH]; height:StyleSheet.speed_up[Constants.HEIGHT];
-            id:speed_up; explode:false; disabled:false; next:back; prev:back;
+            id:speed_up;  disabled:false; next:back; prev:back;
 			onClicked:
 			{
                 if (speedValueSent < 7)
@@ -299,7 +299,7 @@ HMIMenu {
 
         StdButton {
             x:StyleSheet.simulation_on[Constants.X]; y:StyleSheet.simulation_on[Constants.Y]; width:StyleSheet.simulation_on[Constants.WIDTH]; height:StyleSheet.simulation_on[Constants.HEIGHT];
-            id:on_off; next:back; prev:back; explode:false; disabled:false;
+            id:on_off; next:back; prev:back;  disabled:false;
 			property int status: 0;
 			function setState(name)
 			{
@@ -333,7 +333,7 @@ HMIMenu {
 
         StdButton {
             x:StyleSheet.play[Constants.X]; y:StyleSheet.play[Constants.Y]; width:StyleSheet.play[Constants.WIDTH]; height:StyleSheet.play[Constants.HEIGHT];
-            id:simu_mode; next:back; prev:back; explode:false; disabled:false;
+            id:simu_mode; next:back; prev:back;  disabled:false;
 			property int status: 0;
 			function setState(name)
 			{
@@ -406,7 +406,7 @@ HMIMenu {
 
         StdButton {
             x:StyleSheet.onmapview_enable[Constants.X]; y:StyleSheet.onmapview_enable[Constants.Y]; width:StyleSheet.onmapview_enable[Constants.WIDTH]; height:StyleSheet.onmapview_enable[Constants.HEIGHT];
-            id:onmapview_enable; next:back; prev:preferences; explode:false; disabled:false;
+            id:onmapview_enable; next:back; prev:preferences;  disabled:false;
             source:
             {
                 if (Genivi.simulationPanelOnMapview==true)

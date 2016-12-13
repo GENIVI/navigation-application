@@ -55,7 +55,7 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.select_navigation[Constants.SOURCE]; x:StyleSheet.select_navigation[Constants.X]; y:StyleSheet.select_navigation[Constants.Y]; width:StyleSheet.select_navigation[Constants.WIDTH]; height:StyleSheet.select_navigation[Constants.HEIGHT];
-            id:navigation; explode:false; next:mapview; prev:quit; onClicked: {
+            id:navigation;  next:mapview; prev:quit; onClicked: {
                 Genivi.preloadMode=true;
                 Genivi.route_calculated = false;
                 entryMenu("NavigationAppSearch",menu);
@@ -72,7 +72,7 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.select_mapview[Constants.SOURCE]; x:StyleSheet.select_mapview[Constants.X]; y:StyleSheet.select_mapview[Constants.Y]; width:StyleSheet.select_mapview[Constants.WIDTH]; height:StyleSheet.select_mapview[Constants.HEIGHT];
-            id:mapview; explode:false; next:poi; prev:navigation; onClicked: {
+            id:mapview;  next:poi; prev:navigation; onClicked: {
 				Genivi.data["show_current_position"]=true;
                 entryMenu("NavigationAppBrowseMap",menu);
 			}
@@ -88,7 +88,7 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.select_poi[Constants.SOURCE]; x:StyleSheet.select_poi[Constants.X]; y:StyleSheet.select_poi[Constants.Y]; width:StyleSheet.select_poi[Constants.WIDTH]; height:StyleSheet.select_poi[Constants.HEIGHT];
-            id:poi; explode:false; next:trip; prev:mapview; onClicked: {
+            id:poi;  next:trip; prev:mapview; onClicked: {
                 entryMenu("NavigationAppPOI",menu);
             }
         }
@@ -103,14 +103,14 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.select_trip[Constants.SOURCE]; x:StyleSheet.select_trip[Constants.X]; y:StyleSheet.select_trip[Constants.Y]; width:StyleSheet.select_trip[Constants.WIDTH]; height:StyleSheet.select_trip[Constants.HEIGHT];
-            id:trip; explode:false; next:quit; prev:poi;onClicked: {
+            id:trip;  next:quit; prev:poi;onClicked: {
                 entryMenu("NavigationAppTripComputer",menu);
             }
         }
 
         StdButton {
             source:StyleSheet.quit[Constants.SOURCE]; x:StyleSheet.quit[Constants.X]; y:StyleSheet.quit[Constants.Y]; width:StyleSheet.quit[Constants.WIDTH]; height:StyleSheet.quit[Constants.HEIGHT];textColor:StyleSheet.quitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.quitText[Constants.PIXELSIZE];
-            id:quit; text: Genivi.gettext("Quit"); explode:false; next:navigation; prev:trip; onClicked:{Qt.quit()}}
+            id:quit; text: Genivi.gettext("Quit");  next:navigation; prev:trip; onClicked:{Qt.quit()}}
 
     }
 

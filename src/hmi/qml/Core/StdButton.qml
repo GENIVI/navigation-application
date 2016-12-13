@@ -33,6 +33,7 @@ Button {
 	height: content.h
     source:"images/button-keyboard.png";
     property string page
+    explode: false
 	onClicked: {
 		if (page) {
 			pageOpen(page);

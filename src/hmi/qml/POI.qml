@@ -179,7 +179,7 @@ HMIMenu {
 		StdButton { 
             source:StyleSheet.select_reroute[Constants.SOURCE]; x:StyleSheet.select_reroute[Constants.X]; y:StyleSheet.select_reroute[Constants.Y]; width:StyleSheet.select_reroute[Constants.WIDTH]; height:StyleSheet.select_reroute[Constants.HEIGHT];
             id:select_reroute;
-            explode:false;
+            
             disabled:true;
             next:select_display_on_map; prev:select_search_for_refill
 			onClicked: {
@@ -208,7 +208,7 @@ HMIMenu {
         StdButton {
             source:StyleSheet.select_display_on_map[Constants.SOURCE]; x:StyleSheet.select_display_on_map[Constants.X]; y:StyleSheet.select_display_on_map[Constants.Y]; width:StyleSheet.select_display_on_map[Constants.WIDTH]; height:StyleSheet.select_display_on_map[Constants.HEIGHT];
             id:select_display_on_map;
-            explode:false;
+            
 	    disabled:true;
             next:back; prev:select_reroute
 			onClicked: {

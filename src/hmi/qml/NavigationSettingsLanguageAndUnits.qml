@@ -149,16 +149,16 @@ HMIMenu {
              }
         StdButton { objectName:"fra_FRA";
             source:StyleSheet.french_flag[Constants.SOURCE]; x:StyleSheet.french_flag[Constants.X]; y:StyleSheet.french_flag[Constants.Y]; width:StyleSheet.french_flag[Constants.WIDTH]; height:StyleSheet.french_flag[Constants.HEIGHT];
-            id:fra_FRA; disabled:false; next:deu_DEU; prev:back; explode:false; onClicked: {setLocale("fra","FRA","Latn");}}
+            id:fra_FRA; disabled:false; next:deu_DEU; prev:back;  onClicked: {setLocale("fra","FRA","Latn");}}
         StdButton { objectName:"deu_DEU";
             source:StyleSheet.german_flag[Constants.SOURCE]; x:StyleSheet.german_flag[Constants.X]; y:StyleSheet.german_flag[Constants.Y]; width:StyleSheet.german_flag[Constants.WIDTH]; height:StyleSheet.german_flag[Constants.HEIGHT];
-             id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA; explode:false; onClicked: {setLocale("deu","DEU","Latn");}}
+             id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA;  onClicked: {setLocale("deu","DEU","Latn");}}
         StdButton { objectName:"eng_USA";
             source:StyleSheet.usa_flag[Constants.SOURCE]; x:StyleSheet.usa_flag[Constants.X]; y:StyleSheet.usa_flag[Constants.Y]; width:StyleSheet.usa_flag[Constants.WIDTH]; height:StyleSheet.usa_flag[Constants.HEIGHT];
-            id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU; explode:false; onClicked: {setLocale("eng","USA","Latn");}}
+            id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU;  onClicked: {setLocale("eng","USA","Latn");}}
         StdButton { objectName:"jpn_JPN";
             source:StyleSheet.japanese_flag[Constants.SOURCE]; x:StyleSheet.japanese_flag[Constants.X]; y:StyleSheet.japanese_flag[Constants.Y]; width:StyleSheet.japanese_flag[Constants.WIDTH]; height:StyleSheet.japanese_flag[Constants.HEIGHT];
-            id:jpn_JPN; disabled:false; next:back; prev:eng_USA; explode:false; onClicked: {setLocale("jpn","JPN","Hrkt");}}
+            id:jpn_JPN; disabled:false; next:back; prev:eng_USA;  onClicked: {setLocale("jpn","JPN","Hrkt");}}
 
 		Text {
             x:StyleSheet.unitsTitle[Constants.X]; y:StyleSheet.unitsTitle[Constants.Y]; width:StyleSheet.unitsTitle[Constants.WIDTH]; height:StyleSheet.unitsTitle[Constants.HEIGHT];color:StyleSheet.unitsTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[Constants.PIXELSIZE];
@@ -168,12 +168,12 @@ HMIMenu {
             text: Genivi.gettext("Units")
              }
         StdButton { source:StyleSheet.unit_km[Constants.SOURCE]; x:StyleSheet.unit_km[Constants.X]; y:StyleSheet.unit_km[Constants.Y]; width:StyleSheet.unit_km[Constants.WIDTH]; height:StyleSheet.unit_km[Constants.HEIGHT];
-            id:unit_km; explode:false; disabled:false; next:back; prev:back;
+            id:unit_km;  disabled:false; next:back; prev:back;
 			onClicked: {
                 setUnitsLength(Genivi.NAVIGATIONCORE_KM,Genivi.MAPVIEWER_KM);}
 		}
         StdButton { source:StyleSheet.unit_mile[Constants.SOURCE]; x:StyleSheet.unit_mile[Constants.X]; y:StyleSheet.unit_mile[Constants.Y]; width:StyleSheet.unit_mile[Constants.WIDTH]; height:StyleSheet.unit_mile[Constants.HEIGHT];
-            id:unit_mile; explode:false; disabled:false; next:back; prev:back;
+            id:unit_mile;  disabled:false; next:back; prev:back;
 			onClicked: {
                 setUnitsLength(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
 		}

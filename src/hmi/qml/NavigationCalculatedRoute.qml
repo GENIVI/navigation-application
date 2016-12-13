@@ -192,7 +192,7 @@ HMIMenu {
         StdButton {
             source:StyleSheet.show_route_on_map[Constants.SOURCE]; x:StyleSheet.show_route_on_map[Constants.X]; y:StyleSheet.show_route_on_map[Constants.Y]; width:StyleSheet.show_route_on_map[Constants.WIDTH]; height:StyleSheet.show_route_on_map[Constants.HEIGHT];
             id: show_route_on_map
-            explode:false; disabled:true; next:show_route_in_list; prev:back
+             disabled:true; next:show_route_in_list; prev:back
             onClicked: {
                 disconnectSignals();
                 Genivi.data["mapback"]="NavigationCalculatedRoute";
@@ -204,7 +204,7 @@ HMIMenu {
         StdButton {
             source:StyleSheet.show_route_in_list[Constants.SOURCE]; x:StyleSheet.show_route_in_list[Constants.X]; y:StyleSheet.show_route_in_list[Constants.Y]; width:StyleSheet.show_route_in_list[Constants.WIDTH]; height:StyleSheet.show_route_in_list[Constants.HEIGHT];
             id:show_route_in_list;
-            explode:false; disabled:true; next:back; prev:show_route_on_map;
+             disabled:true; next:back; prev:show_route_on_map;
             onClicked: {
                 entryMenu("NavigationRouteDescription",menu);
             }
@@ -212,7 +212,7 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.guidance_start[Constants.SOURCE]; x:StyleSheet.guidance_start[Constants.X]; y:StyleSheet.guidance_start[Constants.Y]; width:StyleSheet.guidance_start[Constants.WIDTH]; height:StyleSheet.guidance_start[Constants.HEIGHT];textColor:StyleSheet.startText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.startText[Constants.PIXELSIZE];
-            id:guidance_start; text: Genivi.gettext("On");explode:false; disabled:true; next:guidance_stop; prev:show_route_on_map
+            id:guidance_start; text: Genivi.gettext("On"); disabled:true; next:guidance_stop; prev:show_route_on_map
             onClicked: {
                 disconnectSignals();
                 Genivi.guidance_StartGuidance(dbusIf,Genivi.routing_handle(dbusIf));
@@ -224,7 +224,7 @@ HMIMenu {
         }
         StdButton {
             source:StyleSheet.guidance_stop[Constants.SOURCE]; x:StyleSheet.guidance_stop[Constants.X]; y:StyleSheet.guidance_stop[Constants.Y]; width:StyleSheet.guidance_stop[Constants.WIDTH]; height:StyleSheet.guidance_stop[Constants.HEIGHT];textColor:StyleSheet.stopText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.stopText[Constants.PIXELSIZE];
-            id:guidance_stop;text: Genivi.gettext("Off");explode:false; disabled:true; next:show_route_on_map; prev:guidance_start
+            id:guidance_stop;text: Genivi.gettext("Off"); disabled:true; next:show_route_on_map; prev:guidance_start
             onClicked: {
                 Genivi.guidance_StopGuidance(dbusIf);
                 guidance_start.disabled=false;

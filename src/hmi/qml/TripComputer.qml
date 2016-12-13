@@ -392,7 +392,7 @@ HMIMenu {
 
         StdButton { source:StyleSheet.reset[Constants.SOURCE]; x:StyleSheet.reset[Constants.X]; y:StyleSheet.reset[Constants.Y]; width:StyleSheet.reset[Constants.WIDTH]; height:StyleSheet.reset[Constants.HEIGHT];textColor:StyleSheet.resetText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.resetText[Constants.PIXELSIZE];
             visible: false;
-            id:reset; text: Genivi.gettext("Reset"); explode:false; disabled:false; next:select_trip1; prev:back;
+            id:reset; text: Genivi.gettext("Reset");  disabled:false; next:select_trip1; prev:back;
             onClicked:{
 		if (Genivi.tripMode == "TRIP_NUMBER1") {
             Genivi.fuelstopadvisor_ResetTripData(dbusIf,0);
@@ -405,7 +405,7 @@ HMIMenu {
         }
         StdButton { source:StyleSheet.select_trip1[Constants.SOURCE]; x:StyleSheet.select_trip1[Constants.X]; y:StyleSheet.select_trip1[Constants.Y]; width:StyleSheet.select_trip1[Constants.WIDTH]; height:StyleSheet.select_trip1[Constants.HEIGHT];
             visible: false;
-            id:select_trip1; explode:false; disabled:false; next:select_trip2; prev:reset;
+            id:select_trip1;  disabled:false; next:select_trip2; prev:reset;
             onClicked:{
                 Genivi.tripMode="TRIP_NUMBER1";
                 updateTripMode();
@@ -413,7 +413,7 @@ HMIMenu {
         }
         StdButton { source:StyleSheet.select_trip2[Constants.SOURCE]; x:StyleSheet.select_trip2[Constants.X]; y:StyleSheet.select_trip2[Constants.Y]; width:StyleSheet.select_trip2[Constants.WIDTH]; height:StyleSheet.select_trip2[Constants.HEIGHT];
             visible: false;
-            id:select_trip2; explode:false; disabled:false; next:select_instant; prev:select_trip1;
+            id:select_trip2;  disabled:false; next:select_instant; prev:select_trip1;
             onClicked:{
                 Genivi.tripMode="TRIP_NUMBER2";
                 updateTripMode();
@@ -421,14 +421,14 @@ HMIMenu {
         }
         StdButton { source:StyleSheet.select_instant[Constants.SOURCE]; x:StyleSheet.select_instant[Constants.X]; y:StyleSheet.select_instant[Constants.Y]; width:StyleSheet.select_instant[Constants.WIDTH]; height:StyleSheet.select_instant[Constants.HEIGHT];
             visible: false;
-            id:select_instant; explode:false; disabled:false; next:back; prev:select_trip2;
+            id:select_instant;  disabled:false; next:back; prev:select_trip2;
             onClicked:{
                 Genivi.tripMode="TRIP_INSTANT";
                 updateTripMode();
             }
         }
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); explode:false; disabled:false; next:reset; prev:select_instant;
+            id:back; text: Genivi.gettext("Back");  disabled:false; next:reset; prev:select_instant;
             onClicked:{leave(); leaveMenu();}
         }
     }

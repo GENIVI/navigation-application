@@ -30,13 +30,13 @@ import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
 import "Core/style-sheets/style-constants.js" as Constants;
-import "Core/style-sheets/navigation-browse-map-css.js" as StyleSheetMap;
-import "Core/style-sheets/navigation-browse-map-settings-css.js" as StyleSheetSettings;
+import "Core/style-sheets/NavigationAppBrowseMap-css.js" as StyleSheetMap;
+import "Core/style-sheets/NavigationAppBrowseMapSettings-css.js" as StyleSheetSettings;
 import lbs.plugin.dbusif 1.0
 
 HMIMenu {
     id: menu
-    property string pagefile:"CameraSettings"
+    property string pagefile:"NavigationAppBrowseMapSettings"
 
     DBusIf {
         id:dbusIf
@@ -243,13 +243,13 @@ HMIMenu {
         color:"transparent"
         Rectangle {
             opacity: 0.8
-            width: StyleSheetSettings.navigation_browse_map_settings_background[Constants.WIDTH]
-            height: StyleSheetSettings.navigation_browse_map_settings_background[Constants.HEIGHT]
+            width: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.WIDTH]
+            height: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.HEIGHT]
             x: StyleSheetMap.settings_area[Constants.X]
             y: StyleSheetMap.settings_area[Constants.Y]
             HMIBgImage {
                 id: content
-                image:StyleSheetSettings.navigation_browse_map_settings_background[Constants.SOURCE];
+                image:StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
 
 
@@ -267,10 +267,11 @@ HMIMenu {
                          onReleased: {camera_stop();}
                  }
 
-                 StdButton {source:StyleSheetSettings.tiltm[Constants.SOURCE]; x:StyleSheetSettings.tiltm[StyleSheetSettings.X]; y:StyleSheetSettings.tiltm[StyleSheetSettings.Y]; width:StyleSheetSettings.tiltm[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.tiltm[StyleSheetSettings.HEIGHT];
-                            id:tiltm;  next:heightp; prev:tiltp;
-                         onPressed: {camera_start_clamp("CameraTiltAngle",10,90);}
-                         onReleased: {camera_stop();}
+                 StdButton {
+                     source:StyleSheetSettings.tiltm[Constants.SOURCE]; x:StyleSheetSettings.tiltm[StyleSheetSettings.X]; y:StyleSheetSettings.tiltm[StyleSheetSettings.Y]; width:StyleSheetSettings.tiltm[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.tiltm[StyleSheetSettings.HEIGHT];
+                     id:tiltm;  next:heightp; prev:tiltp;
+                     onPressed: {camera_start_clamp("CameraTiltAngle",10,90);}
+                     onReleased: {camera_stop();}
                  }
 
                  Text {
@@ -281,16 +282,18 @@ HMIMenu {
                      text: Genivi.gettext("CameraHeight")
                       }
 
-                 StdButton {source:StyleSheetSettings.heightp[Constants.SOURCE]; x:StyleSheetSettings.heightp[StyleSheetSettings.X]; y:StyleSheetSettings.heightp[StyleSheetSettings.Y]; width:StyleSheetSettings.heightp[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightp[StyleSheetSettings.HEIGHT];
-                            id:heightp; next:heightm; prev:tiltm;
-                         onPressed: {camera_start("CameraHeight",10);}
-                         onReleased: {camera_stop();}
+                 StdButton {
+                     source:StyleSheetSettings.heightp[Constants.SOURCE]; x:StyleSheetSettings.heightp[StyleSheetSettings.X]; y:StyleSheetSettings.heightp[StyleSheetSettings.Y]; width:StyleSheetSettings.heightp[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightp[StyleSheetSettings.HEIGHT];
+                     id:heightp; next:heightm; prev:tiltm;
+                     onPressed: {camera_start("CameraHeight",10);}
+                     onReleased: {camera_stop();}
                  }
 
-                 StdButton {source:StyleSheetSettings.heightm[Constants.SOURCE]; x:StyleSheetSettings.heightm[StyleSheetSettings.X]; y:StyleSheetSettings.heightm[StyleSheetSettings.Y]; width:StyleSheetSettings.heightm[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightm[StyleSheetSettings.HEIGHT];
-                            id:heightm;  next:distancep; prev:heightp;
-                         onPressed: {camera_start("CameraHeight",-10);}
-                         onReleased: {camera_stop();}
+                 StdButton {
+                     source:StyleSheetSettings.heightm[Constants.SOURCE]; x:StyleSheetSettings.heightm[StyleSheetSettings.X]; y:StyleSheetSettings.heightm[StyleSheetSettings.Y]; width:StyleSheetSettings.heightm[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightm[StyleSheetSettings.HEIGHT];
+                     id:heightm;  next:distancep; prev:heightp;
+                     onPressed: {camera_start("CameraHeight",-10);}
+                     onReleased: {camera_stop();}
                  }
 
                  Text {

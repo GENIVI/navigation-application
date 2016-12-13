@@ -157,19 +157,11 @@ Rectangle {
         container.load(outmenu);
     }
 
-    function routeMenu()
-    { //location entered, go to route menu and reinit the heap
-        menu.state="hidden";
-        Genivi.entrybackheapsize = 1;
-        Genivi.entryback[Genivi.entrybackheapsize] = "MainMenu";
-        container.load("NavigationAppBrowseMap");
-    }
-
     function mapMenu()
     { //go to map view menu and reinit the heap
         menu.state="hidden";
         Genivi.entrybackheapsize = 1;
-        Genivi.entryback[Genivi.entrybackheapsize] = "MainMenu";
+        Genivi.entryback[Genivi.entrybackheapsize] = "NavigationAppMain";
         container.load("NavigationAppBrowseMap");
     }
 

@@ -35,6 +35,7 @@ import "Core/style-sheets/NavigationAppBrowseMapGuidance-css.js" as StyleSheetGu
 import "Core/style-sheets/NavigationAppBrowseMapScroll-css.js" as StyleSheetScroll
 import "Core/style-sheets/NavigationAppBrowseMapSimulation-css.js" as StyleSheetSimulation
 import "Core/style-sheets/NavigationAppBrowseMapTop-css.js" as StyleSheetTop
+import "Core/style-sheets/NavigationAppBrowseMapManeuver-css.js" as StyleSheetManeuver
 
 import lbs.plugin.dbusif 1.0
 
@@ -53,6 +54,7 @@ HMIMenu {
 	property Item fuelStopAdvisorSignal;
 	property bool north:false;
     property int speedValueSent: 0;
+    property bool displayManeuvers:false;
 
 	DBusIf {
 		id:dbusIf
@@ -157,7 +159,7 @@ HMIMenu {
             on_off.setState("OFF");
             simu_mode.setState("FREE");
         }
-}
+    }
 
     function updateSimulation()
     {
@@ -298,6 +300,31 @@ HMIMenu {
          }
 	}
 
+    function getManeuversList()
+    {
+        var res=Genivi.guidance_GetManeuversList(dbusIf,0xffff,0);
+        var maneuversList=res[5];
+        var model=maneuverArea.model;
+        for (var i = 0 ; i < maneuversList.length ; i+=2) {
+            var roadNameAfterManeuver=maneuversList[i+1][3];
+            var offsetOfNextManeuver=maneuversList[i+1][9];
+            var items=maneuversList[i+1][11];
+
+            for (var j = 0 ; j < items.length ; j+=2) {
+                //multiple maneuvers are not managed !
+                var offsetOfManeuver=items[j+1][1];
+                var direction=items[j+1][5];
+                var maneuver=items[j+1][7];
+                var maneuverData=items[j+1][9];
+                if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
+                {
+                   var text=Genivi.distance(offsetOfManeuver)+" "+Genivi.distance(offsetOfNextManeuver)+" "+Genivi.ManeuverType[maneuver]+":"+Genivi.ManeuverDirection[direction]+" "+roadNameAfterManeuver;
+                   model.append({"name":text});
+                }
+            }
+        }
+    }
+
 	function connectSignals()
     {
         guidanceWaypointReachedSignal=Genivi.connect_guidanceWaypointReachedSignal(dbusIf,menu);
@@ -321,12 +348,6 @@ HMIMenu {
         mapmatchedpositionAddressUpdateSignal.destroy();
         fuelStopAdvisorSignal.destroy();
     }
-
-	function routeOverview()
-	{
-        disconnectSignals();
-        entryMenu("NavigationCalculatedRoute",menu);
-	}
 
 	function toggleOrientation()
 	{
@@ -419,6 +440,27 @@ HMIMenu {
         Genivi.mapmatchedposition_StartSimulation(dbusIf);
     }
 
+    function showManeuversList()
+    {
+        displayManeuvers=true;
+        maneuver.visible=true;
+        route.visible=false;
+        guidance.visible=false;
+        maneuverList.disabled=true;
+        exit.disabled=false;
+        getManeuversList();
+    }
+
+    function hideManeuversList()
+    {
+        displayManeuvers=false;
+        maneuver.visible=false;
+        route.visible=true;
+        guidance.visible=true;
+        maneuverList.disabled=false;
+        exit.disabled=true;
+    }
+
     Rectangle {
         id:map
         x:0
@@ -450,7 +492,6 @@ HMIMenu {
                     source:StyleSheetTop.select_search_for_refill_in_top[Constants.SOURCE]; x:StyleSheetTop.select_search_for_refill_in_top[Constants.X]; y:StyleSheetTop.select_search_for_refill_in_top[Constants.Y]; width:StyleSheetTop.select_search_for_refill_in_top[Constants.WIDTH]; height:StyleSheetTop.select_search_for_refill_in_top[Constants.HEIGHT];
                     id:select_search_for_refill_in_top
                     visible:false
-                    explode: false
                     onClicked: {
                         disconnectSignals();
                         entryMenu("NavigationAppPOI",menu);
@@ -507,7 +548,7 @@ HMIMenu {
 
                 StdButton {
                     x:StyleSheetBottom.directiondestination[Constants.X]; y:StyleSheetBottom.directiondestination[Constants.Y]; width:StyleSheetBottom.directiondestination[Constants.WIDTH]; height:StyleSheetBottom.directiondestination[Constants.HEIGHT];
-                    id:orientation; next:zoomin; prev:menub; explode:false; disabled:false;
+                    id:orientation; next:zoomin; prev:menub;  disabled:false;
                     source:StyleSheetBottom.directiondestination[Constants.SOURCE]; //todo call get status
                     property int status: 0;
                     function setState(name)
@@ -538,7 +579,7 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetBottom.zoomin[Constants.SOURCE]; x:StyleSheetBottom.zoomin[Constants.X]; y:StyleSheetBottom.zoomin[Constants.Y]; width:StyleSheetBottom.zoomin[Constants.WIDTH]; height:StyleSheetBottom.zoomin[Constants.HEIGHT];
-                    id:zoomin; explode:false; next:zoomout; prev:orientation;
+                    id:zoomin;  next:zoomout; prev:orientation;
                     onClicked: {
                         Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,1);
                         showZoom();
@@ -556,7 +597,7 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
-                    id:zoomout; explode:false; next:settings; prev:zoomin;
+                    id:zoomout;  next:settings; prev:zoomin;
                     onClicked: {
                         Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
                         showZoom();
@@ -565,16 +606,16 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetBottom.settings[Constants.SOURCE]; x:StyleSheetBottom.settings[Constants.X]; y:StyleSheetBottom.settings[Constants.Y]; width:StyleSheetBottom.settings[Constants.WIDTH]; height:StyleSheetBottom.settings[Constants.HEIGHT];
-                    id:settings; explode:false; next:menub; prev:zoomout;
+                    id:settings;  next:menub; prev:zoomout;
                     onClicked: {
                         disconnectSignals();
-                        entryMenu("CameraSettings",menu);
+                        entryMenu("NavigationAppBrowseMapSettings",menu);
                     }
                 }
 
                 StdButton {
                     x:StyleSheetBottom.guidanceon[Constants.X]; y:StyleSheetBottom.guidanceon[Constants.Y]; width:StyleSheetBottom.guidanceon[Constants.WIDTH]; height:StyleSheetBottom.guidanceon[Constants.HEIGHT];
-                    id:guidanceStatus; next:zoomin; prev:menub; explode:false; disabled:false;
+                    id:guidanceStatus; next:zoomin; prev:menub;  disabled:false;
                     source:StyleSheetBottom.guidanceoff[Constants.SOURCE]; //todo call get status
                     property int status: 1;
                     function setState(name)
@@ -629,13 +670,13 @@ HMIMenu {
                 opacity: 0.8
                 image:StyleSheetRoute.navigation_app_browse_map_route_background[Constants.SOURCE]
                 anchors { fill: parent; topMargin: parent.headlineHeight}
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        routeOverview();
-                                }
+                StdButton {
+                    source:StyleSheetRoute.show_maneuver_list[Constants.SOURCE]; x:StyleSheetRoute.show_maneuver_list[Constants.X]; y:StyleSheetRoute.show_maneuver_list[Constants.Y]; width:StyleSheetRoute.show_maneuver_list[Constants.WIDTH]; height:StyleSheetRoute.show_maneuver_list[Constants.HEIGHT];
+                    id:maneuverList;
+                    disabled:false;
+                    onClicked: { showManeuversList(); }
+                    next:maneuverList; prev:maneuverList;
                 }
-
                 Text {
                     x:StyleSheetRoute.timetodestinationValue[Constants.X]; y:StyleSheetRoute.timetodestinationValue[Constants.Y]; width:StyleSheetRoute.timetodestinationValue[Constants.WIDTH]; height:StyleSheetRoute.timetodestinationValue[Constants.HEIGHT];color:StyleSheetRoute.timetodestinationValue[Constants.TEXTCOLOR];styleColor:StyleSheetRoute.timetodestinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetRoute.timetodestinationValue[Constants.PIXELSIZE];
                     visible: true
@@ -644,7 +685,6 @@ HMIMenu {
                     id:timetodestinationValue
                     text: "-------"
                 }
-
                 Text {
                     x:StyleSheetRoute.distancetodestinationValue[Constants.X]; y:StyleSheetRoute.distancetodestinationValue[Constants.Y]; width:StyleSheetRoute.distancetodestinationValue[Constants.WIDTH]; height:StyleSheetRoute.distancetodestinationValue[Constants.HEIGHT];color:StyleSheetRoute.distancetodestinationValue[Constants.TEXTCOLOR];styleColor:StyleSheetRoute.distancetodestinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetRoute.distancetodestinationValue[Constants.PIXELSIZE];
                     visible: true
@@ -722,28 +762,28 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetScroll.scrollup[Constants.SOURCE]; x:StyleSheetScroll.scrollup[Constants.X]; y:StyleSheetScroll.scrollup[Constants.Y]; width:StyleSheetScroll.scrollup[Constants.WIDTH]; height:StyleSheetScroll.scrollup[Constants.HEIGHT];
-                    id:scrollup; explode:false; next:scrollleft; prev:scrolldown;
+                    id:scrollup;  next:scrollleft; prev:scrolldown;
                     onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
                     onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2,map.height/2 + scroll.panY);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrollleft[Constants.SOURCE]; x:StyleSheetScroll.scrollleft[Constants.X]; y:StyleSheetScroll.scrollleft[Constants.Y]; width:StyleSheetScroll.scrollleft[Constants.WIDTH]; height:StyleSheetScroll.scrollleft[Constants.HEIGHT];
-                    id:scrollleft; explode:false; next:scrollright; prev:scrollup;
+                    id:scrollleft;  next:scrollright; prev:scrollup;
                     onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
                     onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2 + scroll.panX,map.height/2);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrollright[Constants.SOURCE]; x:StyleSheetScroll.scrollright[Constants.X]; y:StyleSheetScroll.scrollright[Constants.Y]; width:StyleSheetScroll.scrollright[Constants.WIDTH]; height:StyleSheetScroll.scrollright[Constants.HEIGHT];
-                    id:scrollright; explode:false; next:scrolldown; prev:scrollleft;
+                    id:scrollright;  next:scrolldown; prev:scrollleft;
                     onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
                     onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2 - scroll.panX,map.height/2);}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.scrolldown[Constants.SOURCE]; x:StyleSheetScroll.scrolldown[Constants.X]; y:StyleSheetScroll.scrolldown[Constants.Y]; width:StyleSheetScroll.scrolldown[Constants.WIDTH]; height:StyleSheetScroll.scrolldown[Constants.HEIGHT];
-                    id:scrolldown; explode:false; next:scrollup; prev:scrollright;
+                    id:scrolldown;  next:scrollup; prev:scrollright;
                     onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
                     onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2,map.height/2 - scroll.panY);}
                 }
@@ -752,7 +792,6 @@ HMIMenu {
 
         Rectangle {
             color:"transparent"
-
             width: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.WIDTH]
             height: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.HEIGHT]
             x: StyleSheetMap.simulation_area[Constants.X]
@@ -780,7 +819,7 @@ HMIMenu {
                      }
                 StdButton {
                     source:StyleSheetSimulation.speed_down_popup[Constants.SOURCE]; x:StyleSheetSimulation.speed_down_popup[Constants.X]; y:StyleSheetSimulation.speed_down_popup[Constants.Y]; width:StyleSheetSimulation.speed_down_popup[Constants.WIDTH]; height:StyleSheetSimulation.speed_down_popup[Constants.HEIGHT];
-                    id:speed_down; explode:false; disabled:false; next:speed_up; prev:simu_mode;
+                    id:speed_down;  disabled:false; next:speed_up; prev:simu_mode;
                     onClicked:
                     {
                         if (speedValueSent > 0)
@@ -792,7 +831,7 @@ HMIMenu {
                 }
                 StdButton {
                     source:StyleSheetSimulation.speed_up_popup[Constants.SOURCE]; x:StyleSheetSimulation.speed_up_popup[Constants.X]; y:StyleSheetSimulation.speed_up_popup[Constants.Y]; width:StyleSheetSimulation.speed_up_popup[Constants.WIDTH]; height:StyleSheetSimulation.speed_up_popup[Constants.HEIGHT];
-                    id:speed_up; explode:false; disabled:false; next:on_off; prev:speed_down;
+                    id:speed_up;  disabled:false; next:on_off; prev:speed_down;
                     onClicked:
                     {
                         if (speedValueSent < 7)
@@ -804,7 +843,7 @@ HMIMenu {
                 }
                 StdButton {
                     x:StyleSheetSimulation.simulation_on_popup[Constants.X]; y:StyleSheetSimulation.simulation_on_popup[Constants.Y]; width:StyleSheetSimulation.simulation_on_popup[Constants.WIDTH]; height:StyleSheetSimulation.simulation_on_popup[Constants.HEIGHT];
-                    id:on_off; next:simu_mode; prev:speed_up; explode:false; disabled:false;
+                    id:on_off; next:simu_mode; prev:speed_up;  disabled:false;
                     property int status: 1; //by default simulation stopped
                     function setState(name)
                     {
@@ -836,7 +875,7 @@ HMIMenu {
                 }
                 StdButton {
                     x:StyleSheetSimulation.play_popup[Constants.X]; y:StyleSheetSimulation.play_popup[Constants.Y]; width:StyleSheetSimulation.play_popup[Constants.WIDTH]; height:StyleSheetSimulation.play_popup[Constants.HEIGHT];
-                    id:simu_mode; next:speed_down; prev:on_off; explode:false; disabled:false;
+                    id:simu_mode; next:speed_down; prev:on_off;  disabled:false;
                     property int status: 0;
                     function setState(name)
                     {
@@ -886,6 +925,45 @@ HMIMenu {
                 }
             }
         }
+
+        Rectangle {
+            color:"transparent"
+            width: StyleSheetManeuver.navigation_app_browse_map_maneuver_background[Constants.WIDTH]
+            height: StyleSheetManeuver.navigation_app_browse_map_maneuver_background[Constants.HEIGHT]
+            x: StyleSheetManeuver.maneuver_area[Constants.X]
+            y: StyleSheetManeuver.maneuver_area[Constants.Y]
+            HMIBgImage {
+                id: maneuver
+                opacity: 0.8
+                visible: (displayManeuvers)
+                image:StyleSheetManeuver.navigation_app_browse_map_maneuver_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+                StdButton {
+                    source:StyleSheetManeuver.exit[Constants.SOURCE]; x:StyleSheetManeuver.exit[StyleSheetManeuver.X]; y:StyleSheetManeuver.exit[StyleSheetManeuver.Y]; width:StyleSheetManeuver.exit[StyleSheetManeuver.WIDTH]; height:StyleSheetManeuver.exit[StyleSheetManeuver.HEIGHT];
+                    id:exit;  next:maneuverArea; prev:maneuverArea;
+                    onClicked: { hideManeuversList(); }
+                }
+                Component {
+                    id: maneuverDelegate
+                    Text {
+                        width:StyleSheetManeuver.maneuver_delegate[Constants.WIDTH]; height:StyleSheetManeuver.maneuver_delegate[Constants.HEIGHT];color:StyleSheetManeuver.maneuver_delegate[Constants.TEXTCOLOR];styleColor:StyleSheetManeuver.maneuver_delegate[Constants.STYLECOLOR]; font.pixelSize:StyleSheetManeuver.maneuver_delegate[Constants.PIXELSIZE];
+                        id:maneuverItem;
+                        text: name;
+                        style: Text.Sunken;
+                        smooth: true
+                    }
+                }
+                HMIList {
+                    property real selectedEntry
+                    x:StyleSheetManeuver.maneuver_area[Constants.X]; y:StyleSheetManeuver.maneuver_area[Constants.Y]; width:StyleSheetManeuver.maneuver_area[Constants.WIDTH]; height:StyleSheetManeuver.maneuver_area[Constants.HEIGHT];
+                    id:maneuverArea
+                    delegate: maneuverDelegate
+                    next:exit
+                    prev:exit
+                }
+            }
+        }
+
     }
 
     Component.onCompleted: {

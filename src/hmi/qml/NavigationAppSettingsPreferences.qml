@@ -158,9 +158,9 @@ HMIMenu {
             text: Genivi.gettext("Ferries")
         }
         StdButton { source:StyleSheet.allow_ferries[Constants.SOURCE]; x:StyleSheet.allow_ferries[Constants.X]; y:StyleSheet.allow_ferries[Constants.Y]; width:StyleSheet.allow_ferries[Constants.WIDTH]; height:StyleSheet.allow_ferries[Constants.HEIGHT];
-            id:ferries_yes; next:back; prev:back; explode:false; onClicked:{use(Genivi.NAVIGATIONCORE_FERRY)}}
+            id:ferries_yes; next:back; prev:back;  onClicked:{use(Genivi.NAVIGATIONCORE_FERRY)}}
         StdButton { source:StyleSheet.avoid_ferries[Constants.SOURCE]; x:StyleSheet.avoid_ferries[Constants.X]; y:StyleSheet.avoid_ferries[Constants.Y]; width:StyleSheet.avoid_ferries[Constants.WIDTH]; height:StyleSheet.avoid_ferries[Constants.HEIGHT];
-            id:ferries_no; next:back; prev:back; explode:false; onClicked:{avoid(Genivi.NAVIGATIONCORE_FERRY)}}
+            id:ferries_no; next:back; prev:back;  onClicked:{avoid(Genivi.NAVIGATIONCORE_FERRY)}}
 
 		Text {
             x:StyleSheet.tollRoadsText[Constants.X]; y:StyleSheet.tollRoadsText[Constants.Y]; width:StyleSheet.tollRoadsText[Constants.WIDTH]; height:StyleSheet.tollRoadsText[Constants.HEIGHT];color:StyleSheet.tollRoadsText[Constants.TEXTCOLOR];styleColor:StyleSheet.tollRoadsText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tollRoadsText[Constants.PIXELSIZE];
@@ -170,9 +170,9 @@ HMIMenu {
             text: Genivi.gettext("TollRoads")
         }
         StdButton { source:StyleSheet.allow_tollRoads[Constants.SOURCE]; x:StyleSheet.allow_tollRoads[Constants.X]; y:StyleSheet.allow_tollRoads[Constants.Y]; width:StyleSheet.allow_tollRoads[Constants.WIDTH]; height:StyleSheet.allow_tollRoads[Constants.HEIGHT];
-            id:toll_roads_yes; next:back; prev:back; explode:false; onClicked:{use(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
+            id:toll_roads_yes; next:back; prev:back;  onClicked:{use(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
         StdButton { source:StyleSheet.avoid_tollRoads[Constants.SOURCE]; x:StyleSheet.avoid_tollRoads[Constants.X]; y:StyleSheet.avoid_tollRoads[Constants.Y]; width:StyleSheet.avoid_tollRoads[Constants.WIDTH]; height:StyleSheet.avoid_tollRoads[Constants.HEIGHT];
-            id:toll_roads_no;  next:back; prev:back; explode:false; onClicked:{avoid(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
+            id:toll_roads_no;  next:back; prev:back;  onClicked:{avoid(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
 
 		Text {
             x:StyleSheet.motorWaysText[Constants.X]; y:StyleSheet.motorWaysText[Constants.Y]; width:StyleSheet.motorWaysText[Constants.WIDTH]; height:StyleSheet.motorWaysText[Constants.HEIGHT];color:StyleSheet.motorWaysText[Constants.TEXTCOLOR];styleColor:StyleSheet.motorWaysText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.motorWaysText[Constants.PIXELSIZE];
@@ -182,9 +182,9 @@ HMIMenu {
             text: Genivi.gettext("MotorWays")
         }
         StdButton { source:StyleSheet.allow_motorways[Constants.SOURCE]; x:StyleSheet.allow_motorways[Constants.X]; y:StyleSheet.allow_motorways[Constants.Y]; width:StyleSheet.allow_motorways[Constants.WIDTH]; height:StyleSheet.allow_motorways[Constants.HEIGHT];
-            id:motorways_yes; next:back; prev:back; explode:false; onClicked:{use(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
+            id:motorways_yes; next:back; prev:back;  onClicked:{use(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
         StdButton { source:StyleSheet.avoid_motorways[Constants.SOURCE]; x:StyleSheet.avoid_motorways[Constants.X]; y:StyleSheet.avoid_motorways[Constants.Y]; width:StyleSheet.avoid_motorways[Constants.WIDTH]; height:StyleSheet.avoid_motorways[Constants.HEIGHT];
-            id:motorways_no;  next:back; prev:back; explode:false; onClicked:{avoid(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
+            id:motorways_no;  next:back; prev:back;  onClicked:{avoid(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
 
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:back; prev:back; onClicked:{leaveMenu();}}
