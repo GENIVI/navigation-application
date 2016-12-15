@@ -448,6 +448,7 @@ HMIMenu {
         guidance.visible=false;
         maneuverList.disabled=true;
         exit.disabled=false;
+        maneuverArea.model.clear();
         getManeuversList();
     }
 
@@ -674,7 +675,10 @@ HMIMenu {
                     source:StyleSheetRoute.show_maneuver_list[Constants.SOURCE]; x:StyleSheetRoute.show_maneuver_list[Constants.X]; y:StyleSheetRoute.show_maneuver_list[Constants.Y]; width:StyleSheetRoute.show_maneuver_list[Constants.WIDTH]; height:StyleSheetRoute.show_maneuver_list[Constants.HEIGHT];
                     id:maneuverList;
                     disabled:false;
-                    onClicked: { showManeuversList(); }
+                    onClicked: {
+                        if(Genivi.guidance_activated)
+                            showManeuversList();
+                    }
                     next:maneuverList; prev:maneuverList;
                 }
                 Text {
@@ -711,11 +715,8 @@ HMIMenu {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        var res=Genivi.guidance_GetGuidanceStatus(dbusIf);
-                        if (res[1] != Genivi.NAVIGATIONCORE_INACTIVE) {
-                            disconnectSignals();
-                            entryMenu("NavigationManeuversList",menu);
-                        }
+                        if(Genivi.guidance_activated)
+                            showManeuversList();
                     }
                 }
 

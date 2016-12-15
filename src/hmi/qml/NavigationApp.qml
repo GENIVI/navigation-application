@@ -34,6 +34,8 @@ import "Core/genivi.js" as Genivi;
 
 ApplicationWindow {
 	id: container
+    flags: Qt.CustomizeWindowHint
+    color: "transparent"
     visible: true
     width: StyleSheetMap.menu[Constants.WIDTH];
     height: StyleSheetMap.menu[Constants.HEIGHT];

@@ -45,6 +45,7 @@ NavigationAppHMIMenu {
     property real searchWindow: 10
     property bool destinationValid: false
     property real routeListSegments: 1000
+    property bool vehicleLocated: false
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -360,9 +361,8 @@ NavigationAppHMIMenu {
                 }
             }
         }
-        if ((oklat == 1) && (oklong == 1)) {
-            if(destinationValid) {calculate_curr.disabled=false;}
-         } else {calculate_curr.disabled=true;}
+        if ((oklat == 1) && (oklong == 1)) {vehicleLocated=true;}
+        else {vehicleLocated=false;}
     }
 
     function updateStartStop()
@@ -871,7 +871,7 @@ NavigationAppHMIMenu {
                 Genivi.routing_SetWaypoints(dbusIf,true,position,destination);
                 Genivi.routing_CalculateRoute(dbusIf);
             }
-            disabled:true;
+            disabled:!(vehicleLocated && destinationValid && !(keyboardActivated));
             next:back; prev:numberKeyboard
         }
         StdButton {

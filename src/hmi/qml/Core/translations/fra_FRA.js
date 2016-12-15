@@ -152,6 +152,7 @@ translations["Reset"]="RAZ";
 translations["POI"]="POINTS D'INTERET";
 translations["SearchResult"]="RESULTATS";
 translations["SelectedStation"]="STATION CHOISIE";
+translations["Selected"]="SELECTION";
 translations["SearchForPOI"]="CHERCHER";
 translations["Reroute"]="REROUTER";
 translations["DisplayPOI"]="AFFICHER";

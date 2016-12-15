@@ -151,6 +151,7 @@ translations["Reset"]="RESET";
 translations["POI"]="POINTS OF INTEREST";
 translations["SearchResult"]="SEARCH RESULT";
 translations["SelectedStation"]="SELECTED STATION";
+translations["Selected"]="SELECTED";
 translations["SearchForPOI"]="SEARCH";
 translations["Reroute"]="REROUTE";
 translations["DisplayPOI"]="DISPLAY";
