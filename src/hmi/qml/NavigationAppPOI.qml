@@ -37,6 +37,12 @@ NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppPOI"
     property string extraspell;
+    property int type_poi_car_parking: 65842
+    property int type_poi_hotel: 65835
+    property int type_poi_restaurant: 65923
+    property int type_poi_bar: 65848
+    property int type_poi_fuel: 65834
+    property string poiCategoryName
 
     DBusIf {
     	id: dbusIf
@@ -49,8 +55,16 @@ NavigationAppHMIMenu {
 
     function spell(input)
     {
-        input=extraspell+input;
-        extraspell='';
+        keyboardArea.destination.text = input;
+    }
+
+    function displayPOIList()
+    {
+        var model=view.model;
+        for(var i=0;i<Genivi.categoriesIdNameList.length;i+=2)
+        {
+            model.append({"name":Genivi.categoriesIdNameList[i+1][3],"number":i/2});
+        }
     }
 
     //------------------------------------------//
@@ -77,29 +91,52 @@ NavigationAppHMIMenu {
             source:StyleSheet.categoryKeyboard[Constants.SOURCE]; x:StyleSheet.categoryKeyboard[Constants.X]; y:StyleSheet.categoryKeyboard[Constants.Y]; width:StyleSheet.categoryKeyboard[Constants.WIDTH]; height:StyleSheet.categoryKeyboard[Constants.HEIGHT];
             id:categoryKeyboard; disabled:false; next:poiKeyboard; prev:back;
             onClicked: {
+                keyboardArea.destination=categoryValue;
+                poiValue.text="";
+                categoryValue.text=poiCategoryName;
+                poiFrame.visible=false;
+                categoryFrame.visible=true;
+                view.model.clear();
+                displayPOIList();
             }
+        }
+        Image {
+            source:StyleSheet.categoryFrame[Constants.SOURCE]; x:StyleSheet.categoryFrame[Constants.X]; y:StyleSheet.categoryFrame[Constants.Y]; width:StyleSheet.categoryFrame[Constants.WIDTH]; height:StyleSheet.categoryFrame[Constants.HEIGHT];
+            id:categoryFrame;
+            visible:false;
         }
         NavigationAppEntryField {
             x:StyleSheet.categoryValue[Constants.X]; y:StyleSheet.categoryValue[Constants.Y]; width: StyleSheet.categoryValue[Constants.WIDTH]; height: StyleSheet.categoryValue[Constants.HEIGHT];
             id: categoryValue
             globaldata: 'categoryValue'
             textfocus: true
-            next: select_search_for_refill
+            next: select_search
             prev: back
             onLeave:{}
         }
         StdButton {
             source:StyleSheet.poiKeyboard[Constants.SOURCE]; x:StyleSheet.poiKeyboard[Constants.X]; y:StyleSheet.poiKeyboard[Constants.Y]; width:StyleSheet.poiKeyboard[Constants.WIDTH]; height:StyleSheet.poiKeyboard[Constants.HEIGHT];
-            id:poiKeyboard; disabled:false; next:select_search_for_refill; prev:back;
+            id:poiKeyboard; disabled:false; next:select_search; prev:back;
             onClicked: {
+                keyboardArea.destination=poiValue;
+                poiValue.text="";
+                categoryValue.text=poiCategoryName;
+                poiFrame.visible=true;
+                categoryFrame.visible=false;
+                view.model.clear();
             }
+        }
+        Image {
+            source:StyleSheet.poiFrame[Constants.SOURCE]; x:StyleSheet.poiFrame[Constants.X]; y:StyleSheet.poiFrame[Constants.Y]; width:StyleSheet.poiFrame[Constants.WIDTH]; height:StyleSheet.poiFrame[Constants.HEIGHT];
+            id:poiFrame;
+            visible:false;
         }
         NavigationAppEntryField {
             x:StyleSheet.poiValue[Constants.X]; y:StyleSheet.poiValue[Constants.Y]; width: StyleSheet.poiValue[Constants.WIDTH]; height: StyleSheet.poiValue[Constants.HEIGHT];
             id: poiValue
             globaldata: 'poiValue'
             textfocus: true
-            next: select_search_for_refill
+            next: select_search
             prev: back
             onLeave:{}
         }
@@ -135,38 +172,52 @@ NavigationAppHMIMenu {
 			property real selectedEntry
 			id:view
             delegate: searchResultList
-            next:select_search_for_refill
+            next:select_search
 			prev:back
 			onSelected:{
-				if (what) {
-					Genivi.poi_id=what.index;
-					var poi_data=Genivi.poi_data[what.index];
+                if(keyboardArea.destination===poiValue)
+                {
+                    if (what) {
+                        Genivi.poi_id=what.index;
+                        var poi_data=Genivi.poi_data[what.index];
                         selectedValue.text="Name:"+poi_data.name+"\nID:"+poi_data.id+"\nLat:"+poi_data.lat+"\nLon:"+poi_data.lon;
-					select_reroute.disabled=false;
-            				select_display_on_map.disabled=false;
-				} else {
-					Genivi.poi_id=null;
+                        select_reroute.disabled=false;
+                        select_display_on_map.disabled=false;
+                        keyboardArea.destination.text=poi_data.name;
+                    } else {
+                        Genivi.poi_id=null;
                         selectedValue.text="";
-					select_reroute.disabled=true;
-					select_display_on_map.disabled=true;
-				}
+                        select_reroute.disabled=true;
+                        select_display_on_map.disabled=true;
+                        keyboardArea.destination.text=""
+                    }
+                } else {
+                   if (what) {
+                       poiCategoryName=Genivi.categoriesIdNameList[((what.index)*2)+1][3];
+                       Genivi.category_id=Genivi.categoriesIdNameList[((what.index)*2)+1][1];
+                       keyboardArea.destination.text=poiCategoryName;
+                   } else {
+                       keyboardArea.destination.text=""
+                   }
+                }
+
 			}
 		}       
 
         NavigationAppKeyboard {
             x:StyleSheet.keyboardArea[Constants.X]; y:StyleSheet.keyboardArea[Constants.Y]; width:StyleSheet.keyboardArea[Constants.WIDTH]; height:StyleSheet.keyboardArea[Constants.HEIGHT];
             id: keyboardArea;
-            destination: categoryValue; // by default
+            destination: poiValue;
             firstLayout: "ABC";
             secondLayout: "abc";
-            next: select_search_for_refill;
+            next: select_search;
             prev: poiKeyboard;
-            onKeypress: {  spell(what); }
+            onKeypress: {   }
         }
 
         StdButton {
-            source:StyleSheet.select_search_for_refill[Constants.SOURCE]; x:StyleSheet.select_search_for_refill[Constants.X]; y:StyleSheet.select_search_for_refill[Constants.Y]; width:StyleSheet.select_search_for_refill[Constants.WIDTH]; height:StyleSheet.select_search_for_refill[Constants.HEIGHT];
-            id:select_search_for_refill
+            source:StyleSheet.select_search[Constants.SOURCE]; x:StyleSheet.select_search[Constants.X]; y:StyleSheet.select_search[Constants.Y]; width:StyleSheet.select_search[Constants.WIDTH]; height:StyleSheet.select_search[Constants.HEIGHT];
+            id:select_search
 			onClicked: {
 				var model=view.model;
 				var ids=[];
@@ -187,19 +238,13 @@ NavigationAppHMIMenu {
 					model.append({"name":"No position available"});
 					return;
 				}
-                var categories=Genivi.poisearch_GetAvailableCategories(dbusIf);
-                for (i = 0 ; i < categories.length ; i+=2) {
-					if (categories[i+1][1][3] == 'fuel') {
-                        Genivi.fuelCategoryId=categories[i+1][1][1];
-					}
-				}
+                var categoriesAndRadius=[];
+                var categoriesAndRadiusList=[];
+                categoriesAndRadius[0]=Genivi.category_id;
+                categoriesAndRadius[1]=Genivi.radius;
+                categoriesAndRadiusList.push(categoriesAndRadius);
 
                 Genivi.poisearch_SetCenter(dbusIf,latitude,longitude,0);
-                var categoriesAndRadiusList=[];
-                var categoriesAndRadius=[];
-                categoriesAndRadius[0]=Genivi.fuelCategoryId;
-                categoriesAndRadius[1]=Genivi.radius;
-                categoriesAndRadiusList[0]=categoriesAndRadius;
                 Genivi.poisearch_SetCategories(dbusIf,categoriesAndRadiusList);
                 Genivi.poisearch_StartPoiSearch(dbusIf,"",Genivi.POISERVICE_SORT_BY_DISTANCE);
                 var attributeList=[];
@@ -234,7 +279,7 @@ NavigationAppHMIMenu {
             id:select_reroute;
             
             disabled:true;
-            next:select_display_on_map; prev:select_search_for_refill
+            next:select_display_on_map; prev:select_search
 			onClicked: {
                 var destination=Genivi.latlon_to_map(Genivi.poi_data[Genivi.poi_id]);
                 var position="";
@@ -271,14 +316,30 @@ NavigationAppHMIMenu {
             id:back;
 			text: Genivi.gettext("Back"); 
 			disabled:false; 
-            next:select_search_for_refill; prev:select_display_on_map;
+            next:select_search; prev:select_display_on_map;
             onClicked: {
                 leaveMenu();
             }
 		}	
 	}
 	Component.onCompleted: {
-		Genivi.poi_data=[];
+        var categoriesIdNameAndRadius=[];
+        var ret=Genivi.poisearch_GetAvailableCategories(dbusIf);
+        var categories=ret[1];
+        for (var i = 0 ; i < categories.length ; i+=2) {
+            if (categories[i+1][3] == 'fuel') {
+                Genivi.category_id=categories[i+1][1];
+                poiCategoryName=categories[i+1][3];
+            }
+         }
+        Genivi.categoriesIdNameList=categories;
+
+        Genivi.poi_data=[];
+
+        categoryValue.text=poiCategoryName;
+        keyboardArea.destination=poiValue; // by default
+        poiFrame.visible=true;
+
 		update();
 	}
 }

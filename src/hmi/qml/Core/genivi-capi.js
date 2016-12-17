@@ -44,6 +44,9 @@ var data=new Array;
 
 var poi_data=new Array;
 var poi_id;
+var category_id;
+
+var categoriesIdNameList;
 
 var translations=new Array;
 

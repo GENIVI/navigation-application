@@ -114,6 +114,7 @@ SRC_DIR=$CUR_DIR
 SCRIPT_DIR=$SRC_DIR/script
 HMI_QML_DIR=$SRC_DIR/hmi/qml
 app=$HMI_QML_DIR/application.qml # hmi panel launched by default
+poidatabase=$SCRIPT_DIR/empty.db # empty poi database by default
 STYLE_SHEETS_GENERATED_INDICATOR=$HMI_QML_DIR/Core/style-sheets/the-style-sheets-have-been-generated-css.js
 REPLAYER_LOG_FILE=none
 export REPLAYER_LOG_FILE
@@ -155,7 +156,7 @@ HMI_LAUNCHER_BIN_DIR=$BIN_DIR/hmi/qml/$HMI_LAUNCHER
 
 
 # options analysis
-while getopts a:c:glnorvx opt
+while getopts a:c:f:glnorvx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -177,6 +178,9 @@ do
 			exit 1
 			;;
 		esac
+		;;
+	f) #load another poi database
+		poidatabase=$(readlink -f $OPTARG) 
 		;;
 	g) #enable the debugger
 		gdb=1
@@ -250,7 +254,7 @@ fi
 wait_for_service org.automotive.message.broker /
 
 # start the poi server and wait for dbus service
-run "POI service" $POI_SERVER_BIN_DIR/$POI_SERVER -f $SCRIPT_DIR/empty.db
+run "POI service" $POI_SERVER_BIN_DIR/$POI_SERVER -f $poidatabase
 wait_for_service org.genivi.poiservice.POISearch /org/genivi/poiservice/POISearch
 
 if [ "$enhpos" = 1 ]
