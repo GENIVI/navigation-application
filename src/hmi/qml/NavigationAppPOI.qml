@@ -318,6 +318,7 @@ NavigationAppHMIMenu {
 			disabled:false; 
             next:select_search; prev:select_display_on_map;
             onClicked: {
+                Genivi.preloadMode=true;
                 leaveMenu();
             }
 		}	

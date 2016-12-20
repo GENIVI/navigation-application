@@ -540,9 +540,10 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetBottom.menub[Constants.SOURCE]; x:StyleSheetBottom.menub[Constants.X]; y:StyleSheetBottom.menub[Constants.Y]; width:StyleSheetBottom.menub[Constants.WIDTH]; height:StyleSheetBottom.menub[Constants.HEIGHT];textColor:StyleSheetBottom.menubText[Constants.TEXTCOLOR]; pixelSize:StyleSheetBottom.menubText[Constants.PIXELSIZE];
-                    id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:settings;
+                    id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:mapsettings;
                     onClicked: {
                         disconnectSignals();
+                        Genivi.preloadMode=true;
                         leaveMenu();;
                     }
                 }
@@ -598,7 +599,7 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
-                    id:zoomout;  next:settings; prev:zoomin;
+                    id:zoomout;  next:mapsettings; prev:zoomin;
                     onClicked: {
                         Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
                         showZoom();
@@ -606,8 +607,8 @@ HMIMenu {
                 }
 
                 StdButton {
-                    source:StyleSheetBottom.settings[Constants.SOURCE]; x:StyleSheetBottom.settings[Constants.X]; y:StyleSheetBottom.settings[Constants.Y]; width:StyleSheetBottom.settings[Constants.WIDTH]; height:StyleSheetBottom.settings[Constants.HEIGHT];
-                    id:settings;  next:menub; prev:zoomout;
+                    source:StyleSheetBottom.mapsettings[Constants.SOURCE]; x:StyleSheetBottom.mapsettings[Constants.X]; y:StyleSheetBottom.mapsettings[Constants.Y]; width:StyleSheetBottom.mapsettings[Constants.WIDTH]; height:StyleSheetBottom.mapsettings[Constants.HEIGHT];
+                    id:mapsettings;  next:menub; prev:zoomout;
                     onClicked: {
                         disconnectSignals();
                         entryMenu("NavigationAppBrowseMapSettings",menu);

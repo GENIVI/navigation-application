@@ -110,11 +110,23 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.quit[Constants.SOURCE]; x:StyleSheet.quit[Constants.X]; y:StyleSheet.quit[Constants.Y]; width:StyleSheet.quit[Constants.WIDTH]; height:StyleSheet.quit[Constants.HEIGHT];textColor:StyleSheet.quitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.quitText[Constants.PIXELSIZE];
-            id:quit; text: Genivi.gettext("Quit");  next:navigation; prev:trip; onClicked:{Qt.quit()}}
-
+            id:quit; text: Genivi.gettext("Quit");  next:navigation; prev:trip;
+            onClicked:{
+                Genivi.navigationcore_session_clear(dbusIf);
+                Qt.quit(); //for the time being quit
+            }
+        }
     }
 
     Component.onCompleted: {
+        // Test if the navigation server is connected
+        var res=Genivi.navigationcore_session_GetVersion(dbusIf);
+        if (res[0] != "error") {
+            res=Genivi.navigationcore_session(dbusIf);
+        } else {
+            Genivi.dump("",res);
+        }
+
     }
 
 }
