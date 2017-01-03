@@ -304,7 +304,6 @@ NavigationAppHMIMenu {
             next:back; prev:select_reroute
 			onClicked: {
 				var poi_data=Genivi.poi_data[Genivi.poi_id];
-				Genivi.data['show_position']=new Array;
 				Genivi.data['show_position']['lat']=poi_data.lat;
 				Genivi.data['show_position']['lon']=poi_data.lon;
 				Genivi.data['mapback']="POI";

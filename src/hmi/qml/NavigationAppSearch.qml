@@ -447,12 +447,6 @@ NavigationAppHMIMenu {
 
     function setAddress()
     {
-        // set destination address
-        Genivi.data['destination']=new Array;
-        Genivi.data['destination']['lat']=Genivi.data['lat'];
-        Genivi.data['destination']['lon']=Genivi.data['lon'];
-        Genivi.data['destination']['description']=Genivi.data['description'];
-
         //save address for next time
         Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY]=countryValue.text;
         Genivi.address[Genivi.NAVIGATIONCORE_CITY]=cityValue.text;
@@ -469,6 +463,11 @@ NavigationAppHMIMenu {
             Genivi.data['description']+=' '+numberValue.text;
         //save entered location into the history
         Genivi.updateHistoryOfLastEnteredLocation(Genivi.data['description'],Genivi.data['lat'],Genivi.data['lon']);
+
+        // set destination address
+        Genivi.data['destination']['lat']=Genivi.data['lat'];
+        Genivi.data['destination']['lon']=Genivi.data['lon'];
+        Genivi.data['destination']['description']=Genivi.data['description'];
     }
 
     function accept(what)

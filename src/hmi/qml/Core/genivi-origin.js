@@ -41,6 +41,8 @@ var g_poisearch_handle=["uint32",0];
 var g_lang;
 
 var data=new Array;
+data['destination']=new Array;
+data['show_position']=new Array;
 
 var poi_data=new Array;
 var poi_id;
