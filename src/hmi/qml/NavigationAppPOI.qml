@@ -196,6 +196,12 @@ NavigationAppHMIMenu {
                        poiCategoryName=Genivi.categoriesIdNameList[((what.index)*2)+1][3];
                        Genivi.category_id=Genivi.categoriesIdNameList[((what.index)*2)+1][1];
                        keyboardArea.destination.text=poiCategoryName;
+                       keyboardArea.destination=poiValue;
+                       poiValue.text="";
+                       categoryValue.text=poiCategoryName;
+                       poiFrame.visible=true;
+                       categoryFrame.visible=false;
+                       view.model.clear();
                    } else {
                        keyboardArea.destination.text=""
                    }

@@ -568,6 +568,7 @@ NavigationAppHMIMenu {
         guidance_start.disabled=false;
         guidance_stop.disabled=true;
         routeArea.visible=true;
+        crossroadZoom.visible=true;
         Genivi.route_calculated=true;
     }
 
@@ -587,6 +588,7 @@ NavigationAppHMIMenu {
         guidance_start.disabled=false;
         guidance_stop.disabled=true;
         routeArea.visible=false;
+        crossroadZoom.visible=false;
         Genivi.route_calculated=false;
     }
 
@@ -817,6 +819,13 @@ NavigationAppHMIMenu {
                 guidance_start.disabled=false;
                 guidance_stop.disabled=true;
             }
+        }
+        BorderImage {
+            id: crossroadZoom
+            source:StyleSheet.crossroadZoom[Constants.SOURCE]; x:StyleSheet.crossroadZoom[Constants.X]; y:StyleSheet.crossroadZoom[Constants.Y]; width:StyleSheet.crossroadZoom[Constants.WIDTH]; height:StyleSheet.crossroadZoom[Constants.HEIGHT];
+            border.left: 0; border.top: 0
+            border.right: 0; border.bottom: 0
+            visible: false;
         }
 
         // enter a location by the keyboard menu
