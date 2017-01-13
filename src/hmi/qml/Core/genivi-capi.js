@@ -129,6 +129,10 @@ address[NAVIGATIONCORE_COUNTRY]="Switzerland";
 address[NAVIGATIONCORE_CITY]="Zürich";
 address[NAVIGATIONCORE_STREET]="In Lampitzäckern";
 address[NAVIGATIONCORE_HOUSENUMBER]="";
+data['show_position']['lat']=47.415740;
+data['show_position']['lon']=8.614862;
+data['display_on_map']='show_current_position'; //display current position of the vehicle on the map
+
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
 tripMode="TRIP_NUMBER1";
 
@@ -284,6 +288,11 @@ function connect_spellResultSignal(interface,menu)
     return interface.connect("","/LocationInput","org.genivi.navigation.navigationcore.LocationInput.v4_0","spellResult",menu,"spellResult");
 }
 
+function connect_guidanceStatusChangedSignal(interface,menu)
+{
+    return interface.connect("","/Guidance","org.genivi.navigation.navigationcore.Guidance.v4_0","guidanceStatusChanged",menu,"guidanceStatusChanged");
+}
+
 function connect_guidanceWaypointReachedSignal(interface,menu)
 {
     return interface.connect("","/Guidance","org.genivi.navigation.navigationcore.Guidance.v4_0","waypointReached",menu,"guidanceWaypointReached");
@@ -344,7 +353,7 @@ function connect_tripDataUpdatedSignal(interface,menu)
     return interface.connect("","/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor.v1_0","tripDataUpdated",menu,"tripDataUpdated");
 }
 
-function connect_fuelStopAdvisorSignal(interface,menu)
+function connect_fuelStopAdvisorWarningSignal(interface,menu)
 {
     return interface.connect("","/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor.v1_0","fuelStopAdvisorWarning",menu,"fuelStopAdvisorWarning");
 }

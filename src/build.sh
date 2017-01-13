@@ -5,6 +5,7 @@ html="OFF"
 clean=0
 capi=0
 navit=0
+theme=0
 commonapi_tools_option=""
 
 function check_path_for_capi
@@ -33,7 +34,7 @@ function check_path_for_capi
 	commonapi_tools_option="-DDBUS_LIB_PATH="$DBUS_LIB_PATH" -DCOMMONAPI_DBUS_TOOL_DIR="$COMMONAPI_DBUS_TOOL_DIR" -DCOMMONAPI_TOOL_DIR="$COMMONAPI_TOOL_DIR""
 }
 
-while getopts cdmhn opt
+while getopts cdmhnt opt
 do
 	case $opt in
 	c)
@@ -51,14 +52,18 @@ do
 	n)
 		navit=1
 		;;
+	t)
+		theme=1
+		;;
 	\?)
 		echo "Usage:"
-		echo "$0 [-cdmhn]"
+		echo "$0 [-cdmhnt]"
 		echo "-c: Rebuild with clean"
 		echo "-d: Enable the debug messages"
 		echo "-m: Build with commonAPI plugins "
 		echo "-h: Enable migration to the html based hmi"
 		echo "-n: Build navit"
+		echo "-t: Generate the HMI theme"
 		exit 1
 	esac
 done
@@ -135,7 +140,7 @@ fi
 make
 cd ../
 
-if [ "$clean" = 1 ]
+if [ "$theme" = 1 ]
 then
 	echo 'generate the hmi for gdp theme'
 	cd script
