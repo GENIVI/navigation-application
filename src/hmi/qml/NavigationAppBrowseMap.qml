@@ -643,9 +643,9 @@ HMIMenu {
         var maneuversList=res[5];
         var model=maneuverArea.model;
         for (var i = 0 ; i < maneuversList.length ; i+=2) {
-            var roadNameAfterManeuver=maneuversList[i+1][3];
-            var offsetOfNextManeuver=maneuversList[i+1][9];
-            var items=maneuversList[i+1][11];
+            var roadNameAfterManeuver=maneuversList[i+1][9];
+            var offsetOfNextManeuver=maneuversList[i+1][15];
+            var items=maneuversList[i+1][17];
 
             for (var j = 0 ; j < items.length ; j+=2) {
                 //multiple maneuvers are not managed !
@@ -677,32 +677,41 @@ HMIMenu {
 	{
         if(Genivi.guidance_activated == true)
         {
-            var maneuversList=Genivi.guidance_GetManeuversList(dbusIf,1,0);
-            var numberOfManeuvers=maneuversList[3];
+            var res=Genivi.guidance_GetManeuversList(dbusIf,1,0);
             //only one maneuver is considered
-            var maneuver=maneuversList[5][1];
-            var roadNumberAfterManeuver=maneuver[1];
-            var roadNameAfterManeuver=maneuver[3];
-            var roadPropertyAfterManeuver=maneuver[5];
-            var drivingSide=maneuver[7];
-            var offsetOfNextManeuver=maneuver[9];
-            var items=maneuver[11][1];
-            var offsetOfManeuver=items[1];
-            var travelTime=items[3];
-            var direction=items[5];
-            var maneuverType=items[7];
-            var maneuverData=items[9];
-            if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
+            //var error=res[1]
+            var numberOfManeuvers=res[3];
+            if(numberOfManeuvers > 0)
             {
-                maneuverIcon.source=Genivi.ManeuverDirectionIcon[maneuverData[3][3][1]];
-                //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
-                distancetomaneuverValue.text=Genivi.distance(offsetOfManeuver);
-                roadaftermaneuverValue.text=roadNameAfterManeuver;
+                var maneuversList=res[5][1];
+                //var roadShieldsAfterManeuver=maneuversList[1]
+                //var countryCodeAfterManeuver=maneuversList[3]
+                //var stateCodeAfterManeuver=maneuversList[5]
+                var roadNumberAfterManeuver=maneuversList[7];
+                var roadNameAfterManeuver=maneuversList[9];
+                var roadPropertyAfterManeuver=maneuversList[11];
+                var drivingSide=maneuversList[13];
+                var offsetOfNextManeuver=maneuversList[15];
+                var items=maneuversList[17][1];
+                var offsetOfManeuver=items[1];
+                var travelTime=items[3];
+                var direction=items[5];
+                var maneuverType=items[7];
+                var maneuverData=items[9];
+                if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
+                {
+                    maneuverIcon.source=Genivi.ManeuverDirectionIcon[maneuverData[3][3][1]];
+                    //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
+                    distancetomaneuverValue.text=Genivi.distance(offsetOfManeuver);
+                    roadaftermaneuverValue.text=roadNameAfterManeuver;
+                }
+            } else {
+
             }
 
-            var res=Genivi.guidance_GetDestinationInformation(dbusIf);
-            distancetodestinationValue.text = Genivi.distance(res[1]);
-            timetodestinationValue.text = Genivi.time(res[3]);
+            var res1=Genivi.guidance_GetDestinationInformation(dbusIf);
+            distancetodestinationValue.text = Genivi.distance(res1[1]);
+            timetodestinationValue.text = Genivi.time(res1[3]);
 
             updateAddress();
         }
@@ -1422,7 +1431,7 @@ HMIMenu {
 
     Component.onCompleted: {
         Genivi.mapviewer_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
-        if (Genivi.data['display_on_map']==='show_route_handle') {
+        if (Genivi.data['display_on_map']==='show_route') {
             Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
             var res=Genivi.routing_GetRouteBoundingBox(dbusIf,Genivi.data['zoom_route_handle']);
             if (res[0] == "structure") {
@@ -1435,6 +1444,7 @@ HMIMenu {
         else {
             if (Genivi.data['display_on_map']==='show_current_position') {
                 Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
+                Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
             } else {
                 if (Genivi.data['display_on_map']==='show_position') {
                     Genivi.mapviewer_SetFollowCarMode(dbusIf,false);

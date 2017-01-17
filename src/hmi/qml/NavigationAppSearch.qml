@@ -812,7 +812,7 @@ NavigationAppHMIMenu {
             onClicked: {
                 disconnectSignals();
                 Genivi.data["mapback"]="NavigationAppSearch";
-                Genivi.data['display_on_map']='show_route_handle';
+                Genivi.data['display_on_map']='show_route';
                 Genivi.data['show_route_handle']=Genivi.routing_handle(dbusIf);
                 Genivi.data['zoom_route_handle']=Genivi.routing_handle(dbusIf);
                 mapMenu();
