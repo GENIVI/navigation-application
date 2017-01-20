@@ -61,12 +61,25 @@ NavigationAppHMIMenu {
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
             Genivi.guidance_activated = true;
+            if(Genivi.simulationPanelOnMapview){
+                Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
+            }
             //Guidance active, so inform the trip computer (refresh)
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50);
+            //Enter the map browser menu
+            disconnectSignals();
+            Genivi.data['display_on_map']='show_current_position';
+            Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
+            entryMenu("NavigationAppBrowseMap",menu);
         } else {
             Genivi.guidance_activated = false;
+            Genivi.mapmatchedposition_SetSimulationMode(dbusIf,false);
             //Guidance inactive, so inform the trip computer
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,0);
+            guidance_start.disabled=false;
+            guidance_stop.disabled=true;
+            guidance_start.visible=true;
+            guidance_stop.visible=false;
         }
     }
 
@@ -394,9 +407,16 @@ NavigationAppHMIMenu {
         for (var i=0;i<res[3].length;i+=4){
             if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[3][i+3][3][1] != 0)){
                 oklat=1;
+                Genivi.data['position']['lat']=res[3][i+3][3][1];
             } else {
                 if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[3][i+3][3][1] != 0)){
                     oklong=1;
+                    Genivi.data['position']['lon']=res[3][i+3][3][1];
+                } else {
+                    if ((res[3][i+1]== Genivi.NAVIGATIONCORE_ALTITUDE) && (res[3][i+3][3][1] != 0)){
+                        oklong=1;
+                        Genivi.data['position']['alt']=res[3][i+3][3][1];
+                    }
                 }
             }
         }
@@ -427,8 +447,8 @@ NavigationAppHMIMenu {
 
         //launch route calculation
         destination=Genivi.latlon_to_map(Genivi.data['destination']);
-        position="";
-        Genivi.routing_SetWaypoints(dbusIf,true,position,destination);
+        position=Genivi.latlon_to_map(Genivi.data['position']);
+        Genivi.routing_SetWaypoints(dbusIf,true,position,destination); //start from current position
         Genivi.routing_CalculateRoute(dbusIf);
     }
 
@@ -581,10 +601,17 @@ NavigationAppHMIMenu {
         statusTitle.visible=true;
         statusValue.visible=true;
         show_route_on_map.visible=true;
-        guidance_start.visible=true;
+        guidance_start.visible=false;
         guidance_stop.visible=false;
-        guidance_start.disabled=false;
-        guidance_stop.disabled=true;
+        if(Genivi.guidance_activated){
+            guidance_start.disabled=true;
+            guidance_stop.disabled=false;
+            guidance_stop.visible=true;
+        }else{
+            guidance_start.disabled=false;
+            guidance_stop.disabled=true;
+            guidance_start.visible=true;
+        }
         routeArea.model.clear();
         routeArea.visible=true;
         routeArea.forceActiveFocus();
@@ -811,11 +838,15 @@ NavigationAppHMIMenu {
             visible: false;
             onClicked: {
                 disconnectSignals();
-                Genivi.data["mapback"]="NavigationAppSearch";
-                Genivi.data['display_on_map']='show_route';
-                Genivi.data['show_route_handle']=Genivi.routing_handle(dbusIf);
-                Genivi.data['zoom_route_handle']=Genivi.routing_handle(dbusIf);
-                mapMenu();
+                if(Genivi.guidance_activated){
+                    Genivi.data['display_on_map']='show_current_position';
+                    Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
+                }else{
+                    Genivi.data['display_on_map']='show_route';
+                    Genivi.data['show_route_handle']=Genivi.routing_handle(dbusIf);
+                    Genivi.data['zoom_route_handle']=Genivi.routing_handle(dbusIf);
+                }
+                entryMenu("NavigationAppBrowseMap",menu);
             }
         }
         StdButton {
@@ -823,12 +854,7 @@ NavigationAppHMIMenu {
             id:guidance_start; text: Genivi.gettext("On"); disabled:true; next:guidance_stop; prev:show_route_on_map
             visible: false;
             onClicked: {
-                disconnectSignals();
                 Genivi.guidance_StartGuidance(dbusIf,Genivi.routing_handle(dbusIf));
-                Genivi.data["mapback"]="NavigationAppSearch";
-                Genivi.data['display_on_map']='show_current_position';
-                Genivi.data["show_route_handle"]=Genivi.routing_handle(dbusIf);
-                mapMenu();
             }
         }
         StdButton {
@@ -837,8 +863,6 @@ NavigationAppHMIMenu {
             visible: false;
             onClicked: {
                 Genivi.guidance_StopGuidance(dbusIf);
-                guidance_start.disabled=false;
-                guidance_stop.disabled=true;
             }
         }
         BorderImage {
@@ -943,6 +967,7 @@ NavigationAppHMIMenu {
             id:settings;  next:back; prev:calculate_curr;
             disabled: keyboardActivated;
             onClicked: {
+                disconnectSignals();
                 Genivi.preloadMode=true; //for the next call of this menu
                 entryMenu("NavigationAppSettings",menu);
             }
@@ -952,6 +977,7 @@ NavigationAppHMIMenu {
             id:poi;  next:back; prev:calculate_curr;
             disabled: keyboardActivated;
             onClicked: {
+                disconnectSignals();
                 entryMenu("NavigationAppPOI",menu);
             }
         }

@@ -42,7 +42,7 @@ var g_lang;
 
 var data=new Array;
 data['destination']=new Array;
-data['show_position']=new Array;
+data['position']=new Array;
 
 var poi_data=new Array;
 var poi_id;
@@ -55,7 +55,7 @@ var translations=new Array;
 var simulationPanelOnMapview=true;// simulation panel on map view by default
 
 var guidance_activated=false; //used by the HMI to directly go to map when guidance is on (reroute use case)
-var route_calculated=false; //no route (managed by NavigationRoute and NavigationCalculatedRoute)
+var route_calculated=false;
 
 var entryback = new Array;
 var entrybackheapsize=0;
@@ -123,14 +123,16 @@ var radius=5000; //radius in m around the vehicle to search for the refill stati
 var offset=0; //offset of the start record to get on the list of pois
 var maxWindowSize=20; //max size of elements to return as a result
 var fuelCategoryId; //unique id of fuel category
+var zoom_guidance=4; //zoom level when a guidance starts
 
 //the default data below will be managed by the persistency component in the future
 address[NAVIGATIONCORE_COUNTRY]="Switzerland";
-address[NAVIGATIONCORE_CITY]="Zürich";
-address[NAVIGATIONCORE_STREET]="In Lampitzäckern";
-address[NAVIGATIONCORE_HOUSENUMBER]="";
-data['show_position']['lat']=47.415740;
-data['show_position']['lon']=8.614862;
+address[NAVIGATIONCORE_CITY]="Genève";
+address[NAVIGATIONCORE_STREET]="Rue Franck-Martin";
+address[NAVIGATIONCORE_HOUSENUMBER]="8";
+data['position']['lat']=46.202410;
+data['position']['lon']=6.146265;
+data['position']['alt']=20;
 data['display_on_map']='show_current_position'; //display current position of the vehicle on the map
 
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
@@ -356,6 +358,11 @@ function connect_tripDataUpdatedSignal(interface,menu)
 function connect_fuelStopAdvisorWarningSignal(interface,menu)
 {
     return interface.connect("","/FuelStopAdvisor","org.genivi.demonstrator.FuelStopAdvisor.v1_0","fuelStopAdvisorWarning",menu,"fuelStopAdvisorWarning");
+}
+
+function connect_mapViewScaleChangedSignal(interface,menu)
+{
+    return interface.connect("","/MapViewerControl","org.genivi.navigation.mapviewer.MapViewerControl.v4_0","mapViewScaleChanged",menu,"mapViewScaleChanged");
 }
 
 //----------------- NavigationCore dbus messages -----------------
@@ -755,6 +762,11 @@ function mapviewer_GetMapViewScale(dbusIf)
 function mapviewer_GetDisplayedRoutes(dbusIf)
 {
     return mapviewercontrol_get(dbusIf,"getDisplayedRoutes", []);
+}
+
+function mapviewer_SetMapViewScale(dbusIf,scaleID)
+{
+    mapviewercontrol_message(dbusIf,"setMapViewScale", ["uint16",scaleID]);
 }
 
 function mapviewer_SetMapViewScaleByDelta(dbusIf,scaleDelta)

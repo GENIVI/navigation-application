@@ -73,7 +73,7 @@ HMIMenu {
         StdButton {
             source:StyleSheet.select_mapview[Constants.SOURCE]; x:StyleSheet.select_mapview[Constants.X]; y:StyleSheet.select_mapview[Constants.Y]; width:StyleSheet.select_mapview[Constants.WIDTH]; height:StyleSheet.select_mapview[Constants.HEIGHT];
             id:mapview;  next:poi; prev:navigation; onClicked: {
-				Genivi.data["show_current_position"]=true;
+                Genivi.data['display_on_map']='show_current_position';
                 entryMenu("NavigationAppBrowseMap",menu);
 			}
 		}

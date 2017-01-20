@@ -62,13 +62,26 @@ HMIMenu {
         Genivi.hookSignal("guidanceStatusChanged");
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
-            guidanceStatus.setState("ON");
+            guidanceMode.setState("ON");
+            showGuidance();
+            showRoute();
+            showSimulation();
             Genivi.guidance_activated = true;
             //Guidance active, so inform the trip computer (refresh)
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50);
             updateGuidance();
         } else {
-            guidanceStatus.setState("OFF");
+            guidanceMode.setState("OFF");
+            hideGuidance();
+            hideRoute();
+            hideSimulation();
+            if (Genivi.route_calculated == true)
+            {
+                visible=true; //it's possible to restart the current route
+            }
+            else {
+                visible=false; //no route calculated
+            }
             Genivi.guidance_activated = false;
             //Guidance inactive, so inform the trip computer
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,0);
@@ -211,6 +224,20 @@ HMIMenu {
          }
     }
 
+    property Item mapViewScaleChangedSignal;
+    function mapViewScaleChanged(args)
+    {
+        Genivi.hookSignal("mapViewScaleChanged");
+        var text=args[3].toString();
+        if (args[5] === Genivi.MAPVIEWER_MAX) {
+            text+="*";
+        } else {
+            if (args[5] === Genivi.MAPVIEWER_MIN)
+                text="*"+text;
+        }
+        zoomlevel.text=text;
+    }
+
     function connectSignals()
     {
         guidanceStatusChangedSignal=Genivi.connect_guidanceStatusChangedSignal(dbusIf,menu);
@@ -222,6 +249,7 @@ HMIMenu {
         mapmatchedpositionPositionUpdateSignal=Genivi.connect_mapmatchedpositionPositionUpdateSignal(dbusIf,menu);
         mapmatchedpositionAddressUpdateSignal=Genivi.connect_mapmatchedpositionAddressUpdateSignal(dbusIf,menu);
         fuelStopAdvisorWarningSignal=Genivi.connect_fuelStopAdvisorWarningSignal(dbusIf,menu);
+        mapViewScaleChangedSignal=Genivi.connect_mapViewScaleChangedSignal(dbusIf,menu)
     }
 
     function disconnectSignals()
@@ -235,6 +263,7 @@ HMIMenu {
         mapmatchedpositionPositionUpdateSignal.destroy();
         mapmatchedpositionAddressUpdateSignal.destroy();
         fuelStopAdvisorWarningSignal.destroy();
+        mapViewScaleChangedSignal.destroy();
     }
 
     //------------------------------------------//
@@ -673,48 +702,55 @@ HMIMenu {
 		}
 	}
 
+    function toggleGuidanceMode()
+    {
+        if (Genivi.guidance_activated){
+            stopGuidance();
+            stopSimulation();
+        }else{
+            startGuidance();
+        }
+    }
+
 	function updateGuidance()
 	{
-        if(Genivi.guidance_activated == true)
+        var res=Genivi.guidance_GetManeuversList(dbusIf,1,0);
+        //only one maneuver is considered
+        //var error=res[1]
+        var numberOfManeuvers=res[3];
+        if(numberOfManeuvers > 0)
         {
-            var res=Genivi.guidance_GetManeuversList(dbusIf,1,0);
-            //only one maneuver is considered
-            //var error=res[1]
-            var numberOfManeuvers=res[3];
-            if(numberOfManeuvers > 0)
+            var maneuversList=res[5][1];
+            //var roadShieldsAfterManeuver=maneuversList[1]
+            //var countryCodeAfterManeuver=maneuversList[3]
+            //var stateCodeAfterManeuver=maneuversList[5]
+            var roadNumberAfterManeuver=maneuversList[7];
+            var roadNameAfterManeuver=maneuversList[9];
+            var roadPropertyAfterManeuver=maneuversList[11];
+            var drivingSide=maneuversList[13];
+            var offsetOfNextManeuver=maneuversList[15];
+            var items=maneuversList[17][1];
+            var offsetOfManeuver=items[1];
+            var travelTime=items[3];
+            var direction=items[5];
+            var maneuverType=items[7];
+            var maneuverData=items[9];
+            if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
             {
-                var maneuversList=res[5][1];
-                //var roadShieldsAfterManeuver=maneuversList[1]
-                //var countryCodeAfterManeuver=maneuversList[3]
-                //var stateCodeAfterManeuver=maneuversList[5]
-                var roadNumberAfterManeuver=maneuversList[7];
-                var roadNameAfterManeuver=maneuversList[9];
-                var roadPropertyAfterManeuver=maneuversList[11];
-                var drivingSide=maneuversList[13];
-                var offsetOfNextManeuver=maneuversList[15];
-                var items=maneuversList[17][1];
-                var offsetOfManeuver=items[1];
-                var travelTime=items[3];
-                var direction=items[5];
-                var maneuverType=items[7];
-                var maneuverData=items[9];
-                if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
-                {
-                    maneuverIcon.source=Genivi.ManeuverDirectionIcon[maneuverData[3][3][1]];
-                    //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
-                    distancetomaneuverValue.text=Genivi.distance(offsetOfManeuver);
-                    roadaftermaneuverValue.text=roadNameAfterManeuver;
-                }
-            } else {
-
+                maneuverIcon.source=Genivi.ManeuverDirectionIcon[maneuverData[3][3][1]];
+                //Genivi.ManeuverType[subarray[j+1][7]] contains CROSSROAD and is removed for the moment
+                distancetomaneuverValue.text=Genivi.distance(offsetOfManeuver);
+                roadaftermaneuverValue.text=roadNameAfterManeuver;
             }
+        } else {
 
-            var res1=Genivi.guidance_GetDestinationInformation(dbusIf);
-            distancetodestinationValue.text = Genivi.distance(res1[1]);
-            timetodestinationValue.text = Genivi.time(res1[3]);
-
-            updateAddress();
         }
+
+        var res1=Genivi.guidance_GetDestinationInformation(dbusIf);
+        distancetodestinationValue.text = Genivi.distance(res1[1]);
+        timetodestinationValue.text = Genivi.time(res1[3]);
+
+        updateAddress();
     }
 
 	function stopGuidance()
@@ -731,12 +767,12 @@ HMIMenu {
 
     function stopSimulation()
     {
-        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,0);
+        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,false);
     }
 
     function startSimulation()
     {
-        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,1);
+        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
         Genivi.mapmatchedposition_StartSimulation(dbusIf);
     }
 
@@ -774,6 +810,8 @@ HMIMenu {
         on_off.disabled=false;
         simu_mode.visible=true;
         simu_mode.disabled=true;
+        speedUnit.visible=true;
+        vehicleSpeedValue.visible=true;
     }
 
     function hideSimulation()
@@ -788,6 +826,32 @@ HMIMenu {
         on_off.disabled=true;
         simu_mode.visible=false;
         simu_mode.disabled=true;
+        speedUnit.visible=false;
+        vehicleSpeedValue.visible=false;
+    }
+
+    function showGuidance()
+    {
+        guidance.visible=true;
+    }
+
+    function hideGuidance()
+    {
+        guidance.visible=false;
+    }
+
+    function showRoute()
+    {
+        route.visible=true;
+        maneuverList.disabled=false;
+        roadaftermaneuverValue.visible=true;
+    }
+
+    function hideRoute()
+    {
+        route.visible=false;
+        maneuverList.disabled=true;
+        roadaftermaneuverValue.visible=false;
     }
 
     //------------------------------------------//
@@ -882,11 +946,11 @@ HMIMenu {
 
                 StdButton {
                     source:StyleSheetBottom.menub[Constants.SOURCE]; x:StyleSheetBottom.menub[Constants.X]; y:StyleSheetBottom.menub[Constants.Y]; width:StyleSheetBottom.menub[Constants.WIDTH]; height:StyleSheetBottom.menub[Constants.HEIGHT];textColor:StyleSheetBottom.menubText[Constants.TEXTCOLOR]; pixelSize:StyleSheetBottom.menubText[Constants.PIXELSIZE];
-                    id:menub; text:Genivi.gettext("Menu"); next:orientation; prev:settings;
+                    id:menub; text:Genivi.gettext("Back"); next:orientation; prev:settings;
                     onClicked: {
                         disconnectSignals();
                         Genivi.preloadMode=true;
-                        leaveMenu();;
+                        leaveMenu();
                     }
                 }
 
@@ -962,45 +1026,22 @@ HMIMenu {
 
                 StdButton {
                     x:StyleSheetBottom.guidanceon[Constants.X]; y:StyleSheetBottom.guidanceon[Constants.Y]; width:StyleSheetBottom.guidanceon[Constants.WIDTH]; height:StyleSheetBottom.guidanceon[Constants.HEIGHT];
-                    id:guidanceStatus; next:zoomin; prev:menub;  disabled:false;
+                    id:guidanceMode; next:zoomin; prev:menub;  disabled:false;
                     source:StyleSheetBottom.guidanceoff[Constants.SOURCE]; //todo call get status
-                    property int status: 1;
                     function setState(name)
                     {
                         if (name=="ON")
                         {
-                            status=1;
                             source=StyleSheetBottom.guidanceoff[Constants.SOURCE];
-                            guidance.visible=true;
-                            route.visible=true;
-                            simulation.visible=true;
                         }
                         else
                         {
-                            status=0;
                             source=StyleSheetBottom.guidanceon[Constants.SOURCE];
-                            guidance.visible=false;
-                            route.visible=false;
-                            simulation.visible=false;
-                            if (Genivi.route_calculated == true)
-                            {
-                                visible=true; //it's possible to restart the current route
-                            }
-                            else {
-                                visible=false; //no route calculated
-                            }
                         }
                     }
                     onClicked:
                     {
-                        if(status)
-                        {
-                            stopGuidance();
-                            stopSimulation();
-                        }
-                        else {
-                            startGuidance();
-                        }
+                        toggleGuidanceMode();
                     }
                 }
             }
@@ -1430,42 +1471,59 @@ HMIMenu {
     }
 
     Component.onCompleted: {
+        connectSignals();
         Genivi.mapviewer_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
+        hideMapSettings();
+        if(!Genivi.route_calculated) {
+            guidanceMode.visible=false;
+            guidanceMode.disabled=true;
+        }
+
         if (Genivi.data['display_on_map']==='show_route') {
-            Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
             var res=Genivi.routing_GetRouteBoundingBox(dbusIf,Genivi.data['zoom_route_handle']);
-            if (res[0] == "structure") {
-                Genivi.mapviewer_SetMapViewBoundingBox(dbusIf,res);
-            } else {
-                console.log("Unexpected result from GetRouteBoundingBox:");
-                Genivi.dump("",res);
-            }
+            Genivi.mapviewer_SetMapViewBoundingBox(dbusIf,res);
+            Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
+            hideGuidance();
+            hideRoute();
+            hideSimulation();
+            updateAddress();
+            guidanceMode.setState('OFF');//guidance can be launched from this menu
         }
         else {
             if (Genivi.data['display_on_map']==='show_current_position') {
                 Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
-                Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
-            } else {
+                Genivi.mapviewer_SetMapViewScale(dbusIf,Genivi.zoom_guidance);
+                Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
+                if(Genivi.guidance_activated) {
+                    Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
+                    showGuidance();
+                    showRoute();
+                    updateGuidance();
+                    if (Genivi.simulationPanelOnMapview===true)
+                    {
+                        showSimulation();
+                        updateSimulation();
+                    } else {
+                        hideSimulation();
+                    }
+                } else {
+                    hideGuidance();
+                    hideRoute();
+                    hideSimulation();
+                    updateAddress();
+                }
+            }
+            else {
                 if (Genivi.data['display_on_map']==='show_position') {
                     Genivi.mapviewer_SetFollowCarMode(dbusIf,false);
-                    Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['show_position']['lat'],Genivi.data['show_position']['lon'],Genivi.data['show_position']['alt']);
-                } else {
-                    console.log("Error: no position valid");
+                    Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
+                    hideGuidance();
+                    hideRoute();
+                    hideSimulation();
+                    updateAddress();
                 }
             }
         }
-
-
-		connectSignals();
-		updateGuidance();
-        updateSimulation();
         showZoom();
-        hideMapSettings();
-        if (Genivi.simulationPanelOnMapview===true)
-        {
-            showSimulation();
-        } else {
-            hideSimulation();
-        }
 	}
 }

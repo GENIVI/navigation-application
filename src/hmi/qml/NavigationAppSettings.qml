@@ -226,6 +226,22 @@ HMIMenu {
         disconnectSignals();
     }
 
+    function showSimulation()
+    {
+        speed_down.disabled=false;
+        speed_up.disabled=false;
+        on_off.disabled=false;
+        simu_mode.disabled=false;
+    }
+
+    function hideSimulation()
+    {
+        speed_down.disabled=true;
+        speed_up.disabled=true;
+        on_off.disabled=true;
+        simu_mode.disabled=true;
+    }
+
 	HMIBgImage {
 		id: content
         image:StyleSheet.navigation_app_settings_background[Constants.SOURCE];
@@ -318,11 +334,11 @@ HMIMenu {
 			{
 				switch (status) 
 				{
-					case 0: //start the simulation
+                    case 0: //enable the simulation mode and set it to pause
                         Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
-                        Genivi.mapmatchedposition_StartSimulation(dbusIf);
+                        Genivi.mapmatchedposition_PauseSimulation(dbusIf);
 					break;
-					case 1: //stop the simulation
+                    case 1: //disable the simulation mode
                         Genivi.mapmatchedposition_SetSimulationMode(dbusIf,false);
                     break;
 					default:
@@ -436,11 +452,14 @@ HMIMenu {
                 { //hide the panel
                     Genivi.simulationPanelOnMapview=false;
                     onmapview_enable.setState("DISABLE");
+                    hideSimulation();
                 }
                 else
                 { //show the panel
                     Genivi.simulationPanelOnMapview=true;
                     onmapview_enable.setState("ENABLE");
+                    showSimulation();
+                    updateSimulation();
                 }
             }
         }

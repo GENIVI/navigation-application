@@ -310,11 +310,10 @@ NavigationAppHMIMenu {
             next:back; prev:select_reroute
 			onClicked: {
 				var poi_data=Genivi.poi_data[Genivi.poi_id];
-				Genivi.data['show_position']['lat']=poi_data.lat;
-				Genivi.data['show_position']['lon']=poi_data.lon;
-				Genivi.data['mapback']="POI";
-                mapMenu();
-			}
+                Genivi.data['position']['lat']=poi_data.lat;
+                Genivi.data['position']['lon']=poi_data.lon;
+                entryMenu("NavigationAppBrowseMap",menu);
+            }
 		}
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
