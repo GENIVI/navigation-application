@@ -127,12 +127,12 @@ var zoom_guidance=4; //zoom level when a guidance starts
 
 //the default data below will be managed by the persistency component in the future
 address[NAVIGATIONCORE_COUNTRY]="Switzerland";
-address[NAVIGATIONCORE_CITY]="Genève";
-address[NAVIGATIONCORE_STREET]="Rue Franck-Martin";
-address[NAVIGATIONCORE_HOUSENUMBER]="8";
+address[NAVIGATIONCORE_CITY]="Zürich";
+address[NAVIGATIONCORE_STREET]="In Lampitzäckern";
+address[NAVIGATIONCORE_HOUSENUMBER]="11";
 data['position']['lat']=46.202410;
 data['position']['lon']=6.146265;
-data['position']['alt']=20;
+data['position']['alt']=19;
 data['display_on_map']='show_current_position'; //display current position of the vehicle on the map
 
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
