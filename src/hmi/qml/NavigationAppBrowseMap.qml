@@ -122,7 +122,10 @@ HMIMenu {
     function guidancePositionOnRouteChanged(args)
     {
         Genivi.hookSignal("guidancePositionOnRouteChanged");
-        updateGuidance();
+        if(simu_mode.status!==0)
+        { //for the time being it's necessary because of a bug in simulation use case
+            updateGuidance();
+        }
     }
 
     property Item mapmatchedpositionPositionUpdateSignal;

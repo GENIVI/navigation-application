@@ -38,7 +38,7 @@ or to build updated parts
 ./build.sh
 
 ## How to test
-
+There's a file that contains some test case and the reminding issues (bug list)
 
 ##Directory Structure
 
@@ -80,7 +80,7 @@ Potential issue may occur due to path change of freetype stuff. If necessary, ad
 There are two resolutions available, WVGA and XGA.
 For instance, for VGA:
 cd script
-./prepare.sh -i ../hmi/qml/Core/gimp/green-theme/800x480
+./prepare.sh -i ../hmi/qml/Core/gimp/gdp-theme/800x480
 cd ../
 
 
