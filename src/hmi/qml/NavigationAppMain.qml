@@ -31,7 +31,7 @@ import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/NavigationAppMain-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppMain"
     pageBack: Genivi.entryback[Genivi.entrybackheapsize]
@@ -41,7 +41,7 @@ HMIMenu {
 		id:dbusIf;
 	}
 
-	HMIBgImage {
+    NavigationAppHMIBgImage {
         image:StyleSheet.navigation_app_main_background[Constants.SOURCE];
 		anchors { fill: parent; topMargin: parent.headlineHeight}
 

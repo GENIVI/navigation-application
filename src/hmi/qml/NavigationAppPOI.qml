@@ -83,7 +83,7 @@ NavigationAppHMIMenu {
         }
     }
 
-    HMIBgImage {
+    NavigationAppHMIBgImage {
         image:StyleSheet.navigation_app_poi_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight }
 
@@ -167,7 +167,7 @@ NavigationAppHMIMenu {
 				smooth: true
 			}
 		}
-		HMIList {
+        NavigationAppHMIList {
             x:StyleSheet.searchResultList[Constants.X]; y:StyleSheet.searchResultList[Constants.Y]; width:StyleSheet.searchResultList[Constants.WIDTH]; height:StyleSheet.searchResultList[Constants.HEIGHT];
 			property real selectedEntry
 			id:view

@@ -61,7 +61,7 @@ NavigationAppHMIMenu {
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
             Genivi.guidance_activated = true;
-            if(Genivi.simulationPanelOnMapview){
+            if(Genivi.simulationMode){
                 Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
             }
             //Guidance active, so inform the trip computer (refresh)
@@ -407,15 +407,14 @@ NavigationAppHMIMenu {
         for (var i=0;i<res[3].length;i+=4){
             if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[3][i+3][3][1] != 0)){
                 oklat=1;
-                Genivi.data['position']['lat']=res[3][i+3][3][1];
+                Genivi.data['current_position']['lat']=res[3][i+3][3][1];
             } else {
                 if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[3][i+3][3][1] != 0)){
                     oklong=1;
-                    Genivi.data['position']['lon']=res[3][i+3][3][1];
+                    Genivi.data['current_position']['lon']=res[3][i+3][3][1];
                 } else {
-                    if ((res[3][i+1]== Genivi.NAVIGATIONCORE_ALTITUDE) && (res[3][i+3][3][1] != 0)){
-                        oklong=1;
-                        Genivi.data['position']['alt']=res[3][i+3][3][1];
+                    if (res[3][i+1]== Genivi.NAVIGATIONCORE_ALTITUDE){
+                        Genivi.data['current_position']['alt']=res[3][i+3][3][1];
                     }
                 }
             }
@@ -900,7 +899,7 @@ NavigationAppHMIMenu {
             }
         }
 
-        HMIList {
+        NavigationAppHMIList {
             property real selectedEntry
             x:StyleSheet.routeArea[Constants.X]; y:StyleSheet.routeArea[Constants.Y]; width:StyleSheet.routeArea[Constants.WIDTH]; height:StyleSheet.routeArea[Constants.HEIGHT];
             id:routeArea

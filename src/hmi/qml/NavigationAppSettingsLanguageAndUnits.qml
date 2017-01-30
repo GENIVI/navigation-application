@@ -33,7 +33,7 @@ import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/NavigationAppSettingsSettingsLanguageAndUnits-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppSettingsLanguageAndUnits"
     property Item configurationChangedSignal;
@@ -135,7 +135,7 @@ HMIMenu {
 		update();
 	}
 
-	HMIBgImage {
+    NavigationAppHMIBgImage {
 		id: content
         image:StyleSheet.navigation_app_settings_language_and_units_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}

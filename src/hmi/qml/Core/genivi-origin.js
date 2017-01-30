@@ -41,8 +41,9 @@ var g_poisearch_handle=["uint32",0];
 var g_lang;
 
 var data=new Array;
-data['destination']=new Array;
-data['position']=new Array;
+data['destination']=new Array; //the destination
+data['position']=new Array; //a position
+data['current_position']=new Array; //the current position
 
 var poi_data=new Array;
 var poi_id;
@@ -52,9 +53,9 @@ var categoriesIdNameList;
 
 var translations=new Array;
 
-var simulationPanelOnMapview=true;// simulation panel on map view by default
+var simulationMode=true;// simulation mode on by default
 
-var guidance_activated=false; //used by the HMI to directly go to map when guidance is on (reroute use case)
+var guidance_activated=false;
 var route_calculated=false;
 
 var entryback = new Array;
@@ -160,6 +161,11 @@ function dump(prefix,args)
 	dump2(prefix,"",args);
 }	
 
+function hookContext()
+{
+    console.log("Routing: ",route_calculated," Guidance: ",guidance_activated);
+}
+
 //Manage the historyOfLastEnteredLocation
 function updateHistoryOfLastEnteredLocation(enteredLocation,enteredLat,enteredLon)
 {
@@ -224,6 +230,11 @@ function gettext(arg)
 
 //----------------- Management of the DBus messages -----------------
 
+function hookMethod(arg)
+{
+    console.log("Method: ",arg);
+}
+
 // Send a dbus message to layer manager
 function lm_message(par, func, args)
 {
@@ -234,28 +245,28 @@ function lm_message(par, func, args)
 // Send a message to navigationcore (basic)
 function navigationcore_message(par, iface, func, args)
 {
-    console.log("Method: ",func);
+    hookMethod(func);
     return par.message("org.genivi.navigationcore."+iface,"/org/genivi/navigationcore","org.genivi.navigationcore."+iface, func, args);
 }
 
 // Send a message to mapviewer (basic)
 function mapviewer_message(par, iface, func, args)
 {
-    console.log("Method: ",func);
+    hookMethod(func);
     return par.message("org.genivi.mapviewer."+iface,"/org/genivi/mapviewer","org.genivi.mapviewer."+iface, func, args);
 }
 
 // Send a message to poiservice (basic)
 function poi_message(par, iface, func, args)
 {
-    console.log("Method: ",func);
+    hookMethod(func);
     return par.message("org.genivi.poiservice."+iface,"/org/genivi/poiservice/"+iface,"org.genivi.poiservice."+iface, func, args);
 }
 
 // Send a message to demonstrator (basic)
 function demonstrator_message(par, iface, func, args)
 {
-    console.log("Method: ",func);
+    hookMethod(func);
     return par.message("org.genivi.demonstrator."+iface,"/org/genivi/demonstrator/"+iface,"org.genivi.demonstrator."+iface, func, args);
 }
 

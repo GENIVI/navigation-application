@@ -3,7 +3,7 @@
 * SPDX-License-Identifier: MPL-2.0
 *
 *
-* \file HMIList.qml
+* \file NavigationAppHMIList.qml
 *
 * \brief This file is part of the navigation hmi.
 *

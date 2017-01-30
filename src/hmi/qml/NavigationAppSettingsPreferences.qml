@@ -34,7 +34,7 @@ import "Core/style-sheets/NavigationAppSettingsPreference-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 import lbs.plugin.preference 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppSettingsPreferences"
 
@@ -130,7 +130,7 @@ HMIMenu {
 		update();
 	}
 
-	HMIBgImage {
+    NavigationAppHMIBgImage {
 		id: content
         image:StyleSheet.navigation_app_settings_preference_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}

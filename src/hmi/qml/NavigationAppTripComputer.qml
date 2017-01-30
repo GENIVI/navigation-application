@@ -31,7 +31,7 @@ import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/NavigationAppTripComputer-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppTripComputer"
     property Item tripDataUpdatedSignal;
@@ -218,7 +218,7 @@ HMIMenu {
         disconnectSignals();
     }
 
-	HMIBgImage {
+    NavigationAppHMIBgImage {
         id:content
         image:
         {

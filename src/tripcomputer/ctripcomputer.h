@@ -53,6 +53,7 @@ public:
         TRIP_NUMBER = 2,
         TRIP_NUMBER_1 = 0,
         SAMPLING_TIME = 1, /*!< Sampling time of 1 sec. */
+        TANK_DISTANCE_REFRESH_TIME = 5, /*!< Refresh time of 5 sec. */
         INSTANT_FUEL_CONSUMPTION_COEFFICIENT = 10/SAMPLING_TIME, /*!< Time constant for the instant fuel consumption. */
         LAST_QUARTER_FUEL_CONSUMPTION_COEFFICIENT = 90/SAMPLING_TIME, /*!< Time constant for the last quarter fuel consumption. */
         DISTANCE_THRESHOLD = 40000, /*!< Threshold for trip data calculation in cm. */

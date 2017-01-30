@@ -58,6 +58,7 @@ BACK --> back to NavigationAppSearch
  
 ###NavigationAppSettingsLanguageAndUnits
 ![NavigationAppSettingsLanguageAndUnits](NavigationAppSettingsLanguageAndUnits.png) 
+Rationale:
 To select language and units
 Actions:
 LANG --> select the language
@@ -66,6 +67,7 @@ BACK --> back to NavigationAppSettings
 
 ###NavigationAppSettingsPreferences
 ![NavigationAppSettingsPreferences](NavigationAppSettingsPreferences.png) 
+Rationale:
 To select preferences for route calculation
 Actions:
 COST --> select cost model
@@ -74,6 +76,7 @@ BACK --> back to NavigationAppSettings
 
 ###NavigationAppSearch
 ![NavigationAppSearch](NavigationAppSearch.png) 
+Rationale:
 To enter a location by a keyboard
 To launch a route calculation
 To launch a guidance and go to the map viewer menu
@@ -91,8 +94,24 @@ BACK --> back to NavigationAppMain
 
 ###NavigationAppBrowseMap  
 ![NavigationAppBrowseMap](NavigationAppBrowseMap.png) 
+Rationale:
+Actions:
 
 ![NavigationAppBrowseMap_Settings](NavigationAppBrowseMap_Settings.png) 
+Rationale:
+To configure 2D/3D mode
+Actions:
+N/W/S/E --> change direction of the map view
+2D/3D --> toggle between 2D and 3D map view
+N/D --> toggle between night and day map view
+TILTP/TILTM --> change tilt in 3D mode
+HEIGHTP/HEIGHTM --> change height in 3D mode
+DISTP/DISTM --> change distance of view in 3D mode
+BACK --> hide the map view settings
 
 ![NavigationAppBrowseMapManeuvers](NavigationAppBrowseMapManeuvers.png) 
-
+Rationale:
+To display the next maneuvers on the route ahead
+Actions:
+ROLL --> navigate into the list
+BACK --> hide the list of maneuvers

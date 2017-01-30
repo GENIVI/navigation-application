@@ -40,7 +40,7 @@ import "Core/style-sheets/NavigationAppBrowseMapSettings-css.js" as StyleSheetSe
 
 import lbs.plugin.dbusif 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppBrowseMap"
     next: scrollup
@@ -136,6 +136,18 @@ HMIMenu {
         for (var i=0;i<res[3].length;i+=4){
             if (res[3][i+1]== Genivi.NAVIGATIONCORE_SPEED){
                 vehicleSpeedValue.text=res[3][i+3][3][1];
+            } else {
+                if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[3][i+3][3][1] != 0)){
+                    Genivi.data['current_position']['lat']=res[3][i+3][3][1];
+                } else {
+                    if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[3][i+3][3][1] != 0)){
+                        Genivi.data['current_position']['lon']=res[3][i+3][3][1];
+                    } else {
+                        if (res[3][i+1]== Genivi.NAVIGATIONCORE_ALTITUDE){
+                            Genivi.data['current_position']['alt']=res[3][i+3][3][1];
+                        }
+                    }
+                }
             }
         }
     }
@@ -217,13 +229,16 @@ HMIMenu {
         Genivi.hookSignal("fuelStopAdvisorWarning");
         if (args[1] == 1)
         {
+            fsamessageText.visible=true;
             fsamessageText.text=Genivi.gettext("FSAWarning");
             select_search_for_refill_in_top.visible=true;
+            select_search_for_refill_in_top.disabled=false;
         }
         else
         {
-            fsamessageText.text=" ";
+            fsamessageText.visible=false;
             select_search_for_refill_in_top.visible=false;
+            select_search_for_refill_in_top.disabled=true;
          }
     }
 
@@ -841,6 +856,9 @@ HMIMenu {
     function hideGuidance()
     {
         guidance.visible=false;
+        fsamessageText.visible=false;
+        select_search_for_refill_in_top.visible=false;
+        select_search_for_refill_in_top.disabled=true;
     }
 
     function showRoute()
@@ -874,7 +892,7 @@ HMIMenu {
             height: StyleSheetTop.navigation_app_browse_map_top_background[Constants.HEIGHT]
             x: StyleSheetMap.top_area[Constants.X]
             y: StyleSheetMap.top_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: top
                 opacity: 0.8
                 image:StyleSheetTop.navigation_app_browse_map_top_background[Constants.SOURCE];
@@ -941,7 +959,7 @@ HMIMenu {
             height: StyleSheetBottom.navigation_app_browse_map_bottom_background[Constants.HEIGHT]
             x: StyleSheetMap.bottom_area[Constants.X]
             y: StyleSheetMap.bottom_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: bottom
                 opacity: 0.8
                 image:StyleSheetBottom.navigation_app_browse_map_bottom_background[Constants.SOURCE];
@@ -1056,7 +1074,7 @@ HMIMenu {
             height: StyleSheetRoute.navigation_app_browse_map_route_background[Constants.HEIGHT]
             x: StyleSheetMap.route_area[Constants.X]
             y: StyleSheetMap.route_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: route
                 opacity: 0.8
                 image:StyleSheetRoute.navigation_app_browse_map_route_background[Constants.SOURCE]
@@ -1097,7 +1115,7 @@ HMIMenu {
             height: StyleSheetGuidance.navigation_app_browse_map_guidance_background[Constants.HEIGHT]
             x: StyleSheetMap.guidance_area[Constants.X]
             y: StyleSheetMap.guidance_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: guidance
                 opacity: 0.8
                 image:StyleSheetGuidance.navigation_app_browse_map_guidance_background[Constants.SOURCE]
@@ -1143,7 +1161,7 @@ HMIMenu {
             height: StyleSheetScroll.navigation_app_browse_map_scroll_background[Constants.HEIGHT]
             x: StyleSheetMap.scroll_area[Constants.X]
             y: StyleSheetMap.scroll_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 opacity: 0.8
                 property real panX: 40 //delta in pixel for x panning
                 property real panY: 40 //delta in pixel for y panning
@@ -1187,7 +1205,7 @@ HMIMenu {
             height: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.HEIGHT]
             x: StyleSheetMap.simulation_area[Constants.X]
             y: StyleSheetMap.simulation_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: simulation
                 opacity: 0.8
                 image:StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.SOURCE];
@@ -1314,7 +1332,7 @@ HMIMenu {
             height: StyleSheetManeuver.navigation_app_browse_map_maneuver_background[Constants.HEIGHT]
             x: StyleSheetManeuver.maneuver_area[Constants.X]
             y: StyleSheetManeuver.maneuver_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: maneuver
                 opacity: 0.8
                 visible: (displayManeuvers)
@@ -1335,7 +1353,7 @@ HMIMenu {
                         smooth: true
                     }
                 }
-                HMIList {
+                NavigationAppHMIList {
                     property real selectedEntry
                     x:StyleSheetManeuver.maneuver_area[Constants.X]; y:StyleSheetManeuver.maneuver_area[Constants.Y]; width:StyleSheetManeuver.maneuver_area[Constants.WIDTH]; height:StyleSheetManeuver.maneuver_area[Constants.HEIGHT];
                     id:maneuverArea
@@ -1352,7 +1370,7 @@ HMIMenu {
             height: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.HEIGHT]
             x: StyleSheetMap.settings_area[Constants.X]
             y: StyleSheetMap.settings_area[Constants.Y]
-            HMIBgImage {
+            NavigationAppHMIBgImage {
                 id: mapSettings
                 opacity: 0.8
                 image:StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.SOURCE];
@@ -1486,6 +1504,7 @@ HMIMenu {
             var res=Genivi.routing_GetRouteBoundingBox(dbusIf,Genivi.data['zoom_route_handle']);
             Genivi.mapviewer_SetMapViewBoundingBox(dbusIf,res);
             Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
+            Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50); //activate advisor mode
             hideGuidance();
             hideRoute();
             hideSimulation();
@@ -1496,13 +1515,14 @@ HMIMenu {
             if (Genivi.data['display_on_map']==='show_current_position') {
                 Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
                 Genivi.mapviewer_SetMapViewScale(dbusIf,Genivi.zoom_guidance);
-                Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
+                Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['current_position']['lat'],Genivi.data['current_position']['lon'],Genivi.data['current_position']['alt']);
                 if(Genivi.guidance_activated) {
                     Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
+                    Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50); //activate advisor mode
                     showGuidance();
                     showRoute();
                     updateGuidance();
-                    if (Genivi.simulationPanelOnMapview===true)
+                    if (Genivi.simulationMode===true)
                     {
                         showSimulation();
                         updateSimulation();
@@ -1510,6 +1530,7 @@ HMIMenu {
                         hideSimulation();
                     }
                 } else {
+                    Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,50); //no advisor mode
                     hideGuidance();
                     hideRoute();
                     hideSimulation();
@@ -1520,6 +1541,7 @@ HMIMenu {
                 if (Genivi.data['display_on_map']==='show_position') {
                     Genivi.mapviewer_SetFollowCarMode(dbusIf,false);
                     Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
+                    Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,50); //no advisor mode
                     hideGuidance();
                     hideRoute();
                     hideSimulation();

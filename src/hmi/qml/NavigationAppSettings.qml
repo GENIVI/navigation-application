@@ -33,11 +33,9 @@ import "Core/style-sheets/style-constants.js" as Constants;
 import "Core/style-sheets/NavigationAppSettings-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
-HMIMenu {
+NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppSettings"
-    property Item simulationStatusChangedSignal;
-    property Item simulationSpeedChangedSignal;
     next: back
         prev: back
 
@@ -45,204 +43,7 @@ HMIMenu {
 		id:dbusIf;
 	}
 
-    property int speedValueSent: 0;
-
-    function simulationSpeedChanged(args)
-    {
-        Genivi.hookSignal("simulationSpeedChanged");
-        var speedFactor=args[1];
-        if (speedFactor == 0) {
-            speedValue.text="0";
-            speedValueSent=0;
-        }
-        if (speedFactor == 1) {
-            speedValue.text="1/4";
-            speedValueSent=1;
-        }
-        if (speedFactor == 2) {
-            speedValue.text="1/2";
-            speedValueSent=2;
-        }
-        if (speedFactor == 4) {
-            speedValue.text="1";
-            speedValueSent=3;
-        }
-        if (speedFactor == 8) {
-            speedValue.text="2";
-            speedValueSent=4;
-        }
-        if (speedFactor == 16) {
-            speedValue.text="4";
-            speedValueSent=5;
-        }
-        if (speedFactor == 32) {
-            speedValue.text="8";
-            speedValueSent=6;
-        }
-        if (speedFactor == 64) {
-            speedValue.text="16";
-            speedValueSent=7;
-        }
-    }
-
-    function simulationStatusChanged(args)
-    {
-        Genivi.hookSignal("simulationStatusChanged");
-        var simulationStatus=args[1];
-        if (simulationStatus != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
-        {
-            on_off.setState("ON");
-            if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-            {
-                simu_mode.setState("PAUSE");
-            }
-            else
-            {
-                if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                {
-                    simu_mode.setState("PLAY");
-                }
-            }
-        }
-        else
-        {
-            on_off.setState("OFF");
-            simu_mode.setState("FREE");
-        }
-    }
-
-    function connectSignals()
-    {
-        simulationStatusChangedSignal=Genivi.connect_simulationStatusChangedSignal(dbusIf,menu);
-        simulationSpeedChangedSignal=Genivi.connect_simulationSpeedChangedSignal(dbusIf,menu);
-    }
-
-    function disconnectSignals()
-    {
-        simulationStatusChangedSignal.destroy();
-        simulationSpeedChangedSignal.destroy();
-    }
-
-
-	function getDBusSpeedValue(value)
-	{
-		var returnValue;
-		switch (value)
-		{
-			case 0:
-				returnValue = 0;
-			break;
-			case 1:
-				returnValue = 1;
-			break;
-			case 2:
-				returnValue = 2;
-			break;
-			case 3:
-				returnValue = 4;
-			break;
-			case 4:
-				returnValue = 8;
-			break;
-			case 5:
-				returnValue = 16;
-			break;
-			case 6:
-				returnValue = 32;
-			break;
-			case 7:
-				returnValue = 64;
-			break;
-			default:
-				returnValue = 0;
-			break;
-		}	
-		return	returnValue;
-	}
-
-    function updateSimulation()
-	{
-        var res=Genivi.mapmatchedposition_GetSimulationStatus(dbusIf);
-        var simulationStatus=res[1];
-        if (simulationStatus != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
-        {
-            on_off.setState("ON");
-            if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-            {
-                simu_mode.setState("PAUSE");
-            }
-            else
-            {
-                if (simulationStatus == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                {
-                    simu_mode.setState("PLAY");
-                }
-            }
-        }
-        else
-        {
-            on_off.setState("OFF");
-            simu_mode.setState("FREE");
-        }
-
-        var res1=Genivi.mapmatchedposition_GetSimulationSpeed(dbusIf);
-        var speedFactor=res1[1];
-        if (speedFactor == 0) {
-            speedValue.text="0";
-            speedValueSent=0;
-        }
-        if (speedFactor == 1) {
-            speedValue.text="1/4";
-            speedValueSent=1;
-        }
-        if (speedFactor == 2) {
-            speedValue.text="1/2";
-            speedValueSent=2;
-        }
-        if (speedFactor == 4) {
-            speedValue.text="1";
-            speedValueSent=3;
-        }
-        if (speedFactor == 8) {
-            speedValue.text="2";
-            speedValueSent=4;
-        }
-        if (speedFactor == 16) {
-            speedValue.text="4";
-            speedValueSent=5;
-        }
-        if (speedFactor == 32) {
-            speedValue.text="8";
-            speedValueSent=6;
-        }
-        if (speedFactor == 64) {
-            speedValue.text="16";
-            speedValueSent=7;
-        }
-	}
-
-    function leave()
-    {
-        disconnectSignals();
-    }
-
-    function showSimulation()
-    {
-        speed_down.disabled=false;
-        speed_up.disabled=false;
-        on_off.disabled=false;
-        simu_mode.disabled=false;
-    }
-
-    function hideSimulation()
-    {
-        speed_down.disabled=true;
-        speed_up.disabled=true;
-        on_off.disabled=true;
-        simu_mode.disabled=true;
-    }
-
-	HMIBgImage {
+    NavigationAppHMIBgImage {
 		id: content
         image:StyleSheet.navigation_app_settings_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
@@ -255,148 +56,46 @@ HMIMenu {
             text: Genivi.gettext("Simulation")
              }
 
-        Text {
-            x:StyleSheet.speedTitle[Constants.X]; y:StyleSheet.speedTitle[Constants.Y]; width:StyleSheet.speedTitle[Constants.WIDTH]; height:StyleSheet.speedTitle[Constants.HEIGHT];color:StyleSheet.speedTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.speedTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.speedTitle[Constants.PIXELSIZE];
-            id:speedTitle;
-            style: Text.Sunken;
-            smooth: true
-            text: Genivi.gettext("Speed")
-             }
-
-        Text {
-            x:StyleSheet.speedValue[Constants.X]; y:StyleSheet.speedValue[Constants.Y]; width:StyleSheet.speedValue[Constants.WIDTH]; height:StyleSheet.speedValue[Constants.HEIGHT];color:StyleSheet.speedValue[Constants.TEXTCOLOR];styleColor:StyleSheet.speedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.speedValue[Constants.PIXELSIZE];
-            id:speedValue
-            style: Text.Sunken;
-            smooth: true
-            text: ""
-             }
-
         StdButton {
-            source:StyleSheet.speed_down[Constants.SOURCE]; x:StyleSheet.speed_down[Constants.X]; y:StyleSheet.speed_down[Constants.Y]; width:StyleSheet.speed_down[Constants.WIDTH]; height:StyleSheet.speed_down[Constants.HEIGHT];
-            id:speed_down;  disabled:false; next:back; prev:back;
-			onClicked:
-			{
-                if (speedValueSent > 0)
+            x:StyleSheet.simu_mode_enable[Constants.X]; y:StyleSheet.simu_mode_enable[Constants.Y]; width:StyleSheet.simu_mode_enable[Constants.WIDTH]; height:StyleSheet.simu_mode_enable[Constants.HEIGHT];
+            id:simu_mode; next:back; prev:preferences;  disabled:false;
+            source:
+            {
+                if (Genivi.simulationMode==true)
                 {
-                    speedValueSent = speedValueSent-1;
+                    source=StyleSheet.simu_mode_enable[Constants.SOURCE];
                 }
-                Genivi.mapmatchedposition_SetSimulationSpeed(dbusIf,getDBusSpeedValue(speedValueSent));
-			}
-		}
-
-        StdButton {
-            source:StyleSheet.speed_up[Constants.SOURCE]; x:StyleSheet.speed_up[Constants.X]; y:StyleSheet.speed_up[Constants.Y]; width:StyleSheet.speed_up[Constants.WIDTH]; height:StyleSheet.speed_up[Constants.HEIGHT];
-            id:speed_up;  disabled:false; next:back; prev:back;
-			onClicked:
-			{
-                if (speedValueSent < 7)
+                else
                 {
-                    speedValueSent = speedValueSent+1;
+                    source=StyleSheet.simu_mode_disable[Constants.SOURCE];
                 }
-                Genivi.mapmatchedposition_SetSimulationSpeed(dbusIf,getDBusSpeedValue(speedValueSent));
-			}
-		}
-
-		Text {
-            x:StyleSheet.modeTitle[Constants.X]; y:StyleSheet.modeTitle[Constants.Y]; width:StyleSheet.modeTitle[Constants.WIDTH]; height:StyleSheet.modeTitle[Constants.HEIGHT];color:StyleSheet.modeTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.modeTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.modeTitle[Constants.PIXELSIZE];
-            id:modeTitle;
-            style: Text.Sunken;
-            smooth: true
-            text: Genivi.gettext("Mode")
-             }
-
-        Text {
-            x:StyleSheet.onmapviewTitle[Constants.X]; y:StyleSheet.onmapviewTitle[Constants.Y]; width:StyleSheet.onmapviewTitle[Constants.WIDTH]; height:StyleSheet.onmapviewTitle[Constants.HEIGHT];color:StyleSheet.onmapviewTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.onmapviewTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.onmapviewTitle[Constants.PIXELSIZE];
-            id:onmapviewTitle;
-            style: Text.Sunken;
-            smooth: true
-            text: Genivi.gettext("OnMapView")
-             }
-
-        StdButton {
-            x:StyleSheet.simulation_on[Constants.X]; y:StyleSheet.simulation_on[Constants.Y]; width:StyleSheet.simulation_on[Constants.WIDTH]; height:StyleSheet.simulation_on[Constants.HEIGHT];
-            id:on_off; next:back; prev:back;  disabled:false;
-			property int status: 0;
-			function setState(name)
-			{
-				if (name=="ON")
-				{
-					status=1;
-                    source=StyleSheet.simulation_off[Constants.SOURCE];
-				}
-				else
-				{
-					status=0;
-                    source=StyleSheet.simulation_on[Constants.SOURCE];
-				}
             }
-			onClicked:
-			{
-				switch (status) 
-				{
-                    case 0: //enable the simulation mode and set it to pause
-                        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
-                        Genivi.mapmatchedposition_PauseSimulation(dbusIf);
-					break;
-                    case 1: //disable the simulation mode
-                        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,false);
-                    break;
-					default:
-					break;
-				}
-			}
-		}
 
-        StdButton {
-            x:StyleSheet.play[Constants.X]; y:StyleSheet.play[Constants.Y]; width:StyleSheet.play[Constants.WIDTH]; height:StyleSheet.play[Constants.HEIGHT];
-            id:simu_mode; next:back; prev:back;  disabled:false;
-			property int status: 0;
-			function setState(name)
-			{
-				if (name=="FREE")
-				{
-					status=0;
-                    source=StyleSheet.play[Constants.SOURCE];
-					disabled=true;
-				}
-				else
-				{
-					if (name=="PLAY")
-					{
-						status=1;
-                        source=StyleSheet.pause[Constants.SOURCE];
-						enabled=true;
-                        disabled=false;
-					}
-					else
-					{
-						if (name=="PAUSE")
-						{
-							status=2;
-                            source=StyleSheet.play[Constants.SOURCE];
-							enabled=true;
-                            disabled=false;
-						}
-					}
-				}
+            function setState(name)
+            {
+                if (name=="ENABLE")
+                {
+                    source=StyleSheet.simu_mode_enable[Constants.SOURCE];
+                }
+                else
+                {
+                    source=StyleSheet.simu_mode_disable[Constants.SOURCE];
+                }
             }
-			onClicked:
-			{
-				switch (status) 
-				{
-                    case 2: //pause
-						//pause to resume
-                        Genivi.mapmatchedposition_StartSimulation(dbusIf);
-                    break;
-                    case 1: //play
-                        //play to pause
-                        Genivi.mapmatchedposition_PauseSimulation(dbusIf);
-                    break;
-					default:
-					break;
-				}
+            onClicked:
+            {
+                if (Genivi.simulationMode==true)
+                { //hide the panel
+                    Genivi.simulationMode=false;
+                    simu_mode.setState("DISABLE");
+                }
+                else
+                { //show the panel
+                    Genivi.simulationMode=true;
+                    simu_mode.setState("ENABLE");
+                }
             }
-		}
+        }
 
         StdButton {
             source:StyleSheet.preferences[Constants.SOURCE]; x:StyleSheet.preferences[Constants.X]; y:StyleSheet.preferences[Constants.Y]; width:StyleSheet.preferences[Constants.WIDTH]; height:StyleSheet.preferences[Constants.HEIGHT];textColor:StyleSheet.preferencesText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.preferencesText[Constants.PIXELSIZE];
@@ -416,58 +115,12 @@ HMIMenu {
 
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:onmapview_enable; prev:languageAndUnit;
-            onClicked:{leave(); leaveMenu();}
-        }
-
-        StdButton {
-            x:StyleSheet.onmapview_enable[Constants.X]; y:StyleSheet.onmapview_enable[Constants.Y]; width:StyleSheet.onmapview_enable[Constants.WIDTH]; height:StyleSheet.onmapview_enable[Constants.HEIGHT];
-            id:onmapview_enable; next:back; prev:preferences;  disabled:false;
-            source:
-            {
-                if (Genivi.simulationPanelOnMapview==true)
-                {
-                    source=StyleSheet.onmapview_enable[Constants.SOURCE];
-                }
-                else
-                {
-                    source=StyleSheet.onmapview_disable[Constants.SOURCE];
-                }
-            }
-
-            function setState(name)
-            {
-                if (name=="ENABLE")
-                {
-                    source=StyleSheet.onmapview_enable[Constants.SOURCE];
-                }
-                else
-                {
-                    source=StyleSheet.onmapview_disable[Constants.SOURCE];
-                }
-            }
-            onClicked:
-            {
-                if (Genivi.simulationPanelOnMapview==true)
-                { //hide the panel
-                    Genivi.simulationPanelOnMapview=false;
-                    onmapview_enable.setState("DISABLE");
-                    hideSimulation();
-                }
-                else
-                { //show the panel
-                    Genivi.simulationPanelOnMapview=true;
-                    onmapview_enable.setState("ENABLE");
-                    showSimulation();
-                    updateSimulation();
-                }
-            }
+            id:back; text: Genivi.gettext("Back"); disabled:false; next:simu_mode; prev:languageAndUnit;
+            onClicked:{leaveMenu();}
         }
 
 	}
 
     Component.onCompleted: {
-        connectSignals();
-        updateSimulation();
     }
 }

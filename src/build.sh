@@ -144,6 +144,7 @@ if [ "$theme" = 1 ]
 then
 	echo 'generate the hmi for gdp theme'
 	cd script
+	./prepare.sh -c
 	./prepare.sh -i ../hmi/qml/Core/gimp/gdp-theme/800x480
 	cd ../
 fi

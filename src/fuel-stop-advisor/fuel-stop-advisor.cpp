@@ -350,7 +350,7 @@ class FuelStopAdvisor
 		return distance/1000+(remaining > 0 ? remaining:0);
 	}
 	
-	void update_data()
+    void updateData()
 	{
         tripComputerInput_t tripComputerInput;
         DBus::Variant variant;
@@ -506,8 +506,16 @@ static gboolean
 update_data(gpointer user_data)
 {
 	FuelStopAdvisor *tc=(FuelStopAdvisor *)user_data;
-	tc->update_data();
+    tc->updateData();
 	return TRUE;
+}
+
+static gboolean
+update_enhanced_distance(gpointer user_data)
+{
+    FuelStopAdvisor *tc=(FuelStopAdvisor *)user_data;
+    tc->updateEnhancedDistance();
+    return TRUE;
 }
 
 int main(int argc, char **argv)
@@ -521,5 +529,6 @@ int main(int argc, char **argv)
 	server=new FuelStopAdvisor(*conn);
 
     g_timeout_add(CTripComputer::SAMPLING_TIME*CTripComputer::CONVERT_SECOND_IN_MILLISECOND, update_data, server);
-	g_main_loop_run(loop);
+    g_timeout_add(CTripComputer::TANK_DISTANCE_REFRESH_TIME*CTripComputer::CONVERT_SECOND_IN_MILLISECOND, update_enhanced_distance, server);
+    g_main_loop_run(loop);
 }
