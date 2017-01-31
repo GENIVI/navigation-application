@@ -165,3 +165,4 @@ translations["Menu"]="MENU";
 translations["Cancel"]="CANCEL";
 translations["Quit"]="QUIT";
 
+translations["Showroom"]="SHOWROOM";

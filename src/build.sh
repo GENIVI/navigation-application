@@ -142,10 +142,11 @@ cd ../
 
 if [ "$theme" = 1 ]
 then
-	echo 'generate the hmi for gdp theme'
+	echo 'generate the hmi for gdp theme and pack it into a tarball'
 	cd script
 	./prepare.sh -c
 	./prepare.sh -i ../hmi/qml/Core/gimp/gdp-theme/800x480
+	tar czf ../hmi/qml/Core/referenceHMI.tar.gz ../hmi/qml/Core/images/ ../hmi/qml/Core/style-sheets/ ../hmi/qml/Core/translations/
 	cd ../
 fi
 

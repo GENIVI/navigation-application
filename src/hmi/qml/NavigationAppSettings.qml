@@ -55,7 +55,6 @@ NavigationAppHMIMenu {
             smooth: true
             text: Genivi.gettext("Simulation")
              }
-
         StdButton {
             x:StyleSheet.simu_mode_enable[Constants.X]; y:StyleSheet.simu_mode_enable[Constants.Y]; width:StyleSheet.simu_mode_enable[Constants.WIDTH]; height:StyleSheet.simu_mode_enable[Constants.HEIGHT];
             id:simu_mode; next:back; prev:preferences;  disabled:false;
@@ -85,14 +84,62 @@ NavigationAppHMIMenu {
             onClicked:
             {
                 if (Genivi.simulationMode==true)
-                { //hide the panel
+                {
                     Genivi.simulationMode=false;
                     simu_mode.setState("DISABLE");
                 }
                 else
-                { //show the panel
+                {
                     Genivi.simulationMode=true;
                     simu_mode.setState("ENABLE");
+                }
+            }
+        }
+
+        Text {
+            x:StyleSheet.showroomTitle[Constants.X]; y:StyleSheet.showroomTitle[Constants.Y]; width:StyleSheet.showroomTitle[Constants.WIDTH]; height:StyleSheet.showroomTitle[Constants.HEIGHT];color:StyleSheet.showroomTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.showroomTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.showroomTitle[Constants.PIXELSIZE];
+            id:showroomTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Showroom")
+             }
+        StdButton {
+            x:StyleSheet.showroom_enable[Constants.X]; y:StyleSheet.showroom_enable[Constants.Y]; width:StyleSheet.showroom_enable[Constants.WIDTH]; height:StyleSheet.showroom_enable[Constants.HEIGHT];
+            id:showroom; next:back; prev:preferences;  disabled:false;
+            source:
+            {
+                if (Genivi.showroom==true)
+                {
+                    source=StyleSheet.showroom_enable[Constants.SOURCE];
+                }
+                else
+                {
+                    source=StyleSheet.showroom_disable[Constants.SOURCE];
+                }
+            }
+
+            function setState(name)
+            {
+                if (name=="ENABLE")
+                {
+                    source=StyleSheet.showroom_enable[Constants.SOURCE];
+                }
+                else
+                {
+                    source=StyleSheet.showroom_disable[Constants.SOURCE];
+                }
+            }
+            onClicked:
+            {
+                if (Genivi.showroom ===true)
+                {
+                    Genivi.showroom=false;
+                    showroom.setState("DISABLE");
+                }
+                else
+                {
+                    Genivi.showroom=true;
+                    showroom.setState("ENABLE");
                 }
             }
         }

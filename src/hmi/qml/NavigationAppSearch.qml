@@ -421,6 +421,7 @@ NavigationAppHMIMenu {
         }
         if ((oklat == 1) && (oklong == 1)) {vehicleLocated=true;}
         else {vehicleLocated=false;}
+        calculate_curr.update();
     }
 
     function updateStartStop()
@@ -446,8 +447,14 @@ NavigationAppHMIMenu {
 
         //launch route calculation
         destination=Genivi.latlon_to_map(Genivi.data['destination']);
-        position=Genivi.latlon_to_map(Genivi.data['position']);
-        Genivi.routing_SetWaypoints(dbusIf,true,position,destination); //start from current position
+        if(Genivi.showroom) {
+            position=Genivi.latlon_to_map(Genivi.data['default_position']);
+            Genivi.routing_SetWaypoints(dbusIf,false,position,destination); //start from given position
+        }else{
+            position=Genivi.latlon_to_map(Genivi.data['current_position']);
+            Genivi.routing_SetWaypoints(dbusIf,true,position,destination); //start from current position
+        }
+
         Genivi.routing_CalculateRoute(dbusIf);
     }
 
@@ -615,6 +622,10 @@ NavigationAppHMIMenu {
         routeArea.visible=true;
         routeArea.forceActiveFocus();
         crossroadZoom.visible=true;
+        prev_maneuver.visible=true;
+        prev_maneuver.disabled=false;
+        next_maneuver.visible=true;
+        next_maneuver.disabled=false;
         Genivi.route_calculated=true;
     }
 
@@ -635,6 +646,10 @@ NavigationAppHMIMenu {
         guidance_stop.disabled=true;
         routeArea.visible=false;
         crossroadZoom.visible=false;
+        prev_maneuver.visible=false;
+        prev_maneuver.disabled=true;
+        next_maneuver.visible=false;
+        next_maneuver.disabled=true;
         Genivi.route_calculated=false;
     }
 
@@ -771,6 +786,47 @@ NavigationAppHMIMenu {
             onLeave:{}
         }
 
+        // enter a location by the keyboard menu
+        // keyboard
+        NavigationAppKeyboard {
+            x:StyleSheet.keyboardArea[Constants.X]; y:StyleSheet.keyboardArea[Constants.Y]; width:StyleSheet.keyboardArea[Constants.WIDTH]; height:StyleSheet.keyboardArea[Constants.HEIGHT];
+            id: keyboardArea;
+            visible: false;
+            destination: countryValue; // by default
+            firstLayout: "ABC";
+            secondLayout: "abc";
+            next: listArea;
+            prev: numberKeyboard;
+            onKeypress: {  spell(what); }
+        }
+        // list of items
+        Component {
+            id: listDelegate
+            Text {
+                property real index:number;
+                width:StyleSheet.list_delegate[Constants.WIDTH]; height:StyleSheet.list_delegate[Constants.HEIGHT];color:StyleSheet.list_delegate[Constants.TEXTCOLOR];styleColor:StyleSheet.list_delegate[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.list_delegate[Constants.PIXELSIZE];
+                id:textItem;
+                text: name;
+                style: Text.Sunken;
+                smooth: true
+            }
+        }
+        NavigationAppHMIList {
+            property real selectedEntry
+            x:StyleSheet.listArea[Constants.X]; y:StyleSheet.listArea[Constants.Y]; width:StyleSheet.listArea[Constants.WIDTH]; height:StyleSheet.listArea[Constants.HEIGHT];
+            id:listArea
+            visible: false;
+            delegate: listDelegate
+            next:cancel
+            prev:keyboardArea
+            onSelected:{
+                Genivi.entryselectedentry=what.index;
+                // Set value of corresponding field and hide keyboard and list
+                Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
+                manageAddressItem();
+            }
+        }
+
         // route menu
         Text {
             x:StyleSheet.guidanceTitle[Constants.X]; y:StyleSheet.guidanceTitle[Constants.Y]; width:StyleSheet.guidanceTitle[Constants.WIDTH]; height:StyleSheet.guidanceTitle[Constants.HEIGHT];color:StyleSheet.guidanceTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.guidanceTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.guidanceTitle[Constants.PIXELSIZE];
@@ -871,21 +927,18 @@ NavigationAppHMIMenu {
             border.right: 0; border.bottom: 0
             visible: false;
         }
-
-        // enter a location by the keyboard menu
-        // keyboard
-        NavigationAppKeyboard {
-            x:StyleSheet.keyboardArea[Constants.X]; y:StyleSheet.keyboardArea[Constants.Y]; width:StyleSheet.keyboardArea[Constants.WIDTH]; height:StyleSheet.keyboardArea[Constants.HEIGHT];
-            id: keyboardArea;
+        StdButton {
+            source:StyleSheet.prev_maneuver[Constants.SOURCE]; x:StyleSheet.prev_maneuver[Constants.X]; y:StyleSheet.prev_maneuver[Constants.Y]; width:StyleSheet.prev_maneuver[Constants.WIDTH]; height:StyleSheet.prev_maneuver[Constants.HEIGHT];
+            id:prev_maneuver;
+            disabled:true;
             visible: false;
-            destination: countryValue; // by default
-            firstLayout: "ABC";
-            secondLayout: "abc";
-            next: listArea;
-            prev: numberKeyboard;
-            onKeypress: {  spell(what); }
         }
-
+        StdButton {
+            source:StyleSheet.next_maneuver[Constants.SOURCE]; x:StyleSheet.next_maneuver[Constants.X]; y:StyleSheet.next_maneuver[Constants.Y]; width:StyleSheet.next_maneuver[Constants.WIDTH]; height:StyleSheet.next_maneuver[Constants.HEIGHT];
+            id:next_maneuver;
+            disabled:true;
+            visible: false;
+        }
         // route list
         Component {
             id: routeDelegate
@@ -898,7 +951,6 @@ NavigationAppHMIMenu {
                 smooth: true
             }
         }
-
         NavigationAppHMIList {
             property real selectedEntry
             x:StyleSheet.routeArea[Constants.X]; y:StyleSheet.routeArea[Constants.Y]; width:StyleSheet.routeArea[Constants.WIDTH]; height:StyleSheet.routeArea[Constants.HEIGHT];
@@ -909,35 +961,6 @@ NavigationAppHMIMenu {
             prev:keyboardArea
         }
 
-        // list of items
-        Component {
-            id: listDelegate
-            Text {
-                property real index:number;
-                width:StyleSheet.list_delegate[Constants.WIDTH]; height:StyleSheet.list_delegate[Constants.HEIGHT];color:StyleSheet.list_delegate[Constants.TEXTCOLOR];styleColor:StyleSheet.list_delegate[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.list_delegate[Constants.PIXELSIZE];
-                id:textItem;
-                text: name;
-                style: Text.Sunken;
-                smooth: true
-            }
-        }
-
-        NavigationAppHMIList {
-            property real selectedEntry
-            x:StyleSheet.listArea[Constants.X]; y:StyleSheet.listArea[Constants.Y]; width:StyleSheet.listArea[Constants.WIDTH]; height:StyleSheet.listArea[Constants.HEIGHT];
-            id:listArea
-            visible: false;
-            delegate: listDelegate
-            next:cancel
-            prev:keyboardArea
-            onSelected:{
-                Genivi.entryselectedentry=what.index;
-                // Set value of corresponding field and hide keyboard and list
-                Genivi.locationinput_SelectEntry(dbusIf,Genivi.entryselectedentry-1);
-                manageAddressItem();
-            }
-        }
-
         // bottom banner
         StdButton {
             source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
@@ -946,7 +969,7 @@ NavigationAppHMIMenu {
                 setAddress();
                 launchRouteCalculation();
             }
-            disabled:!(vehicleLocated && destinationValid && !(keyboardActivated));
+            disabled:!((vehicleLocated || Genivi.showroom ) && destinationValid && !(keyboardActivated));
             next:back; prev:numberKeyboard
         }
         StdButton {

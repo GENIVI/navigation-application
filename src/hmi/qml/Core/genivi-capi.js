@@ -44,6 +44,7 @@ var data=new Array;
 data['destination']=new Array; //the destination
 data['position']=new Array; //a position
 data['current_position']=new Array; //the current position
+data['default_position']=new Array; //the default position used for the showrooom
 
 var poi_data=new Array;
 var poi_id;
@@ -54,6 +55,7 @@ var categoriesIdNameList;
 var translations=new Array;
 
 var simulationMode=true;// simulation mode on by default
+var showroom=false; //showroom off by default
 
 var guidance_activated=false;
 var route_calculated=false;
@@ -135,6 +137,9 @@ data['position']['lat']=46.202410;
 data['position']['lon']=6.146265;
 data['position']['alt']=19;
 data['display_on_map']='show_current_position'; //display current position of the vehicle on the map
+data['default_position']['lat']=46.202038; //default position (rue Jean Calvin Genève)
+data['default_position']['lon']=6.146845;
+data['default_position']['alt']=19;
 
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
 tripMode="TRIP_NUMBER1";
