@@ -59,6 +59,7 @@ var showroom=false; //showroom off by default
 
 var guidance_activated=false;
 var route_calculated=false;
+var reroute_requested=false;
 
 var entryback = new Array;
 var entrybackheapsize=0;
@@ -143,6 +144,12 @@ data['default_position']['alt']=19;
 
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
 tripMode="TRIP_NUMBER1";
+
+//keyboard parameters
+var kbdRows=8; //number of rows per line
+var kbdRowRatio=4; //size of row spacing (ratio)
+var kbdLines=4; //number of lines
+var kbdLineRatio=4; //size of line spacing (ratio)
 
 //dump functions for debug
 function dump2(prefix,index,args)
@@ -265,7 +272,7 @@ function mapviewer_message(par, iface, func, args)
 function poi_message(par, iface, func, args)
 {
     hookMethod(func);
-    return par.message("org.genivi.navigation.poiservice."+iface+".v4_0_"+iface,"/"+iface,"org.genivi.navigation.poiservice."+iface+".v4_0", func, args);
+    return par.message("org.genivi.navigation.poiservice."+iface+".v2_0_"+iface,"/"+iface,"org.genivi.navigation.poiservice."+iface+".v2_0", func, args);
 }
 
 // Send a message to demonstrator (basic)

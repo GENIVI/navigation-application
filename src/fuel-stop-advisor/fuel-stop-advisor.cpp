@@ -96,12 +96,12 @@ class Properties
 };
 
 class Routing
-: public org::genivi::navigationcore::Routing_proxy,
+: public org::genivi::navigation::navigationcore::Routing_proxy,
   public DBus::ObjectProxy
 {
 	public:
 	Routing(DBus::Connection &connection)
-        : DBus::ObjectProxy(connection, "/org/genivi/navigationcore","org.genivi.navigationcore.Routing")
+        : DBus::ObjectProxy(connection, "/org/genivi/navigationcore","org.genivi.navigation.navigationcore.Routing")
 	{
 	}
 

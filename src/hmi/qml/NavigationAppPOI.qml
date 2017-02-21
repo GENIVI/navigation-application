@@ -43,9 +43,57 @@ NavigationAppHMIMenu {
     property int type_poi_bar: 65848
     property int type_poi_fuel: 65834
     property string poiCategoryName
+    property bool vehicleLocated: false
 
+    //------------------------------------------//
+    // Management of the DBus exchanges
+    //------------------------------------------//
     DBusIf {
     	id: dbusIf
+    }
+
+    property Item mapmatchedpositionPositionUpdateSignal;
+    function mapmatchedpositionPositionUpdate(args)
+    {
+        Genivi.hookSignal("mapmatchedpositionPositionUpdate");
+        if(!Genivi.showroom) {
+            updateCurrentPosition();
+        }
+    }
+
+    function connectSignals()
+    {
+        mapmatchedpositionPositionUpdateSignal=Genivi.connect_mapmatchedpositionPositionUpdateSignal(dbusIf,menu);
+    }
+
+    function disconnectSignals()
+    {
+        mapmatchedpositionPositionUpdateSignal.destroy();
+    }
+
+    function updateCurrentPosition()
+    {
+        var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
+        var oklat=0;
+        var oklong=0;
+        for (var i=0;i<res[3].length;i+=4){
+            if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[3][i+3][3][1] != 0)){
+                oklat=1;
+                Genivi.data['current_position']['lat']=res[3][i+3][3][1];
+            } else {
+                if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[3][i+3][3][1] != 0)){
+                    oklong=1;
+                    Genivi.data['current_position']['lon']=res[3][i+3][3][1];
+                } else {
+                    if (res[3][i+1]== Genivi.NAVIGATIONCORE_ALTITUDE){
+                        Genivi.data['current_position']['alt']=res[3][i+3][3][1];
+                    }
+                }
+            }
+        }
+        if ((oklat == 1) && (oklong == 1)) {vehicleLocated=true;}
+        else {vehicleLocated=false;}
+        select_search.update();
     }
 
     function update()
@@ -224,21 +272,21 @@ NavigationAppHMIMenu {
         StdButton {
             source:StyleSheet.select_search[Constants.SOURCE]; x:StyleSheet.select_search[Constants.X]; y:StyleSheet.select_search[Constants.Y]; width:StyleSheet.select_search[Constants.WIDTH]; height:StyleSheet.select_search[Constants.HEIGHT];
             id:select_search
-			onClicked: {
+            disabled:!(vehicleLocated || Genivi.showroom );
+            onClicked: {
 				var model=view.model;
 				var ids=[];
-                var position=Genivi.mapmatchedposition_GetPosition(dbusIf);
                 var latitude=0;
                 var longitude=0;
-                for (var i=0;i<position[3].length;i+=4){
-                    if ((position[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (position[3][i+3][3][1] != 0)){
-                        latitude=position[3][i+3][3][1];
-                    } else {
-                        if ((position[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (position[3][i+3][3][1] != 0)){
-                            longitude=position[3][i+3][3][1];
-                        }
-                    }
+
+                if(Genivi.showroom) {
+                    latitude=Genivi.data['default_position']['lat'];
+                    longitude=Genivi.data['default_position']['lon'];
+                }else{
+                    latitude=Genivi.data['current_position']['lat'];
+                    longitude=Genivi.data['current_position']['lon'];
                 }
+
                 if (!latitude && !longitude) {
 					model.clear();
 					model.append({"name":"No position available"});
@@ -257,6 +305,7 @@ NavigationAppHMIMenu {
                 attributeList[0]=0;
                 var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxWindowSize,attributeList);
 				var res_win=res[5];
+                var i;
                 for (i = 0 ; i < res_win.length ; i+=2) {
                     var id=res_win[i+1][1];
                     ids.push(id);
@@ -282,39 +331,38 @@ NavigationAppHMIMenu {
 		}
 		StdButton { 
             source:StyleSheet.select_reroute[Constants.SOURCE]; x:StyleSheet.select_reroute[Constants.X]; y:StyleSheet.select_reroute[Constants.Y]; width:StyleSheet.select_reroute[Constants.WIDTH]; height:StyleSheet.select_reroute[Constants.HEIGHT];
-            id:select_reroute;
-            
+            id:select_reroute;            
             disabled:true;
             next:select_display_on_map; prev:select_search
 			onClicked: {
-                var destination=Genivi.latlon_to_map(Genivi.poi_data[Genivi.poi_id]);
-                var position="";
-                Genivi.routing_SetWaypoints(dbusIf,true,position,destination);
-				Genivi.data['calculate_route']=true;
-				Genivi.data['lat']='';
-				Genivi.data['lon']='';
-                if (Genivi.guidance_activated == true)
-                {
-                    mapMenu();
-                }
-                else {
-                    pageOpen("NavigationAppSearch");
-                }
+                disconnectSignals();
+                Genivi.data['destination']=Genivi.poi_data[Genivi.poi_id];
+                Genivi.reroute_requested=true;
+                pageOpen("NavigationAppSearch");
 			}
 		}
         StdButton {
             source:StyleSheet.select_display_on_map[Constants.SOURCE]; x:StyleSheet.select_display_on_map[Constants.X]; y:StyleSheet.select_display_on_map[Constants.Y]; width:StyleSheet.select_display_on_map[Constants.WIDTH]; height:StyleSheet.select_display_on_map[Constants.HEIGHT];
-            id:select_display_on_map;
-            
-	    disabled:true;
+            id:select_display_on_map;           
+            disabled:true;
             next:back; prev:select_reroute
 			onClicked: {
-				var poi_data=Genivi.poi_data[Genivi.poi_id];
+                disconnectSignals();
+                var poi_data=Genivi.poi_data[Genivi.poi_id];
                 Genivi.data['position']['lat']=poi_data.lat;
                 Genivi.data['position']['lon']=poi_data.lon;
                 entryMenu("NavigationAppBrowseMap",menu);
             }
 		}
+        StdButton {
+            source:StyleSheet.settings[Constants.SOURCE]; x:StyleSheet.settings[Constants.X]; y:StyleSheet.settings[Constants.Y]; width:StyleSheet.settings[Constants.WIDTH]; height:StyleSheet.settings[Constants.HEIGHT];
+            id:settings;  next:back; prev:select_display_on_map;
+            disabled: false;
+            onClicked: {
+                disconnectSignals();
+                entryMenu("NavigationAppSettings",menu);
+            }
+        }
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back;
@@ -322,12 +370,15 @@ NavigationAppHMIMenu {
 			disabled:false; 
             next:select_search; prev:select_display_on_map;
             onClicked: {
+                disconnectSignals();
                 Genivi.preloadMode=true;
                 leaveMenu();
             }
 		}	
 	}
 	Component.onCompleted: {
+        connectSignals();
+
         var categoriesIdNameAndRadius=[];
         var ret=Genivi.poisearch_GetAvailableCategories(dbusIf);
         var categories=ret[1];
@@ -346,5 +397,8 @@ NavigationAppHMIMenu {
         poiFrame.visible=true;
 
 		update();
-	}
+        if(!Genivi.showroom) {
+            updateCurrentPosition();
+        }
+    }
 }

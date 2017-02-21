@@ -24,14 +24,15 @@
 * @licence end@
 */
 import QtQuick 2.1 
+import "genivi.js" as Genivi;
 
 Item {
 	id: keyboard;
-	property real wspc: keyboard.width/80;
-	property real hspc: keyboard.height/20;
-	property real w: (keyboard.width-wspc*7)/8+0.5;
-	property real h: keyboard.height/5
-	property Item destination;
+    property real w: (keyboard.width*Genivi.kbdRowRatio)/(Genivi.kbdRows*(1+Genivi.kbdRowRatio)-1);
+    property real h: (keyboard.height*Genivi.kbdLineRatio)/(Genivi.kbdLines*(1+Genivi.kbdLineRatio)-1);
+    property real wspc: w/Genivi.kbdRowRatio;
+    property real hspc: h/Genivi.kbdLineRatio;
+    property Item destination;
 	property Item layout;
 	property string firstLayout;
 	property string secondLayout: null;

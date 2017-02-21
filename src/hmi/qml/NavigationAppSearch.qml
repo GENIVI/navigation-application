@@ -626,7 +626,6 @@ NavigationAppHMIMenu {
         prev_maneuver.disabled=false;
         next_maneuver.visible=true;
         next_maneuver.disabled=false;
-        Genivi.route_calculated=true;
     }
 
     function hideRoute()
@@ -650,7 +649,6 @@ NavigationAppHMIMenu {
         prev_maneuver.disabled=true;
         next_maneuver.visible=false;
         next_maneuver.disabled=true;
-        Genivi.route_calculated=false;
     }
 
 
@@ -1024,7 +1022,8 @@ NavigationAppHMIMenu {
         listArea.model.clear(); // clean lists
         routeArea.model.clear();
 
-        if (Genivi.route_calculated) {
+        if (Genivi.route_calculated || Genivi.reroute_requested) {
+            Genivi.reroute_requested=false;
             launchRouteCalculation(); //relaunch route calculation to refresh data
             showRoute();
         }
