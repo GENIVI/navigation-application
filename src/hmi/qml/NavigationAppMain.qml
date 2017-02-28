@@ -34,13 +34,64 @@ import lbs.plugin.dbusif 1.0
 NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppMain"
+    property bool vehicleLocated: false
     pageBack: Genivi.entryback[Genivi.entrybackheapsize]
     next: navigation
     prev: quit
+
+    //------------------------------------------//
+    // Management of the DBus exchanges
+    //------------------------------------------//
     DBusIf {
 		id:dbusIf;
 	}
 
+    property Item mapmatchedpositionPositionUpdateSignal;
+    function mapmatchedpositionPositionUpdate(args)
+    {
+        Genivi.hookSignal("mapmatchedpositionPositionUpdate");
+        updateCurrentPosition();
+    }
+
+    function connectSignals()
+    {
+        mapmatchedpositionPositionUpdateSignal=Genivi.connect_mapmatchedpositionPositionUpdateSignal(dbusIf,menu);
+    }
+
+    function disconnectSignals()
+    {
+        mapmatchedpositionPositionUpdateSignal.destroy();
+    }
+
+    function updateCurrentPosition()
+    {
+        var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
+        var oklat=0;
+        var oklong=0;
+        for (var i=0;i<res[3].length;i+=4){
+            if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LATITUDE) && (res[3][i+3][3][1] != 0)){
+                oklat=1;
+                Genivi.data['current_position']['lat']=res[3][i+3][3][1];
+            } else {
+                if ((res[3][i+1]== Genivi.NAVIGATIONCORE_LONGITUDE) && (res[3][i+3][3][1] != 0)){
+                    oklong=1;
+                    Genivi.data['current_position']['lon']=res[3][i+3][3][1];
+                } else {
+                    if (res[3][i+1]== Genivi.NAVIGATIONCORE_ALTITUDE){
+                        Genivi.data['current_position']['alt']=res[3][i+3][3][1];
+                    }
+                }
+            }
+        }
+        if ((oklat == 1) && (oklong == 1)) {vehicleLocated=true;}
+        else {vehicleLocated=false;}
+        mapview.update();
+    }
+
+
+    //------------------------------------------//
+    // Menu elements
+    //------------------------------------------//
     NavigationAppHMIBgImage {
         image:StyleSheet.navigation_app_main_background[Constants.SOURCE];
 		anchors { fill: parent; topMargin: parent.headlineHeight}
@@ -72,7 +123,9 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.select_mapview[Constants.SOURCE]; x:StyleSheet.select_mapview[Constants.X]; y:StyleSheet.select_mapview[Constants.Y]; width:StyleSheet.select_mapview[Constants.WIDTH]; height:StyleSheet.select_mapview[Constants.HEIGHT];
-            id:mapview;  next:poi; prev:navigation; onClicked: {
+            id:mapview;  next:poi; prev:navigation;
+            disabled:!(vehicleLocated || Genivi.showroom )
+            onClicked: {
                 Genivi.data['display_on_map']='show_current_position';
                 entryMenu("NavigationAppBrowseMap",menu);
 			}
@@ -103,8 +156,26 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.select_trip[Constants.SOURCE]; x:StyleSheet.select_trip[Constants.X]; y:StyleSheet.select_trip[Constants.Y]; width:StyleSheet.select_trip[Constants.WIDTH]; height:StyleSheet.select_trip[Constants.HEIGHT];
-            id:trip;  next:quit; prev:poi;onClicked: {
+            id:trip;  next:settings; prev:poi;onClicked: {
                 entryMenu("NavigationAppTripComputer",menu);
+            }
+        }
+
+        Text {
+            x:StyleSheet.settingsText[Constants.X]; y:StyleSheet.settingsText[Constants.Y]; width:StyleSheet.settingsText[Constants.WIDTH]; height:StyleSheet.settingsText[Constants.HEIGHT];color:StyleSheet.settingsText[Constants.TEXTCOLOR];styleColor:StyleSheet.settingsText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.settingsText[Constants.PIXELSIZE];
+            id:settingsText;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Configuration")
+             }
+
+        StdButton {
+            source:StyleSheet.select_settings[Constants.SOURCE]; x:StyleSheet.select_settings[Constants.X]; y:StyleSheet.select_settings[Constants.Y]; width:StyleSheet.select_settings[Constants.WIDTH]; height:StyleSheet.select_settings[Constants.HEIGHT];
+            id:settings;  next:quit; prev:trip;
+            onClicked: {
+                disconnectSignals();
+                Genivi.preloadMode=true; //for the next call of this menu
+                entryMenu("NavigationAppSettings",menu);
             }
         }
 
@@ -113,20 +184,25 @@ NavigationAppHMIMenu {
             id:quit; text: Genivi.gettext("Quit");  next:navigation; prev:trip;
             onClicked:{
                 Genivi.navigationcore_session_clear(dbusIf);
+                disconnectSignals();
                 Qt.quit(); //for the time being quit
             }
         }
     }
 
     Component.onCompleted: {
+        connectSignals();
+
         // Test if the navigation server is connected
         var res=Genivi.navigationcore_session_GetVersion(dbusIf);
         if (res[0] != "error") {
             res=Genivi.navigationcore_session(dbusIf);
         } else {
+            //to do something here
             Genivi.dump("",res);
         }
 
+        updateCurrentPosition();
     }
 
 }

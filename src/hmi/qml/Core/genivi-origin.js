@@ -127,7 +127,7 @@ var radius=5000; //radius in m around the vehicle to search for the refill stati
 var offset=0; //offset of the start record to get on the list of pois
 var maxWindowSize=20; //max size of elements to return as a result
 var fuelCategoryId; //unique id of fuel category
-var zoom_guidance=4; //zoom level when a guidance starts
+var zoom_guidance=2; //zoom level when a guidance starts
 
 //the default data below will be managed by the persistency component in the future
 address[NAVIGATIONCORE_COUNTRY]="Switzerland";

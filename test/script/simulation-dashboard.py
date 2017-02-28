@@ -349,23 +349,23 @@ dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbu
 
 # Guidance
 try:
-	guidanceObject = dbusConnectionBus.get_object("org.genivi.navigationcore.Guidance","/org/genivi/navigationcore")
+	guidanceObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.Guidance","/org/genivi/navigationcore")
 except dbus.DBusException:
 	print ("connection to Guidance failed")
 	print_exc()
 	sys.exit(1)
-guidanceInterface = dbus.Interface(guidanceObject, "org.genivi.navigationcore.Guidance")
-dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigationcore.Guidance", signal_name = "GuidanceStatusChanged")
+guidanceInterface = dbus.Interface(guidanceObject, "org.genivi.navigation.navigationcore.Guidance")
+dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.Guidance", signal_name = "GuidanceStatusChanged")
 
 # Map matched position
 try:
-	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
+	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
 except dbus.DBusException:
 	print ("connection to Map matched position failed")
 	print_exc()
 	sys.exit(1)
-mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigationcore.MapMatchedPosition")
-dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
+mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigation.navigationcore.MapMatchedPosition")
+dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
 
 displayStatus( 'Start simulation' )
 

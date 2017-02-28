@@ -16,7 +16,8 @@ Actions:
 NAVI --> show navigation menu 
 POI --> show poi menu
 MAP --> show map viewer menu
-TRIP --> show trip computer
+TRIP --> show trip computer menu
+CONF --> show configuration menu
 QUIT --> close the application
 
 ###NavigationAppTripComputer
@@ -46,34 +47,19 @@ BACK --> back to parent menu
 ###NavigationAppSettings
 ![NavigationAppSettings](NavigationAppSettings.png) 
 Rationale:
-To configure the simulation 
-To access sub menus for configuration
-Actions:
-SIMU --> on/off simulation
-SPEED --> set simulation speed
-MODE --> start/pause stop simulation
-PREF --> access sub menu preferences
-LANG&UNIT --> access sub menu language and units
-BACK --> back to NavigationAppSearch
- 
-###NavigationAppSettingsLanguageAndUnits
-![NavigationAppSettingsLanguageAndUnits](NavigationAppSettingsLanguageAndUnits.png) 
-Rationale:
+To configure the simulation
+To configure the showroom mode 
 To select language and units
-Actions:
-LANG --> select the language
-UNIT --> select the unit
-BACK --> back to NavigationAppSettings
-
-###NavigationAppSettingsPreferences
-![NavigationAppSettingsPreferences](NavigationAppSettingsPreferences.png) 
-Rationale:
 To select preferences for route calculation
 Actions:
+SIMU --> on/off simulation
+SHROOM --> on/off showroom mode
+LANG --> select the language
+UNIT --> select the unit
 COST --> select cost model
 ROUTE_PREF --> select routing preference
-BACK --> back to NavigationAppSettings
-
+BACK --> back to parent menu
+ 
 ###NavigationAppSearch
 ![NavigationAppSearch](NavigationAppSearch.png) 
 Rationale:

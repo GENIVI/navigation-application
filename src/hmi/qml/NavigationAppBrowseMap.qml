@@ -1481,6 +1481,9 @@ NavigationAppHMIMenu {
                 Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
                 Genivi.mapviewer_SetMapViewScale(dbusIf,Genivi.zoom_guidance);
                 if(Genivi.guidance_activated) {
+                    if(Genivi.showroom) {
+                        Genivi.data['current_position']=Genivi.data['default_position'];
+                    }
                     Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['current_position']['lat'],Genivi.data['current_position']['lon'],Genivi.data['current_position']['alt']);
                     Genivi.mapviewer_DisplayRoute(dbusIf,Genivi.data['show_route_handle'],false);
                     Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50); //activate advisor mode
@@ -1508,7 +1511,7 @@ NavigationAppHMIMenu {
             }
             else {
                 if (Genivi.data['display_on_map']==='show_position') {
-                    //show a given position on the map
+                    //show a given position on the map, used to explore the map
                     Genivi.mapviewer_SetFollowCarMode(dbusIf,false);
                     Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
                     Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,50); //no advisor mode
