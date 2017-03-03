@@ -621,7 +621,7 @@ NavigationAppHMIMenu {
         routeArea.model.clear();
         routeArea.visible=true;
         routeArea.forceActiveFocus();
-        crossroadZoom.visible=true;
+        crossroadZoom.visible=false;
         prev_maneuver.visible=true;
         prev_maneuver.disabled=false;
         next_maneuver.visible=true;
@@ -644,7 +644,7 @@ NavigationAppHMIMenu {
         guidance_start.disabled=false;
         guidance_stop.disabled=true;
         routeArea.visible=false;
-        crossroadZoom.visible=false;
+        crossroadZoom.visible=true;
         prev_maneuver.visible=false;
         prev_maneuver.disabled=true;
         next_maneuver.visible=false;
@@ -923,7 +923,7 @@ NavigationAppHMIMenu {
             source:StyleSheet.crossroadZoom[Constants.SOURCE]; x:StyleSheet.crossroadZoom[Constants.X]; y:StyleSheet.crossroadZoom[Constants.Y]; width:StyleSheet.crossroadZoom[Constants.WIDTH]; height:StyleSheet.crossroadZoom[Constants.HEIGHT];
             border.left: 0; border.top: 0
             border.right: 0; border.bottom: 0
-            visible: false;
+            visible: true;
         }
         StdButton {
             source:StyleSheet.prev_maneuver[Constants.SOURCE]; x:StyleSheet.prev_maneuver[Constants.X]; y:StyleSheet.prev_maneuver[Constants.Y]; width:StyleSheet.prev_maneuver[Constants.WIDTH]; height:StyleSheet.prev_maneuver[Constants.HEIGHT];

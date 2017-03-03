@@ -57,9 +57,9 @@ ApplicationWindow {
     }
 
 	Component.onCompleted: {
-        Genivi.setlang("eng","USA","Latn"); //set to english US
-        Genivi.setDefaultPosition(46.202038,6.146845,19); // (rue Jean Calvin Genève)
-        Genivi.setDefaultAddress("Switzerland","Lausanne","Rue de Midi","8"); // preferred address
+        Genivi.setlang("jpn","JPN","Hrkt"); //set to japanese
+        Genivi.setDefaultPosition(35.758795,139.316533,19); // (1 Chome-1-5 Gonokami Hamura-shi, Tōkyō-to)
+        Genivi.setDefaultAddress("Japan","東京","井ノ頭通り","17"); // preferred address
         Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
         load("NavigationAppMain");
 	}

@@ -113,7 +113,7 @@ NavigationAppHMIMenu {
             }
         }
 
-        Genivi.setlang(current_lang_nav);
+        Genivi.setlang(current_nav[1],current_nav[3],current_nav[5]);
 
         var units1,units2;
         var res=Genivi.navigationcore_configuration_GetUnitsOfMeasurement(dbusIf);
@@ -135,7 +135,7 @@ NavigationAppHMIMenu {
     {
         Genivi.navigationcore_configuration_SetLocale(dbusIf,language,country,script);
         Genivi.mapviewer_configuration_SetLocale(dbusIf,language,country,script);
-        Genivi.setlang(language + "_" + country);
+        Genivi.setlang(language,country,script);
         pageOpen(menu.pagefile); //reload page because of texts...
     }
 

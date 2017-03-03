@@ -38,7 +38,7 @@ var g_mapviewer_session=["uint32",0];
 var g_mapviewer_handle=["uint32",0];
 var g_mapviewer_handle2=["uint32",0];
 var g_poisearch_handle=["uint32",0];
-var g_lang;
+var g_language,g_country,g_script;
 
 var data=new Array;
 data['destination']=new Array; //the destination
@@ -54,7 +54,7 @@ var categoriesIdNameList;
 
 var translations=new Array;
 
-var simulationMode=true;// simulation mode on by default
+var simulationMode=false;// simulation mode off by default
 var showroom=false; //showroom off by default
 
 var guidance_activated=false;
@@ -210,11 +210,13 @@ function time(seconds)
 }
 
 // Language and text
-function setlang(lang)
+function setlang(language,country,script)
 {
-    g_lang=lang;
+    g_language=language;
+    g_country=country;
+    g_script=script;
     translations = new Array;
-    Qt.include("translations/"+lang+".js");
+    Qt.include("translations/"+g_language + "_" + g_country+".js");
 }
 
 // Default position (for showroom mode)
@@ -237,8 +239,8 @@ function setDefaultAddress(country,city,street,number)
 function gettext(arg)
 {
     if (!translations[arg]) {
-        if (g_lang) {
-            console.log("Translation for '" + arg + "' missing for " + g_lang);
+        if (g_language) {
+            console.log("Translation for '" + arg + "' missing for " + g_language);
         }
         return arg;
     } else {

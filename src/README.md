@@ -83,4 +83,13 @@ cd script
 ./prepare.sh -i ../hmi/qml/Core/gimp/gdp-theme/800x480
 cd ../
 
-
+##How to launch it in another area
+It's possible to test it (experimental) in another area.
+For instance, to locate the demo in Japan:
+Get the map of Tokyo and suburbs by picking it from this site:
+http://maps9.navit-project.org/api/map/?bbox=139.1,35.5,140.4,36.0&timestamp=170217
+Rename the file to tokyo.bin, copy it to ./navigation/src/navigation/map
+do ./build.sh -c
+Launch the demo 
+./run -r -c tokyo -a hmi/qml/NavigationAppTokyo.qml
+For sure, there's some hack to do :-)
