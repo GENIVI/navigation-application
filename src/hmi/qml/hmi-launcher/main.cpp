@@ -72,7 +72,7 @@ int main(int argc, char ** argv)
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
-    window->setFlags(Qt::CustomizeWindowHint);
+    window->setFlags(Qt::FramelessWindowHint);
     window->setColor(Qt::transparent);
 
     QSurfaceFormat surfaceFormat = window->requestedFormat();

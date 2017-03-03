@@ -1513,6 +1513,7 @@ NavigationAppHMIMenu {
                 if (Genivi.data['display_on_map']==='show_position') {
                     //show a given position on the map, used to explore the map
                     Genivi.mapviewer_SetFollowCarMode(dbusIf,false);
+                    Genivi.mapviewer_SetMapViewScale(dbusIf,Genivi.zoom_guidance);
                     Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
                     Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,50); //no advisor mode
                     hideGuidance();

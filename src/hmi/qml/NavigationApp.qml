@@ -34,7 +34,7 @@ import "Core/genivi.js" as Genivi;
 
 ApplicationWindow {
 	id: container
-    flags: Qt.CustomizeWindowHint
+    flags: Qt.FramelessWindowHint
     color: "transparent"
     visible: true
     width: StyleSheetMap.menu[Constants.WIDTH];
@@ -49,7 +49,9 @@ ApplicationWindow {
 	}
 
 	Component.onCompleted: {
-        Genivi.setlang("eng_USA"); //by default set to english US
+        Genivi.setlang("eng_USA"); //set to english US
+        Genivi.setDefaultPosition(46.202038,6.146845,19); // (rue Jean Calvin Genève)
+        Genivi.setDefaultAddress("Switzerland","Lausanne","Rue de Midi","8"); // preferred address
         load("NavigationAppMain");
 	}
 }

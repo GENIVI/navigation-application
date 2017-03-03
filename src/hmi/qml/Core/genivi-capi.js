@@ -125,22 +125,11 @@ var historyOfLastEnteredLocationIn=0; //next input
 var historyOfLastEnteredLocationOut=0; //first ouput
 var radius=5000; //radius in m around the vehicle to search for the refill stations
 var offset=0; //offset of the start record to get on the list of pois
-var maxWindowSize=20; //max size of elements to return as a result
+var maxResultListSize=50; //max size of elements to return as a result
 var fuelCategoryId; //unique id of fuel category
 var zoom_guidance=2; //zoom level when a guidance starts
 
-//the default data below will be managed by the persistency component in the future
-address[NAVIGATIONCORE_COUNTRY]="Switzerland";
-address[NAVIGATIONCORE_CITY]="Zürich";
-address[NAVIGATIONCORE_STREET]="In Lampitzäckern";
-address[NAVIGATIONCORE_HOUSENUMBER]="11";
-data['position']['lat']=46.202410;
-data['position']['lon']=6.146265;
-data['position']['alt']=19;
 data['display_on_map']='show_current_position'; //display current position of the vehicle on the map
-data['default_position']['lat']=46.202038; //default position (rue Jean Calvin Genève)
-data['default_position']['lon']=6.146845;
-data['default_position']['alt']=19;
 
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
 tripMode="TRIP_NUMBER1";
@@ -226,6 +215,23 @@ function setlang(lang)
     g_lang=lang;
     translations = new Array;
     Qt.include("translations/"+lang+".js");
+}
+
+// Default position (for showroom mode)
+function setDefaultPosition(lat,lon,alt)
+{
+    data['default_position']['lat']= lat;
+    data['default_position']['lon']= lon;
+    data['default_position']['alt']= alt;
+}
+
+// Default address
+function setDefaultAddress(country,city,street,number)
+{
+    address[NAVIGATIONCORE_COUNTRY]=country;
+    address[NAVIGATIONCORE_CITY]=city;
+    address[NAVIGATIONCORE_STREET]=street;
+    address[NAVIGATIONCORE_HOUSENUMBER]=number;
 }
 
 function gettext(arg)

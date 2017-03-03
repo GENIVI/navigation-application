@@ -37,11 +37,7 @@ NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppPOI"
     property string extraspell;
-    property int type_poi_car_parking: 65842
-    property int type_poi_hotel: 65835
-    property int type_poi_restaurant: 65923
-    property int type_poi_bar: 65848
-    property int type_poi_fuel: 65834
+    property string all_categories: "all categories"
     property string poiCategoryName
     property bool vehicleLocated: false
 
@@ -98,7 +94,7 @@ NavigationAppHMIMenu {
 
     function update()
     {
-        selectedValue.text="See details of \nthe POI \nhere"
+        selectedValue.text="Name:\nID:\nLat:\nLon:\n"
     }
 
     function spell(input)
@@ -111,7 +107,8 @@ NavigationAppHMIMenu {
         var model=view.model;
         for(var i=0;i<Genivi.categoriesIdNameList.length;i+=2)
         {
-            model.append({"name":Genivi.categoriesIdNameList[i+1][3],"number":i/2});
+            if(Genivi.categoriesIdNameList[i+1][3]!==all_categories)
+                model.append({"name":Genivi.categoriesIdNameList[i+1][3],"number":i/2});
         }
     }
 
@@ -303,7 +300,7 @@ NavigationAppHMIMenu {
                 Genivi.poisearch_StartPoiSearch(dbusIf,"",Genivi.POISERVICE_SORT_BY_DISTANCE);
                 var attributeList=[];
                 attributeList[0]=0;
-                var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxWindowSize,attributeList);
+                var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
 				var res_win=res[5];
                 var i;
                 for (i = 0 ; i < res_win.length ; i+=2) {
@@ -351,6 +348,7 @@ NavigationAppHMIMenu {
                 var poi_data=Genivi.poi_data[Genivi.poi_id];
                 Genivi.data['position']['lat']=poi_data.lat;
                 Genivi.data['position']['lon']=poi_data.lon;
+                Genivi.data['display_on_map']='show_position';
                 entryMenu("NavigationAppBrowseMap",menu);
             }
 		}
