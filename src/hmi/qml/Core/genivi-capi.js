@@ -56,6 +56,7 @@ var translations=new Array;
 
 var simulationMode=false;// simulation mode off by default
 var showroom=false; //showroom off by default
+var autoguidance=false; //no automatic display route on guidance by default
 
 var guidance_activated=false;
 var route_calculated=false;
@@ -67,8 +68,6 @@ entryback[entrybackheapsize]="";
 var entrydest=null;
 var entrycriterion;
 var entryselectedentry;
-
-var entrycancel = false; //set to true when back button is pushed without any selection
 
 var roadPreferenceList=new Object;
 roadPreferenceList[NAVIGATIONCORE_FERRY]=NAVIGATIONCORE_AVOID;
@@ -164,7 +163,7 @@ function dump(prefix,args)
 
 function hookContext()
 {
-    console.log("Routing: ",route_calculated," Guidance: ",guidance_activated);
+    console.log("Routing: ",route_calculated," Guidance: ",guidance_activated," Simulation: ",simulationMode);
 }
 
 //Manage the historyOfLastEnteredLocation
@@ -419,7 +418,7 @@ function navigationcore_session(par) {
 function navigationcore_session_clear(par)
 {
     if (g_nav_session[1]) {
-        var res=navigationcore_session_message(par,"deleteSession", [g_nav_session]);
+        var res=navigationcore_session_message(par,"deleteSession", g_nav_session);
         g_nav_session[1]=0;
     }
 }

@@ -1,0 +1,14 @@
+# fuel_stop_advisor fsa systemd service unit file
+#
+
+[Unit]
+Description=Fuel Stop Advisor Service for FSA configuration file
+Requires=dbus.service ambd_fsa.service
+After=ambd_fsa.service
+
+[Service]
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/dbus/user_bus_socket
+ExecStart=/usr/bin/fuel-stop-advisor
+
+[Install]
+WantedBy=default.target

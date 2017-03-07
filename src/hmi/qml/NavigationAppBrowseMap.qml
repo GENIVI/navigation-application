@@ -192,25 +192,16 @@ NavigationAppHMIMenu {
     function simulationStatusChanged(args)
     {
         Genivi.hookSignal("simulationStatusChanged");
-        if (args[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+        if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
         {
-            on_off.setState("ON");
-            if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-            {
-                simu_mode.setState("PAUSE");
-            }
-            else
-            {
-                if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                {
-                    simu_mode.setState("PLAY");
-                }
-            }
+            simu_mode.setState("PAUSE");
         }
         else
         {
-            on_off.setState("OFF");
-            simu_mode.setState("FREE");
+            if (args[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+            {
+                simu_mode.setState("PLAY");
+            }
         }
     }
 
@@ -446,7 +437,7 @@ NavigationAppHMIMenu {
         updateMapViewer();
     }
 
-    function toggleSplit()
+    function toggleSplit() //split not tested yet
     {
         var displayedRoutes=Genivi.mapviewer_GetDisplayedRoutes(dbusIf);
         var mapViewTheme=Genivi.mapviewer_GetMapViewTheme(dbusIf);
@@ -482,7 +473,7 @@ NavigationAppHMIMenu {
         updateMapViewer();
     }
 
-    function disableSplit()
+    function disableSplit() //split not tested yet
     {
         if (Genivi.g_mapviewer_handle2) {
             toggleSplit();
@@ -517,8 +508,8 @@ NavigationAppHMIMenu {
         west.disabled=false;
         exitSettings.visible=true;
         exitSettings.disabled=false;
-        split.visible=true;
-        split.disabled=false;
+        split.visible=false; //split not tested yet
+        split.disabled=true; //split not tested yet
         perspective.visible=true;
         perspective.disabled=false;
         daynight.visible=true;
@@ -567,25 +558,16 @@ NavigationAppHMIMenu {
     function updateSimulation()
     {
         var res=Genivi.mapmatchedposition_GetSimulationStatus(dbusIf);
-        if (res[1] != Genivi.NAVIGATIONCORE_SIMULATION_STATUS_NO_SIMULATION)
+        if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
         {
-            on_off.setState("ON");
-            if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_PAUSED || res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_FIXED_POSITION)
-            {
-                simu_mode.setState("PAUSE");
-            }
-            else
-            {
-                if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
-                {
-                    simu_mode.setState("PLAY");
-                }
-            }
+            simu_mode.setState("PAUSE");
         }
         else
         {
-            on_off.setState("OFF");
-            simu_mode.setState("FREE");
+            if (res[1] == Genivi.NAVIGATIONCORE_SIMULATION_STATUS_RUNNING)
+            {
+                simu_mode.setState("PLAY");
+            }
         }
 
         var res1=Genivi.mapmatchedposition_GetSimulationSpeed(dbusIf);
@@ -773,12 +755,11 @@ NavigationAppHMIMenu {
 
     function stopSimulation()
     {
-        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,false);
+        Genivi.mapmatchedposition_PauseSimulation(dbusIf);
     }
 
     function startSimulation()
     {
-        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,true);
         Genivi.mapmatchedposition_StartSimulation(dbusIf);
     }
 
@@ -812,8 +793,6 @@ NavigationAppHMIMenu {
         speed_down.disabled=false;
         speed_up.visible=true;
         speed_up.disabled=false;
-        on_off.visible=true;
-        on_off.disabled=false;
         simu_mode.visible=true;
         simu_mode.disabled=true;
         speedUnit.visible=true;
@@ -828,8 +807,6 @@ NavigationAppHMIMenu {
         speed_down.disabled=true;
         speed_up.visible=false;
         speed_up.disabled=true;
-        on_off.visible=false;
-        on_off.disabled=true;
         simu_mode.visible=false;
         simu_mode.disabled=true;
         speedUnit.visible=false;
@@ -1199,7 +1176,7 @@ NavigationAppHMIMenu {
                 }
                 StdButton {
                     source:StyleSheetSimulation.speed_up_popup[Constants.SOURCE]; x:StyleSheetSimulation.speed_up_popup[Constants.X]; y:StyleSheetSimulation.speed_up_popup[Constants.Y]; width:StyleSheetSimulation.speed_up_popup[Constants.WIDTH]; height:StyleSheetSimulation.speed_up_popup[Constants.HEIGHT];
-                    id:speed_up;  disabled:false; next:on_off; prev:speed_down;
+                    id:speed_up;  disabled:false; next:simu_mode; prev:speed_down;
                     onClicked:
                     {
                         if (speedValueSent < 7)
@@ -1210,40 +1187,8 @@ NavigationAppHMIMenu {
                     }
                 }
                 StdButton {
-                    x:StyleSheetSimulation.simulation_on_popup[Constants.X]; y:StyleSheetSimulation.simulation_on_popup[Constants.Y]; width:StyleSheetSimulation.simulation_on_popup[Constants.WIDTH]; height:StyleSheetSimulation.simulation_on_popup[Constants.HEIGHT];
-                    id:on_off; next:simu_mode; prev:speed_up;  disabled:false;
-                    property int status: 1; //by default simulation stopped
-                    function setState(name)
-                    {
-                        if (name=="ON")
-                        {
-                            status=1;
-                            source=StyleSheetSimulation.simulation_off_popup[Constants.SOURCE];
-                        }
-                        else
-                        {
-                            status=0;
-                            source=StyleSheetSimulation.simulation_on_popup[Constants.SOURCE];
-                        }
-                    }
-                    onClicked:
-                    {
-                        switch (status)
-                        {
-                            case 0: //start the simulation
-                                startSimulation();
-                            break;
-                            case 1: //stop the simulation
-                                stopSimulation();
-                            break;
-                            default:
-                            break;
-                        }
-                    }
-                }
-                StdButton {
                     x:StyleSheetSimulation.play_popup[Constants.X]; y:StyleSheetSimulation.play_popup[Constants.Y]; width:StyleSheetSimulation.play_popup[Constants.WIDTH]; height:StyleSheetSimulation.play_popup[Constants.HEIGHT];
-                    id:simu_mode; next:speed_down; prev:on_off;  disabled:false;
+                    id:simu_mode; next:speed_down; prev:speed_up;  disabled:false;
                     property int status: 0;
                     function setState(name)
                     {
@@ -1440,7 +1385,7 @@ NavigationAppHMIMenu {
                  StdButton {
                      source:StyleSheetSettings.split[Constants.SOURCE]; x:StyleSheetSettings.split[StyleSheetSettings.X]; y:StyleSheetSettings.split[StyleSheetSettings.Y]; width:StyleSheetSettings.split[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.split[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.splitText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.splitText[StyleSheetSettings.PIXELSIZE];
                             id:split; text:Genivi.gettext("Split");  next:perspective; prev:west;
-                         onClicked: {toggleSplit();}
+                         onClicked: {toggleSplit();} //split not tested yet
                  }
                  StdButton {
                      source:StyleSheetSettings.perspective[Constants.SOURCE]; x:StyleSheetSettings.perspective[StyleSheetSettings.X]; y:StyleSheetSettings.perspective[StyleSheetSettings.Y]; width:StyleSheetSettings.perspective[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.perspective[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.perspectiveText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.perspectiveText[StyleSheetSettings.PIXELSIZE];
@@ -1461,7 +1406,6 @@ NavigationAppHMIMenu {
 
     Component.onCompleted: {
         connectSignals();
-        Genivi.mapviewer_handle(dbusIf,menu.width,menu.height,Genivi.MAPVIEWER_MAIN_MAP);
         hideMapSettings();
 
         if (Genivi.data['display_on_map']==='show_route') {
@@ -1490,6 +1434,7 @@ NavigationAppHMIMenu {
                     showGuidance();
                     showRoute();
                     updateGuidance();
+                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,Genivi.simulationMode);
                     if (Genivi.simulationMode===true)
                     {
                         showSimulation();

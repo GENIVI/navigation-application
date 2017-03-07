@@ -431,6 +431,54 @@ NavigationAppHMIMenu {
             }
         }
 
+        Text {
+            x:StyleSheet.autoguidanceTitle[Constants.X]; y:StyleSheet.autoguidanceTitle[Constants.Y]; width:StyleSheet.autoguidanceTitle[Constants.WIDTH]; height:StyleSheet.autoguidanceTitle[Constants.HEIGHT];color:StyleSheet.autoguidanceTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.autoguidanceTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.autoguidanceTitle[Constants.PIXELSIZE];
+            id:autoguidanceTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Autoguidance")
+             }
+        StdButton {
+            x:StyleSheet.autoguidance_enable[Constants.X]; y:StyleSheet.autoguidance_enable[Constants.Y]; width:StyleSheet.autoguidance_enable[Constants.WIDTH]; height:StyleSheet.autoguidance_enable[Constants.HEIGHT];
+            id:autoguidance; next:back; prev:back;  disabled:false;
+            source:
+            {
+                if (Genivi.autoguidance==true)
+                {
+                    source=StyleSheet.autoguidance_enable[Constants.SOURCE];
+                }
+                else
+                {
+                    source=StyleSheet.autoguidance_disable[Constants.SOURCE];
+                }
+            }
+
+            function setState(name)
+            {
+                if (name=="ENABLE")
+                {
+                    source=StyleSheet.autoguidance_enable[Constants.SOURCE];
+                }
+                else
+                {
+                    source=StyleSheet.autoguidance_disable[Constants.SOURCE];
+                }
+            }
+            onClicked:
+            {
+                if (Genivi.autoguidance ===true)
+                {
+                    Genivi.autoguidance=false;
+                    autoguidance.setState("DISABLE");
+                }
+                else
+                {
+                    Genivi.autoguidance=true;
+                    autoguidance.setState("ENABLE");
+                }
+            }
+        }
+
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:simu_mode; prev:showroom;
@@ -444,6 +492,11 @@ NavigationAppHMIMenu {
 
     Component.onCompleted: {
         connectSignals();
+        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,Genivi.simulationMode);
+        if(Genivi.simulationMode===true) {
+            Genivi.mapmatchedposition_PauseSimulation(dbusIf);
+        }
+
         var res=Genivi.routing_GetCostModel(dbusIf);
         var costmodel=res[1];
         var costModelsList=Genivi.routing_GetSupportedCostModels(dbusIf);

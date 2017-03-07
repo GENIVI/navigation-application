@@ -94,7 +94,7 @@ NavigationAppHMIMenu {
 
     function update()
     {
-        selectedValue.text="Name:\nID:\nLat:\nLon:\n"
+        selectedValue.text="Lat:\nLon:\nDist:\n";
     }
 
     function spell(input)
@@ -102,7 +102,7 @@ NavigationAppHMIMenu {
         keyboardArea.destination.text = input;
     }
 
-    function displayPOIList()
+    function displayCategoryList()
     {
         var model=view.model;
         for(var i=0;i<Genivi.categoriesIdNameList.length;i+=2)
@@ -110,6 +110,7 @@ NavigationAppHMIMenu {
             if(Genivi.categoriesIdNameList[i+1][3]!==all_categories)
                 model.append({"name":Genivi.categoriesIdNameList[i+1][3],"number":i/2});
         }
+        categoryValue.text=model.get(0).name;
     }
 
     //------------------------------------------//
@@ -138,11 +139,14 @@ NavigationAppHMIMenu {
             onClicked: {
                 keyboardArea.destination=categoryValue;
                 poiValue.text="";
+                selectedValue.text="Lat:\nLon:\nDist:\n";
+                poiName.visible=false;
+                selectedValueTitle.visible=false;
                 categoryValue.text=poiCategoryName;
                 poiFrame.visible=false;
                 categoryFrame.visible=true;
                 view.model.clear();
-                displayPOIList();
+                displayCategoryList();
             }
         }
         Image {
@@ -186,9 +190,18 @@ NavigationAppHMIMenu {
             onLeave:{}
         }
 
+        SmartText {
+            x:StyleSheet.poiName[Constants.X]; y:StyleSheet.poiName[Constants.Y]; width:StyleSheet.poiName[Constants.WIDTH]; height:StyleSheet.poiName[Constants.HEIGHT];color:StyleSheet.poiName[Constants.TEXTCOLOR];styleColor:StyleSheet.poiName[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.poiName[Constants.PIXELSIZE];
+            id:poiName;
+            visible: false
+            style: Text.Sunken;
+            smooth: true
+            text: ""
+        }
         Text {
             x:StyleSheet.selectedValueTitle[Constants.X]; y:StyleSheet.selectedValueTitle[Constants.Y]; width:StyleSheet.selectedValueTitle[Constants.WIDTH]; height:StyleSheet.selectedValueTitle[Constants.HEIGHT];color:StyleSheet.selectedValueTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.selectedValueTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.selectedValueTitle[Constants.PIXELSIZE];
             id:selectedValueTitle;
+            visible: false
             style: Text.Sunken;
             smooth: true
             text: Genivi.gettext("Selected")
@@ -225,13 +238,17 @@ NavigationAppHMIMenu {
                     if (what) {
                         Genivi.poi_id=what.index;
                         var poi_data=Genivi.poi_data[what.index];
-                        selectedValue.text="Name:"+poi_data.name+"\nID:"+poi_data.id+"\nLat:"+poi_data.lat+"\nLon:"+poi_data.lon;
+                        poiName.text=poi_data.name;
+                        poiName.visible=true;
+                        selectedValue.text="Lat: "+poi_data.lat.toFixed(4)+"\nLon: "+poi_data.lon.toFixed(4)+"\nDist: "+poi_data.distance+" m";
+                        selectedValueTitle.visible=true;
                         select_reroute.disabled=false;
                         select_display_on_map.disabled=false;
-                        keyboardArea.destination.text=poi_data.name;
                     } else {
                         Genivi.poi_id=null;
+                        poiName.visible=false;
                         selectedValue.text="";
+                        selectedValueTitle.visible=false;
                         select_reroute.disabled=true;
                         select_display_on_map.disabled=true;
                         keyboardArea.destination.text=""
@@ -322,7 +339,9 @@ NavigationAppHMIMenu {
                 for (i = 0 ; i < ids.length ; i+=1) {
                     id=ids[i];
 					var poi_data=Genivi.poi_data[id];
-					model.append({"name":Genivi.distance(poi_data.distance)+" "+poi_data.name,"number":id});
+                    if((poi_data.name !== "") && (poi_data.name !== "?") ){ //filter empty and unknown names
+                        model.append({"name":poi_data.name,"number":id});
+                    }
 				}
 			}
 		}

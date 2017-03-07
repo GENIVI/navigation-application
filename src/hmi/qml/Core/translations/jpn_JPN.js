@@ -166,5 +166,6 @@ translations["Cancel"]="キャンセル";
 translations["Quit"]="QUIT";
 
 translations["Showroom"]="SHOWROOM";
+translations["Autoguidance"]="AUTOGUIDE";
 
 

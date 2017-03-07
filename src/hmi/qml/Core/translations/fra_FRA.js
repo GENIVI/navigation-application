@@ -167,3 +167,4 @@ translations["Cancel"]="ANNUL";
 translations["Quit"]="QUITTER";
 
 translations["Showroom"]="SHOWROOM";
+translations["Autoguidance"]="AUTOGUIDE";

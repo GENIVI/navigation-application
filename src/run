@@ -114,7 +114,6 @@ SRC_DIR=$CUR_DIR
 SCRIPT_DIR=$SRC_DIR/script
 HMI_QML_DIR=$SRC_DIR/hmi/qml
 app=$HMI_QML_DIR/NavigationApp.qml # hmi panel launched by default
-poidatabase=$SCRIPT_DIR/empty.db # empty poi database by default
 STYLE_SHEETS_GENERATED_INDICATOR=$HMI_QML_DIR/Core/style-sheets/the-style-sheets-have-been-generated-css.js
 REPLAYER_LOG_FILE=none
 export REPLAYER_LOG_FILE
@@ -137,6 +136,9 @@ NAVIT_BIN_DIR=$NAVIGATION_BIN_DIR/navit/navit
 POI_SERVER=poi-server
 POI_SERVER_SRC_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/$POI_SERVER
 POI_SERVER_BIN_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/bin
+POI_SERVER_RESOURCE_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/resource
+
+poidatabase=$POI_SERVER_RESOURCE_DIR/empty.db # empty poi database by default
 
 LOG_REPLAYER=log-replayer
 LOG_REPLAYER_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$LOG_REPLAYER

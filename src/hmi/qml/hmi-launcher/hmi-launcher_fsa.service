@@ -1,0 +1,7 @@
+[Unit]
+Description=HMI Launcher Service for FSA configuration file
+Requires=navit_genivi_mapviewer_fsa.service
+
+[Service]
+Environment=LD_PRELOAD=/usr/lib/libEGL.so
+ExecStart=/usr/bin/hmi-launcher -platform wayland /usr/bin/navigation-application/qml/NavigationApp.qml

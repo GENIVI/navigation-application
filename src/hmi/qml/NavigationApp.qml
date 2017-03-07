@@ -57,10 +57,23 @@ ApplicationWindow {
     }
 
 	Component.onCompleted: {
+        //set persistent data
         Genivi.setlang("eng","USA","Latn"); //set to english US
         Genivi.setDefaultPosition(46.202038,6.146845,19); // (rue Jean Calvin Genève)
         Genivi.setDefaultAddress("Switzerland","Lausanne","Rue de Midi","8"); // preferred address
+
+        //configure the middleware
         Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
+
+        //launch the map viewer
+        Genivi.mapviewer_handle(dbusIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
+
+        //launch the HMI
         load("NavigationAppMain");
 	}
+
+    Component.onDestruction:  {
+        //release the map viewer
+        Genivi.mapviewer_handle_clear(dbusIf);
+    }
 }

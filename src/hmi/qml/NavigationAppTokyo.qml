@@ -57,10 +57,23 @@ ApplicationWindow {
     }
 
 	Component.onCompleted: {
+        //set persistent data
         Genivi.setlang("jpn","JPN","Hrkt"); //set to japanese
         Genivi.setDefaultPosition(35.758795,139.316533,19); // (1 Chome-1-5 Gonokami Hamura-shi, Tōkyō-to)
+
+        //configure the middleware
         Genivi.setDefaultAddress("Japan","東京","井ノ頭通り","17"); // preferred address
         Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
+
+        //launch the map viewer
+        Genivi.mapviewer_handle(dbusIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
+
+        //launch the HMI
         load("NavigationAppMain");
 	}
+
+    Component.onDestruction:  {
+        //release the map viewer
+        Genivi.mapviewer_handle_clear(dbusIf);
+    }
 }
