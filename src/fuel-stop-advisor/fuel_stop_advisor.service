@@ -8,6 +8,7 @@ After=ambd_fsa.service
 
 [Service]
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/dbus/user_bus_socket
+ExecStartPre=/bin/sleep 1
 ExecStart=/usr/bin/fuel-stop-advisor
 
 [Install]
