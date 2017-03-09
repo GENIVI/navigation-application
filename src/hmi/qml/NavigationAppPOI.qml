@@ -353,7 +353,9 @@ NavigationAppHMIMenu {
 			onClicked: {
                 disconnectSignals();
                 Genivi.data['destination']=Genivi.poi_data[Genivi.poi_id];
+                Genivi.location_input_activated=false;
                 Genivi.reroute_requested=true;
+                Genivi.guidance_StopGuidance(dbusIf);
                 pageOpen("NavigationAppSearch");
 			}
 		}

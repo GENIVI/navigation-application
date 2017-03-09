@@ -61,6 +61,7 @@ var autoguidance=false; //no automatic display route on guidance by default
 var guidance_activated=false;
 var route_calculated=false;
 var reroute_requested=false;
+var location_input_activated=true;
 
 var entryback = new Array;
 var entrybackheapsize=0;

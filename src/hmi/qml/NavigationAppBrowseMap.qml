@@ -62,10 +62,17 @@ NavigationAppHMIMenu {
         Genivi.hookSignal("guidanceStatusChanged");
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
+            Genivi.guidance_activated = true;
             showGuidance();
             showRoute();
-            showSimulation();
-            Genivi.guidance_activated = true;
+            if (Genivi.simulationMode===true)
+            {
+                Genivi.mapmatchedposition_SetSimulationMode(dbusIf,Genivi.simulationMode);
+                showSimulation();
+                updateSimulation();
+            } else {
+                hideSimulation();
+            }
             //Guidance active, so inform the trip computer (refresh)
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50);
             updateGuidance();
@@ -1010,6 +1017,21 @@ NavigationAppHMIMenu {
                     }
                 }
 
+                StdButton {
+                    source:StyleSheetBottom.calculate_curr[Constants.SOURCE]; x:StyleSheetBottom.calculate_curr[Constants.X]; y:StyleSheetBottom.calculate_curr[Constants.Y]; width:StyleSheetBottom.calculate_curr[Constants.WIDTH]; height:StyleSheetBottom.calculate_curr[Constants.HEIGHT];
+                    id:calculate_curr;
+                    onClicked: {
+                        if(!Genivi.guidance_activated){
+                            Genivi.guidance_StartGuidance(dbusIf,Genivi.routing_handle(dbusIf));
+                        }
+                        Genivi.mapviewer_SetFollowCarMode(dbusIf,true);
+                        Genivi.mapviewer_SetMapViewScale(dbusIf,Genivi.zoom_guidance);
+
+                    }
+                    disabled:!(Genivi.route_calculated && !Genivi.guidance_activated);
+                    next:menub; prev:settings
+                }
+
             }
         }
 
@@ -1434,9 +1456,9 @@ NavigationAppHMIMenu {
                     showGuidance();
                     showRoute();
                     updateGuidance();
-                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,Genivi.simulationMode);
                     if (Genivi.simulationMode===true)
                     {
+                        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,Genivi.simulationMode);
                         showSimulation();
                         updateSimulation();
                     } else {

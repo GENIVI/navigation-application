@@ -46,6 +46,20 @@ NavigationAppHMIMenu {
     property bool destinationValid: false
     property real routeListSegments: 1000
     property bool vehicleLocated: false
+    property real delayToGetManeuverList: 100
+
+    //------------------------------------------//
+    // Miscellaneous
+    //------------------------------------------//
+    Timer {
+        id:delay_timer
+    }
+    function delay(delayTime, cb) {
+        delay_timer.interval = delayTime;
+        delay_timer.repeat = false;
+        delay_timer.triggered.connect(cb);
+        delay_timer.start();
+    }
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -72,7 +86,9 @@ NavigationAppHMIMenu {
                 entryMenu("NavigationAppBrowseMap",menu);
             }else{
                 showGuidance();
-                getManeuversList();
+                delay(delayToGetManeuverList, function() {
+                    getManeuversList();
+                })
             }
 
         } else {
@@ -291,28 +307,9 @@ NavigationAppHMIMenu {
     function routeCalculationSuccessful(args)
     { //routeHandle 1, unfullfilledPreferences 3
         Genivi.hookSignal("routeCalculationSuccessful");
-        statusValue.text=Genivi.gettext("CalculatedRouteSuccess");
+
         Genivi.route_calculated = true;
-        var res=Genivi.routing_GetRouteOverviewTimeAndDistance(dbusIf);
-
-        var i, time = 0, distance = 0;
-        for (i=0;i<res[1].length;i+=4)
-        {
-            if (res[1][i+1] == Genivi.NAVIGATIONCORE_TOTAL_TIME)
-            {
-                time = res[1][i+3][3][1];
-            }
-            else
-            {
-                if (Genivi.NAVIGATIONCORE_TOTAL_DISTANCE)
-                {
-                    distance = res[1][i+3][3][1];
-                }
-            }
-        }
-
-        distanceValue.text =Genivi.distance(distance);
-        timeValue.text= Genivi.time(time);
+        getRouteOverview();
 
         // Give the route handle to the FSA
         Genivi.fuelstopadvisor_SetRouteHandle(dbusIf,Genivi.g_routing_handle);
@@ -472,7 +469,22 @@ NavigationAppHMIMenu {
     }
 
     //------------------------------------------//
-    // Management of entered location
+    // Management of "element name" configuration
+    //------------------------------------------//
+    function showElementName()
+    {
+        elementTitle.visible=true;
+        elementName.visible=true;
+    }
+
+    function hideElementName()
+    {
+        elementTitle.visible=false;
+        elementName.visible=false;
+    }
+
+    //------------------------------------------//
+    // Management of "location input" configuration
     //------------------------------------------//
     function loadAddress()
     { //load an address and test if it's guidable
@@ -556,6 +568,48 @@ NavigationAppHMIMenu {
         }
     }
 
+    function showLocationInput()
+    {
+        locationInputBackground.visible=true;
+        countryTitle.visible=true;
+        countryKeyboard.visible=true;
+        countryKeyboard.disabled=false;
+        countryValue.visible=true;
+        cityTitle.visible=true;
+        cityKeyboard.visible=true;
+        cityKeyboard.disabled=false;
+        cityValue.visible=true;
+        streetTitle.visible=true;
+        streetKeyboard.visible=true;
+        streetKeyboard.disabled=false;
+        streetValue.visible=true;
+        numberTitle.visible=true;
+        numberKeyboard.visible=true;
+        numberKeyboard.disabled=false;
+        numberValue.visible=true;
+    }
+
+    function hideLocationInput()
+    {
+        locationInputBackground.visible=false;
+        countryTitle.visible=false;
+        countryKeyboard.visible=false;
+        countryKeyboard.disabled=true;
+        countryValue.visible=false;
+        cityTitle.visible=false;
+        cityKeyboard.visible=false;
+        cityKeyboard.disabled=true;
+        cityValue.visible=false;
+        streetTitle.visible=false;
+        streetKeyboard.visible=false;
+        streetKeyboard.disabled=true;
+        streetValue.visible=false;
+        numberTitle.visible=false;
+        numberKeyboard.visible=false;
+        numberKeyboard.disabled=true;
+        numberValue.visible=false;
+    }
+
     //------------------------------------------//
     // Management of "keyboard" configuration
     //------------------------------------------//
@@ -611,6 +665,32 @@ NavigationAppHMIMenu {
     //------------------------------------------//
     // Management of "route" configuration
     //------------------------------------------//
+    function getRouteOverview()
+    {
+        statusValue.text=Genivi.gettext("CalculatedRouteSuccess");
+
+        var res=Genivi.routing_GetRouteOverviewTimeAndDistance(dbusIf);
+
+        var i, time = 0, distance = 0;
+        for (i=0;i<res[1].length;i+=4)
+        {
+            if (res[1][i+1] == Genivi.NAVIGATIONCORE_TOTAL_TIME)
+            {
+                time = res[1][i+3][3][1];
+            }
+            else
+            {
+                if (Genivi.NAVIGATIONCORE_TOTAL_DISTANCE)
+                {
+                    distance = res[1][i+3][3][1];
+                }
+            }
+        }
+
+        distanceValue.text =Genivi.distance(distance);
+        timeValue.text= Genivi.time(time);
+    }
+
     function showRoute()
     {
         guidanceTitle.visible=true;
@@ -690,7 +770,30 @@ NavigationAppHMIMenu {
         anchors { fill: parent; topMargin: parent.headlineHeight}
         id: content
 
-        // location input menu (always visible)
+        // name display
+        Text {
+            x:StyleSheet.elementTitle[Constants.X]; y:StyleSheet.elementTitle[Constants.Y]; width:StyleSheet.elementTitle[Constants.WIDTH]; height:StyleSheet.elementTitle[Constants.HEIGHT];color:StyleSheet.elementTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.elementTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.elementTitle[Constants.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id: elementTitle
+            text: Genivi.gettext("Element");
+        }
+        SmartText {
+            x:StyleSheet.elementName[Constants.X]; y:StyleSheet.elementName[Constants.Y]; width:StyleSheet.elementName[Constants.WIDTH]; height:StyleSheet.elementName[Constants.HEIGHT];color:StyleSheet.elementName[Constants.TEXTCOLOR];styleColor:StyleSheet.elementName[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.elementName[Constants.PIXELSIZE];
+            style: Text.Sunken;
+            smooth: true;
+            id: elementName
+            text: "";
+        }
+
+        // location input menu
+        BorderImage {
+            id: locationInputBackground
+            source:StyleSheet.locationInputBackground[Constants.SOURCE]; x:StyleSheet.locationInputBackground[Constants.X]; y:StyleSheet.locationInputBackground[Constants.Y]; width:StyleSheet.locationInputBackground[Constants.WIDTH]; height:StyleSheet.locationInputBackground[Constants.HEIGHT];
+            border.left: 0; border.top: 0
+            border.right: 0; border.bottom: 0
+            visible: false;
+        }
         Text {
             x:StyleSheet.countryTitle[Constants.X]; y:StyleSheet.countryTitle[Constants.Y]; width:StyleSheet.countryTitle[Constants.WIDTH]; height:StyleSheet.countryTitle[Constants.HEIGHT];color:StyleSheet.countryTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.countryTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.countryTitle[Constants.PIXELSIZE];
             style: Text.Sunken;
@@ -980,8 +1083,8 @@ NavigationAppHMIMenu {
 
         // bottom banner
         StdButton {
-            source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];textColor:StyleSheet.calculate_currText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.calculate_currText[Constants.PIXELSIZE];
-            id:calculate_curr; text: Genivi.gettext("GoTo");
+            source:StyleSheet.calculate_curr[Constants.SOURCE]; x:StyleSheet.calculate_curr[Constants.X]; y:StyleSheet.calculate_curr[Constants.Y]; width:StyleSheet.calculate_curr[Constants.WIDTH]; height:StyleSheet.calculate_curr[Constants.HEIGHT];
+            id:calculate_curr;
             onClicked: {
                 setAddress();
                 Genivi.guidance_activated=false;
@@ -1003,13 +1106,17 @@ NavigationAppHMIMenu {
             next:settings; prev:calculate_curr;
         }
         StdButton {
-            source:StyleSheet.settings[Constants.SOURCE]; x:StyleSheet.settings[Constants.X]; y:StyleSheet.settings[Constants.Y]; width:StyleSheet.settings[Constants.WIDTH]; height:StyleSheet.settings[Constants.HEIGHT];
-            id:settings;  next:back; prev:calculate_curr;
-            disabled: keyboardActivated;
+            source:StyleSheet.location_input[Constants.SOURCE]; x:StyleSheet.location_input[Constants.X]; y:StyleSheet.location_input[Constants.Y]; width:StyleSheet.location_input[Constants.WIDTH]; height:StyleSheet.location_input[Constants.HEIGHT];
+            id:location_input;  next:back; prev:calculate_curr;
+            disabled: false;
             onClicked: {
-                disconnectSignals();
-                Genivi.preloadMode=true; //for the next call of this menu
-                entryMenu("NavigationAppSettings",menu);
+                if(!Genivi.location_input_activated){
+                    Genivi.location_input_activated=true;
+                    Genivi.guidance_activated=false;
+                    Genivi.route_calculated=false;
+                    Genivi.preloadMode=true;
+                    pageOpen(menu.pagefile); //reload page
+                }
             }
         }
         StdButton {
@@ -1022,11 +1129,22 @@ NavigationAppHMIMenu {
             }
         }
         StdButton {
+            source:StyleSheet.settings[Constants.SOURCE]; x:StyleSheet.settings[Constants.X]; y:StyleSheet.settings[Constants.Y]; width:StyleSheet.settings[Constants.WIDTH]; height:StyleSheet.settings[Constants.HEIGHT];
+            id:settings;  next:back; prev:calculate_curr;
+            disabled: keyboardActivated;
+            onClicked: {
+                disconnectSignals();
+                Genivi.preloadMode=true; //for the next call of this menu
+                entryMenu("NavigationAppSettings",menu);
+            }
+        }
+        StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back");
             disabled: keyboardActivated; next:streetValue; prev:calculate_curr;
             onClicked: {
                 disconnectSignals();
+                Genivi.guidance_StopGuidance(dbusIf);
                 Genivi.locationinput_handle_clear(dbusIf); //clear the handle
                 leaveMenu();
             }
@@ -1042,37 +1160,75 @@ NavigationAppHMIMenu {
         listArea.model.clear(); // clean lists
         maneuverArea.model.clear();
 
-        if (Genivi.route_calculated || Genivi.reroute_requested) {
+        if (Genivi.reroute_requested){
             Genivi.reroute_requested=false;
-            countryValue.text=Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY];
-            countryValue.disabled=false;
-            cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
-            cityValue.disabled=false;
-            streetValue.text=Genivi.address[Genivi.NAVIGATIONCORE_STREET];
-            streetValue.disabled=false;
-            numberValue.text=Genivi.address[Genivi.NAVIGATIONCORE_HOUSENUMBER];
-            numberValue.disabled=false;
-
-            launchRouteCalculation(); //relaunch route calculation to refresh data
-            showRoute();
-            if(Genivi.guidance_activated){
-                guidanceActive();
-                showGuidance();
-                getManeuversList();
+            launchRouteCalculation(); //launch route calculation
+            if(Genivi.location_input_activated){
+                showLocationInput();
+                hideElementName();
+                countryValue.text=Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY];
+                countryValue.disabled=false;
+                cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
+                cityValue.disabled=false;
+                streetValue.text=Genivi.address[Genivi.NAVIGATIONCORE_STREET];
+                streetValue.disabled=false;
+                numberValue.text=Genivi.address[Genivi.NAVIGATIONCORE_HOUSENUMBER];
+                numberValue.disabled=false;
             }else{
-                guidanceInactive();
+                showElementName();
+                hideLocationInput();
+                elementName.text=Genivi.data['destination']['name'];
             }
-        }
-        else {
-            hideRoute();
-
-            // Preload address if activated
-            if (Genivi.preloadMode==true)
-            {
-                loadAddress();
+            showRoute();
+        }else{
+            if (Genivi.route_calculated) {
+                getRouteOverview();
+                show_route_on_map.disabled=false;
+                if(Genivi.guidance_activated){
+                    guidanceActive();
+                    showGuidance();
+                    delay(delayToGetManeuverList, function() {
+                        getManeuversList();
+                    })
+                }else{
+                    guidanceInactive();
+                }
+                if(Genivi.location_input_activated){
+                    showLocationInput();
+                    hideElementName();
+                    countryValue.text=Genivi.address[Genivi.NAVIGATIONCORE_COUNTRY];
+                    countryValue.disabled=false;
+                    cityValue.text=Genivi.address[Genivi.NAVIGATIONCORE_CITY];
+                    cityValue.disabled=false;
+                    streetValue.text=Genivi.address[Genivi.NAVIGATIONCORE_STREET];
+                    streetValue.disabled=false;
+                    numberValue.text=Genivi.address[Genivi.NAVIGATIONCORE_HOUSENUMBER];
+                    numberValue.disabled=false;
+                }else{
+                    showElementName();
+                    hideLocationInput();
+                    elementName.text=Genivi.data['destination']['name'];
+                }
+                showRoute();
             }
-        }
+            else {
+                if(Genivi.location_input_activated){
+                    showLocationInput();
+                    hideElementName();
+                    // Preload address if activated
+                    if (Genivi.preloadMode==true)
+                    {
+                        loadAddress();
+                    }
+                }else{
+                    showElementName();
+                    hideLocationInput();
+                    elementName.text=Genivi.data['destination']['name'];
+                }
+                hideRoute();
+            }
+       }
 
-        updateCurrentPosition();
+       updateCurrentPosition();
     }
 }

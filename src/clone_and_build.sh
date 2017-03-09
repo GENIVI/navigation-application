@@ -1,7 +1,7 @@
 #!/bin/bash
 
 build_option=""
-navigation_version='f7ab563cd23182dcedaa7509b1ae66774addf181'
+navigation_version='ef97f1a0866832f84f3f1780a407d6a98e24c8f2'
 positioning_version='9725fe1f553197042d6445997690d452a73490c0'
 navit_version='995cec54c8682fbabfb4f912b6156ce0b5b43436'
 
