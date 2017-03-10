@@ -882,6 +882,11 @@ function mapviewer_SetMapViewPan(dbusIf,panningAction,x,y)
     mapviewercontrol_message(dbusIf, "setMapViewPan", ["int32",panningAction,"array",["structure",["uint16",x,"uint16",y]]]);
 }
 
+function mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,x,y)
+{
+    return mapviewercontrol_message(dbusIf, "convertPixelCoordsToGeoCoords",["array",["structure",["uint16",x,"uint16",y]]]);
+}
+
 //---------------- MapViewer messages (handle 2) ----------------
 
 // Create a new map handle or get the current handle

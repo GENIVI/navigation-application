@@ -37,6 +37,7 @@ import "Core/style-sheets/NavigationAppBrowseMapSimulation-css.js" as StyleSheet
 import "Core/style-sheets/NavigationAppBrowseMapTop-css.js" as StyleSheetTop
 import "Core/style-sheets/NavigationAppBrowseMapManeuver-css.js" as StyleSheetManeuver
 import "Core/style-sheets/NavigationAppBrowseMapSettings-css.js" as StyleSheetSettings;
+import "Core/style-sheets/NavigationAppBrowseMapScale-css.js" as StyleSheetScale;
 
 import lbs.plugin.dbusif 1.0
 
@@ -48,6 +49,7 @@ NavigationAppHMIMenu {
 	property bool north:false;
     property int speedValueSent: 0;
     property bool displayManeuvers:false;
+    property double earthRadius: 6371009;
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -250,6 +252,7 @@ NavigationAppHMIMenu {
                 text="*"+text;
         }
         zoomlevel.text=text;
+        setScale();
     }
 
     function connectSignals()
@@ -768,6 +771,17 @@ NavigationAppHMIMenu {
     function startSimulation()
     {
         Genivi.mapmatchedposition_StartSimulation(dbusIf);
+    }
+
+    function setScale()
+    {
+        var res=Genivi.mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,width/2,height/2);
+        var latitude=res[3][1][1];
+        res=Genivi.mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,width/2+1,height/2+1);
+        var deltaLatitude=latitude-res[3][1][1];
+        var kilometerPerPixel=earthRadius*Math.sin((deltaLatitude*Math.PI)/360);
+        //StyleSheetScale.scale_bar[Constants.WIDTH]
+        console.log(kilometerPerPixel)
     }
 
     function showManeuversList()
@@ -1422,6 +1436,49 @@ NavigationAppHMIMenu {
                      }
                  }
              }
+        }
+
+        Rectangle {
+            color:"transparent"
+            width: StyleSheetScale.navigation_app_browse_map_scale_background[Constants.WIDTH]
+            height: StyleSheetScale.navigation_app_browse_map_scale_background[Constants.HEIGHT]
+            x: StyleSheetMap.scale_area[Constants.X]
+            y: StyleSheetMap.scale_area[Constants.Y]
+            NavigationAppHMIBgImage {
+                id: scale
+                opacity: 1
+                image:StyleSheetScale.navigation_app_browse_map_scale_background[Constants.SOURCE]
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+                Text {
+                    x:StyleSheetScale.scaleValue[Constants.X]; y:StyleSheetScale.scaleValue[Constants.Y]; width:StyleSheetScale.scaleValue[Constants.WIDTH]; height:StyleSheetScale.scaleValue[Constants.HEIGHT];color:StyleSheetScale.scaleValue[Constants.TEXTCOLOR];styleColor:StyleSheetScale.scaleValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetScale.scaleValue[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:scaleValue
+                    text: "-------"
+                }
+                BorderImage {
+                    id: left
+                    source: StyleSheetScale.left[Constants.SOURCE];x:StyleSheetScale.left[Constants.X]; y:StyleSheetScale.left[Constants.Y]; width:StyleSheetScale.left[Constants.WIDTH]; height:StyleSheetScale.left[Constants.HEIGHT];
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                    visible: true;
+                }
+                BorderImage {
+                    id: scale_bar
+                    source: StyleSheetScale.scale_bar[Constants.SOURCE];x:StyleSheetScale.scale_bar[Constants.X]; y:StyleSheetScale.scale_bar[Constants.Y]; width:StyleSheetScale.scale_bar[Constants.WIDTH]; height:StyleSheetScale.scale_bar[Constants.HEIGHT];
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                    visible: true;
+                }
+                BorderImage {
+                    id: right
+                    source: StyleSheetScale.right[Constants.SOURCE];x:StyleSheetScale.right[Constants.X]; y:StyleSheetScale.right[Constants.Y]; width:StyleSheetScale.right[Constants.WIDTH]; height:StyleSheetScale.right[Constants.HEIGHT];
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                    visible: true;
+                }
+            }
         }
 
     }
