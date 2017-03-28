@@ -276,8 +276,8 @@ NavigationAppHMIMenu {
             x:StyleSheet.keyboardArea[Constants.X]; y:StyleSheet.keyboardArea[Constants.Y]; width:StyleSheet.keyboardArea[Constants.WIDTH]; height:StyleSheet.keyboardArea[Constants.HEIGHT];
             id: keyboardArea;
             destination: poiValue;
-            firstLayout: "ABC";
-            secondLayout: "abc";
+            firstLayout: Genivi.kbdFirstLayout;
+            secondLayout: Genivi.kbdSecondLayout;
             next: select_search;
             prev: poiKeyboard;
             onKeypress: {   }

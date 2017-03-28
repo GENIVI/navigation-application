@@ -48,8 +48,8 @@ NavigationAppHMIMenu {
 	prev: menub
 	property bool north:false;
     property int speedValueSent: 0;
-    property bool displayManeuvers:false;
-    property double earthRadius: 6371009;
+    property bool displayManeuvers:false; 
+    property int currentZoomId;
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -105,9 +105,6 @@ NavigationAppHMIMenu {
     function guidanceManeuverChanged(args)
     {
         Genivi.hookSignal("guidanceManeuverChanged");
-        // TODO: Create possibility to poll information?
-        // console.log("guidanceManeuverChanged");
-        // Genivi.dump("",args);
         maneuverAdvice.text=Genivi.Maneuver[args[1]];
     }
 
@@ -115,8 +112,6 @@ NavigationAppHMIMenu {
     function guidanceWaypointReached(args)
     {
         Genivi.hookSignal("guidanceWaypointReached");
-        // console.log("guidanceWaypointReached");
-        // Genivi.dump("",args);
         if (args[2]) {
             maneuverAdvice.text="Destination reached";
         } else {
@@ -243,16 +238,18 @@ NavigationAppHMIMenu {
     property Item mapViewScaleChangedSignal;
     function mapViewScaleChanged(args)
     {
-        Genivi.hookSignal("mapViewScaleChanged");
+        Genivi.hookSignal("mapViewScaleChanged");       
         var text=args[3].toString();
-        if (args[5] === Genivi.MAPVIEWER_MAX) {
+        currentZoomId=args[3];
+        if(currentZoomId===Genivi.maxZoomId){
             text+="*";
-        } else {
-            if (args[5] === Genivi.MAPVIEWER_MIN)
+        }else{
+            if(currentZoomId===Genivi.minZoomId){
                 text="*"+text;
+            }
         }
         zoomlevel.text=text;
-        setScale();
+        setScale(currentZoomId);
     }
 
     function connectSignals()
@@ -665,14 +662,17 @@ NavigationAppHMIMenu {
 	{
         var res=Genivi.mapviewer_GetMapViewScale(dbusIf);
         var text=res[1].toString();
-        if (res[3] === Genivi.MAPVIEWER_MAX) {
+        currentZoomId=res[1];
+        if(currentZoomId===Genivi.maxZoomId){
             text+="*";
-        } else {
-            if (res[3] === Genivi.MAPVIEWER_MIN)
+        }else{
+            if(currentZoomId===Genivi.minZoomId){
                 text="*"+text;
+            }
         }
         zoomlevel.text=text;
-	}
+        setScale(currentZoomId);
+    }
 
     function getManeuversList()
     {
@@ -773,15 +773,34 @@ NavigationAppHMIMenu {
         Genivi.mapmatchedposition_StartSimulation(dbusIf);
     }
 
-    function setScale()
+    function setScale(scaleId)
     {
-        var res=Genivi.mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,width/2,height/2);
-        var latitude=res[3][1][1];
-        res=Genivi.mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,width/2+1,height/2+1);
-        var deltaLatitude=latitude-res[3][1][1];
-        var kilometerPerPixel=earthRadius*Math.sin((deltaLatitude*Math.PI)/360);
-        //StyleSheetScale.scale_bar[Constants.WIDTH]
-        console.log(kilometerPerPixel)
+        for(var index=0;index<Genivi.scaleList.length/2;index++)
+        {
+            if(scaleId===Genivi.scaleList[index*2+1][1])
+            {
+                var barLength;
+                if(Genivi.scaleList[index*2+1][5]===Genivi.MAPVIEWER_METER){
+                    barLength=(Genivi.scaleList[index*2+1][3]*1000)/Genivi.scaleList[index*2+1][7];
+                    scale_bar.width=barLength;
+                    right.x=left.x+left.width+scale_bar.width;
+                    scaleValue.text=Genivi.scaleList[index*2+1][3]+" m";
+                }else{
+                    if(Genivi.scaleList[index*2+1][5]===Genivi.MAPVIEWER_KM){
+                        barLength=(Genivi.scaleList[index*2+1][3]*1000000)/Genivi.scaleList[index*2+1][7];
+                        scale_bar.width=barLength;
+                        right.x=left.x+left.width+scale_bar.width;
+                        scaleValue.text=Genivi.scaleList[index*2+1][3]+" km";
+                    }
+                }
+                break;
+            }
+
+        }
+
+        scale_bar.update();
+        right.update();
+
     }
 
     function showManeuversList()
@@ -996,8 +1015,9 @@ NavigationAppHMIMenu {
                     source:StyleSheetBottom.zoomin[Constants.SOURCE]; x:StyleSheetBottom.zoomin[Constants.X]; y:StyleSheetBottom.zoomin[Constants.Y]; width:StyleSheetBottom.zoomin[Constants.WIDTH]; height:StyleSheetBottom.zoomin[Constants.HEIGHT];
                     id:zoomin;  next:zoomout; prev:orientation;
                     onClicked: {
-                        Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,1);
-                        showZoom();
+                        if(currentZoomId>Genivi.minZoomId){
+                            Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,1);
+                        }
                     }
                 }
 
@@ -1014,8 +1034,9 @@ NavigationAppHMIMenu {
                     source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
                     id:zoomout;  next:settings; prev:zoomin;
                     onClicked: {
-                        Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
-                        showZoom();
+                        if(currentZoomId<Genivi.maxZoomId){
+                            Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
+                        }
                     }
                 }
 
@@ -1548,5 +1569,6 @@ NavigationAppHMIMenu {
             }
         }
         showZoom();
+        initScale();
 	}
 }

@@ -326,8 +326,6 @@ NavigationAppHMIMenu {
     function routeCalculationFailed(args)
     {
         Genivi.hookSignal("routeCalculationFailed");
-        //console.log("routeCalculationFailed:");
-        //Genivi.dump("",args);
 
         statusValue.text=Genivi.gettext("CalculatedRouteFailed");
         Genivi.route_calculated = false;
@@ -643,7 +641,7 @@ NavigationAppHMIMenu {
         {
             spell('');
         } else { //there's a bug for street
-            keyboardArea.setactivekeys('\b'+"aAuUeEbBnNrRsSiIhHfFdDcC(kK otvVgGwWmMOTjJpPlLyYzZqQ*",true);
+            keyboardArea.activateAllKeys();
             listArea.model.clear();
         }
     }
@@ -1025,8 +1023,8 @@ NavigationAppHMIMenu {
             id: keyboardArea;
             visible: false;
             destination: countryValue; // by default
-            firstLayout: "ABC";
-            secondLayout: "abc";
+            firstLayout: Genivi.kbdFirstLayout;
+            secondLayout: Genivi.kbdSecondLayout;
             next: listArea;
             prev: numberKeyboard;
             onKeypress: {  spell(what); }

@@ -56,6 +56,14 @@ ApplicationWindow {
         id:dbusIf;
     }
 
+    function initScale()
+    {
+        var res=Genivi.mapviewer_GetScaleList(dbusIf);
+        Genivi.scaleList=res[1];
+        Genivi.minZoomId=Genivi.scaleList[1][1];
+        Genivi.maxZoomId=Genivi.scaleList[Genivi.scaleList.length-1][1];
+    }
+
 	Component.onCompleted: {
         //set persistent data
         Genivi.setlang("jpn","JPN","Hrkt"); //set to japanese
@@ -65,8 +73,9 @@ ApplicationWindow {
         Genivi.setDefaultAddress("Japan","東京","井ノ頭通り","17"); // preferred address
         Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
 
-        //launch the map viewer
+        //launch the map viewer and init the scale list
         Genivi.mapviewer_handle(dbusIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
+        initScale();
 
         //launch the HMI
         load("NavigationAppMain");

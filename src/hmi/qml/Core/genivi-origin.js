@@ -63,6 +63,10 @@ var route_calculated=false;
 var reroute_requested=false;
 var location_input_activated=true;
 
+var scaleList;
+var minZoomId;
+var maxZoomId;
+
 var entryback = new Array;
 var entrybackheapsize=0;
 entryback[entrybackheapsize]="";
@@ -134,12 +138,6 @@ data['display_on_map']='show_current_position'; //display current position of th
 historyOfLastEnteredLocationDepth=10; //max number of items into the history is set to historyOfLastEnteredLocationDepth-1
 tripMode="TRIP_NUMBER1";
 
-//keyboard parameters
-var kbdRows=8; //number of rows per line
-var kbdRowRatio=4; //size of row spacing (ratio)
-var kbdLines=4; //number of lines
-var kbdLineRatio=4; //size of line spacing (ratio)
-
 //dump functions for debug
 function dump2(prefix,index,args)
 {
@@ -209,6 +207,86 @@ function time(seconds)
 	}
 }
 
+// Keyboard parameters
+var kbdColumns; //number of columns per line
+var kbdColumnRatio; //size of column spacing (ratio)
+var kbdLines; //number of lines
+var kbdLineRatio; //size of line spacing (ratio)
+var kbdFirstLayout;
+var kbdSecondLayout;
+var keyboardLayout;
+var germanLayout={
+    'ABC':['A','B','C','D','E','F','G','H',
+           'I','J','K','L','M','N','O','P',
+           'Q','R','S','T','U','V','W','X',
+           'Y','Z','␣','','','123','ÄÖÜ','←',
+        ],
+    'ÄÖÜ':['Ä','Ö','Ü','ß','','','','',
+           '','','','','','','','',
+           '','','','','','','','',
+           '','','','','','123','ABC','←',
+        ],
+    '123':['0','1','2','3','4','5','6','7',
+           '8','9','-','.',',','','','',
+           '','','','','','','','',
+           '','','','','','ABC','ÄÖÜ','←',
+        ],
+};
+var frenchLayout={
+    'ABC':['A','B','C','D','E','F','G','H',
+           'I','J','K','L','M','N','O','P',
+           'Q','R','S','T','U','V','W','X',
+           'Y','Z','␣','','','123','','←',
+        ],
+    '123':['0','1','2','3','4','5','6','7',
+           '8','9','-','.',',','','','',
+           '','','','','','','','',
+           '','','','','','ABC','','←',
+        ],
+};
+var englishLayout={
+    'ABC':['A','B','C','D','E','F','G','H',
+           'I','J','K','L','M','N','O','P',
+           'Q','R','S','T','U','V','W','X',
+           'Y','Z','␣','','','123','','←',
+        ],
+    '123':['0','1','2','3','4','5','6','7',
+           '8','9','-','.',',','','','',
+           '','','','','','','','',
+           '','','','','','ABC','','←',
+        ],
+};
+var japaneseLayout={
+    'かな':['あ','か','さ','た','な','は','ま','や','ら','わ',
+        　　'い','き','し','ち','に','ひ','み','','り','を',
+        　　'う','く','す','つ','ぬ','ふ','む','ゆ','る','ん',
+        　　'え','け','せ','て','ね','へ','め','','れ','”',
+        　　'お','こ','そ','と','の','ほ','も','よ','ろ','°',
+        　　'カナ','ABC','123','','','','','','','←',
+        ],
+    'カナ':['ア','カ','サ','タ','ナ','ハ','マ','ヤ','ラ','ワ',
+        　　'イ','キ','シ','チ','ニ','ヒ','ミ','','リ','ヲ',
+        　　'ウ','ク','ス','ツ','ヌ','フ','ム','ユ','ル','ン',
+        　　'エ','ケ','セ','テ','ネ','ヘ','メ','','レ','”',
+        　　'オ','コ','ソ','ト','ノ','ホ','モ','ヨ','ロ','°',
+        　　'かな','ABC','123','','','','','','ー','←',
+        ],
+    'ABC':['A','Z','E','R','T','Y','U','I','O','P',
+        　　'Q','S','D','F','G','H','J','K','L','M',
+        　　'W','X','C','V','B','N','','','','',
+        　　'','','','','','','','','','',
+        　　'','','','','','','','','','',
+        　　'かな','','123','','␣','','','','','←',
+        ],
+    '123':['0','1','2','3','4','5','6','7','8','9',
+        　　'','','','','','','','','','',
+        　　'','','','','','','','','','',
+        　　'','','','','','','','','','',
+        　　'','','','','','','','','','',
+        　　'かな','ABC','','','','','','','','←',
+        ],
+};
+
 // Language and text
 function setlang(language,country,script)
 {
@@ -217,6 +295,44 @@ function setlang(language,country,script)
     g_script=script;
     translations = new Array;
     Qt.include("translations/"+g_language + "_" + g_country+".js");
+    if(g_language==="eng"){
+        keyboardLayout=englishLayout;
+        kbdColumns=8; //number of rows per line
+        kbdColumnRatio=4; //size of row spacing (ratio)
+        kbdLines=4; //number of lines
+        kbdLineRatio=4; //size of line spacing (ratio)
+    }else{
+        if(g_language==="fra"){
+            keyboardLayout=frenchLayout;
+            kbdColumns=8; //number of rows per line
+            kbdColumnRatio=4; //size of row spacing (ratio)
+            kbdLines=4; //number of lines
+            kbdLineRatio=4; //size of line spacing (ratio)
+        }else{
+            if(g_language==="jpn"){
+                keyboardLayout=japaneseLayout;
+                kbdColumns=10; //number of rows per line
+                kbdColumnRatio=4; //size of row spacing (ratio)
+                kbdLines=6; //number of lines
+                kbdLineRatio=4; //size of line spacing (ratio)
+            }else{
+                if(g_language==="deu"){
+                    keyboardLayout=germanLayout;
+                    kbdColumns=8; //number of rows per line
+                    kbdColumnRatio=4; //size of row spacing (ratio)
+                    kbdLines=4; //number of lines
+                    kbdLineRatio=4; //size of line spacing (ratio)
+                }else{
+                    //default
+                    keyboardLayout=germanLayout;
+                    kbdColumns=8; //number of rows per line
+                    kbdColumnRatio=4; //size of row spacing (ratio)
+                    kbdLines=4; //number of lines
+                    kbdLineRatio=4; //size of line spacing (ratio)
+                }
+            }
+        }
+    }
 }
 
 // Default position (for showroom mode)
@@ -786,6 +902,11 @@ function mapviewercontrol_get(par, func, args)
 function mapviewer_GetMapViewScale(dbusIf)
 {
     return mapviewercontrol_get(dbusIf,"GetMapViewScale", []);
+}
+
+function mapviewer_GetScaleList(dbusIf)
+{
+    return mapviewercontrol_get(dbusIf,"GetScaleList", []);
 }
 
 function mapviewer_GetDisplayedRoutes(dbusIf)
