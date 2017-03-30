@@ -30,36 +30,36 @@ translations["Navigation"]="ナビ";
 translations["Mapview"]="地図";
 translations["Poi"]="地点";
 translations["Configuration"]="設定";
-translations["Trip"]="TRIP";
+translations["Trip"]="旅行";
 
 translations["Country"]="国";
 translations["City"]="町";
 translations["Street"]="道";
 translations["Number"]="番号";
 
-translations["RoutingPreferences"]="ROUTING PREFERENCES";
-translations["Ferries"]="FERRIES";
-translations["TollRoads"]="TOLL ROADS";
-translations["MotorWays"]="MOTORWAYS";
+translations["RoutingPreferences"]="ルートの設定";
+translations["Ferries"]="フェリー";
+translations["TollRoads"]="通行料";
+translations["MotorWays"]="高速道路";
 translations["CostModel"]="COST MODEL";
 translations["Shortest"]="SHORTEST";
 translations["Fastest"]="FASTEST";
 translations["Language"]="言語";
 translations["Units"]="ユニット";
 translations["Showroom"]="ショールーム";
-translations["Autoguidance"]="AUTOGUIDE";
-translations["Simulation"]="SIMULATION";
+translations["Autoguidance"]="自動ガイド";
+translations["Simulation"]="シミュレーション";
 
 translations["RouteDistance"]="距離";
 translations["RouteTime"]="時間";
 translations["Guidance"]="ガイダンス";
 translations["DisplayRoute"]="ルート";
 translations["StatusTitle"]="ステータス";
-translations["CalculatedRouteInProgress"]="CALCULATION IN PROGRESS";
-translations["CalculatedRouteFailed"]="CALCULATION FAILED";
-translations["CalculatedRouteSuccess"]="ROUTE AVAILABLE";
+translations["CalculatedRouteInProgress"]="進行中";
+translations["CalculatedRouteFailed"]="失敗した";
+translations["CalculatedRouteSuccess"]="成功した";
 
-translations["FSAWarning"]="Refill";
+translations["FSAWarning"]="補給";
 translations["NoGuidance"]="No guidance";
 translations["NoManeuver"]="No maneuver";
 
@@ -68,32 +68,30 @@ translations["North"]="北";
 translations["South"]="南";
 translations["East"]="東";
 translations["West"]="西";
-translations["CameraTilt"]="Tilt";
-translations["CameraHeight"]="Height";
+translations["CameraTilt"]="上下";
+translations["CameraHeight"]="高さ";
 translations["CameraDistance"]="Dist";
 translations["CameraPerspective3d"]="3d";
 translations["CameraPerspective2d"]="2d";
 translations["Split"]="Sp";
 translations["Join"]="Jo";
-translations["Day"]="Da";
-translations["Night"]="Ni";
+translations["Day"]="日";
+translations["Night"]="夜";
 
-translations["AvgSpeed"]="AVG SPEED";
-translations["AvgFuel"]="AVG FUEL";
+translations["AvgSpeed"]="時速";
+translations["AvgFuel"]="燃費";
 translations["Distance"]="距離";
-translations["FuelLevel"]="FUEL LEVEL";
-translations["TankDistance"]="TANK DISTANCE";
-translations["PredictiveTankDistance"]="PREDICTIVE\nTANK DISTANCE";
-translations["Reset"]="RESET";
+translations["FuelLevel"]="燃料";
+translations["TankDistance"]="走行距離";
+translations["PredictiveTankDistance"]="予報した\n走行距離";
+translations["Reset"]="リセット";
 
-translations["Selected"]="SELECTED";
+translations["Selected"]="選ばれた";
 
 translations["On"]="ON";
 translations["Off"]="OFF";
-translations["Back"]="BACK";
+translations["Back"]="戻る";
 translations["Cancel"]="キャンセル";
-translations["Quit"]="QUIT";
+translations["Quit"]="終了";
 
-
-translations["Element"]="NAME";
-
+translations["Element"]="場所";

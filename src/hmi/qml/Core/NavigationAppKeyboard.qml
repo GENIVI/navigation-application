@@ -106,14 +106,14 @@ Item {
     {
         var keys;
         keys='\b'+'␣'+"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        if(g_language==="eng"){
+        if(Genivi.g_language ==="eng"){
         }else{
-            if(g_language==="fra"){
+            if(Genivi.g_language==="fra"){
             }else{
-                if(g_language==="jpn"){
+                if(Genivi.g_language==="jpn"){
                     keys+="あかさたなはまやらわいきしちにひみりをうくすつぬふむゆるんえけせてねへめれ”おこそとのほもよろ°";
                 }else{
-                    if(g_language==="deu"){
+                    if(Genivi.g_language==="deu"){
                     }
                 }
             }

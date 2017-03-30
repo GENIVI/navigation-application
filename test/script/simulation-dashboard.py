@@ -114,6 +114,7 @@ def displayEngineSpeed(string):
 	logVerbose("EngineSpeed",string)
 
 def displayFuelLevel(string):
+	display('       ',FUEL_LEVEL_LOCATION,YELLOW,BLACK)
 	display(string,FUEL_LEVEL_LOCATION,YELLOW,BLACK)
 
 def displayFuelInstant(string):
@@ -138,9 +139,11 @@ def displayFuelStopAdvisorWarning(string):
 	display(string,FUEL_STOP_ADVISOR_WARNING_LOCATION,YELLOW,BLACK)
 
 def displayFuelStopAdvisorTankDistance(string):
+	display('       ',FUEL_STOP_ADVISOR_TANK_DISTANCE_LOCATION,YELLOW,BLACK)
 	display(string,FUEL_STOP_ADVISOR_TANK_DISTANCE_LOCATION,YELLOW,BLACK)
 
 def displayFuelStopAdvisorEnhancedTankDistance(string):
+	display('       ',FUEL_STOP_ADVISOR_ENHANCED_TANK_DISTANCE_LOCATION,YELLOW,BLACK)
 	display(string,FUEL_STOP_ADVISOR_ENHANCED_TANK_DISTANCE_LOCATION,YELLOW,BLACK)
 
 def refresh():

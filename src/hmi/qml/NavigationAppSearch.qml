@@ -46,7 +46,7 @@ NavigationAppHMIMenu {
     property bool destinationValid: false
     property real routeListSegments: 1000
     property bool vehicleLocated: false
-    property real delayToGetManeuverList: 100
+    property real delayToGetManeuverList: 200 //in ms
 
     //------------------------------------------//
     // Miscellaneous

@@ -1551,7 +1551,7 @@ NavigationAppHMIMenu {
                     hideGuidance();
                     hideRoute();
                     hideSimulation();
-                    updateAddress();
+                    updateAddress(); //there's a pb of accuracy of SetPosition in mapmatchedposition
                 }
             }
             else {
@@ -1564,11 +1564,12 @@ NavigationAppHMIMenu {
                     hideGuidance();
                     hideRoute();
                     hideSimulation();
-                    updateAddress();
+                    updateAddress(); //there's a pb of accuracy of SetPosition in mapmatchedposition
                 }
             }
         }
         showZoom();
         initScale();
+        updateDayNight();
 	}
 }

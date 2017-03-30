@@ -7,7 +7,7 @@
 #vehicle speed 90 km/h so 2500 cm/1000 ms
 #engine speed 2000 RPM
 #ignition key ON (Not Applicable)
-#fuel level 15 l
+#fuel level 4 l
 #fuel consumption 5.4 l/h so 1500 µl/1000 ms (6 l/100)
 #step 1000 ms
 #totalodo is used for simulating distance step in cm
@@ -17,6 +17,6 @@
 1000,0$GVGNSP,1000,46.202038, 6.146845,0,0X03
 1000,0$GVSNSVEHSP,1000,90.00,0X01
 1000,0$GVVEHENGSPEED,2000,0X01
-1000,0$GVVEHFUELLEVEL,15,0X01
+1000,0$GVVEHFUELLEVEL,4,0X01
 1000,0$GVVEHFUELCONS,1500,0X01
 1000,0$GVVEHTOTALODO,2500,0x01
