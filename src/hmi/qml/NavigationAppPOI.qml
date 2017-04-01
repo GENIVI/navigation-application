@@ -92,11 +92,6 @@ NavigationAppHMIMenu {
         select_search.update();
     }
 
-    function update()
-    {
-        selectedValue.text="Lat:\nLon:\nDist:\n";
-    }
-
     function spell(input)
     {
         keyboardArea.destination.text = input;
@@ -111,6 +106,66 @@ NavigationAppHMIMenu {
                 model.append({"name":Genivi.categoriesIdNameList[i+1][3],"number":i/2});
         }
         categoryValue.text=model.get(0).name;
+    }
+
+    function displayPoiList()
+    {
+        var model=view.model;
+        var ids=[];
+        var latitude=0;
+        var longitude=0;
+
+        if(Genivi.showroom) {
+            latitude=Genivi.data['default_position']['lat'];
+            longitude=Genivi.data['default_position']['lon'];
+        }else{
+            latitude=Genivi.data['current_position']['lat'];
+            longitude=Genivi.data['current_position']['lon'];
+        }
+
+        if (!latitude && !longitude) {
+            model.clear();
+            model.append({"name":"No position available"});
+            return;
+        }
+        var categoriesAndRadius=[];
+        var categoriesAndRadiusList=[];
+        categoriesAndRadius[0]=Genivi.category_id;
+        categoriesAndRadius[1]=Genivi.radius;
+        categoriesAndRadiusList.push(categoriesAndRadius);
+
+        Genivi.poisearch_SetCenter(dbusIf,latitude,longitude,0);
+        Genivi.poisearch_SetCategories(dbusIf,categoriesAndRadiusList);
+        Genivi.poisearch_StartPoiSearch(dbusIf,"",Genivi.POISERVICE_SORT_BY_DISTANCE);
+        var attributeList=[];
+        attributeList[0]=0;
+        var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
+        var res_win=res[5];
+        var i;
+        for (i = 0 ; i < res_win.length ; i+=2) {
+            var id=res_win[i+1][1];
+            ids.push(id);
+            Genivi.poi_data[id]=[];
+            Genivi.poi_data[id].id=id;
+            Genivi.poi_data[id].category=Genivi.category_id;
+            Genivi.poi_data[id].distance=res_win[i+1][3];
+        }
+        var details=Genivi.poisearch_GetPoiDetails(dbusIf,ids);
+        for (i = 0 ; i < details[1].length ; i+=2) {
+            var poi_details=details[1][i+1];
+            id=poi_details[1][1];
+            Genivi.poi_data[id].name=poi_details[1][3];
+            Genivi.poi_data[id].lat=poi_details[1][5][1];
+            Genivi.poi_data[id].lon=poi_details[1][5][3];
+        }
+        model.clear();
+        for (i = 0 ; i < ids.length ; i+=1) {
+            id=ids[i];
+            var poi_data=Genivi.poi_data[id];
+            if((poi_data.name !== "") && (poi_data.name !== "?") ){ //filter empty and unknown names
+                model.append({"name":poi_data.name,"number":id});
+            }
+        }
     }
 
     //------------------------------------------//
@@ -138,6 +193,7 @@ NavigationAppHMIMenu {
             id:categoryKeyboard; disabled:false; next:poiKeyboard; prev:back;
             onClicked: {
                 keyboardArea.destination=categoryValue;
+                Genivi.poi_id=null; //clear current selected poi
                 poiValue.text="";
                 selectedValue.text="Lat:\nLon:\nDist:\n";
                 poiName.visible=false;
@@ -288,61 +344,7 @@ NavigationAppHMIMenu {
             id:select_search
             disabled:!(vehicleLocated || Genivi.showroom );
             onClicked: {
-				var model=view.model;
-				var ids=[];
-                var latitude=0;
-                var longitude=0;
-
-                if(Genivi.showroom) {
-                    latitude=Genivi.data['default_position']['lat'];
-                    longitude=Genivi.data['default_position']['lon'];
-                }else{
-                    latitude=Genivi.data['current_position']['lat'];
-                    longitude=Genivi.data['current_position']['lon'];
-                }
-
-                if (!latitude && !longitude) {
-					model.clear();
-					model.append({"name":"No position available"});
-					return;
-				}
-                var categoriesAndRadius=[];
-                var categoriesAndRadiusList=[];
-                categoriesAndRadius[0]=Genivi.category_id;
-                categoriesAndRadius[1]=Genivi.radius;
-                categoriesAndRadiusList.push(categoriesAndRadius);
-
-                Genivi.poisearch_SetCenter(dbusIf,latitude,longitude,0);
-                Genivi.poisearch_SetCategories(dbusIf,categoriesAndRadiusList);
-                Genivi.poisearch_StartPoiSearch(dbusIf,"",Genivi.POISERVICE_SORT_BY_DISTANCE);
-                var attributeList=[];
-                attributeList[0]=0;
-                var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
-				var res_win=res[5];
-                var i;
-                for (i = 0 ; i < res_win.length ; i+=2) {
-                    var id=res_win[i+1][1];
-                    ids.push(id);
-					Genivi.poi_data[id]=[];
-					Genivi.poi_data[id].id=id;
-					Genivi.poi_data[id].distance=res_win[i+1][3];
-				}
-                var details=Genivi.poisearch_GetPoiDetails(dbusIf,ids);
-                for (i = 0 ; i < details[1].length ; i+=2) {
-					var poi_details=details[1][i+1];
-                    id=poi_details[1][1];
-					Genivi.poi_data[id].name=poi_details[1][3];
-                    Genivi.poi_data[id].lat=poi_details[1][5][1];
-                    Genivi.poi_data[id].lon=poi_details[1][5][3];
-				}
-				model.clear();
-                for (i = 0 ; i < ids.length ; i+=1) {
-                    id=ids[i];
-					var poi_data=Genivi.poi_data[id];
-                    if((poi_data.name !== "") && (poi_data.name !== "?") ){ //filter empty and unknown names
-                        model.append({"name":poi_data.name,"number":id});
-                    }
-				}
+                displayPoiList();
 			}
 		}
 		StdButton { 
@@ -400,22 +402,40 @@ NavigationAppHMIMenu {
 
         var categoriesIdNameAndRadius=[];
         var ret=Genivi.poisearch_GetAvailableCategories(dbusIf);
-        var categories=ret[1];
-        for (var i = 0 ; i < categories.length ; i+=2) {
-            if (categories[i+1][3] == 'fuel') {
-                Genivi.category_id=categories[i+1][1];
-                poiCategoryName=categories[i+1][3];
-            }
-         }
-        Genivi.categoriesIdNameList=categories;
+        Genivi.categoriesIdNameList=ret[1];
 
-        Genivi.poi_data=[];
+        if(Genivi.poi_id !== null){
+            //there's a selected poi
+            var poi_data=Genivi.poi_data[Genivi.poi_id];
+            poiName.text=poi_data.name;
+            poiName.visible=true;
+            for (var i = 0 ; i < Genivi.categoriesIdNameList.length ; i+=2) {
+                if (Genivi.categoriesIdNameList[i+1][1] === poi_data.category) {
+                    Genivi.category_id=poi_data.category;
+                    poiCategoryName=Genivi.categoriesIdNameList[i+1][3];
+                }
+             }
+            selectedValue.text="Lat: "+poi_data.lat.toFixed(4)+"\nLon: "+poi_data.lon.toFixed(4)+"\nDist: "+poi_data.distance+" m";
+            selectedValueTitle.visible=true;
+            select_reroute.disabled=false;
+            select_display_on_map.disabled=false;
+            displayPoiList();
+        }else{
+            Genivi.poi_data=[];
+            selectedValue.text="Lat:\nLon:\nDist:\n";
+            for (var j = 0 ; j < Genivi.categoriesIdNameList.length ; j+=2) {
+                if (Genivi.categoriesIdNameList[j+1][3] == 'fuel') {
+                    Genivi.category_id=Genivi.categoriesIdNameList[j+1][1];
+                    poiCategoryName=Genivi.categoriesIdNameList[j+1][3];
+                }
+             }
+        }
+
 
         categoryValue.text=poiCategoryName;
         keyboardArea.destination=poiValue; // by default
         poiFrame.visible=true;
 
-		update();
         if(!Genivi.showroom) {
             updateCurrentPosition();
         }

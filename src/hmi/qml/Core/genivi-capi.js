@@ -47,7 +47,7 @@ data['current_position']=new Array; //the current position
 data['default_position']=new Array; //the default position used for the showrooom
 
 var poi_data=new Array;
-var poi_id;
+var poi_id=null;
 var category_id;
 
 var categoriesIdNameList;
@@ -118,6 +118,7 @@ CostModels[NAVIGATIONCORE_INVALID]="INVALID";
 CostModels[NAVIGATIONCORE_FASTEST]="FASTEST";
 CostModels[NAVIGATIONCORE_SHORTEST]="SHORTEST";
 
+var verbose=false; //no log sent to stdout by default
 var preloadMode=false; //set to true when the address is restored
 var address = new Object; //to store the address, in order to make the hmi more friendly :-)
 var tripMode; //trip mode to be displayed by the trip computer menu ("TRIP_NUMBER1", "TRIP_NUMBER2" or "TRIP_INSTANT")
@@ -162,7 +163,14 @@ function dump(prefix,args)
 
 function hookContext()
 {
-    console.log("Routing: ",route_calculated," Guidance: ",guidance_activated," Simulation: ",simulationMode);
+    if(verbose===true){
+        console.log("Routing: ",route_calculated," Guidance: ",guidance_activated," Simulation: ",simulationMode);
+    }
+}
+
+function setVerbose()
+{
+    verbose=true;
 }
 
 //Manage the historyOfLastEnteredLocation
@@ -297,6 +305,8 @@ function setlang(language,country,script)
     Qt.include("translations/"+g_language + "_" + g_country+".js");
     if(g_language==="eng"){
         keyboardLayout=englishLayout;
+        kbdFirstLayout="ABC";
+        kbdSecondLayout="123";
         kbdColumns=8; //number of rows per line
         kbdColumnRatio=4; //size of row spacing (ratio)
         kbdLines=4; //number of lines
@@ -304,6 +314,8 @@ function setlang(language,country,script)
     }else{
         if(g_language==="fra"){
             keyboardLayout=frenchLayout;
+            kbdFirstLayout="ABC";
+            kbdSecondLayout="123";
             kbdColumns=8; //number of rows per line
             kbdColumnRatio=4; //size of row spacing (ratio)
             kbdLines=4; //number of lines
@@ -311,6 +323,8 @@ function setlang(language,country,script)
         }else{
             if(g_language==="jpn"){
                 keyboardLayout=japaneseLayout;
+                kbdFirstLayout="かな";
+                kbdSecondLayout="カナ";
                 kbdColumns=10; //number of rows per line
                 kbdColumnRatio=4; //size of row spacing (ratio)
                 kbdLines=6; //number of lines
@@ -318,6 +332,8 @@ function setlang(language,country,script)
             }else{
                 if(g_language==="deu"){
                     keyboardLayout=germanLayout;
+                    kbdFirstLayout="ABC";
+                    kbdSecondLayout="123";
                     kbdColumns=8; //number of rows per line
                     kbdColumnRatio=4; //size of row spacing (ratio)
                     kbdLines=4; //number of lines
@@ -368,7 +384,9 @@ function gettext(arg)
 
 function hookMethod(arg)
 {
-    console.log("Method: ",arg);
+    if(verbose===true){
+        console.log("Method: ",arg);
+    }
 }
 
 // Send a dbus message to layer manager
@@ -409,7 +427,9 @@ function demonstrator_message(par, iface, func, args)
 //----------------- DBus signals -----------------
 function hookSignal(arg)
 {
-    console.log("Signal: ",arg);
+    if(verbose===true){
+        console.log("Signal: ",arg);
+    }
 }
 
 function connect_simulationStatusChangedSignal(interface,menu)

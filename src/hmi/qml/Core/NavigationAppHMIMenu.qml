@@ -160,7 +160,9 @@ Rectangle {
     }
 
 	function pageOpen(command) {
-        console.log("page open")
+        if(Genivi.verbose===true){
+            console.log("page open")
+        }
         menu.state="hidden";
         Genivi.hookContext();
         container.load(command);
@@ -176,6 +178,8 @@ Rectangle {
         }
 
     Component.onCompleted: {
-        console.log("Level: ",Genivi.entrybackheapsize," Menu: ",pagefile);
+        if(Genivi.verbose===true){
+            console.log("Level: ",Genivi.entrybackheapsize," Menu: ",pagefile);
+        }
     }
 }

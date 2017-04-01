@@ -77,6 +77,9 @@ ApplicationWindow {
         Genivi.mapviewer_handle(dbusIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
         initScale();
 
+        //set verbose mode on
+        Genivi.setVerbose();
+
         //launch the HMI
         load("NavigationAppMain");
 	}
