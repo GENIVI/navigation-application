@@ -63,6 +63,38 @@ var route_calculated=false;
 var reroute_requested=false;
 var location_input_activated=true;
 
+function setRouteCalculated(arg)
+{
+    route_calculated=arg;
+    if(verbose===true){
+        console.log("Routing: ",route_calculated);
+    }
+}
+
+function setGuidanceActivated(arg)
+{
+    guidance_activated=arg;
+    if(verbose===true){
+        console.log(" Guidance: ",guidance_activated);
+    }
+}
+
+function setLocationInputActivated(arg)
+{
+    location_input_activated=arg;
+    if(verbose===true){
+        console.log("Location input: ",location_input_activated);
+    }
+}
+
+function setRerouteRequested(arg)
+{
+    reroute_requested=arg;
+    if(verbose===true){
+        console.log("Rerouting: ",reroute_requested);
+    }
+}
+
 var scaleList;
 var minZoomId;
 var maxZoomId;

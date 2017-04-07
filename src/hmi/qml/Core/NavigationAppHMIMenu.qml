@@ -146,7 +146,6 @@ Rectangle {
         Genivi.entrybackheapsize += 1;
         Genivi.entryback[Genivi.entrybackheapsize] = outmenu.pagefile;
         outmenu.state = "hidden";
-        Genivi.hookContext();
         container.load(inmenu);
     }
 
@@ -155,16 +154,11 @@ Rectangle {
         var outmenu=Genivi.entryback[Genivi.entrybackheapsize];
         Genivi.entrybackheapsize -= 1;
         menu.state="hidden";
-        Genivi.hookContext();
         container.load(outmenu);
     }
 
 	function pageOpen(command) {
-        if(Genivi.verbose===true){
-            console.log("page open")
-        }
         menu.state="hidden";
-        Genivi.hookContext();
         container.load(command);
 	}
 

@@ -64,7 +64,7 @@ NavigationAppHMIMenu {
         Genivi.hookSignal("guidanceStatusChanged");
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
-            Genivi.guidance_activated = true;
+            Genivi.setGuidanceActivated(true);
             showGuidance();
             showRoute();
             if (Genivi.simulationMode===true)
@@ -89,7 +89,7 @@ NavigationAppHMIMenu {
             else {
                 visible=false; //no route calculated
             }
-            Genivi.guidance_activated = false;
+            Genivi.setGuidanceActivated(false);
             //Guidance inactive, so inform the trip computer
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,0);
             maneuverAdvice.text=Genivi.gettext("NoGuidance");

@@ -74,7 +74,7 @@ NavigationAppHMIMenu {
         Genivi.hookSignal("guidanceStatusChanged");
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
-            Genivi.guidance_activated = true;
+            Genivi.setGuidanceActivated(true);
             guidanceActive();
             //Guidance active, so inform the trip computer (refresh)
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,1,50);
@@ -92,7 +92,7 @@ NavigationAppHMIMenu {
             }
 
         } else {
-            Genivi.guidance_activated = false;
+            Genivi.setGuidanceActivated(false);
             guidanceInactive();
             hideGuidance();
             //Guidance inactive, so inform the trip computer
@@ -308,7 +308,7 @@ NavigationAppHMIMenu {
     { //routeHandle 1, unfullfilledPreferences 3
         Genivi.hookSignal("routeCalculationSuccessful");
 
-        Genivi.route_calculated = true;
+        Genivi.setRouteCalculated(true);
         getRouteOverview();
 
         // Give the route handle to the FSA
@@ -328,7 +328,7 @@ NavigationAppHMIMenu {
         Genivi.hookSignal("routeCalculationFailed");
 
         statusValue.text=Genivi.gettext("CalculatedRouteFailed");
-        Genivi.route_calculated = false;
+        Genivi.setRouteCalculated(false);
         // Tell the FSA that there's no route available
         Genivi.fuelstopadvisor_ReleaseRouteHandle(dbusIf,Genivi.g_routing_handle);
     }
@@ -338,7 +338,7 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal("routeCalculationProgressUpdate");
         statusValue.text=Genivi.gettext("CalculatedRouteInProgress");
-        Genivi.route_calculated = false;
+        Genivi.setRouteCalculated(false);
     }
 
     property Item spellResultSignal;
@@ -627,7 +627,7 @@ NavigationAppHMIMenu {
     function initKeyboard()
     {
         // when keyboard is activated, route is reset
-        Genivi.route_calculated=false;
+        Genivi.setRouteCalculated(false);
         hideRoute();
         hideGuidance();
         listArea.forceActiveFocus();
@@ -1085,7 +1085,7 @@ NavigationAppHMIMenu {
             id:calculate_curr;
             onClicked: {
                 setAddress();
-                Genivi.guidance_activated=false;
+                Genivi.setGuidanceActivated(false);
                 launchRouteCalculation();
             }
             disabled:!((vehicleLocated || Genivi.showroom ) && destinationValid && !(keyboardActivated));
@@ -1109,9 +1109,9 @@ NavigationAppHMIMenu {
             disabled: false;
             onClicked: {
                 if(!Genivi.location_input_activated){
-                    Genivi.location_input_activated=true;
-                    Genivi.guidance_activated=false;
-                    Genivi.route_calculated=false;
+                    Genivi.setLocationInputActivated(true);
+                    Genivi.setGuidanceActivated(false);
+                    Genivi.setRouteCalculated(false);
                     Genivi.preloadMode=true;
                     pageOpen(menu.pagefile); //reload page
                 }
@@ -1159,7 +1159,7 @@ NavigationAppHMIMenu {
         maneuverArea.model.clear();
 
         if (Genivi.reroute_requested){
-            Genivi.reroute_requested=false;
+            Genivi.setRerouteRequested(false);
             launchRouteCalculation(); //launch route calculation
             if(Genivi.location_input_activated){
                 showLocationInput();
