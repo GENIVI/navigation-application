@@ -1015,7 +1015,7 @@ NavigationAppHMIMenu {
                     source:StyleSheetBottom.zoomin[Constants.SOURCE]; x:StyleSheetBottom.zoomin[Constants.X]; y:StyleSheetBottom.zoomin[Constants.Y]; width:StyleSheetBottom.zoomin[Constants.WIDTH]; height:StyleSheetBottom.zoomin[Constants.HEIGHT];
                     id:zoomin;  next:zoomout; prev:orientation;
                     onClicked: {
-                        if(currentZoomId>Genivi.minZoomId){
+                        if(currentZoomId<Genivi.maxZoomId){
                             Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,1);
                         }
                     }
@@ -1034,7 +1034,7 @@ NavigationAppHMIMenu {
                     source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
                     id:zoomout;  next:settings; prev:zoomin;
                     onClicked: {
-                        if(currentZoomId<Genivi.maxZoomId){
+                        if(currentZoomId>Genivi.minZoomId){
                             Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
                         }
                     }
