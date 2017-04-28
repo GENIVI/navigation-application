@@ -27,8 +27,8 @@
 import QtQuick 2.1
 import "Core"
 import "Core/genivi.js" as Genivi;
-import "Core/style-sheets/style-constants.js" as Constants;
-import "Core/style-sheets/NavigationAppSearch-css.js" as StyleSheet;
+import "../style-sheets/style-constants.js" as Constants;
+import "../style-sheets/NavigationAppSearch-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 
 NavigationAppHMIMenu {

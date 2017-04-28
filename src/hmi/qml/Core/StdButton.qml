@@ -31,6 +31,6 @@ import QtQuick 2.1
 Button {
 	width: content.w
 	height: content.h
-    source:"images/button-keyboard.png"; //needed to avoid crash in dynamic creation of button in NavigationSettingsPreferences (to be fixed)
+    source:"../../images/button-keyboard.png"; //needed to avoid crash in dynamic creation of button in NavigationSettingsPreferences (to be fixed)
     explode: false
 }

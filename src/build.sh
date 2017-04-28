@@ -5,7 +5,8 @@ html="OFF"
 clean=0
 capi=0
 navit=0
-theme=0
+theme_option="-DWITH_STYLESHEET=OFF"
+pack_for_gdp=0
 commonapi_tools_option=""
 
 function check_path_for_capi
@@ -53,7 +54,8 @@ do
 		navit=1
 		;;
 	t)
-		theme=1
+		theme_option="-DWITH_STYLESHEET=ON"
+		pack_for_gdp=1
 		;;
 	\?)
 		echo "Usage:"
@@ -72,9 +74,6 @@ set -e
 if [ "$capi" = 1 ]
 then
 	check_path_for_capi
-	cp ./hmi/qml/Core/genivi-capi.js ./hmi/qml/Core/genivi.js
-else
-	cp ./hmi/qml/Core/genivi-origin.js ./hmi/qml/Core/genivi.js
 fi
 
 if [ "$clean" = 1 ]
@@ -127,9 +126,9 @@ if [ "$clean" = 1 ]
 then
 	if [ "$capi" = 0 ]
 	then
-		cmake -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=OFF -DWITH_DEBUG=$debug ../
+		cmake $theme_option -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=OFF -DWITH_DEBUG=$debug ../
 	else
-		cmake -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=ON -DWITH_DBUS_INTERFACE=OFF $commonapi_tools_option -DWITH_DEBUG=$debug ../
+		cmake $theme_option -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=ON -DWITH_DBUS_INTERFACE=OFF $commonapi_tools_option -DWITH_DEBUG=$debug ../
 		echo 'fix a bug in the generation of CommonAPI hpp'
 		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./navigation/franca/src-gen/v4/org/genivi/navigation/navigationcore/LocationInput.hpp
 		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./navigation/franca/src-gen/v4/org/genivi/navigation/navigationcore/MapMatchedPosition.hpp
@@ -143,13 +142,9 @@ fi
 make
 cd ../
 
-if [ "$theme" = 1 ]
+if [ "$pack_for_gdp" = 1 ]
 then
-	echo 'generate the hmi for gdp theme and pack it into a tarball'
-	cd script
-	./prepare.sh -c
-	./prepare.sh -i ../hmi/qml/Core/gimp/gdp-theme/800x480
-	tar czf ../hmi/qml/Core/referenceHMI.tar.gz ../hmi/qml/Core/images/ ../hmi/qml/Core/style-sheets/ ../hmi/qml/Core/translations/
-	cd ../
+	echo 'pack the hmi for gdp into a tarball'
+	tar czf referenceHMI.tar.gz ./hmi/images/ ./hmi/style-sheets/ ./hmi/translations/
 fi
 

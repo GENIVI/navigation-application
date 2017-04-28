@@ -26,7 +26,10 @@ option(AMB_ON_DBUS_SESSION
         "Run amb on dbus session" ON)
 option(WITH_HTML_MIGRATION
         "Enable migration to the html based hmi" OFF)
+option(WITH_STYLESHEET
+        "Generate the style sheet" OFF)
 
+message(STATUS "WITH_STYLESHEET = ${WITH_STYLESHEET}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 message(STATUS "WITH_PLUGIN_MIGRATION = ${WITH_PLUGIN_MIGRATION}")
 message(STATUS "AMB_ON_DBUS_SESSION = ${AMB_ON_DBUS_SESSION}")
@@ -81,7 +84,7 @@ endif()
 
 add_subdirectory(genivilogreplayer)
 
-add_subdirectory(hmi/qml/hmi-launcher)
+add_subdirectory(hmi)
 
 add_subdirectory(navigation/src/poi-service "${CMAKE_CURRENT_BINARY_DIR}/poi-service")
 

@@ -31,7 +31,7 @@ import QtQuick 2.1
 
 Button {
 	id: button
-    source:"images/button-keyboard.png";
+    source:"../../images/button-keyboard.png";
 	width: keyboard.w
 	height: keyboard.h
 	pixelSize: 20

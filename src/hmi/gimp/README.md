@@ -20,12 +20,8 @@ Genivi/Generate style sheet
 Choose the target (must be qml/Core)
 Press OK
 
-With the batch (Gimp not launched):
-Use ./prepare.sh
-Usage: prepare -i input_directory
-       prepare -c clean images and style sheets
-
-
+With the batch:
+build.sh -c -t (under src folder)
 
 
 

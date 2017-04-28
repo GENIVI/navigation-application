@@ -25,7 +25,7 @@
 */
 import QtQuick 2.1 
 import "genivi.js" as Genivi;
-import "style-sheets/style-constants.js" as Constants;
+import "../../style-sheets/style-constants.js" as Constants;
 import lbs.plugin.wheelarea 1.0
 
 Rectangle {

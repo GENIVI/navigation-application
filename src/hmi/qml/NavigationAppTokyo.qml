@@ -28,8 +28,8 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
-import "Core/style-sheets/style-constants.js" as Constants;
-import "Core/style-sheets/NavigationAppBrowseMap-css.js" as StyleSheetMap;
+import "../style-sheets/style-constants.js" as Constants;
+import "../style-sheets/NavigationAppBrowseMap-css.js" as StyleSheetMap;
 import "Core/genivi.js" as Genivi;
 import lbs.plugin.dbusif 1.0
 

@@ -37,7 +37,7 @@ import string
 from gimpfu import *
 from gimpenums import *
 
-image_path = "Core/images/"
+image_path = "../images/"
 
 def format_color(color) :
 	return "Qt.rgba(%.2f, %.2f, %.2f, %.2f)" % (color[0]/255.0,color[1]/255.0,color[2]/255.0,color[3]/255.0)

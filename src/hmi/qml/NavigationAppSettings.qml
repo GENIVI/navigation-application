@@ -29,8 +29,8 @@
 import QtQuick 2.1 
 import "Core"
 import "Core/genivi.js" as Genivi;
-import "Core/style-sheets/style-constants.js" as Constants;
-import "Core/style-sheets/NavigationAppSettings-css.js" as StyleSheet;
+import "../style-sheets/style-constants.js" as Constants;
+import "../style-sheets/NavigationAppSettings-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
 import lbs.plugin.preference 1.0
 

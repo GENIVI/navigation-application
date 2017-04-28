@@ -32,11 +32,11 @@ A script allows to clone the third parties code (i.e. positioning, navigation, n
 ./clone_and_build.sh
 ### Build
 A script allows either:
-to clean and rebuild all (including invoking cmake) 
-./build.sh -c
+to clean and rebuild all (invoking cmake) , including the HMI
+./build.sh -c -t
 or to build updated parts
 ./build.sh
-
+NB: with -t option a tarball is also generated (used by the GDP)
 ## How to test
 There's a file that contains some test case and the reminding issues (bug list)
 
@@ -74,14 +74,6 @@ For Qt version >= 5.2 with gcc 64 bits, there's an issue that needs to be fixed 
 You must build your code with position independent code if Qt was built with -reduce-relocations
 For Qt version 5.4, it's needed to fix Qt 5.4 QML -> C++ QVariant issues by unboxing the QVariant-QJSValue
 Potential issue may occur due to path change of freetype stuff. If necessary, add a link to /usr/include/freetype2/ into /usr/include 
-
-##How To Prepare the HMI
-
-There are two resolutions available, WVGA and XGA.
-For instance, for VGA:
-cd script
-./prepare.sh -i ../hmi/qml/Core/gimp/gdp-theme/800x480
-cd ../
 
 ##How to launch it in another area
 It's possible to test it (experimental) in another area.

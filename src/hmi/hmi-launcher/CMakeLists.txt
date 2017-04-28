@@ -107,15 +107,15 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/constants.js)
             get_filename_component(FILE ${RAW_FILE} NAME_WE)
             execute_process(
                     OUTPUT_VARIABLE data_flow
-                    COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/../javascript.xsl ${RAW_FILE}
+                    COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/../qml/javascript.xsl ${RAW_FILE}
             )
             file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/constants.js ${data_flow})
     endforeach()
 endif()
 
 # set the paths into the resource.js file
-set(FILE_RESOURCE_IN ${CMAKE_CURRENT_SOURCE_DIR}/../Core/resource.js.in)
-set(FILE_RESOURCE_OUT ${CMAKE_CURRENT_SOURCE_DIR}/../Core/resource.js)
+set(FILE_RESOURCE_IN ${CMAKE_CURRENT_SOURCE_DIR}/../qml/Core/resource.js.in)
+set(FILE_RESOURCE_OUT ${CMAKE_CURRENT_SOURCE_DIR}/../qml/Core/resource.js)
 set(CONSTANTS_PATH ${CMAKE_CURRENT_BINARY_DIR})
 set(ICON_PATH ${NAVIT_PNG_BIN_DIR})
 configure_file(${FILE_RESOURCE_IN} ${FILE_RESOURCE_OUT} @ONLY)

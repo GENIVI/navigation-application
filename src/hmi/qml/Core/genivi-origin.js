@@ -334,7 +334,7 @@ function setlang(language,country,script)
     g_country=country;
     g_script=script;
     translations = new Array;
-    Qt.include("translations/"+g_language + "_" + g_country+".js");
+    Qt.include("../../translations/"+g_language + "_" + g_country+".js");
     if(g_language==="eng"){
         keyboardLayout=englishLayout;
         kbdFirstLayout="ABC";
