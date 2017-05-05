@@ -1026,6 +1026,7 @@ NavigationAppHMIMenu {
 
                     }
                     disabled:!(Genivi.route_calculated && !Genivi.guidance_activated);
+                    visible:(Genivi.route_calculated && !Genivi.guidance_activated);
                     next:menub; prev:settings
                 }
 
@@ -1180,6 +1181,21 @@ NavigationAppHMIMenu {
                     onPressed: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_START,map.width/2,map.height/2);}
                     onReleased: {Genivi.mapviewer_SetMapViewPan(dbusIf,Genivi.MAPVIEWER_PAN_END,map.width/2,map.height/2 - scroll.panY);}
                 }
+
+                StdButton {
+                    source:StyleSheetScroll.backtoCurrentLocation[Constants.SOURCE]; x:StyleSheetScroll.backtoCurrentLocation[Constants.X]; y:StyleSheetScroll.backtoCurrentLocation[Constants.Y]; width:StyleSheetScroll.backtoCurrentLocation[Constants.WIDTH]; height:StyleSheetScroll.backtoCurrentLocation[Constants.HEIGHT];
+                    id:backtoCurrentLocation;  next:scrollup; prev:scrollright;
+                    onClicked: {
+                        if (Genivi.data['display_on_map']==='show_current_position') {
+                            Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['current_position']['lat'],Genivi.data['current_position']['lon'],Genivi.data['current_position']['alt']);
+                        } else {
+                            if (Genivi.data['display_on_map']==='show_position') {
+                                Genivi.mapviewer_SetTargetPoint(dbusIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
