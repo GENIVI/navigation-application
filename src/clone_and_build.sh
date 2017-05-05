@@ -1,9 +1,9 @@
 #!/bin/bash
 
 build_option=""
-navigation_version='70e44b6b5df23d8a8708885f1f4f7ce90cb12fae'
+navigation_version='312fedf2360633e7d76f9a70a17c5d4961964e34'
 positioning_version='9725fe1f553197042d6445997690d452a73490c0'
-navit_version='995cec54c8682fbabfb4f912b6156ce0b5b43436'
+navit_version='566e5dfc2cafb2c184bd3cfeddf1b4138f0bc972'
 
 echo "version of navigation is: $navigation_version"
 echo "version of positioning is: $positioning_version"
@@ -53,7 +53,7 @@ patch -p0 -i ../patches/search_list_get_unique.diff
 patch -p0 -i ../patches/fsa_issue_padding.diff
 cd ../../../../
 
-./build.sh -c -n $build_option
+./build.sh -t -c -n $build_option
 
 
 

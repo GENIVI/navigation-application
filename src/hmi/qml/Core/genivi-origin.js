@@ -1049,7 +1049,7 @@ function mapviewer_SetCameraHeadingTrackUp(dbusIf)
 
 function mapviewer_SetMapViewPan(dbusIf,panningAction,x,y)
 {
-    mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",panningAction,"array",["structure",["uint16",x,"uint16",y]]]);
+    mapviewercontrol_message(dbusIf, "SetMapViewPan", ["int32",panningAction,"structure",["uint16",x,"uint16",y]]);
 }
 
 function mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,x,y)

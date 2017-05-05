@@ -38,6 +38,9 @@ import "../style-sheets/NavigationAppBrowseMapTop-css.js" as StyleSheetTop
 import "../style-sheets/NavigationAppBrowseMapManeuver-css.js" as StyleSheetManeuver
 import "../style-sheets/NavigationAppBrowseMapSettings-css.js" as StyleSheetSettings;
 import "../style-sheets/NavigationAppBrowseMapScale-css.js" as StyleSheetScale;
+import "../style-sheets/NavigationAppBrowseMapZoom-css.js" as StyleSheetZoom;
+import "../style-sheets/NavigationAppBrowseMapCompass-css.js" as StyleSheetCompass;
+
 
 import lbs.plugin.dbusif 1.0
 
@@ -50,6 +53,7 @@ NavigationAppHMIMenu {
     property int speedValueSent: 0;
     property bool displayManeuvers:false; 
     property int currentZoomId;
+    property string simulationSpeedRatio;
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -92,7 +96,6 @@ NavigationAppHMIMenu {
             Genivi.setGuidanceActivated(false);
             //Guidance inactive, so inform the trip computer
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,0,0);
-            maneuverAdvice.text=Genivi.gettext("NoGuidance");
             maneuverIcon.source=StyleSheetGuidance.maneuverIcon[Constants.SOURCE]; //no icon by default
             distancetomaneuverValue.text="----";
             distancetodestinationValue.text="----";
@@ -105,7 +108,25 @@ NavigationAppHMIMenu {
     function guidanceManeuverChanged(args)
     {
         Genivi.hookSignal("guidanceManeuverChanged");
-        maneuverAdvice.text=Genivi.Maneuver[args[1]];
+        var advice = Genivi.Maneuver[args[1]];
+        maneuverBarCru.visible=false;
+        maneuverBarApp.visible=false;
+        maneuverBarPre.visible=false;
+        maneuverBarAdv.visible=false;
+        if (advice=="CRU")
+            maneuverBarCru.visible=true;
+        else {
+            if (advice=="APP")
+                maneuverBarApp.visible=true;
+            else {
+                if (advice=="PRE")
+                    maneuverBarPre.visible=true;
+                else {
+                    if (advice=="ADV")
+                        maneuverBarAdv.visible=true;
+                    }
+            }
+        }
     }
 
     property Item guidanceWaypointReachedSignal;
@@ -113,9 +134,9 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal("guidanceWaypointReached");
         if (args[2]) {
-            maneuverAdvice.text="Destination reached";
+            // "Destination reached" TBD
         } else {
-            maneuverAdvice.text="Waypoint reached";
+            // "Waypoint reached" TBD
         }
 
     }
@@ -159,35 +180,35 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal("simulationSpeedChanged");
         if (args[1] == 0) {
-            speedValue.text="0";
+            simulationSpeedRatio="0";
             speedValueSent=0;
         }
         if (args[1] == 1) {
-            speedValue.text="1/4";
+            simulationSpeedRatio="1/4";
             speedValueSent=1;
         }
         if (args[1] == 2) {
-            speedValue.text="1/2";
+            simulationSpeedRatio="1/2";
             speedValueSent=2;
         }
         if (args[1] == 4) {
-            speedValue.text="1";
+            simulationSpeedRatio="1";
             speedValueSent=3;
         }
         if (args[1] == 8) {
-            speedValue.text="2";
+            simulationSpeedRatio="2";
             speedValueSent=4;
         }
         if (args[1] == 16) {
-            speedValue.text="4";
+            simulationSpeedRatio="4";
             speedValueSent=5;
         }
         if (args[1] == 32) {
-            speedValue.text="8";
+            simulationSpeedRatio="8";
             speedValueSent=6;
         }
         if (args[1] == 64) {
-            speedValue.text="16";
+            simulationSpeedRatio="16";
             speedValueSent=7;
         }
     }
@@ -222,14 +243,11 @@ NavigationAppHMIMenu {
         Genivi.hookSignal("fuelStopAdvisorWarning");
         if (args[1] == 1)
         {
-            fsamessageText.visible=true;
-            fsamessageText.text=Genivi.gettext("FSAWarning");
             select_search_for_refill_in_top.visible=true;
             select_search_for_refill_in_top.disabled=false;
         }
         else
         {
-            fsamessageText.visible=false;
             select_search_for_refill_in_top.visible=false;
             select_search_for_refill_in_top.disabled=true;
          }
@@ -241,14 +259,21 @@ NavigationAppHMIMenu {
         Genivi.hookSignal("mapViewScaleChanged");       
         var text=args[3].toString();
         currentZoomId=args[3];
+        zoomin.disabled=false;
+        zoomin.visible=true;
+        zoomout.disabled=false;
+        zoomout.visible=true;
         if(currentZoomId===Genivi.maxZoomId){
+            zoomout.disabled=true;
+            zoomout.visible=false;
             text+="*";
         }else{
             if(currentZoomId===Genivi.minZoomId){
+                zoomin.disabled=true;
+                zoomin.visible=false;
                 text="*"+text;
             }
         }
-        zoomlevel.text=text;
         setScale(currentZoomId);
     }
 
@@ -579,35 +604,35 @@ NavigationAppHMIMenu {
 
         var res1=Genivi.mapmatchedposition_GetSimulationSpeed(dbusIf);
         if (res1[1] == 0) {
-            speedValue.text="0";
+            simulationSpeedRatio="0";
             speedValueSent=0;
         }
         if (res1[1] == 1) {
-            speedValue.text="1/4";
+            simulationSpeedRatio="1/4";
             speedValueSent=1;
         }
         if (res1[1] == 2) {
-            speedValue.text="1/2";
+            simulationSpeedRatio="1/2";
             speedValueSent=2;
         }
         if (res1[1] == 4) {
-            speedValue.text="1";
+            simulationSpeedRatio="1";
             speedValueSent=3;
         }
         if (res1[1] == 8) {
-            speedValue.text="2";
+            simulationSpeedRatio="2";
             speedValueSent=4;
         }
         if (res1[1] == 16) {
-            speedValue.text="4";
+            simulationSpeedRatio="4";
             speedValueSent=5;
         }
         if (res1[1] == 32) {
-            speedValue.text="8";
+            simulationSpeedRatio="8";
             speedValueSent=6;
         }
         if (res1[1] == 64) {
-            speedValue.text="16";
+            simulationSpeedRatio="16";
             speedValueSent=7;
         }
     }
@@ -663,14 +688,21 @@ NavigationAppHMIMenu {
         var res=Genivi.mapviewer_GetMapViewScale(dbusIf);
         var text=res[1].toString();
         currentZoomId=res[1];
+        zoomin.disabled=false;
+        zoomin.visible=true;
+        zoomout.disabled=false;
+        zoomout.visible=true;
         if(currentZoomId===Genivi.maxZoomId){
+            zoomout.disabled=true;
+            zoomout.visible=false;
             text+="*";
         }else{
             if(currentZoomId===Genivi.minZoomId){
+                zoomin.disabled=true;
+                zoomin.visible=false;
                 text="*"+text;
             }
         }
-        zoomlevel.text=text;
         setScale(currentZoomId);
     }
 
@@ -828,7 +860,6 @@ NavigationAppHMIMenu {
     function showSimulation()
     {
         simulation.visible=true;
-        speedValue.visible=true;
         speed_down.visible=true;
         speed_down.disabled=false;
         speed_up.visible=true;
@@ -842,7 +873,6 @@ NavigationAppHMIMenu {
     function hideSimulation()
     {
         simulation.visible=false;
-        speedValue.visible=false;
         speed_down.visible=false;
         speed_down.disabled=true;
         speed_up.visible=false;
@@ -856,12 +886,13 @@ NavigationAppHMIMenu {
     function showGuidance()
     {
         guidance.visible=true;
+        roadaftermaneuverBlock.visible=true;
     }
 
     function hideGuidance()
     {
         guidance.visible=false;
-        fsamessageText.visible=false;
+        roadaftermaneuverBlock.visible=false;
         select_search_for_refill_in_top.visible=false;
         select_search_for_refill_in_top.disabled=true;
     }
@@ -914,13 +945,6 @@ NavigationAppHMIMenu {
                     }
                 }
 
-                SmartText {
-                    x:StyleSheetTop.fsamessageText[Constants.X]; y:StyleSheetTop.fsamessageText[Constants.Y]; width:StyleSheetTop.fsamessageText[Constants.WIDTH]; height:StyleSheetTop.fsamessageText[Constants.HEIGHT];color:StyleSheetTop.fsamessageText[Constants.TEXTCOLOR];styleColor:StyleSheetTop.fsamessageText[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.fsamessageText[Constants.PIXELSIZE];
-                    id:fsamessageText
-                    visible: true
-                    text:""
-                }
-
                 StdButton {
                     source:StyleSheetTop.select_search_for_refill_in_top[Constants.SOURCE]; x:StyleSheetTop.select_search_for_refill_in_top[Constants.X]; y:StyleSheetTop.select_search_for_refill_in_top[Constants.Y]; width:StyleSheetTop.select_search_for_refill_in_top[Constants.WIDTH]; height:StyleSheetTop.select_search_for_refill_in_top[Constants.HEIGHT];
                     id:select_search_for_refill_in_top
@@ -931,6 +955,14 @@ NavigationAppHMIMenu {
                                 }
                         }
 
+                BorderImage {
+                    id: roadaftermaneuverBlock
+                    source:StyleSheetTop.roadaftermaneuverBlock[Constants.SOURCE]; x:StyleSheetTop.roadaftermaneuverBlock[Constants.X]; y:StyleSheetTop.roadaftermaneuverBlock[Constants.Y]; width:StyleSheetTop.roadaftermaneuverBlock[Constants.WIDTH]; height:StyleSheetTop.roadaftermaneuverBlock[Constants.HEIGHT];
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                    visible: false;
+                }
+
                 SmartText {
                     x:StyleSheetTop.roadaftermaneuverValue[Constants.X]; y:StyleSheetTop.roadaftermaneuverValue[Constants.Y]; width:StyleSheetTop.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetTop.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetTop.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetTop.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.roadaftermaneuverValue[Constants.PIXELSIZE];
                     visible: true
@@ -938,23 +970,6 @@ NavigationAppHMIMenu {
                     text: " "
                 }
 
-                Text {
-                    x:StyleSheetTop.speedValue[Constants.X]; y:StyleSheetTop.speedValue[Constants.Y]; width:StyleSheetTop.speedValue[Constants.WIDTH]; height:StyleSheetTop.speedValue[Constants.HEIGHT];color:StyleSheetTop.speedValue[Constants.TEXTCOLOR];styleColor:StyleSheetTop.speedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.speedValue[Constants.PIXELSIZE];
-                    visible: true
-                    style: Text.Sunken;
-                    smooth: true
-                    id:vehicleSpeedValue
-                    text: "---"
-                }
-
-                Text {
-                    x:StyleSheetTop.speedUnit[Constants.X]; y:StyleSheetTop.speedUnit[Constants.Y]; width:StyleSheetTop.speedUnit[Constants.WIDTH]; height:StyleSheetTop.speedUnit[Constants.HEIGHT];color:StyleSheetTop.speedUnit[Constants.TEXTCOLOR];styleColor:StyleSheetTop.speedUnit[Constants.STYLECOLOR]; font.pixelSize:StyleSheetTop.speedUnit[Constants.PIXELSIZE];
-                    visible: true
-                    style: Text.Sunken;
-                    smooth: true
-                    id:speedUnit
-                    text: "km/h"
-                }
             }
         }
 
@@ -980,64 +995,11 @@ NavigationAppHMIMenu {
                     }
                 }
 
-                StdButton {
-                    x:StyleSheetBottom.directiondestination[Constants.X]; y:StyleSheetBottom.directiondestination[Constants.Y]; width:StyleSheetBottom.directiondestination[Constants.WIDTH]; height:StyleSheetBottom.directiondestination[Constants.HEIGHT];
-                    id:orientation; next:zoomin; prev:menub;  disabled:false;
-                    source:StyleSheetBottom.directiondestination[Constants.SOURCE]; //todo call get status
-                    property int status: 0;
-                    function setState(name)
-                    {
-                        if (name=="D")
-                        {
-                            status=1;
-                            source=StyleSheetBottom.directionnorth[Constants.SOURCE];
-                        }
-                        else
-                        {
-                            status=0;
-                            source=StyleSheetBottom.directiondestination[Constants.SOURCE];
-                        }
-                    }
-                    onClicked:
-                    {
-                        toggleOrientation();
-                    }
-                }
-
                 SmartText {
                     x:StyleSheetBottom.currentroad[Constants.X]; y:StyleSheetBottom.currentroad[Constants.Y]; width:StyleSheetBottom.currentroad[Constants.WIDTH]; height:StyleSheetBottom.currentroad[Constants.HEIGHT];color:StyleSheetBottom.currentroad[Constants.TEXTCOLOR];styleColor:StyleSheetBottom.currentroad[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBottom.currentroad[Constants.PIXELSIZE];
                     visible: true
                     id:currentroad
                     text: "-------"
-                }
-
-                StdButton {
-                    source:StyleSheetBottom.zoomin[Constants.SOURCE]; x:StyleSheetBottom.zoomin[Constants.X]; y:StyleSheetBottom.zoomin[Constants.Y]; width:StyleSheetBottom.zoomin[Constants.WIDTH]; height:StyleSheetBottom.zoomin[Constants.HEIGHT];
-                    id:zoomin;  next:zoomout; prev:orientation;
-                    onClicked: {
-                        if(currentZoomId>Genivi.minZoomId){
-                            Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
-                        }
-                    }
-                }
-
-                Text {
-                    x:StyleSheetBottom.zoomlevel[Constants.X]; y:StyleSheetBottom.zoomlevel[Constants.Y]; width:StyleSheetBottom.zoomlevel[Constants.WIDTH]; height:StyleSheetBottom.zoomlevel[Constants.HEIGHT];color:StyleSheetBottom.zoomlevel[Constants.TEXTCOLOR];styleColor:StyleSheetBottom.zoomlevel[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBottom.zoomlevel[Constants.PIXELSIZE];
-                    visible: true
-                    style: Text.Sunken;
-                    smooth: true
-                    id:zoomlevel
-                    text: " "
-                }
-
-                StdButton {
-                    source:StyleSheetBottom.zoomout[Constants.SOURCE]; x:StyleSheetBottom.zoomout[Constants.X]; y:StyleSheetBottom.zoomout[Constants.Y]; width:StyleSheetBottom.zoomout[Constants.WIDTH]; height:StyleSheetBottom.zoomout[Constants.HEIGHT];
-                    id:zoomout;  next:settings; prev:zoomin;
-                    onClicked: {
-                        if(currentZoomId<Genivi.maxZoomId){
-                            Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,1);
-                        }
-                    }
                 }
 
                 StdButton {
@@ -1139,13 +1101,33 @@ NavigationAppHMIMenu {
                     text: " "
                 }
 
-                Text {
-                    x:StyleSheetGuidance.maneuverAdvice[Constants.X]; y:StyleSheetGuidance.maneuverAdvice[Constants.Y]; width:StyleSheetGuidance.maneuverAdvice[Constants.WIDTH]; height:StyleSheetGuidance.maneuverAdvice[Constants.HEIGHT];color:StyleSheetGuidance.maneuverAdvice[Constants.TEXTCOLOR];styleColor:StyleSheetGuidance.maneuverAdvice[Constants.STYLECOLOR]; font.pixelSize:StyleSheetGuidance.maneuverAdvice[Constants.PIXELSIZE];
-                    visible: true
-                    style: Text.Sunken;
-                    smooth: true
-                    id:maneuverAdvice
-                    text: " "
+                BorderImage {
+                    id: maneuverBarAdv
+                    source:StyleSheetGuidance.maneuverBarAdv[Constants.SOURCE]; x:StyleSheetGuidance.maneuverBarAdv[Constants.X]; y:StyleSheetGuidance.maneuverBarAdv[Constants.Y]; width:StyleSheetGuidance.maneuverBarAdv[Constants.WIDTH]; height:StyleSheetGuidance.maneuverBarAdv[Constants.HEIGHT];
+                    visible: false
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                }
+                BorderImage {
+                    id: maneuverBarPre
+                    source:StyleSheetGuidance.maneuverBarPre[Constants.SOURCE]; x:StyleSheetGuidance.maneuverBarPre[Constants.X]; y:StyleSheetGuidance.maneuverBarPre[Constants.Y]; width:StyleSheetGuidance.maneuverBarPre[Constants.WIDTH]; height:StyleSheetGuidance.maneuverBarPre[Constants.HEIGHT];
+                    visible: false
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                }
+                BorderImage {
+                    id: maneuverBarApp
+                    source:StyleSheetGuidance.maneuverBarApp[Constants.SOURCE]; x:StyleSheetGuidance.maneuverBarApp[Constants.X]; y:StyleSheetGuidance.maneuverBarApp[Constants.Y]; width:StyleSheetGuidance.maneuverBarApp[Constants.WIDTH]; height:StyleSheetGuidance.maneuverBarApp[Constants.HEIGHT];
+                    visible: false
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                }
+                BorderImage {
+                    id: maneuverBarCru
+                    source:StyleSheetGuidance.maneuverBarCru[Constants.SOURCE]; x:StyleSheetGuidance.maneuverBarCru[Constants.X]; y:StyleSheetGuidance.maneuverBarCru[Constants.Y]; width:StyleSheetGuidance.maneuverBarCru[Constants.WIDTH]; height:StyleSheetGuidance.maneuverBarCru[Constants.HEIGHT];
+                    visible: false
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
                 }
 
                 BorderImage {
@@ -1203,6 +1185,79 @@ NavigationAppHMIMenu {
 
         Rectangle {
             color:"transparent"
+            width: StyleSheetZoom.navigation_app_browse_map_zoom_background[Constants.WIDTH]
+            height: StyleSheetZoom.navigation_app_browse_map_zoom_background[Constants.HEIGHT]
+            x: StyleSheetMap.zoom_area[Constants.X]
+            y: StyleSheetMap.zoom_area[Constants.Y]
+            NavigationAppHMIBgImage {
+                opacity: 0.8
+                id: zoom
+                image:StyleSheetZoom.navigation_app_browse_map_zoom_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+
+                StdButton {
+                    source:StyleSheetZoom.zoomin[Constants.SOURCE]; x:StyleSheetZoom.zoomin[Constants.X]; y:StyleSheetZoom.zoomin[Constants.Y]; width:StyleSheetZoom.zoomin[Constants.WIDTH]; height:StyleSheetZoom.zoomin[Constants.HEIGHT];
+                    id:zoomin;  next:zoomout; prev:orientation;
+                    onClicked: {
+                        if(currentZoomId>Genivi.minZoomId){
+                            Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,-1);
+                        }
+                    }
+                }
+
+                StdButton {
+                    source:StyleSheetZoom.zoomout[Constants.SOURCE]; x:StyleSheetZoom.zoomout[Constants.X]; y:StyleSheetZoom.zoomout[Constants.Y]; width:StyleSheetZoom.zoomout[Constants.WIDTH]; height:StyleSheetZoom.zoomout[Constants.HEIGHT];
+                    id:zoomout;  next:settings; prev:zoomin;
+                    onClicked: {
+                        if(currentZoomId<Genivi.maxZoomId){
+                            Genivi.mapviewer_SetMapViewScaleByDelta(dbusIf,1);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        Rectangle {
+            color:"transparent"
+            width: StyleSheetCompass.navigation_app_browse_map_compass_background[Constants.WIDTH]
+            height: StyleSheetCompass.navigation_app_browse_map_compass_background[Constants.HEIGHT]
+            x: StyleSheetMap.compass_area[Constants.X]
+            y: StyleSheetMap.compass_area[Constants.Y]
+            NavigationAppHMIBgImage {
+                opacity: 0.8
+                id: compass
+                image:StyleSheetCompass.navigation_app_browse_map_compass_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+
+                StdButton {
+                    x:StyleSheetCompass.directiondestination[Constants.X]; y:StyleSheetCompass.directiondestination[Constants.Y]; width:StyleSheetCompass.directiondestination[Constants.WIDTH]; height:StyleSheetCompass.directiondestination[Constants.HEIGHT];
+                    id:orientation; next:zoomin; prev:menub;  disabled:false;
+                    source:StyleSheetCompass.directiondestination[Constants.SOURCE]; //todo call get status
+                    property int status: 0;
+                    function setState(name)
+                    {
+                        if (name=="D")
+                        {
+                            status=1;
+                            source=StyleSheetCompass.directionnorth[Constants.SOURCE];
+                        }
+                        else
+                        {
+                            status=0;
+                            source=StyleSheetCompass.directiondestination[Constants.SOURCE];
+                        }
+                    }
+                    onClicked:
+                    {
+                        toggleOrientation();
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            color:"transparent"
             width: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.WIDTH]
             height: StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.HEIGHT]
             x: StyleSheetMap.simulation_area[Constants.X]
@@ -1213,12 +1268,22 @@ NavigationAppHMIMenu {
                 image:StyleSheetSimulation.navigation_app_browse_map_simulation_background[Constants.SOURCE];
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 Text {
-                    x:StyleSheetSimulation.speedValue_popup[Constants.X]; y:StyleSheetSimulation.speedValue_popup[Constants.Y]; width:StyleSheetSimulation.speedValue_popup[Constants.WIDTH]; height:StyleSheetSimulation.speedValue_popup[Constants.HEIGHT];color:StyleSheetSimulation.speedValue_popup[Constants.TEXTCOLOR];styleColor:StyleSheetSimulation.speedValue_popup[Constants.STYLECOLOR]; font.pixelSize:StyleSheetSimulation.speedValue_popup[Constants.PIXELSIZE];
-                    id:speedValue
+                    x:StyleSheetSimulation.speedValue[Constants.X]; y:StyleSheetSimulation.speedValue[Constants.Y]; width:StyleSheetSimulation.speedValue[Constants.WIDTH]; height:StyleSheetSimulation.speedValue[Constants.HEIGHT];color:StyleSheetSimulation.speedValue[Constants.TEXTCOLOR];styleColor:StyleSheetSimulation.speedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetSimulation.speedValue[Constants.PIXELSIZE];
+                    visible: true
                     style: Text.Sunken;
                     smooth: true
-                    text: ""
-                     }
+                    id:vehicleSpeedValue
+                    text: "---"
+                }
+
+                Text {
+                    x:StyleSheetSimulation.speedUnit[Constants.X]; y:StyleSheetSimulation.speedUnit[Constants.Y]; width:StyleSheetSimulation.speedUnit[Constants.WIDTH]; height:StyleSheetSimulation.speedUnit[Constants.HEIGHT];color:StyleSheetSimulation.speedUnit[Constants.TEXTCOLOR];styleColor:StyleSheetSimulation.speedUnit[Constants.STYLECOLOR]; font.pixelSize:StyleSheetSimulation.speedUnit[Constants.PIXELSIZE];
+                    visible: true
+                    style: Text.Sunken;
+                    smooth: true
+                    id:speedUnit
+                    text: "km/h"
+                }
                 StdButton {
                     source:StyleSheetSimulation.speed_down_popup[Constants.SOURCE]; x:StyleSheetSimulation.speed_down_popup[Constants.X]; y:StyleSheetSimulation.speed_down_popup[Constants.Y]; width:StyleSheetSimulation.speed_down_popup[Constants.WIDTH]; height:StyleSheetSimulation.speed_down_popup[Constants.HEIGHT];
                     id:speed_down;  disabled:false; next:speed_up; prev:simu_mode;
