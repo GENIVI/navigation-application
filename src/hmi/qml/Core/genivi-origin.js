@@ -1057,6 +1057,14 @@ function mapviewer_ConvertPixelCoordsToGeoCoords(dbusIf,x,y)
     return mapviewercontrol_message(dbusIf, "ConvertPixelCoordsToGeoCoords",["array",["structure",["uint16",x,"uint16",y]]]);
 }
 
+function initScale(dbusIf)
+{
+    var res=mapviewer_GetScaleList(dbusIf);
+    scaleList=res[1];
+    minZoomId=scaleList[1][1];
+    maxZoomId=scaleList[scaleList.length-1][1];
+}
+
 //---------------- MapViewer messages (handle 2) ----------------
 
 // Create a new map handle or get the current handle

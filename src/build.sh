@@ -86,9 +86,9 @@ then
 			find ./build ! -name '*.cbp' -type f -exec rm -f {} +
 		else
 			echo 'clean up the build folder and regenerate all the stuff except navit '
-			rm ./build/CMakeCache.txt
-			rm ./build/cmake_install.cmake
-			rm ./build/Makefile
+			rm -f ./build/CMakeCache.txt
+			rm -f ./build/cmake_install.cmake
+			rm -f ./build/Makefile
 		fi
 	fi
 else

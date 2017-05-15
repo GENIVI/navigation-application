@@ -56,14 +56,6 @@ ApplicationWindow {
         id:dbusIf;
     }
 
-    function initScale()
-    {
-        var res=Genivi.mapviewer_GetScaleList(dbusIf);
-        Genivi.scaleList=res[1];
-        Genivi.minZoomId=Genivi.scaleList[1][1];
-        Genivi.maxZoomId=Genivi.scaleList[Genivi.scaleList.length-1][1];
-    }
-
 	Component.onCompleted: {
         //set persistent data
         Genivi.setlang("eng","USA","Latn"); //set to english US
@@ -75,7 +67,7 @@ ApplicationWindow {
 
         //launch the map viewer and init the scale list
         Genivi.mapviewer_handle(dbusIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
-        initScale();
+        Genivi.initScale(dbusIf);
 
         //set verbose mode on
         Genivi.setVerbose();

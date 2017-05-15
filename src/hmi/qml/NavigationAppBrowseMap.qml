@@ -1650,7 +1650,6 @@ NavigationAppHMIMenu {
             }
         }
         showZoom();
-        initScale();
         updateDayNight();
 	}
 }

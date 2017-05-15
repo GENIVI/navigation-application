@@ -3,7 +3,7 @@
 build_option=""
 navigation_version='312fedf2360633e7d76f9a70a17c5d4961964e34'
 positioning_version='9725fe1f553197042d6445997690d452a73490c0'
-navit_version='566e5dfc2cafb2c184bd3cfeddf1b4138f0bc972'
+navit_version='5ca60166243b0671b4a7e62938b13feacd2391e2'
 
 echo "version of navigation is: $navigation_version"
 echo "version of positioning is: $positioning_version"
