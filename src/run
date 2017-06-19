@@ -102,6 +102,7 @@ xterm=0 #no subprocess into a separate xterm
 log=0 #no log file 
 enhpos=1 #enhanced position server enabled 
 replayer=1 #replayer enabled
+gateway=0 #vehicle gateway disabled
 lm=0 #layer manager disabled
 wm="" #to store the current window manager (in case of start with the layer manager)
 verbose=0 #no debug or log messages displayed
@@ -156,9 +157,13 @@ HMI_LAUNCHER=hmi-launcher
 HMI_LAUNCHER_SRC_DIR=$SRC_DIR/hmi/$HMI_LAUNCHER
 HMI_LAUNCHER_BIN_DIR=$BIN_DIR/hmi/$HMI_LAUNCHER
 
+VEHICLE_GATEWAY=vehicle-gateway
+VEHICLE_GATEWAY_SRC_DIR=$SRC_DIR/$VEHICLE_GATEWAY
+VEHICLE_GATEWAY_BIN_DIR=$BIN_DIR/$VEHICLE_GATEWAY
+devices="/dev/ttyUSB0 /dev/ttyACM0"
 
 # options analysis
-while getopts a:c:f:glnorvx opt
+while getopts a:c:df:g:lnorvx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -184,11 +189,15 @@ do
 			;;
 		esac
 		;;
+	d) #enable the debugger
+		gdb=1
+		;;
 	f) #load another poi database
 		poidatabase=$(readlink -f $OPTARG) 
 		;;
-	g) #enable the debugger
-		gdb=1
+	g) #enable the vehicle gateway
+		gateway=1
+		devices=$OPTARG
 		;;
 	l) #enable the layer manager
 		lm=1
@@ -213,7 +222,8 @@ do
 		echo "$0 [-a application][-c center][-glnorvx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
-		echo "-g: Run subprocesses within gdb (only with -x)"
+		echo "-d: Run subprocesses within gdb (only with -x)"
+		echo "-g: Run the vehicle gateway (only with -r) -g \"<ELM327device> <GNSSdevice>\""
 		echo "-l: Use layermanager"
 		echo "-n: Don't start enhanced positioning service"
 		echo "-o: Create log file of subprocess output"
@@ -301,6 +311,11 @@ wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
 if [ "$replayer" = 1 ]
 then # start the log replayer (of the fsa) with a sample log file
 	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER  $LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+else
+	if [ "$gateway" = 1 ]
+	then
+		run "Vehicle gateway" $VEHICLE_GATEWAY_BIN_DIR/$VEHICLE_GATEWAY $devices
+	fi
 fi
 
 sleep 3 # need a sleep here (to be improved)

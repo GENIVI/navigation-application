@@ -1,4 +1,4 @@
 #!/bin/sh
 echo 'kill all remaining process'
-kill -9 `ps -ef | grep '\(navit\|poi-server\|hmi-launcher\|fuel-stop-advisor\|ambd\|enhanced-position-service\)' | grep -v grep | awk '{print $2}'`
+kill -9 `ps -ef | grep '\(navit\|poi-server\|hmi-launcher\|fuel-stop-advisor\|ambd\|vehicle-gateway\|enhanced-position-service\)' | grep -v grep | awk '{print $2}'`
 

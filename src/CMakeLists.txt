@@ -28,12 +28,18 @@ option(WITH_HTML_MIGRATION
         "Enable migration to the html based hmi" OFF)
 option(WITH_STYLESHEET
         "Generate the style sheet" OFF)
+option(WITH_VEHICLE_GATEWAY
+        "Use of vehicle gateway" OFF)
+option(WITH_DLT
+        "Enable DLT logging" OFF)
 
 message(STATUS "WITH_STYLESHEET = ${WITH_STYLESHEET}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 message(STATUS "WITH_PLUGIN_MIGRATION = ${WITH_PLUGIN_MIGRATION}")
 message(STATUS "AMB_ON_DBUS_SESSION = ${AMB_ON_DBUS_SESSION}")
 message(STATUS "WITH_HTML_MIGRATION = ${WITH_HTML_MIGRATION}")
+message(STATUS "WITH_VEHICLE_GATEWAY = ${WITH_VEHICLE_GATEWAY}")
+message(STATUS "WITH_DLT = ${WITH_DLT}")
 
 set(NAVIGATION_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/api")
 set(POSITIONING_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/src/navigation/positioning/enhanced-position-service/dbus/api")
@@ -90,4 +96,8 @@ add_subdirectory(navigation/src/poi-service "${CMAKE_CURRENT_BINARY_DIR}/poi-ser
 
 if(WITH_HTML_MIGRATION)
     add_subdirectory(hmi/html)
+endif()
+
+if(WITH_VEHICLE_GATEWAY)
+    add_subdirectory(vehicle-gateway)
 endif()

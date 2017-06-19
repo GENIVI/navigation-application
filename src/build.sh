@@ -5,7 +5,8 @@ html="OFF"
 clean=0
 capi=0
 navit=0
-theme_option="-DWITH_STYLESHEET=OFF"
+gateway="OFF"
+theme_option="OFF"
 pack_for_gdp=0
 commonapi_tools_option=""
 
@@ -35,7 +36,7 @@ function check_path_for_capi
 	commonapi_tools_option="-DDBUS_LIB_PATH="$DBUS_LIB_PATH" -DCOMMONAPI_DBUS_TOOL_DIR="$COMMONAPI_DBUS_TOOL_DIR" -DCOMMONAPI_TOOL_DIR="$COMMONAPI_TOOL_DIR""
 }
 
-while getopts cdmhnt opt
+while getopts cdmghnt opt
 do
 	case $opt in
 	c)
@@ -47,6 +48,9 @@ do
 	m)
 		capi=1
 		;;
+	g)
+		gateway="ON"
+		;;
 	h)
 		html="ON"
 		;;
@@ -54,7 +58,7 @@ do
 		navit=1
 		;;
 	t)
-		theme_option="-DWITH_STYLESHEET=ON"
+		theme_option="ON"
 		pack_for_gdp=1
 		;;
 	\?)
@@ -62,8 +66,9 @@ do
 		echo "$0 [-cdmhnt]"
 		echo "-c: Rebuild with clean"
 		echo "-d: Enable the debug messages"
-		echo "-m: Build with commonAPI plugins "
 		echo "-h: Enable migration to the html based hmi"
+		echo "-g: Build the vehicle gateway"
+		echo "-m: Build with commonAPI plugins "
 		echo "-n: Build navit"
 		echo "-t: Generate the HMI theme"
 		exit 1
@@ -126,9 +131,9 @@ if [ "$clean" = 1 ]
 then
 	if [ "$capi" = 0 ]
 	then
-		cmake $theme_option -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=OFF -DWITH_DEBUG=$debug ../
+		cmake -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=OFF -DWITH_DEBUG=$debug ../
 	else
-		cmake $theme_option -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=ON -DWITH_DBUS_INTERFACE=OFF $commonapi_tools_option -DWITH_DEBUG=$debug ../
+		cmake -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=ON -DWITH_DBUS_INTERFACE=OFF $commonapi_tools_option -DWITH_DEBUG=$debug ../
 		echo 'fix a bug in the generation of CommonAPI hpp'
 		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./navigation/franca/src-gen/v4/org/genivi/navigation/navigationcore/LocationInput.hpp
 		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./navigation/franca/src-gen/v4/org/genivi/navigation/navigationcore/MapMatchedPosition.hpp
