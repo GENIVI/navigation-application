@@ -112,6 +112,7 @@ bool get_geolocation(char*& sock_buf,char* buffer)
             if(strcmp(token,NMEA_DATA_VALID)==0){
                 retval=true;
             }else{
+                LOG_INFO_MSG(gContext,"NMEA DATA NOT VALID\n");
                 return retval;
             }
             break;
@@ -333,6 +334,8 @@ int main(int argc, char* argv[])
 
         sleep(1);
     } while(isRunning);
+
+    LOG_INFO_MSG(gContext,"Shutting down Vehicle gateway...");
 
     gnss_destroy();
 

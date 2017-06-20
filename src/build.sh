@@ -1,14 +1,44 @@
 #!/bin/bash
 
-debug="OFF"
-html="OFF"
-clean=0
-capi=0
-navit=0
-gateway="OFF"
-theme_option="OFF"
-pack_for_gdp=0
-commonapi_tools_option=""
+###########################################################################
+# @licence app begin@
+# SPDX-License-Identifier: MPL-2.0
+#
+# \copyright Copyright (C) 2013-2017, PSA Group
+#
+# \file build.sh
+#
+# \brief This file is part of the Build System for navigation-application.
+#
+# \author Philippe Colliot <philippe.colliot@mpsa.com>
+#
+# \version 1.0
+#
+# This Source Code Form is subject to the terms of the
+# Mozilla Public License (MPL), v. 2.0.
+# If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# For further information see http://www.genivi.org/.
+#
+# List of changes:
+# 
+#
+# @licence end@
+###########################################################################
+
+clean=0 #no clean (means no cmake) -> -c option
+capi=0 #no common api -> -m option
+commonapi_tools_option="-DWITH_PLUGIN_MIGRATION=OFF" 
+navit=0 #no build of navit -> -n option
+poi=0 #no build of poi -> -p option 
+dlt_option="OFF" #no DLT -> -l option
+debug="OFF" #no debug -> -d option
+gateway="OFF" #no vehicle gateway -> -g option
+theme_option="OFF" #no HMI theme -> -t option
+pack_for_gdp=0 #no tar generated
+html="OFF" #no html interface (draft)
+
 
 function check_path_for_capi
 {
@@ -36,7 +66,7 @@ function check_path_for_capi
 	commonapi_tools_option="-DDBUS_LIB_PATH="$DBUS_LIB_PATH" -DCOMMONAPI_DBUS_TOOL_DIR="$COMMONAPI_DBUS_TOOL_DIR" -DCOMMONAPI_TOOL_DIR="$COMMONAPI_TOOL_DIR""
 }
 
-while getopts cdmghnt opt
+while getopts cdghlmntw opt
 do
 	case $opt in
 	c)
@@ -45,14 +75,16 @@ do
 	d)
 		debug="ON"
 		;;
-	m)
-		capi=1
-		;;
 	g)
 		gateway="ON"
 		;;
-	h)
-		html="ON"
+	l)
+		dlt_option="ON"
+		;;
+	m)
+		capi=1
+		#check commonapi settings
+		check_path_for_capi
 		;;
 	n)
 		navit=1
@@ -61,43 +93,39 @@ do
 		theme_option="ON"
 		pack_for_gdp=1
 		;;
-	\?)
+	w)
+		html="ON"
+		;;
+	h)
 		echo "Usage:"
-		echo "$0 [-cdmhnt]"
+		echo "$0 [-cdghlmntw]"
 		echo "-c: Rebuild with clean"
 		echo "-d: Enable the debug messages"
-		echo "-h: Enable migration to the html based hmi"
 		echo "-g: Build the vehicle gateway"
-		echo "-m: Build with commonAPI plugins "
+		echo "-h: Help"
+		echo "-l: Build with dlt (only with -c)"
+		echo "-m: Build with commonAPI plugins (only with -c)"
 		echo "-n: Build navit"
 		echo "-t: Generate the HMI theme"
+		echo "-w: Enable migration to the html based hmi"
 		exit 1
 	esac
 done
 set -e
 
-if [ "$capi" = 1 ]
+#clean
+if [ "$clean" = 1 ] && [ -d "./build" ]
 then
-	check_path_for_capi
-fi
-
-if [ "$clean" = 1 ]
-then
-	if [ -d "./build" ]
+	if [ "$navit" = 1 ]
 	then
-		if [ "$navit" = 1 ]
-		then
-			echo 'clean up the build folder and regenerate all the stuff'
-			find ./build ! -name '*.cbp' -type f -exec rm -f {} +
-		else
-			echo 'clean up the build folder and regenerate all the stuff except navit '
-			rm -f ./build/CMakeCache.txt
-			rm -f ./build/cmake_install.cmake
-			rm -f ./build/Makefile
-		fi
+		echo 'clean up the build folder and regenerate all the stuff'
+		find ./build ! -name '*.cbp' -type f -exec rm -f {} +
+	else
+		echo 'clean up the build folder and regenerate all the stuff except navit '
+		rm -f ./build/CMakeCache.txt
+		rm -f ./build/cmake_install.cmake
+		rm -f ./build/Makefile
 	fi
-else
-	echo 'just build without generation of the hmi'
 fi
 
 mkdir -p build
@@ -129,17 +157,7 @@ echo 'build fsa'
 
 if [ "$clean" = 1 ]
 then
-	if [ "$capi" = 0 ]
-	then
-		cmake -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=OFF -DWITH_DEBUG=$debug ../
-	else
-		cmake -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html -DWITH_PLUGIN_MIGRATION=ON -DWITH_DBUS_INTERFACE=OFF $commonapi_tools_option -DWITH_DEBUG=$debug ../
-		echo 'fix a bug in the generation of CommonAPI hpp'
-		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./navigation/franca/src-gen/v4/org/genivi/navigation/navigationcore/LocationInput.hpp
-		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./navigation/franca/src-gen/v4/org/genivi/navigation/navigationcore/MapMatchedPosition.hpp
-		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./poi-service/poi-server-capi/src-gen/v4/org/genivi/navigation/navigationcore/LocationInput.hpp
-		sed -i -e 's/(const TimeStampedEnum::/(const ::v4::org::genivi::navigation::navigationcore::NavigationCoreTypes::TimeStampedEnum::/' ./poi-service/poi-server-capi/src-gen/v4/org/genivi/navigation/navigationcore/MapMatchedPosition.hpp
-	fi
+	cmake -DWITH_DLT=$dlt_option $commonapi_tools_option -DWITH_DEBUG=$debug -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html  ../
 	echo 'replace a missing font in the configuration file of navit instances'
 	sed -i -e 's/Liberation Sans/TakaoPGothic/' ./navigation/navit/navit/navit_genivi_mapviewer.xml
 	sed -i -e 's/Liberation Sans/TakaoPGothic/' ./navigation/navit/navit/navit_genivi_navigationcore.xml

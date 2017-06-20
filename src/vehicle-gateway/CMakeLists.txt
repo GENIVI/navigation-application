@@ -26,7 +26,9 @@ message(STATUS ${PROJECT_NAME})
 
 add_definitions("-std=gnu++11")
 
-message(STATUS "WITH_DLT = ${WITH_DLT}")
+if(WITH_DEBUG)
+    add_definitions("-DDEBUG_ENABLED=1")
+endif()
 
 find_package(PkgConfig REQUIRED)
 
