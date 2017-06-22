@@ -83,5 +83,5 @@ http://maps9.navit-project.org/api/map/?bbox=139.1,35.5,140.4,36.0&timestamp=170
 Rename the file to tokyo.bin, copy it to ./navigation/src/navigation/map
 do ./build.sh -c
 Launch the demo 
-./run -r -c tokyo -a hmi/qml/NavigationAppTokyo.qml
-For sure, there's some hack to do :-)
+./run -r -c tokyo
+NB: configuration is managed by a fsa.conf located in $HOME/.config/navigation and the run shell replaces it by the right one

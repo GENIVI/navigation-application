@@ -32,7 +32,6 @@ import "Core/genivi.js" as Genivi;
 import "../style-sheets/style-constants.js" as Constants;
 import "../style-sheets/NavigationAppSettings-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
-import lbs.plugin.preference 1.0
 
 NavigationAppHMIMenu {
 	id: menu
@@ -153,11 +152,6 @@ NavigationAppHMIMenu {
     //    (NAVIGATIONCORE_AVOID,NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)
     //    (NAVIGATIONCORE_AVOID,NAVIGATIONCORE_TOLL_ROADS)
     //    (NAVIGATIONCORE_AVOID,NAVIGATIONCORE_FERRY)
-
-    Preference {
-        source: 0
-        mode: 0
-    }
 
     function updatePreferences()
     {

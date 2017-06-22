@@ -32,6 +32,7 @@ import "../style-sheets/style-constants.js" as Constants;
 import "../style-sheets/NavigationAppBrowseMap-css.js" as StyleSheetMap;
 import "Core/genivi.js" as Genivi;
 import lbs.plugin.dbusif 1.0
+import lbs.plugin.preference 1.0
 
 ApplicationWindow {
 	id: container
@@ -56,11 +57,16 @@ ApplicationWindow {
         id:dbusIf;
     }
 
+    Preference {
+        source: 0
+        mode: 0
+    }
+
 	Component.onCompleted: {
-        //set persistent data
-        Genivi.setlang("eng","USA","Latn"); //set to english US
-        Genivi.setDefaultPosition(46.202038,6.146845,392); // (rue Jean Calvin Genève)
-        Genivi.setDefaultAddress("Switzerland","Lausanne","Rue de Midi","8"); // preferred address
+        //init persistent data
+        Genivi.setlang(Settings.getValue("Locale/language"),Settings.getValue("Locale/country"),Settings.getValue("Locale/script"));
+        Genivi.setDefaultPosition(Settings.getValue("DefaultPosition/latitude"),Settings.getValue("DefaultPosition/longitude"),Settings.getValue("DefaultPosition/altitude"));
+        Genivi.setDefaultAddress(Settings.getValue("DefaultAddress/country"),Settings.getValue("DefaultAddress/city"),Settings.getValue("DefaultAddress/street"),Settings.getValue("DefaultAddress/number"));
 
         //configure the middleware
         Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);

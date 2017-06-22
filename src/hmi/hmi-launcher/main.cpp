@@ -38,6 +38,7 @@
 #include "dbusif.h"
 #include "wheelarea.h"
 #include "preference.h"
+#include "settings.h"
 
 int main(int argc, char ** argv)
 {
@@ -48,9 +49,21 @@ int main(int argc, char ** argv)
     qmlRegisterType<Preference>("lbs.plugin.preference", 1,0, "Preference");
     qmlRegisterType<WheelArea>("lbs.plugin.wheelarea", 1, 0, "WheelArea");
 
+    //get settings stored into the conf file (in $HOME/.config/navigation/fsa.conf)
+
+    app.setOrganizationName(QString("navigation"));
+    app.setApplicationName(QString("fsa"));
+
+    Settings* settings=new Settings;
+    settings->setIniCodec("UTF-8");
+
+    QString toto=settings->getValue("DefaultAddress/city").toString();
+
     int rc = 0;
 
     QQmlEngine engine;
+    engine.rootContext()->setContextProperty("Settings",settings);
+
     QQmlComponent *component = new QQmlComponent(&engine);
 
     QPalette pal = app.palette();

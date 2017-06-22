@@ -127,6 +127,7 @@ set (SRC_TO_MOC
     ${CMAKE_CURRENT_SOURCE_DIR}/wheelarea.h
     ${CMAKE_CURRENT_SOURCE_DIR}/wheelareaplugin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/preference.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
 )
 execute_process(
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
@@ -153,12 +154,7 @@ add_executable(hmi-launcher
     main.cpp
     dbusif.cpp
     wheelareaplugin.cpp
-    wheelareaplugin.h
     preference.cpp
-    dbusif.h
-    dbusifsignal.h
-    wheelarea.h
-    preference.h
 )
 
 target_link_libraries(hmi-launcher ${LIBRARIES})
