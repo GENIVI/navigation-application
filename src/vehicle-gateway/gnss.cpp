@@ -47,6 +47,7 @@
 
 #include <gnss.h>
 #include <hnmea.h>
+#include <common.h>
 
 const char* ACTIVATE_GST = "$PUBX,40,GST,0,0,0,1,0,0*5A\r\n";
 const char* ACTIVATE_GRS = "$PUBX,40,GRS,0,0,0,1,0,0*5C\r\n";
@@ -59,6 +60,7 @@ static unsigned int g_baudrate;
 pthread_t g_thread_gnss;
 pthread_mutex_t mutex_gnss;
 char gnssBuffer[MAX_GNSS_BUFFER_SIZE];
+uint64_t gnssTimestamp;
 bool gnssDataReady;
 
 /** Flag to terminate NMEA reader thread */
@@ -201,6 +203,7 @@ void* loop_gnss_device(void* dev)
             {
                 pthread_mutex_lock(&mutex_gnss);       /* down semaphore */
                 strncpy(gnssBuffer,buf,res);
+                gnssTimestamp=get_timestamp();
                 gnssDataReady=true;
                 pthread_mutex_unlock(&mutex_gnss);       /* up semaphore */
             }

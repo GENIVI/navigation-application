@@ -37,6 +37,7 @@ set(PRJ_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/obd2.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/hnmea.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gnss.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/common.cpp
 )
 
 include_directories(

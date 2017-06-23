@@ -38,18 +38,30 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <inttypes.h>
 
 #include <obd2.h>
+#include <common.h>
 
 /* baudrate settings are defined in <asm/termbits.h>, which is
 included by <termios.h> */
 
-#define OBD_PID_FUEL_TANK 0x012F
-#define OBD_PID_RPM 0x010C
-#define OBD_PID_VEH_SPEED 0x010D
+#define OBD_HEADER_LENGTH 5 //41 0C for instance
+
+#define OBD_FUEL_TANK_PID "012F\r\n"
+#define OBD_FUEL_TANK_MESSAGE_HEADER "41 2F"
+#define OBD_FUEL_TANK_MESSAGE_DATA_LENGTH 1
+#define OBD_FUEL_TANK_MESSAGE_LENGTH OBD_HEADER_LENGTH+3*OBD_FUEL_TANK_MESSAGE_DATA_LENGTH //41 2F 00
+
+#define OBD_RPM_PID "010C\r\n"
+#define OBD_RPM_MESSAGE_HEADER "41 0C"
+#define OBD_RPM_MESSAGE_DATA_LENGTH 2
+#define OBD_RPM_MESSAGE_LENGTH OBD_HEADER_LENGTH+3*OBD_RPM_MESSAGE_DATA_LENGTH //41 0C 00 00
+
+#define OBD_VEH_SPEED_PID "010D\r\n"
 
 #define ELM_RESET_ALL "AT Z\r\n"
 #define ELM_GET_ID "AT I\r\n"
@@ -140,7 +152,7 @@ int obd2_open_device(char* obd2_device, unsigned int baudrate)
    return fd;
 }
 
-bool obd2_read_answer(char*& ans,size_t* length)
+bool obd2_read_answer(char*& ans,size_t& length,uint64_t& timestamp)
 { //ans is allocated dynamically
     bool isRead=false;
     char buf=EOS;
@@ -165,7 +177,7 @@ bool obd2_read_answer(char*& ans,size_t* length)
                         isRead=true;
                         *(tmp+buf_length)=buf;
                         ans = tmp;
-                        *length=buf_length;
+                        length=buf_length;
                     }
                     else{
                         if(buf==CR)
@@ -180,6 +192,7 @@ bool obd2_read_answer(char*& ans,size_t* length)
         timeout+=ELM_READ_LOOP;
     }while((isRead==false)&&(timeout<ELM_READ_TIMEOUT));
 
+    timestamp=get_timestamp();
     return isRead;
 }
 
@@ -204,5 +217,84 @@ bool obd2_init(char* obd2_device, unsigned int baudrate)
     return retval;
 }
 
+bool obd2_reset()
+{
+    char* answer;
+    size_t answer_length;
+    uint64_t timestamp;
+    if (obd2_send_command(ELM_RESET_ALL)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    return true;
+}
 
+bool obd2_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
+{
+    //`010C` Engine RPM: returns 2 bytes (A,B): RPM [1/min] = ((A*256)+B)/4
+    char* answer;
+    char header[OBD_HEADER_LENGTH+1];
+    char value[OBD_RPM_MESSAGE_DATA_LENGTH*2+1];
+    size_t answer_length;
+    if (obd2_send_command(OBD_RPM_PID)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if(answer_length!=OBD_RPM_MESSAGE_LENGTH){
+        return false;
+    }else{
+        strncpy(header,answer,OBD_HEADER_LENGTH);
+        header[OBD_HEADER_LENGTH]=EOS;
+        if(strcmp(header,OBD_RPM_MESSAGE_HEADER)!=0){
+            return false;
+        }else{
+            value[0]=answer[OBD_HEADER_LENGTH+1];
+            value[1]=answer[OBD_HEADER_LENGTH+2];
+            value[2]=answer[OBD_HEADER_LENGTH+4];
+            value[3]=answer[OBD_HEADER_LENGTH+5];
+            value[4]=EOS;
+            rpm=atoi(value)/4;
+        }
+    }
+    return true;
+}
 
+bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp)
+{
+    //`012F` Fuel Tank Level Input: returns 1 byte: level in %
+    char* answer;
+    char header[OBD_HEADER_LENGTH+1];
+    char value[OBD_FUEL_TANK_MESSAGE_DATA_LENGTH*2+1];
+    size_t answer_length;
+    if (obd2_send_command(OBD_FUEL_TANK_PID)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if(answer_length!=OBD_FUEL_TANK_MESSAGE_LENGTH){
+        return false;
+    }else{
+        strncpy(header,answer,OBD_HEADER_LENGTH);
+        header[OBD_HEADER_LENGTH]=EOS;
+        if(strcmp(header,OBD_FUEL_TANK_MESSAGE_HEADER)!=0){
+            return false;
+        }else{
+            value[0]=answer[OBD_HEADER_LENGTH+1];
+            value[1]=answer[OBD_HEADER_LENGTH+2];
+            value[3]=EOS;
+            level=atoi(value);
+        }
+    }
+    return true;
+}

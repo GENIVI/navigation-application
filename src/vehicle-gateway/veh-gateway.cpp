@@ -3,10 +3,10 @@
 *
 * SPDX-License-Identifier: MPL-2.0
 *
-* \ingroup LogReplayer
-* \author Marco Residori <marco.residori@xse.de>
+* \ingroup Vehicle gateway
+* \author Philippe Colliot <philippe.colliot@mpsa.com>
 *
-* \copyright Copyright (C) 2013, XS Embedded GmbH
+* \copyright Copyright (C) 2017, PSA Group
 * 
 * \license
 * This Source Code Form is subject to the terms of the
@@ -32,6 +32,7 @@
 #include <semaphore.h>
 #include <termios.h>
 
+#include <common.h>
 #include <obd2.h>
 #include <gnss.h>
 
@@ -43,15 +44,11 @@
 #define PORT2 9931   //port used for sensor data
 #define PORT3 9932   //port used for vehicle data
 const char * IPADDR_DEFAULT = "127.0.0.1";
-const char * GNS_PREFIX = "GVGNS";
-const char * SNS_PREFIX = "GVSNS";
-const char * VEH_PREFIX = "GVVEH";
 
+#define SCAN_LOOP_TIME 100000 //100 ms
 #define MAXDELTA 1000  //max value to avoid overflow
 
 #define BAUDRATE_OBD2 B38400
-#define ELM_RESET_ALL "AT Z\r\n"
-#define ELM_GET_ID "AT I\r\n"
 
 #define NMEA_TOKEN ","
 #define NMEA_RMC_STATUS 2
@@ -79,20 +76,9 @@ bool isRunning=true;
 static int g_obd2_fd = -1;
 static struct termios g_oldtio;
 
-uint64_t get_timestamp()
-{
-  struct timespec time_value;
-  if (clock_gettime(CLOCK_MONOTONIC, &time_value) != -1)
-  {
-    return (time_value.tv_sec*1000 + time_value.tv_nsec/1000000);
-  }
-  else
-  {
-    return 0xFFFFFFFFFFFFFFFF;
-  }
-}
-
-bool get_geolocation(char*& sock_buf,char* buffer)
+//scan the buffer, if nmea status is OK (so there's a valid location)
+//allocate the memory and compose the frame into sock_buf
+bool get_geolocation(char*& sock_buf,char* buffer,const uint64_t timestamp)
 {
     geocoordinate3D_t geolocation;
     char* tmp = new char[BUFLEN];
@@ -139,10 +125,55 @@ bool get_geolocation(char*& sock_buf,char* buffer)
     LOG_DEBUG(gContext,"Lat: %f Lon: %f Alt: %f\n",geolocation.latitude,geolocation.longitude,geolocation.altitude);
 
     //compose frame data: TIMESTAMP,0$GVGNSP,TIMESTAMP,LAT,LON,ALT,0X07
-    sprintf(tmp,"%d,%s,%d,%.6f,%.6f,%.6f,0x07",1000,"0$GVGNSP",1000,geolocation.latitude,geolocation.longitude,geolocation.altitude);
+    sprintf(tmp,"%d,%s,%d,%.6f,%.6f,%.6f,0x07",timestamp,"0$GVGNSP",timestamp,geolocation.latitude,geolocation.longitude,geolocation.altitude);
     sock_buf=tmp;
     return retval;
 }
+
+bool get_engine_speed(char*& sock_buf)
+{
+    uint16_t rpm;
+    uint64_t timestamp;
+    char* tmp = new char[BUFLEN];
+    if (obd2_read_engine_rpm(rpm,timestamp)!=true){
+        LOG_ERROR_MSG(gContext,"Read engine rpm failed\n");
+        return false;
+    }else{
+        LOG_DEBUG(gContext,"Engine speed: %d\n",rpm);
+
+        //compose frame data: TIMESTAMP,0$GVVEHENGSPEED,TIMESTAMP,RPM,0X01
+        sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHENGSPEED",timestamp,rpm);
+        sock_buf=tmp;
+    }
+    return true;
+}
+
+bool get_fuel_tank_level(char*& sock_buf)
+{
+    uint8_t fuel_level;
+    uint64_t timestamp;
+    char* tmp = new char[BUFLEN];
+    if (obd2_read_fuel_tank_level(fuel_level,timestamp)!=true){
+        LOG_ERROR_MSG(gContext,"Read fuel tank level failed\n");
+        return false;
+    }else{
+        LOG_DEBUG(gContext,"Fuel tank level: %d\%\n",fuel_level);
+
+        //compose frame data: TIMESTAMP,0$GVVEHFUELLEVEL,TIMESTAMP,LEVEL,0X01
+        sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHFUELLEVEL",timestamp,fuel_level);
+        sock_buf=tmp;
+    }
+    return true;
+}
+
+bool get_vehicle_speed(char*& sock_buf)
+{
+    return false;
+}
+
+//GVVEHFUELLEVEL
+//GVVEHFUELCONS
+//GVVEHTOTALODO
 
 void sighandler(int sig)
 {
@@ -157,20 +188,15 @@ int main(int argc, char* argv[])
     socklen_t slen = sizeof(si_other);
     int sock;
     char* sock_buf;
-    char msgId[MSGIDLEN];
     char * ipaddr = 0;
 
     // OBD and GNSS devices
     bool result;
     uint64_t start, stop;
-    char* answer;
-    size_t answer_length;
     char * modem_device_obd2 = 0;
     char * modem_device_gnss = 0;
-    char* gnssprefix = (char*)GNS_PREFIX;
-    char* snsprefix = (char*)SNS_PREFIX;
-    char* vehprefix = (char*)VEH_PREFIX;
     char gnss_buf[MAX_GNSS_BUFFER_SIZE];
+    uint64_t gnss_timestamp;
 
     // arguments check
     if(argc < 3)
@@ -248,40 +274,29 @@ int main(int argc, char* argv[])
     }
 
     // reset the OBD2 device
-    if (obd2_send_command(ELM_RESET_ALL)){
-        answer=NULL;
-        if(obd2_read_answer(answer,&answer_length)!=true){
-            LOG_ERROR_MSG(gContext,"RESET OBD2 FAILURE\n");
-            return(-1);
-        }
-    }else{
+    if(!obd2_reset()){
         LOG_ERROR_MSG(gContext,"RESET OBD2 FAILURE\n");
         return(-1);
     }
 
     //config the GNSS device to send given frames (TBD)
 
-    bool snsDataReady=false;
-    bool vehDataReady=false;
     //main loop
     do{
-        if (obd2_send_command(ELM_GET_ID)!=true){
-            LOG_DEBUG(gContext,"WRITE OBD2 FAILURE ON COMMAND: %s\n",ELM_GET_ID);
-            isRunning=false;
-        }
 
         //GNSS: list of supported message IDs
         //char* gnssstr = "GVGNSP,GVGNSC,GVGNSAC,GVGNSSAT";
+        //for the moment only GVGNSP is managed
         pthread_mutex_lock(&mutex_gnss);       /* down semaphore */
         if(gnssDataReady)
         {
             gnssDataReady=false;
             strcpy(gnss_buf,gnssBuffer); //get the gnss buffer (end of string is added in gnss code)
+            gnss_timestamp=gnssTimestamp; //get the gnss timestamp
             pthread_mutex_unlock(&mutex_gnss);       /* up semaphore */
-            if(get_geolocation(sock_buf,gnss_buf))
+            if(get_geolocation(sock_buf,gnss_buf,gnss_timestamp))
             {
                 LOG_DEBUG(gContext,"Sending Packet to %s:%d\n",ipaddr,PORT1);
-                LOG_DEBUG(gContext,"MsgID:%s\n", gnssprefix);
                 LOG_DEBUG(gContext,"Len:%d\n", (int)strlen(sock_buf));
                 LOG_DEBUG(gContext,"Data:%s\n", sock_buf);
 
@@ -299,11 +314,9 @@ int main(int argc, char* argv[])
         //SNS: list of supported message IDs
         //char* snsstr = "GVVEHSP,GVGYRO,GVGYROCONF,GVDRVDIR,GVODO,GVWHTK,GVWHTKCONF";
         //char* snsstr = "GVSNSVEHSP,GVSNSGYRO,GVSNSWHTK"; //subset currently supported for new log format
-        if(snsDataReady)
-        {
-            snsDataReady=false;
+        //for the moment no ID managed
+        if(get_vehicle_speed(sock_buf)){
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT2);
-            LOG_DEBUG(gContext,"MsgID:%s", msgId);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(sock_buf));
             LOG_DEBUG(gContext,"Data:%s", sock_buf);
 
@@ -314,13 +327,26 @@ int main(int argc, char* argv[])
                 return EXIT_FAILURE;
             }
         }
+
         //VHL: list of supported message IDs
         //char* vhlstr = "GVVEHVER,GVVEHENGSPEED,GVVEHFUELLEVEL,GVVEHFUELCONS,GVVEHTOTALODO";
-        if(vehDataReady)
+        //for the moment GVVEHENGSPEED, GVVEHFUELLEVEL managed
+        if(get_engine_speed(sock_buf))
         {
-            vehDataReady=false;
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT3);
-            LOG_DEBUG(gContext,"MsgID:%s", msgId);
+            LOG_DEBUG(gContext,"Len:%d", (int)strlen(sock_buf));
+            LOG_DEBUG(gContext,"Data:%s", sock_buf);
+
+            si_other.sin_port = htons(PORT3);
+            if(sendto(sock, sock_buf, strlen(sock_buf)+1, 0, (struct sockaddr *)&si_other, slen) == -1)
+            {
+                LOG_ERROR_MSG(gContext,"sendto() failed!");
+                return EXIT_FAILURE;
+            }
+        }
+        if(get_fuel_tank_level(sock_buf))
+        {
+            LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT3);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(sock_buf));
             LOG_DEBUG(gContext,"Data:%s", sock_buf);
 
@@ -332,7 +358,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        sleep(1);
+        usleep(SCAN_LOOP_TIME);
     } while(isRunning);
 
     LOG_INFO_MSG(gContext,"Shutting down Vehicle gateway...");

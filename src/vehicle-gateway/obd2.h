@@ -43,11 +43,13 @@ extern "C" {
 #include <math.h>
 #include <sys/types.h>
 
-bool obd2_read_answer(char*& ans, size_t* length);
-
-bool obd2_send_command(const char* cmd);
-
 bool obd2_init(char* obd2_device, unsigned int baudrate);
+
+bool obd2_reset();
+
+bool obd2_read_engine_rpm(uint16_t& rpm, uint64_t &timestamp);
+
+bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp);
 
 #ifdef __cplusplus
 }

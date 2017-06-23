@@ -34,6 +34,7 @@
 #ifndef INCLUDE_GNSS
 #define INCLUDE_GNSS
 #include <semaphore.h>
+#include <inttypes.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +45,7 @@ extern "C" {
 extern pthread_mutex_t mutex_gnss;
 extern bool gnssDataReady;
 extern char gnssBuffer[];
-
+extern uint64_t gnssTimestamp;
 bool gnss_init(const char* gnss_device, unsigned int baudrate);
 bool gnss_destroy();
 
