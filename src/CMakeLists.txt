@@ -17,6 +17,7 @@
 ###########################################################################
 project(fuel-stop-advisor)
 cmake_minimum_required(VERSION 2.8)
+find_package(PkgConfig)
 
 option(WITH_DEBUG
         "Enable the debug messages" OFF)
@@ -61,7 +62,7 @@ if(NOT EXISTS ${AUTOMOTIVE_MESSAGE_BROKER_DIR})
         ExternalProject_Add(${AUTOMOTIVE_MESSAGE_BROKER}
         PREFIX ${AUTOMOTIVE_MESSAGE_BROKER_DIR}
         GIT_REPOSITORY  https://github.com/otcshare/automotive-message-broker.git
-        GIT_TAG c216955d16ca275159891cad296217094d972390
+        GIT_TAG 8af1cc9a502cb85736b7afb37dc9073a168aa605
         UPDATE_COMMAND ""
         PATCH_COMMAND ""
         INSTALL_COMMAND sudo make install
@@ -77,6 +78,13 @@ if(NOT EXISTS ${AUTOMOTIVE_MESSAGE_BROKER_DIR})
         INSTALL_COMMAND sudo make install
         )
     endif()
+endif()
+
+if(${WITH_DLT})
+    add_definitions("-DDLT_ENABLED=1")
+    pkg_check_modules(DLT REQUIRED automotive-dlt)
+    include_directories( ${DLT_INCLUDE_DIRS} )
+    set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
 endif()
 
 add_subdirectory(navigation/src/navigation "${CMAKE_CURRENT_BINARY_DIR}/navigation")

@@ -2,7 +2,7 @@
 
 navigation=0
 navit=0
-navigation_version='56837f0237fadedd325940630601061bd7bbd30f'
+navigation_version='4c3e24b04f8ff1e41a94f1c1dd181ae3412c3db9'
 positioning_version='9725fe1f553197042d6445997690d452a73490c0'
 navit_version='1e71b5fd4c0bf5ac96e5207c51db7d17057ed798'
 

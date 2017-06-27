@@ -70,6 +70,7 @@ endforeach()
 add_executable(fuel-stop-advisor fuel-stop-advisor.cpp  ${TRIPCOMPUTER_DIR}/ctripcomputer.cpp)
 
 set(LIBRARIES
+    ${LIBRARIES}
     ${DBUS_CPP_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${DBUS_CPP_GLIB_LIBRARIES}

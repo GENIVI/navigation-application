@@ -45,7 +45,9 @@ extern "C" {
 
 bool obd2_init(char* obd2_device, unsigned int baudrate);
 
-bool obd2_reset();
+bool obd2_reset(uint64_t &timestamp);
+
+bool obd2_config(uint64_t& timestamp);
 
 bool obd2_read_engine_rpm(uint16_t& rpm, uint64_t &timestamp);
 

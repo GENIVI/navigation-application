@@ -24,6 +24,14 @@ cmake_minimum_required(VERSION 2.8)
 
 message(STATUS ${PROJECT_NAME})
 
+option(WITH_DEBUG
+        "Enable the debug messages" OFF)
+option(WITH_DLT
+        "Enable DLT logging" OFF)
+
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
+message(STATUS "WITH_DLT = ${WITH_DLT}")
+
 add_definitions("-std=gnu++11")
 
 if(WITH_DEBUG)

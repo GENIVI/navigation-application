@@ -49,6 +49,8 @@
 /* baudrate settings are defined in <asm/termbits.h>, which is
 included by <termios.h> */
 
+#define OBD_GET_PID_LIST "0100\r\n"
+
 #define OBD_HEADER_LENGTH 5 //41 0C for instance
 
 #define OBD_FUEL_TANK_PID "012F\r\n"
@@ -64,6 +66,7 @@ included by <termios.h> */
 #define OBD_VEH_SPEED_PID "010D\r\n"
 
 #define ELM_RESET_ALL "AT Z\r\n"
+#define ELM_ECHO_OFF "AT E0\r\n"
 #define ELM_GET_ID "AT I\r\n"
 #define ELM_PROMPT '>'
 #define ELM_READ_LOOP 5000 //5 ms
@@ -217,12 +220,34 @@ bool obd2_init(char* obd2_device, unsigned int baudrate)
     return retval;
 }
 
-bool obd2_reset()
+bool obd2_reset(uint64_t& timestamp)
 {
     char* answer;
     size_t answer_length;
-    uint64_t timestamp;
     if (obd2_send_command(ELM_RESET_ALL)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    return true;
+}
+
+bool obd2_config(uint64_t& timestamp)
+{
+    char* answer;
+    size_t answer_length;
+    if (obd2_send_command(ELM_ECHO_OFF)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if (obd2_send_command(OBD_GET_PID_LIST)){
         answer=NULL;
         if(obd2_read_answer(answer,answer_length,timestamp)!=true){
             return false;

@@ -12,12 +12,15 @@
 #include "genivi-navigationcore-constants.h"
 #include "genivi-navigationcore-routing_proxy.h"
 
+#include "log.h"
+
+DLT_DECLARE_CONTEXT(gCtx);
+
+
 static DBus::Glib::BusDispatcher dispatcher;
 static DBus::Connection *conn;
 static class FuelStopAdvisor *server;
 static GMainLoop *loop;
-
-#define dbgprintf(...) printf(__VA_ARGS__);
 
 #if (!DEBUG_ENABLED)
 #undef dbgprintf
@@ -314,7 +317,7 @@ class FuelStopAdvisor
 	double enhancedDistance(double level, double &remaining)
 	{
 		double distance=0;
-        dbgprintf("routeHandle %d\n",routeHandle);
+        LOG_INFO(gCtx,"routeHandle %d\n",routeHandle);
         if (routeHandle) {
             std::vector< std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > > RouteShape;
             std::vector< int32_t > valuesToReturn;
@@ -343,10 +346,10 @@ class FuelStopAdvisor
 					level-=fuel_consumption;
 				}
 			}
-            dbgprintf("%d segments\n",totalNumberOfSegments);
+            LOG_INFO(gCtx,"%d segments\n",totalNumberOfSegments);
 		}
 		remaining=level/fuel_consumption_l_100km*100;
-        dbgprintf("distance_on_route %f remaining %f\n",distance/1000,remaining);
+        LOG_INFO(gCtx,"distance_on_route %f remaining %f\n",distance/1000,remaining);
 		return distance/1000+(remaining > 0 ? remaining:0);
 	}
 	
@@ -433,9 +436,9 @@ class FuelStopAdvisor
         double remaining;
         if (advisorMode) {
             enhancedDistance(fuelLevel, remaining);
-            dbgprintf("Advisor %f vs %d\n",remaining, distanceThreshold);
+            LOG_INFO(gCtx,"Advisor %f vs %d\n",remaining, distanceThreshold);
             if (remaining < distanceThreshold) {
-                dbgprintf("Warning %f < %d\n",remaining, distanceThreshold);
+                LOG_INFO(gCtx,"Warning %f < %d\n",remaining, distanceThreshold);
                 destinationCantBeReached = true;
             }
             else
@@ -450,7 +453,6 @@ class FuelStopAdvisor
 	void
 	SetFuelAdvisorSettings(const bool& advisorMode, const uint8_t& distanceThreshold)
 	{
-        dbgprintf("SetFuelAdvisorSettings(%d,%d)\n",advisorMode, distanceThreshold);
 		this->advisorMode=advisorMode;
 		this->distanceThreshold=distanceThreshold;
         updateEnhancedDistance();
@@ -466,14 +468,12 @@ class FuelStopAdvisor
 
 	void SetRouteHandle(const uint32_t& routeHandle)
 	{
-        dbgprintf("SetRouteHandle %d\n",routeHandle);
         this->routeHandle=routeHandle;
         updateEnhancedDistance();
 	}
 
     void ReleaseRouteHandle(const uint32_t& routeHandle)
     {
-        dbgprintf("ResetRouteHandle %d\n",routeHandle);
         this->routeHandle=0;
         updateEnhancedDistance();
     }
@@ -520,7 +520,10 @@ update_enhanced_distance(gpointer user_data)
 
 int main(int argc, char **argv)
 {
-	loop=g_main_loop_new(NULL, false);
+    DLT_REGISTER_APP("FSAD","FUEL STOP ADVISOR");
+    DLT_REGISTER_CONTEXT(gCtx,"FSAD","Global Context");
+
+    loop=g_main_loop_new(NULL, false);
 	dispatcher.attach(NULL);
 	DBus::default_dispatcher = &dispatcher;
 	conn = new DBus::Connection(DBus::Connection::SessionBus());

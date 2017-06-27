@@ -85,6 +85,7 @@ bool get_geolocation(char*& sock_buf,char* buffer,const uint64_t timestamp)
     char *token;
     uint8_t cnt=0;
     bool retval = false;
+    double fract;
     geolocation.latitude=0;
     geolocation.longitude=0;
     geolocation.altitude=0;
@@ -98,18 +99,20 @@ bool get_geolocation(char*& sock_buf,char* buffer,const uint64_t timestamp)
             if(strcmp(token,NMEA_DATA_VALID)==0){
                 retval=true;
             }else{
-                LOG_INFO_MSG(gContext,"NMEA DATA NOT VALID\n");
+                LOG_INFO_MSG(gContext,"NMEA DATA NOT VALID");
                 return retval;
             }
             break;
         case NMEA_RMC_LATITUDE:
-            geolocation.latitude=atof(token);
+            fract=modf(atof(token)/100,&(geolocation.latitude));
+            geolocation.latitude+=(fract*100)/60;
             break;
         case NMEA_RMC_LATITUDE_INDICATOR:
             if(token==NMEA_SOUTH) geolocation.latitude=(-1)*geolocation.latitude;
             break;
         case NMEA_RMC_LONGITUDE:
-            geolocation.longitude=atof(token);
+            fract=modf(atof(token)/100,&(geolocation.longitude));
+            geolocation.longitude+=(fract*100)/60;
             break;
         case NMEA_RMC_LONGITUDE_INDICATOR:
             if(token==NMEA_WEST) geolocation.longitude=(-1)*geolocation.longitude;
@@ -122,7 +125,7 @@ bool get_geolocation(char*& sock_buf,char* buffer,const uint64_t timestamp)
         }
         cnt++;
     }
-    LOG_DEBUG(gContext,"Lat: %f Lon: %f Alt: %f\n",geolocation.latitude,geolocation.longitude,geolocation.altitude);
+    LOG_DEBUG(gContext,"Lat: %f Lon: %f Alt: %f",geolocation.latitude,geolocation.longitude,geolocation.altitude);
 
     //compose frame data: TIMESTAMP,0$GVGNSP,TIMESTAMP,LAT,LON,ALT,0X07
     sprintf(tmp,"%d,%s,%d,%.6f,%.6f,%.6f,0x07",timestamp,"0$GVGNSP",timestamp,geolocation.latitude,geolocation.longitude,geolocation.altitude);
@@ -136,10 +139,10 @@ bool get_engine_speed(char*& sock_buf)
     uint64_t timestamp;
     char* tmp = new char[BUFLEN];
     if (obd2_read_engine_rpm(rpm,timestamp)!=true){
-        LOG_ERROR_MSG(gContext,"Read engine rpm failed\n");
+        LOG_ERROR_MSG(gContext,"Read engine rpm failed");
         return false;
     }else{
-        LOG_DEBUG(gContext,"Engine speed: %d\n",rpm);
+        LOG_DEBUG(gContext,"Engine speed: %d",rpm);
 
         //compose frame data: TIMESTAMP,0$GVVEHENGSPEED,TIMESTAMP,RPM,0X01
         sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHENGSPEED",timestamp,rpm);
@@ -154,10 +157,10 @@ bool get_fuel_tank_level(char*& sock_buf)
     uint64_t timestamp;
     char* tmp = new char[BUFLEN];
     if (obd2_read_fuel_tank_level(fuel_level,timestamp)!=true){
-        LOG_ERROR_MSG(gContext,"Read fuel tank level failed\n");
+        LOG_ERROR_MSG(gContext,"Read fuel tank level failed");
         return false;
     }else{
-        LOG_DEBUG(gContext,"Fuel tank level: %d\%\n",fuel_level);
+        LOG_DEBUG(gContext,"Fuel tank level: %d\%",fuel_level);
 
         //compose frame data: TIMESTAMP,0$GVVEHFUELLEVEL,TIMESTAMP,LEVEL,0X01
         sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHFUELLEVEL",timestamp,fuel_level);
@@ -249,12 +252,12 @@ int main(int argc, char* argv[])
     stop = get_timestamp();
     if (result)
     {
-      LOG_INFO(gContext,"INIT OBD2 OK [DURATION = %" PRIu64 " ms]\n", stop-start);
+      LOG_INFO(gContext,"INIT OBD2 OK [DURATION = %" PRIu64 " ms]", stop-start);
     }
     else
     {
-      LOG_DEBUG(gContext,"INIT OBD2 FAILURE [DURATION = %" PRIu64 " ms]\n", stop-start);
-      LOG_DEBUG(gContext,"Do you have access rights to %s ?\n", modem_device_obd2);
+      LOG_DEBUG(gContext,"INIT OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
+      LOG_DEBUG(gContext,"Do you have access rights to %s ?", modem_device_obd2);
       return(-1);
     }
 
@@ -264,18 +267,26 @@ int main(int argc, char* argv[])
     stop = get_timestamp();
     if (result)
     {
-      LOG_INFO(gContext,"INIT GNSS OK [DURATION = %" PRIu64 " ms]\n", stop-start);
+      LOG_INFO(gContext,"INIT GNSS OK [DURATION = %" PRIu64 " ms]", stop-start);
     }
     else
     {
-      LOG_DEBUG(gContext,"INIT GNSS FAILURE [DURATION = %" PRIu64 " ms]\n", stop-start);
-      LOG_DEBUG(gContext,"Do you have access rights to %s ?\n", modem_device_gnss);
+      LOG_DEBUG(gContext,"INIT GNSS FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
+      LOG_DEBUG(gContext,"Do you have access rights to %s ?", modem_device_gnss);
       return(-1);
     }
 
     // reset the OBD2 device
-    if(!obd2_reset()){
-        LOG_ERROR_MSG(gContext,"RESET OBD2 FAILURE\n");
+    start = get_timestamp();
+    if(!obd2_reset(stop)){
+        LOG_DEBUG(gContext,"RESET OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
+        return(-1);
+    }
+
+    // set echo OFF
+    start = get_timestamp();
+    if(!obd2_config(stop)){
+        LOG_DEBUG(gContext,"ECHO OFF OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
         return(-1);
     }
 
@@ -296,9 +307,9 @@ int main(int argc, char* argv[])
             pthread_mutex_unlock(&mutex_gnss);       /* up semaphore */
             if(get_geolocation(sock_buf,gnss_buf,gnss_timestamp))
             {
-                LOG_DEBUG(gContext,"Sending Packet to %s:%d\n",ipaddr,PORT1);
-                LOG_DEBUG(gContext,"Len:%d\n", (int)strlen(sock_buf));
-                LOG_DEBUG(gContext,"Data:%s\n", sock_buf);
+                LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT1);
+                LOG_DEBUG(gContext,"Len:%d", (int)strlen(sock_buf));
+                LOG_DEBUG(gContext,"Data:%s", sock_buf);
 
                 si_other.sin_port = htons(PORT1);
                 if(sendto(sock, sock_buf, strlen(sock_buf)+1, 0, (struct sockaddr *)&si_other, slen) == -1)
