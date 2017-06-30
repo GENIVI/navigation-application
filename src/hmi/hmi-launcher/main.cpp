@@ -57,8 +57,6 @@ int main(int argc, char ** argv)
     Settings* settings=new Settings;
     settings->setIniCodec("UTF-8");
 
-    QString toto=settings->getValue("DefaultAddress/city").toString();
-
     int rc = 0;
 
     QQmlEngine engine;

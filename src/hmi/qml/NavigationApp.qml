@@ -50,6 +50,16 @@ ApplicationWindow {
 		component = Qt.createQmlObject(page+"{}",container,"dynamic");
 	}
 
+    function saveSettings()
+    {
+        Settings.setValue("Settings/simulationMode",Genivi.simulationMode);
+        Settings.setValue("Settings/showroom",Genivi.showroom);
+        Settings.setValue("Settings/autoguidance",Genivi.autoguidance);
+        Settings.setValue("Locale/language",Genivi.g_language)
+        Settings.setValue("Locale/country",Genivi.g_country);
+        Settings.setValue("Locale/script",Genivi.g_script);
+    }
+
     //------------------------------------------//
     // Management of the DBus exchanges
     //------------------------------------------//
@@ -64,9 +74,23 @@ ApplicationWindow {
 
 	Component.onCompleted: {
         //init persistent data
+        //NB: settings are stored as strings, so it may need some rework for persistent data that are not strings (to be improved ?)
         Genivi.setlang(Settings.getValue("Locale/language"),Settings.getValue("Locale/country"),Settings.getValue("Locale/script"));
         Genivi.setDefaultPosition(Settings.getValue("DefaultPosition/latitude"),Settings.getValue("DefaultPosition/longitude"),Settings.getValue("DefaultPosition/altitude"));
         Genivi.setDefaultAddress(Settings.getValue("DefaultAddress/country"),Settings.getValue("DefaultAddress/city"),Settings.getValue("DefaultAddress/street"),Settings.getValue("DefaultAddress/number"));
+
+        if(Settings.getValue("Settings/simulationMode")==="true")
+            Genivi.simulationMode=true;
+        else
+            Genivi.simulationMode=false;
+        if(Settings.getValue("Settings/showroom")==="true")
+            Genivi.showroom=true;
+        else
+            Genivi.showroom=false;
+        if(Settings.getValue("Settings/autoguidance")==="true")
+            Genivi.autoguidance=true;
+        else
+            Genivi.autoguidance=false;
 
         //configure the middleware
         Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
@@ -76,13 +100,15 @@ ApplicationWindow {
         Genivi.initScale(dbusIf);
 
         //set verbose mode on
-        Genivi.setVerbose();
+        //Genivi.setVerbose();
 
         //launch the HMI
         load("NavigationAppMain");
 	}
 
     Component.onDestruction:  {
+        saveSettings();
+
         //release the map viewer
         Genivi.mapviewer_handle_clear(dbusIf);
     }

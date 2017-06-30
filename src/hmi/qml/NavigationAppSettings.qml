@@ -231,6 +231,34 @@ NavigationAppHMIMenu {
         updatePreferences();
     }
 
+    function updateSettings()
+    {
+        if (Genivi.autoguidance===true)
+        {
+            autoguidance.setState("ENABLE");
+        }
+        else
+        {
+            autoguidance.setState("DISABLE");
+        }
+        if (Genivi.simulationMode===true)
+        {
+            simu_mode.setState("ENABLE");
+        }
+        else
+        {
+            simu_mode.setState("DISABLE");
+        }
+        if (Genivi.showroom===true)
+        {
+            showroom.setState("ENABLE");
+        }
+        else
+        {
+            showroom.setState("DISABLE");
+        }
+    }
+
     //------------------------------------------//
     // Menu elements
     //------------------------------------------//
@@ -339,18 +367,7 @@ NavigationAppHMIMenu {
         StdButton {
             x:StyleSheet.simu_mode_enable[Constants.X]; y:StyleSheet.simu_mode_enable[Constants.Y]; width:StyleSheet.simu_mode_enable[Constants.WIDTH]; height:StyleSheet.simu_mode_enable[Constants.HEIGHT];
             id:simu_mode; next:back; prev:back;  disabled:false;
-            source:
-            {
-                if (Genivi.simulationMode==true)
-                {
-                    source=StyleSheet.simu_mode_enable[Constants.SOURCE];
-                }
-                else
-                {
-                    source=StyleSheet.simu_mode_disable[Constants.SOURCE];
-                }
-            }
-
+            source:StyleSheet.simu_mode_enable[Constants.SOURCE];
             function setState(name)
             {
                 if (name=="ENABLE")
@@ -387,21 +404,10 @@ NavigationAppHMIMenu {
         StdButton {
             x:StyleSheet.showroom_enable[Constants.X]; y:StyleSheet.showroom_enable[Constants.Y]; width:StyleSheet.showroom_enable[Constants.WIDTH]; height:StyleSheet.showroom_enable[Constants.HEIGHT];
             id:showroom; next:back; prev:back;  disabled:false;
-            source:
-            {
-                if (Genivi.showroom==true)
-                {
-                    source=StyleSheet.showroom_enable[Constants.SOURCE];
-                }
-                else
-                {
-                    source=StyleSheet.showroom_disable[Constants.SOURCE];
-                }
-            }
-
+            source: StyleSheet.showroom_disable[Constants.SOURCE];
             function setState(name)
             {
-                if (name=="ENABLE")
+                if (name==="ENABLE")
                 {
                     source=StyleSheet.showroom_enable[Constants.SOURCE];
                 }
@@ -412,7 +418,7 @@ NavigationAppHMIMenu {
             }
             onClicked:
             {
-                if (Genivi.showroom ===true)
+                if (Genivi.showroom===true)
                 {
                     Genivi.showroom=false;
                     showroom.setState("DISABLE");
@@ -435,18 +441,7 @@ NavigationAppHMIMenu {
         StdButton {
             x:StyleSheet.autoguidance_enable[Constants.X]; y:StyleSheet.autoguidance_enable[Constants.Y]; width:StyleSheet.autoguidance_enable[Constants.WIDTH]; height:StyleSheet.autoguidance_enable[Constants.HEIGHT];
             id:autoguidance; next:back; prev:back;  disabled:false;
-            source:
-            {
-                if (Genivi.autoguidance==true)
-                {
-                    source=StyleSheet.autoguidance_enable[Constants.SOURCE];
-                }
-                else
-                {
-                    source=StyleSheet.autoguidance_disable[Constants.SOURCE];
-                }
-            }
-
+            source: StyleSheet.autoguidance_disable[Constants.SOURCE];
             function setState(name)
             {
                 if (name=="ENABLE")
@@ -478,6 +473,7 @@ NavigationAppHMIMenu {
             id:back; text: Genivi.gettext("Back"); disabled:false; next:simu_mode; prev:showroom;
             onClicked:{
                 disconnectSignals();
+                saveSettings();
                 leaveMenu();
             }
         }
@@ -516,5 +512,6 @@ NavigationAppHMIMenu {
 
         updateLanguageAndUnits();
         updatePreferences();
+        updateSettings();
     }
 }

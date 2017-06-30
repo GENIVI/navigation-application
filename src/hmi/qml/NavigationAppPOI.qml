@@ -36,7 +36,6 @@ import lbs.plugin.dbusif 1.0
 NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppPOI"
-    property string extraspell;
     property string all_categories: "all categories"
     property string poiCategoryName
     property bool vehicleLocated: false
@@ -92,11 +91,6 @@ NavigationAppHMIMenu {
         select_search.update();
     }
 
-    function spell(input)
-    {
-        keyboardArea.destination.text = input;
-    }
-
     function displayCategoryList()
     {
         var model=view.model;
@@ -105,10 +99,10 @@ NavigationAppHMIMenu {
             if(Genivi.categoriesIdNameList[i+1][3]!==all_categories)
                 model.append({"name":Genivi.categoriesIdNameList[i+1][3],"number":i/2});
         }
-        categoryValue.text=model.get(0).name;
+        categoryValue.text=model.get(0).name; // to be clarified
     }
 
-    function displayPoiList()
+    function searchPois()
     {
         var model=view.model;
         var ids=[];
@@ -136,10 +130,17 @@ NavigationAppHMIMenu {
 
         Genivi.poisearch_SetCenter(dbusIf,latitude,longitude,0);
         Genivi.poisearch_SetCategories(dbusIf,categoriesAndRadiusList);
-        Genivi.poisearch_StartPoiSearch(dbusIf,"",Genivi.POISERVICE_SORT_BY_DISTANCE);
+        Genivi.poisearch_StartPoiSearch(dbusIf,keyboardArea.destination.text,Genivi.POISERVICE_SORT_BY_DISTANCE);
         var attributeList=[];
         attributeList[0]=0;
         var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
+        if(res[3]===0)
+        {
+            //no match
+            //to do something to inform the user
+            return
+        }
+
         var res_win=res[5];
         var i;
         for (i = 0 ; i < res_win.length ; i+=2) {
@@ -173,7 +174,7 @@ NavigationAppHMIMenu {
     //------------------------------------------//
     Keys.onPressed: {
         if (event.text) {
-            if (event.text == '\b') {
+            if (event.text === '\b') {
                 if (text.text.length) {
                     text.text=text.text.slice(0,-1);
                 }
@@ -182,6 +183,11 @@ NavigationAppHMIMenu {
             }
             spell(event.text);
         }
+    }
+
+    function spell(input)
+    {
+        keyboardArea.destination.text = keyboardArea.destination.text+input;
     }
 
     NavigationAppHMIBgImage {
@@ -331,12 +337,13 @@ NavigationAppHMIMenu {
         NavigationAppKeyboard {
             x:StyleSheet.keyboardArea[Constants.X]; y:StyleSheet.keyboardArea[Constants.Y]; width:StyleSheet.keyboardArea[Constants.WIDTH]; height:StyleSheet.keyboardArea[Constants.HEIGHT];
             id: keyboardArea;
+            visible: true;
             destination: poiValue;
             firstLayout: Genivi.kbdFirstLayout;
             secondLayout: Genivi.kbdSecondLayout;
             next: select_search;
             prev: poiKeyboard;
-            onKeypress: {   }
+            onKeypress: { }
         }
 
         StdButton {
@@ -344,7 +351,7 @@ NavigationAppHMIMenu {
             id:select_search
             disabled:!(vehicleLocated || Genivi.showroom );
             onClicked: {
-                displayPoiList();
+                searchPois();
 			}
 		}
 		StdButton { 
@@ -419,12 +426,11 @@ NavigationAppHMIMenu {
             selectedValueTitle.visible=true;
             select_reroute.disabled=false;
             select_display_on_map.disabled=false;
-            displayPoiList();
         }else{
             Genivi.poi_data=[];
             selectedValue.text="Lat:\nLon:\nDist:\n";
             for (var j = 0 ; j < Genivi.categoriesIdNameList.length ; j+=2) {
-                if (Genivi.categoriesIdNameList[j+1][3] == 'fuel') {
+                if (Genivi.categoriesIdNameList[j+1][3] === Genivi.g_default_category_name) {
                     Genivi.category_id=Genivi.categoriesIdNameList[j+1][1];
                     poiCategoryName=Genivi.categoriesIdNameList[j+1][3];
                 }
@@ -434,6 +440,7 @@ NavigationAppHMIMenu {
 
         categoryValue.text=poiCategoryName;
         keyboardArea.destination=poiValue; // by default
+        keyboardArea.setactivekeys(Genivi.allKeys,true);
         poiFrame.visible=true;
 
         if(!Genivi.showroom) {

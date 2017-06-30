@@ -108,6 +108,7 @@ wm="" #to store the current window manager (in case of start with the layer mana
 verbose=0 #no debug or log messages displayed
 center="4612 N 0608 E" #geneva
 config_file=fsa_switzerland.conf #switzerland settings
+persistent=0 #reuse of persistent data disabled
 
 CUR_DIR=$PWD
 BIN_DIR=$CUR_DIR/build
@@ -165,7 +166,7 @@ VEHICLE_GATEWAY_BIN_DIR=$BIN_DIR/$VEHICLE_GATEWAY
 devices="/dev/ttyUSB0 /dev/ttyACM0"
 
 # options analysis
-while getopts a:c:df:g:lnorvx opt
+while getopts a:c:df:g:lnoprvx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -213,6 +214,9 @@ do
 	o) #enable the log file
 		log=1
 		;;
+	p) #enable the reuse of persistent data
+		persistent=1
+		;;
 	r) #disable the log replayer
 		replayer=0
 		;;
@@ -224,7 +228,7 @@ do
 		;;
 	\?)
 		echo "Usage:"
-		echo "$0 [-a application][-c center][-glnorvx]"
+		echo "$0 [-a application][-c center][-glnoprvx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
 		echo "-d: Run subprocesses within gdb (only with -x)"
@@ -232,6 +236,7 @@ do
 		echo "-l: Use layermanager"
 		echo "-n: Don't start enhanced positioning service"
 		echo "-o: Create log file of subprocess output"
+		echo "-p: Reuse of persistent data (i.e. in $HOME, so don't reinit it with default file)"
 		echo "-r: Don't start replayer"
 		echo "-v: Enable the output of log or debug messages"
 		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
@@ -263,8 +268,11 @@ export NAVIT_GRAPHICS='sdl'
 # set the language to en_US for navit
 export LANGUAGE=en_US
 
-# set the config file for Qt
-cp $CONFIG_DIR/$config_file $HOME/.config/navigation/fsa.conf
+if [ "$persistent" = 0 ]
+then
+	# reinit the config file for Qt (persistent data)
+	cp $CONFIG_DIR/$config_file $HOME/.config/navigation/fsa.conf
+fi
 
 # start the automotive message broker and wait for dbus service
 cd $AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR

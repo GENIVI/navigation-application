@@ -38,7 +38,8 @@ var g_mapviewer_session=["uint32",0];
 var g_mapviewer_handle=["uint32",0];
 var g_mapviewer_handle2=["uint32",0];
 var g_poisearch_handle=["uint32",0];
-var g_language,g_country,g_script;
+var g_language,g_country,g_script; //initialized by conf file
+var g_default_category_name='fuel'
 
 var data=new Array;
 data['destination']=new Array; //the destination
@@ -54,9 +55,9 @@ var categoriesIdNameList;
 
 var translations=new Array;
 
-var simulationMode=false;// simulation mode off by default
-var showroom=false; //showroom off by default
-var autoguidance=false; //no automatic display route on guidance by default
+var simulationMode; //initialized by conf file
+var showroom; //initialized by conf file
+var autoguidance; //initialized by conf file
 
 var guidance_activated=false;
 var route_calculated=false;
@@ -326,6 +327,11 @@ var japaneseLayout={
         　　'かな','ABC','','','','','','','','←',
         ],
 };
+var allKeys;
+var germanAllKeys="\b ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+var frenchAllKeys="\b ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+var englishAllKeys="\b ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+var japaneseAllKeys="\b ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789あかさたなはまやらわいきしちにひみりをうくすつぬふむゆるんえけせてねへめれ”おこそとのほもよろ°アカサタナハマヤラワイキシチニヒミリヲウクスツヌフムユルンエケセテネヘメレオコソトノホモヨロ";
 
 // Language and text
 function setlang(language,country,script)
@@ -337,6 +343,7 @@ function setlang(language,country,script)
     Qt.include("../../translations/"+g_language + "_" + g_country+".js");
     if(g_language==="eng"){
         keyboardLayout=englishLayout;
+        allKeys=englishAllKeys;
         kbdFirstLayout="ABC";
         kbdSecondLayout="123";
         kbdColumns=8; //number of rows per line
@@ -346,6 +353,7 @@ function setlang(language,country,script)
     }else{
         if(g_language==="fra"){
             keyboardLayout=frenchLayout;
+            allKeys=frenchAllKeys;
             kbdFirstLayout="ABC";
             kbdSecondLayout="123";
             kbdColumns=8; //number of rows per line
@@ -355,6 +363,7 @@ function setlang(language,country,script)
         }else{
             if(g_language==="jpn"){
                 keyboardLayout=japaneseLayout;
+                allKeys=japaneseAllKeys;
                 kbdFirstLayout="かな";
                 kbdSecondLayout="カナ";
                 kbdColumns=10; //number of rows per line
@@ -364,6 +373,7 @@ function setlang(language,country,script)
             }else{
                 if(g_language==="deu"){
                     keyboardLayout=germanLayout;
+                    allKeys=germanAllKeys;
                     kbdFirstLayout="ABC";
                     kbdSecondLayout="123";
                     kbdColumns=8; //number of rows per line
@@ -373,6 +383,7 @@ function setlang(language,country,script)
                 }else{
                     //default
                     keyboardLayout=germanLayout;
+                    allKeys=germanAllKeys;
                     kbdColumns=8; //number of rows per line
                     kbdColumnRatio=4; //size of row spacing (ratio)
                     kbdLines=4; //number of lines
@@ -970,7 +981,7 @@ function mapviewer_GetDisplayedRoutes(dbusIf)
 
 function mapviewer_SetMapViewScale(dbusIf,scaleID)
 {
-    mapviewercontrol_message(dbusIf,"setMapViewScale", ["uint16",scaleID]);
+    mapviewercontrol_message(dbusIf,"setMapViewScale", ["uint8",scaleID]);
 }
 
 function mapviewer_SetMapViewScaleByDelta(dbusIf,scaleDelta)

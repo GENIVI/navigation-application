@@ -89,8 +89,6 @@ Item {
 		if (text.length) {
 			if (!activekeys_enabled || text.length > 1 || activekeys.indexOf(stext) != -1) 
 				disabled=false;
-			if (stext == '\b' && !destination.text.length)
-				disabled=true;
 		}
 		id.disabled=disabled;
 	}
@@ -101,25 +99,6 @@ Item {
 		activekeys_enabled=enabled;
 		shift(shiftlevel);
 	}
-
-    function activateAllKeys()
-    {
-        var keys;
-        keys='\b'+'␣'+"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        if(Genivi.g_language ==="eng"){
-        }else{
-            if(Genivi.g_language==="fra"){
-            }else{
-                if(Genivi.g_language==="jpn"){
-                    keys+="あかさたなはまやらわいきしちにひみりをうくすつぬふむゆるんえけせてねへめれ”おこそとのほもよろ°";
-                }else{
-                    if(Genivi.g_language==="deu"){
-                    }
-                }
-            }
-        }
-        setactivekeys(keys,true);
-    }
 
 	function shift(what) {
 		shiftlevel=what;

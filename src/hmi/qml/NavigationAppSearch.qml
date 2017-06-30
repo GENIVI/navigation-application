@@ -641,7 +641,7 @@ NavigationAppHMIMenu {
         {
             spell('');
         } else { //there's a bug for street
-            keyboardArea.activateAllKeys();
+            keyboardArea.setactivekeys(Genivi.allKeys,true);
             listArea.model.clear();
         }
     }
@@ -1025,6 +1025,7 @@ NavigationAppHMIMenu {
             destination: countryValue; // by default
             firstLayout: Genivi.kbdFirstLayout;
             secondLayout: Genivi.kbdSecondLayout;
+            shiftlevel: Genivi.kbdFirstLayout;
             next: listArea;
             prev: numberKeyboard;
             onKeypress: {  spell(what); }
