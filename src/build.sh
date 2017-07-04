@@ -106,7 +106,7 @@ do
 		echo "-l: Build with dlt (only with -c)"
 		echo "-m: Build with commonAPI plugins (only with -c)"
 		echo "-n: Build navit"
-		echo "-t: Generate the HMI theme"
+		echo "-t: Generate the HMI theme (only with -c)"
 		echo "-w: Enable migration to the html based hmi"
 		exit 1
 	esac

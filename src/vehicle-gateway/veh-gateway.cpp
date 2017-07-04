@@ -62,6 +62,9 @@ const char * IPADDR_DEFAULT = "127.0.0.1";
 #define NMEA_SOUTH "S"
 #define BAUDRATE_GNSS B38400
 
+#define CAN_MESSAGE_FILTER 0x123
+#define CAN_MESSAGE_MASK 0x7FF
+
 typedef struct
 {
     double latitude;
@@ -72,6 +75,7 @@ typedef struct
 DLT_DECLARE_CONTEXT(gContext);
 
 bool isRunning=true;
+bool can_reader_mode;
 
 static int g_obd2_fd = -1;
 static struct termios g_oldtio;
@@ -138,16 +142,25 @@ bool get_engine_speed(char*& sock_buf)
     uint16_t rpm;
     uint64_t timestamp;
     char* tmp = new char[BUFLEN];
-    if (obd2_read_engine_rpm(rpm,timestamp)!=true){
-        LOG_ERROR_MSG(gContext,"Read engine rpm failed");
-        return false;
-    }else{
-        LOG_DEBUG(gContext,"Engine speed: %d",rpm);
 
-        //compose frame data: TIMESTAMP,0$GVVEHENGSPEED,TIMESTAMP,RPM,0X01
-        sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHENGSPEED",timestamp,rpm);
-        sock_buf=tmp;
+    if(can_reader_mode){
+        if (can_read_engine_rpm(rpm,timestamp)!=true){
+            LOG_ERROR_MSG(gContext,"Read engine rpm failed");
+            return false;
+        }
+    }else{
+        if (obd2_read_engine_rpm(rpm,timestamp)!=true){
+            LOG_ERROR_MSG(gContext,"Read engine rpm failed");
+            return false;
+        }
     }
+
+    LOG_DEBUG(gContext,"Engine speed: %d",rpm);
+
+    //compose frame data: TIMESTAMP,0$GVVEHENGSPEED,TIMESTAMP,RPM,0X01
+    sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHENGSPEED",timestamp,rpm);
+    sock_buf=tmp;
+
     return true;
 }
 
@@ -156,16 +169,25 @@ bool get_fuel_tank_level(char*& sock_buf)
     uint8_t fuel_level;
     uint64_t timestamp;
     char* tmp = new char[BUFLEN];
-    if (obd2_read_fuel_tank_level(fuel_level,timestamp)!=true){
-        LOG_ERROR_MSG(gContext,"Read fuel tank level failed");
-        return false;
-    }else{
-        LOG_DEBUG(gContext,"Fuel tank level: %d\%",fuel_level);
 
-        //compose frame data: TIMESTAMP,0$GVVEHFUELLEVEL,TIMESTAMP,LEVEL,0X01
-        sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHFUELLEVEL",timestamp,fuel_level);
-        sock_buf=tmp;
+    if(can_reader_mode){
+        if (can_read_fuel_tank_level(fuel_level,timestamp)!=true){
+            LOG_ERROR_MSG(gContext,"Read fuel tank level failed");
+            return false;
+        }
+    }else{
+        if (obd2_read_fuel_tank_level(fuel_level,timestamp)!=true){
+            LOG_ERROR_MSG(gContext,"Read fuel tank level failed");
+            return false;
+        }
     }
+
+    LOG_DEBUG(gContext,"Fuel tank level: %d\%",fuel_level);
+
+    //compose frame data: TIMESTAMP,0$GVVEHFUELLEVEL,TIMESTAMP,LEVEL,0X01
+    sprintf(tmp,"%d,%s,%d,%d,0x01",timestamp,"0$GVVEHFUELLEVEL",timestamp,fuel_level);
+    sock_buf=tmp;
+
     return true;
 }
 
@@ -201,6 +223,9 @@ int main(int argc, char* argv[])
     char gnss_buf[MAX_GNSS_BUFFER_SIZE];
     uint64_t gnss_timestamp;
 
+    // default arguments
+    can_reader_mode=false;
+    ipaddr = (char*)IPADDR_DEFAULT;
     // arguments check
     if(argc < 3)
     {
@@ -211,10 +236,15 @@ int main(int argc, char* argv[])
     {
         modem_device_obd2 = argv[1];
         modem_device_gnss = argv[2];
-        if(argc < 4)
-            ipaddr = (char*)IPADDR_DEFAULT;
-        else
-            ipaddr = argv[3];
+        if(argc == 4)
+            can_reader_mode= argv[3];
+        else{
+            if(argc == 5)
+                ipaddr = argv[4];
+            else
+            if(argc > 5)
+                LOG_ERROR_MSG(gContext,"two many parameters");
+        }
     }
 
 
@@ -283,11 +313,25 @@ int main(int argc, char* argv[])
         return(-1);
     }
 
-    // set echo OFF
-    start = get_timestamp();
-    if(!obd2_config(stop)){
-        LOG_DEBUG(gContext,"ECHO OFF OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
-        return(-1);
+    if(can_reader_mode){
+        // can reader mode
+        start = get_timestamp();
+        if(!obd2_config_can_reader(stop)){
+            LOG_DEBUG(gContext,"ECHO OFF OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
+            return(-1);
+        }
+        start = get_timestamp();
+        if(!obd2_set_filter(CAN_MESSAGE_FILTER,CAN_MESSAGE_MASK,stop)){
+            LOG_DEBUG(gContext,"ECHO OFF OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
+            return(-1);
+        }
+    }else{
+        // config standard OBD2 with AT command
+        start = get_timestamp();
+        if(!obd2_config(stop)){
+            LOG_DEBUG(gContext,"ECHO OFF OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
+            return(-1);
+        }
     }
 
     //config the GNSS device to send given frames (TBD)

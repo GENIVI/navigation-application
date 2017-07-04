@@ -51,7 +51,15 @@ bool obd2_config(uint64_t& timestamp);
 
 bool obd2_read_engine_rpm(uint16_t& rpm, uint64_t &timestamp);
 
+bool can_read_engine_rpm(uint16_t& rpm, uint64_t &timestamp);
+
 bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp);
+
+bool can_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp);
+
+bool obd2_config_can_reader(uint64_t& timestamp);
+
+bool obd2_set_filter(uint16_t filter, uint16_t mask, uint64_t& timestamp);
 
 #ifdef __cplusplus
 }

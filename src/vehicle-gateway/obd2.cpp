@@ -71,11 +71,20 @@ included by <termios.h> */
 #define ELM_PROMPT '>'
 #define ELM_READ_LOOP 5000 //5 ms
 #define ELM_READ_TIMEOUT 1000000 //100 ms
+#define ELM_HEADER_ON "AT H1\r\n"
+#define ELM_CAN_FORMAT_OFF "AT CAF0\r\n"
+#define ELM_MONITOR_ALL "AT MA\r\n"
+#define ELM_SET_CAN_ID_MASK "AT CM"
+#define ELM_SET_CAN_ID_MASK_LENGTH 12
+#define ELM_SET_CAN_ID_FILTER "AT CF"
+#define ELM_SET_CAN_ID_FILTER_LENGTH 12
 
 #define CR '\r'
+#define CR_LF "\r\n"
 #define EOS '\0'
 #define SPACE ' '
 #define BUFFER_MAX_LENGTH 512
+
 
 static int g_obd2_fd = -1;
 static struct termios g_oldtio;
@@ -201,7 +210,7 @@ bool obd2_read_answer(char*& ans,size_t& length,uint64_t& timestamp)
 
 bool obd2_send_command(const char* cmd)
 {
-    if (write(g_obd2_fd,cmd,sizeof(cmd)-1))
+    if (write(g_obd2_fd,cmd,strlen(cmd)))
         return true;
     else
         return false;
@@ -258,6 +267,37 @@ bool obd2_config(uint64_t& timestamp)
     return true;
 }
 
+bool obd2_config_can_reader(uint64_t& timestamp)
+{
+    char* answer;
+    size_t answer_length;
+    if (obd2_send_command(ELM_HEADER_ON)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if (obd2_send_command(ELM_CAN_FORMAT_OFF)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if (obd2_send_command(ELM_MONITOR_ALL)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    return true;
+}
+
 bool obd2_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
 {
     //`010C` Engine RPM: returns 2 bytes (A,B): RPM [1/min] = ((A*256)+B)/4
@@ -292,6 +332,11 @@ bool obd2_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
     return true;
 }
 
+bool can_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
+{
+    return false;
+}
+
 bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp)
 {
     //`012F` Fuel Tank Level Input: returns 1 byte: level in %
@@ -320,6 +365,40 @@ bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp)
             value[3]=EOS;
             level=atoi(value);
         }
+    }
+    return true;
+}
+
+bool can_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp)
+{
+    return false;
+}
+
+bool obd2_set_filter(uint16_t filter,uint16_t mask,uint64_t& timestamp)
+{
+    char* answer;
+    size_t answer_length;
+    char filterBuffer[ELM_SET_CAN_ID_FILTER_LENGTH];
+    char maskBuffer[ELM_SET_CAN_ID_MASK_LENGTH];
+
+    sprintf(filterBuffer,ELM_SET_CAN_ID_FILTER " %x" CR_LF,filter);
+    sprintf(maskBuffer,ELM_SET_CAN_ID_MASK " %x" CR_LF,mask);
+
+    if (obd2_send_command(filterBuffer)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if (obd2_send_command(maskBuffer)){
+        answer=NULL;
+        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+            return false;
+        }
+    }else{
+        return false;
     }
     return true;
 }

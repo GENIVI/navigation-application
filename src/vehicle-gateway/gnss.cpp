@@ -170,8 +170,8 @@ void* loop_gnss_device(void* dev)
         int res;
         struct timeval timeout;
         /* set timeout value within input loop */
-        timeout.tv_usec = 0;  /* milliseconds */
-        timeout.tv_sec  = 2;  /* seconds */
+        timeout.tv_usec = 100000;  /* µseconds */
+        timeout.tv_sec  = 0;  /* seconds */
         FD_SET(fd, &readfs);
         maxfd = fd+1;
 
