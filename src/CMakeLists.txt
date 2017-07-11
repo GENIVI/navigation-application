@@ -45,6 +45,7 @@ message(STATUS "WITH_DLT = ${WITH_DLT}")
 set(NAVIGATION_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/api")
 set(POSITIONING_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/src/navigation/positioning/enhanced-position-service/dbus/api")
 set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
+set(NAVIGATION_COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/src/navigation/navigation-common")
 
 set(AUTOMOTIVE_MESSAGE_BROKER "automotive-message-broker")
 set(AUTOMOTIVE_MESSAGE_BROKER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AUTOMOTIVE_MESSAGE_BROKER}")

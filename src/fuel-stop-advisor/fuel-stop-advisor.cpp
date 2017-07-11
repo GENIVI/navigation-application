@@ -317,7 +317,7 @@ class FuelStopAdvisor
 	double enhancedDistance(double level, double &remaining)
 	{
 		double distance=0;
-        LOG_INFO(gCtx,"routeHandle %d\n",routeHandle);
+        LOG_INFO(gCtx,"routeHandle %d",routeHandle);
         if (routeHandle) {
             std::vector< std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > > RouteShape;
             std::vector< int32_t > valuesToReturn;
@@ -346,10 +346,10 @@ class FuelStopAdvisor
 					level-=fuel_consumption;
 				}
 			}
-            LOG_INFO(gCtx,"%d segments\n",totalNumberOfSegments);
+            LOG_INFO(gCtx,"%d segments",totalNumberOfSegments);
 		}
 		remaining=level/fuel_consumption_l_100km*100;
-        LOG_INFO(gCtx,"distance_on_route %f remaining %f\n",distance/1000,remaining);
+        LOG_INFO(gCtx,"distance_on_route %f remaining %f",distance/1000,remaining);
 		return distance/1000+(remaining > 0 ? remaining:0);
 	}
 	
@@ -436,9 +436,9 @@ class FuelStopAdvisor
         double remaining;
         if (advisorMode) {
             enhancedDistance(fuelLevel, remaining);
-            LOG_INFO(gCtx,"Advisor %f vs %d\n",remaining, distanceThreshold);
+            LOG_INFO(gCtx,"Advisor %f vs %d",remaining, distanceThreshold);
             if (remaining < distanceThreshold) {
-                LOG_INFO(gCtx,"Warning %f < %d\n",remaining, distanceThreshold);
+                LOG_INFO(gCtx,"Warning %f < %d",remaining, distanceThreshold);
                 destinationCantBeReached = true;
             }
             else
@@ -520,8 +520,8 @@ update_enhanced_distance(gpointer user_data)
 
 int main(int argc, char **argv)
 {
-    DLT_REGISTER_APP("FSAD","FUEL STOP ADVISOR");
-    DLT_REGISTER_CONTEXT(gCtx,"FSAD","Global Context");
+    DLT_REGISTER_APP("FSAS","FUEL STOP ADVISOR SERVER");
+    DLT_REGISTER_CONTEXT(gCtx,"FSAS","Global Context");
 
     loop=g_main_loop_new(NULL, false);
 	dispatcher.attach(NULL);

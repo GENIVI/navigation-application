@@ -30,19 +30,25 @@ import "Core/genivi.js" as Genivi;
 import "../style-sheets/style-constants.js" as Constants;
 import "../style-sheets/NavigationAppTripComputer-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
+import lbs.plugin.dltif 1.0
 
 NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppTripComputer"
     property Item tripDataUpdatedSignal;
 
-	DBusIf {
+    DLTIf {
+        id:dltIf;
+        name: pagefile;
+    }
+
+    DBusIf {
 		id: dbusIf
 	}
 
     function tripDataUpdated(args)
     {
-        Genivi.hookSignal("tripDataUpdated");
+        Genivi.hookSignal(dltIf,"tripDataUpdated");
         updateTripMode();
     }
 
@@ -181,7 +187,7 @@ NavigationAppHMIMenu {
         var value;
         disableAllValue(); // By default set all the values to "--"
 		if (tripnr > 0) {         
-            res=Genivi.fuelstopadvisor_GetTripData(dbusIf,tripnr-1);
+            res=Genivi.fuelstopadvisor_GetTripData(dbusIf,dltIf,tripnr-1);
             for (var i = 0 ; i < res[1].length ; i+=4) {
                 if (res[1][i+1] == Genivi.FUELSTOPADVISOR_DISTANCE) {
                     value=res[1][i+3][3][1]/10;
@@ -197,7 +203,7 @@ NavigationAppHMIMenu {
                 }
 			}
 		} else {
-            res=Genivi.fuelstopadvisor_GetInstantData(dbusIf);
+            res=Genivi.fuelstopadvisor_GetInstantData(dbusIf,dltIf);
 			for (var i = 0 ; i < res[1].length ; i+=4) {
                 if (res[1][i+1] == Genivi.FUELSTOPADVISOR_FUEL_LEVEL) {
                     fuel_value.text=res[1][i+3][3][1];
@@ -393,10 +399,10 @@ NavigationAppHMIMenu {
             id:reset; text: Genivi.gettext("Reset");  disabled:false; next:select_trip1; prev:back;
             onClicked:{
 		if (Genivi.tripMode == "TRIP_NUMBER1") {
-            Genivi.fuelstopadvisor_ResetTripData(dbusIf,0);
+            Genivi.fuelstopadvisor_ResetTripData(dbusIf,dltIf,0);
 		}
 		if (Genivi.tripMode == "TRIP_NUMBER2") {
-            Genivi.fuelstopadvisor_ResetTripData(dbusIf,1);
+            Genivi.fuelstopadvisor_ResetTripData(dbusIf,dltIf,1);
 		}
     		updateTripMode();
             }

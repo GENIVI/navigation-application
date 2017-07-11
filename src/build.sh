@@ -89,16 +89,18 @@ do
 	n)
 		navit=1
 		;;
+	p)
+		pack_for_gdp=1
+		;;
 	t)
 		theme_option="ON"
-		pack_for_gdp=1
 		;;
 	w)
 		html="ON"
 		;;
 	h)
 		echo "Usage:"
-		echo "$0 [-cdghlmntw]"
+		echo "$0 [-cdghlmnptw]"
 		echo "-c: Rebuild with clean"
 		echo "-d: Enable the debug messages"
 		echo "-g: Build the vehicle gateway"
@@ -106,6 +108,7 @@ do
 		echo "-l: Build with dlt (only with -c)"
 		echo "-m: Build with commonAPI plugins (only with -c)"
 		echo "-n: Build navit"
+		echo "-p: Pack the hmi (for GDP)"
 		echo "-t: Generate the HMI theme (only with -c)"
 		echo "-w: Enable migration to the html based hmi"
 		exit 1

@@ -30,6 +30,7 @@ import "Core/genivi.js" as Genivi;
 import "../style-sheets/style-constants.js" as Constants;
 import "../style-sheets/NavigationAppMain-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
+import lbs.plugin.dltif 1.0
 
 NavigationAppHMIMenu {
 	id: menu
@@ -38,6 +39,11 @@ NavigationAppHMIMenu {
     pageBack: Genivi.entryback[Genivi.entrybackheapsize]
     next: navigation
     prev: quit
+
+    DLTIf {
+        id:dltIf;
+        name: pagefile
+    }
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -49,7 +55,7 @@ NavigationAppHMIMenu {
     property Item mapmatchedpositionPositionUpdateSignal;
     function mapmatchedpositionPositionUpdate(args)
     {
-        Genivi.hookSignal("mapmatchedpositionPositionUpdate");
+        Genivi.hookSignal(dltIf,"mapmatchedpositionPositionUpdate");
         updateCurrentPosition();
     }
 
@@ -65,7 +71,7 @@ NavigationAppHMIMenu {
 
     function updateCurrentPosition()
     {
-        var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
+        var res=Genivi.mapmatchedposition_GetPosition(dbusIf,dltIf);
         var oklat=0;
         var oklong=0;
         for (var i=0;i<res[3].length;i+=4){
@@ -183,7 +189,6 @@ NavigationAppHMIMenu {
             source:StyleSheet.quit[Constants.SOURCE]; x:StyleSheet.quit[Constants.X]; y:StyleSheet.quit[Constants.Y]; width:StyleSheet.quit[Constants.WIDTH]; height:StyleSheet.quit[Constants.HEIGHT];textColor:StyleSheet.quitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.quitText[Constants.PIXELSIZE];
             id:quit; text: Genivi.gettext("Quit");  next:navigation; prev:trip;
             onClicked:{
-                Genivi.navigationcore_session_clear(dbusIf);
                 disconnectSignals();
                 Qt.quit(); //for the time being quit
             }
@@ -194,9 +199,10 @@ NavigationAppHMIMenu {
         connectSignals();
 
         // Test if the navigation server is connected
-        var res=Genivi.navigationcore_session_GetVersion(dbusIf);
+        var res=Genivi.navigationcore_session_GetVersion(dbusIf,dltIf);
         if (res[0] != "error") {
-            res=Genivi.navigationcore_session(dbusIf);
+            var res1=Genivi.navigationcore_session_CreateSession(dbusIf,dltIf);
+            Genivi.g_nav_session[1]=res1[3];
         } else {
             //to do something here
             Genivi.dump("",res);

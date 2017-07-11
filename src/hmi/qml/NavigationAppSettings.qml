@@ -32,12 +32,18 @@ import "Core/genivi.js" as Genivi;
 import "../style-sheets/style-constants.js" as Constants;
 import "../style-sheets/NavigationAppSettings-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
+import lbs.plugin.dltif 1.0
 
 NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppSettings"
     next: back
     prev: back
+
+    DLTIf {
+        id:dltIf;
+        name: pagefile;
+    }
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -49,7 +55,7 @@ NavigationAppHMIMenu {
     property Item configurationChangedSignal;
     function configurationChanged(args)
     { //to be improved !
-        Genivi.hookSignal("configurationChanged");
+        Genivi.hookSignal(dltIf,"configurationChanged");
         for (var i=0; i < args[1].length;i+=2) {
             switch (args[1][i+1]) {
             case Genivi.NAVIGATIONCORE_LOCALE:
@@ -78,10 +84,10 @@ NavigationAppHMIMenu {
 
     function updateLanguageAndUnits()
     {
-        var available_nav=Genivi.navigationcore_configuration_GetSupportedLocales(dbusIf);
-        var available_map=Genivi.mapviewer_configuration_GetSupportedLocales(dbusIf);
-        var current_nav=Genivi.navigationcore_configuration_GetLocale(dbusIf);
-        var current_map=Genivi.mapviewer_configuration_GetLocale(dbusIf);
+        var available_nav=Genivi.navigationcore_configuration_GetSupportedLocales(dbusIf,dltIf);
+        var available_map=Genivi.mapviewer_configuration_GetSupportedLocales(dbusIf,dltIf);
+        var current_nav=Genivi.navigationcore_configuration_GetLocale(dbusIf,dltIf);
+        var current_map=Genivi.mapviewer_configuration_GetLocale(dbusIf,dltIf);
         var current_lang_nav;
         var current_lang_map;
         var lang_nav=[];
@@ -115,12 +121,12 @@ NavigationAppHMIMenu {
         Genivi.setlang(current_nav[1],current_nav[3],current_nav[5]);
 
         var units1,units2;
-        var res=Genivi.navigationcore_configuration_GetUnitsOfMeasurement(dbusIf);
+        var res=Genivi.navigationcore_configuration_GetUnitsOfMeasurement(dbusIf,dltIf);
 
         if (res[1][1] == Genivi.NAVIGATIONCORE_LENGTH) {
             units1=res[1][3];
         }
-        var res1=Genivi.mapviewer_configuration_GetUnitsOfMeasurement(dbusIf);
+        var res1=Genivi.mapviewer_configuration_GetUnitsOfMeasurement(dbusIf,dltIf);
         if (res1[1][1] == Genivi.MAPVIEWER_LENGTH) {
             units2=res1[1][3];
         }
@@ -132,16 +138,16 @@ NavigationAppHMIMenu {
 
     function setLocale(language, country, script)
     {
-        Genivi.navigationcore_configuration_SetLocale(dbusIf,language,country,script);
-        Genivi.mapviewer_configuration_SetLocale(dbusIf,language,country,script);
+        Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,language,country,script);
+        Genivi.mapviewer_configuration_SetLocale(dbusIf,dltIf,language,country,script);
         Genivi.setlang(language,country,script);
         pageOpen(menu.pagefile); //reload page because of texts...
     }
 
     function setUnitsLength(units1,units2)
     {
-        Genivi.navigationcore_configuration_SetUnitsOfMeasurementLength(dbusIf,units1);
-        Genivi.mapviewer_configuration_SetUnitsOfMeasurementLength(dbusIf,units2);
+        Genivi.navigationcore_configuration_SetUnitsOfMeasurementLength(dbusIf,dltIf,units1);
+        Genivi.mapviewer_configuration_SetUnitsOfMeasurementLength(dbusIf,dltIf,units2);
         updateLanguageAndUnits();
     }
 
@@ -155,8 +161,8 @@ NavigationAppHMIMenu {
 
     function updatePreferences()
     {
-        Genivi.routing_SetRoutePreferences(dbusIf,""); //preferences applied to all countries
-        var active=Genivi.routing_GetRoutePreferences(dbusIf,"");
+        Genivi.routing_SetRoutePreferences(dbusIf,dltIf,""); //preferences applied to all countries
+        var active=Genivi.routing_GetRoutePreferences(dbusIf,dltIf,"");
 
         var roadPreferenceList;
         var conditionPreferenceList;
@@ -482,14 +488,14 @@ NavigationAppHMIMenu {
 
     Component.onCompleted: {
         connectSignals();
-        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,Genivi.simulationMode);
+        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
         if(Genivi.simulationMode===true) {
-            Genivi.mapmatchedposition_PauseSimulation(dbusIf);
+            Genivi.mapmatchedposition_PauseSimulation(dbusIf,dltIf);
         }
 
-        var res=Genivi.routing_GetCostModel(dbusIf);
+        var res=Genivi.routing_GetCostModel(dbusIf,dltIf);
         var costmodel=res[1];
-        var costModelsList=Genivi.routing_GetSupportedCostModels(dbusIf);
+        var costModelsList=Genivi.routing_GetSupportedCostModels(dbusIf,dltIf);
         for (var i = 0 ; i < costModelsList[1].length ; i+=2) {
             var button=Qt.createQmlObject('import QtQuick 2.1 ; import "Core"; StdButton { }',content,'dynamic');
             button.source=StyleSheet.cost_model[Constants.SOURCE];
@@ -504,7 +510,7 @@ NavigationAppHMIMenu {
             button.disabled=button.userdata == costmodel;
             button.clicked.connect(
                 function(what) {
-                    Genivi.routing_SetCostModel(dbusIf,what.userdata);
+                    Genivi.routing_SetCostModel(dbusIf,dltIf,what.userdata);
                     pageOpen(menu.pagefile); //reload the page
                 }
             );

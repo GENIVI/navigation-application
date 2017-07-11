@@ -36,6 +36,7 @@
 #include <QSurfaceFormat>
 #include <QQmlContext>
 #include "dbusif.h"
+#include "dltif.h"
 #include "wheelarea.h"
 #include "preference.h"
 #include "settings.h"
@@ -48,6 +49,7 @@ int main(int argc, char ** argv)
     qmlRegisterType<DBusIf>("lbs.plugin.dbusif", 1, 0, "DBusIf");
     qmlRegisterType<Preference>("lbs.plugin.preference", 1,0, "Preference");
     qmlRegisterType<WheelArea>("lbs.plugin.wheelarea", 1, 0, "WheelArea");
+    qmlRegisterType<DLTIf>("lbs.plugin.dltif", 1, 0, "DLTIf");
 
     //get settings stored into the conf file (in $HOME/.config/navigation/fsa.conf)
 

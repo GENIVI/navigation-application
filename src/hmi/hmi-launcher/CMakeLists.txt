@@ -49,6 +49,7 @@ include_directories(
     ${QT5_GUI_INCLUDE_DIRS}
     ${QT5_NETWORK_INCLUDE_DIRS}
     ${DBUS_INCLUDE_DIRS}
+    ${NAVIGATION_COMMON_DIR}
 )
 
 message(STATUS "${DBUS_INCLUDE_DIRS}")
@@ -83,6 +84,7 @@ link_directories(
 )
  
 set(LIBRARIES 
+    ${LIBRARIES}
     ${QT5_CORE_LIBRARIES}
     ${QT5_QML_LIBRARIES}
     ${QT5_QUICK_LIBRARIES}
@@ -123,6 +125,7 @@ configure_file(${FILE_RESOURCE_IN} ${FILE_RESOURCE_OUT} @ONLY)
 # for some reason, automoc doesn't run, so moc is made manually
 set (SRC_TO_MOC
     ${CMAKE_CURRENT_SOURCE_DIR}/dbusif.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/dltif.h
     ${CMAKE_CURRENT_SOURCE_DIR}/dbusifsignal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/wheelarea.h
     ${CMAKE_CURRENT_SOURCE_DIR}/wheelareaplugin.h
@@ -149,9 +152,21 @@ foreach (RAW_FILE ${SRC_TO_MOC})
 endforeach()
 file(GLOB MOC_SOURCES ${MOC_DIR}/moc_*.cpp)
 
+if(${WITH_DEBUG})
+    add_definitions("-DDEBUG_ENABLED=1")
+endif()
+
+if(${WITH_DLT})
+    add_definitions("-DDLT_ENABLED=1")
+    pkg_check_modules(DLT REQUIRED automotive-dlt)
+    include_directories( ${DLT_INCLUDE_DIRS} )
+    set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
 add_executable(hmi-launcher
     ${MOC_SOURCES}
     main.cpp
+    dltif.cpp
     dbusif.cpp
     wheelareaplugin.cpp
     preference.cpp

@@ -33,9 +33,11 @@ import "../style-sheets/NavigationAppBrowseMap-css.js" as StyleSheetMap;
 import "Core/genivi.js" as Genivi;
 import lbs.plugin.dbusif 1.0
 import lbs.plugin.preference 1.0
+import lbs.plugin.dltif 1.0
 
 ApplicationWindow {
 	id: container
+    property string pagefile:"NavigationAppBrowseMap"
     flags: Qt.FramelessWindowHint
     color: "transparent"
     visible: true
@@ -58,6 +60,11 @@ ApplicationWindow {
         Settings.setValue("Locale/language",Genivi.g_language)
         Settings.setValue("Locale/country",Genivi.g_country);
         Settings.setValue("Locale/script",Genivi.g_script);
+    }
+
+    DLTIf {
+        id:dltIf;
+        name: pagefile;
     }
 
     //------------------------------------------//
@@ -91,16 +98,30 @@ ApplicationWindow {
             Genivi.autoguidance=true;
         else
             Genivi.autoguidance=false;
+        if(Settings.getValue("Log/verbose")==="true")
+            Genivi.verbose=true;
+        else
+            Genivi.verbose=false;
+
+        if(Settings.getValue("Log/dlt")==="true")
+            Genivi.dlt=true;
+        else
+            Genivi.dlt=false;
+
 
         //configure the middleware
-        Genivi.navigationcore_configuration_SetLocale(dbusIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
+        Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
 
         //launch the map viewer and init the scale list
-        Genivi.mapviewer_handle(dbusIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
-        Genivi.initScale(dbusIf);
+        var res=Genivi.mapviewer_session_CreateSession(dbusIf,dltIf); //only one session managed
+        Genivi.g_mapviewer_session[1]=res[3];
+        var res1=Genivi.mapviewer_CreateMapViewInstance(dbusIf,dltIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
+        Genivi.g_mapviewer_handle[1]=res[3];
+        Genivi.initScale(dbusIf,dltIf);
 
-        //set verbose mode on
-        //Genivi.setVerbose();
+        //create a route by default
+        var res2=Genivi.routing_CreateRoute(dbusIf,dltIf);
+        Genivi.g_routing_handle[1]=res2[3];
 
         //launch the HMI
         load("NavigationAppMain");
@@ -109,7 +130,12 @@ ApplicationWindow {
     Component.onDestruction:  {
         saveSettings();
 
-        //release the map viewer
-        Genivi.mapviewer_handle_clear(dbusIf);
+        //release all created objects
+        var res=Genivi.mapviewer_ReleaseMapViewInstance(dbusIf,dltIf);
+        Genivi.g_mapviewer_handle[1]=0;
+        var res1=Genivi.mapviewer_session_DeleteSession(dbusIf,dltIf);//only one session managed
+        Genivi.g_mapviewer_session[1]=0;
+        var res2=Genivi.routing_DeleteRoute(dbusIf,dltIf);
+        Genivi.g_routing_handle[1]=0;
     }
 }

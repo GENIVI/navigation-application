@@ -172,8 +172,5 @@ Rectangle {
         }
 
     Component.onCompleted: {
-        if(Genivi.verbose===true){
-            console.log("Level: ",Genivi.entrybackheapsize," Menu: ",pagefile);
-        }
     }
 }

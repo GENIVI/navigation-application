@@ -32,6 +32,7 @@ import "Core/genivi.js" as Genivi;
 import "../style-sheets/style-constants.js" as Constants;
 import "../style-sheets/NavigationAppPOI-css.js" as StyleSheet;
 import lbs.plugin.dbusif 1.0
+import lbs.plugin.dltif 1.0
 
 NavigationAppHMIMenu {
 	id: menu
@@ -39,6 +40,11 @@ NavigationAppHMIMenu {
     property string all_categories: "all categories"
     property string poiCategoryName
     property bool vehicleLocated: false
+
+    DLTIf {
+        id:dltIf;
+        name: pagefile
+    }
 
     //------------------------------------------//
     // Management of the DBus exchanges
@@ -50,7 +56,7 @@ NavigationAppHMIMenu {
     property Item mapmatchedpositionPositionUpdateSignal;
     function mapmatchedpositionPositionUpdate(args)
     {
-        Genivi.hookSignal("mapmatchedpositionPositionUpdate");
+        Genivi.hookSignal(dltIf,"mapmatchedpositionPositionUpdate");
         if(!Genivi.showroom) {
             updateCurrentPosition();
         }
@@ -68,7 +74,7 @@ NavigationAppHMIMenu {
 
     function updateCurrentPosition()
     {
-        var res=Genivi.mapmatchedposition_GetPosition(dbusIf);
+        var res=Genivi.mapmatchedposition_GetPosition(dbusIf,dltIf);
         var oklat=0;
         var oklong=0;
         for (var i=0;i<res[3].length;i+=4){
@@ -128,12 +134,16 @@ NavigationAppHMIMenu {
         categoriesAndRadius[1]=Genivi.radius;
         categoriesAndRadiusList.push(categoriesAndRadius);
 
-        Genivi.poisearch_SetCenter(dbusIf,latitude,longitude,0);
-        Genivi.poisearch_SetCategories(dbusIf,categoriesAndRadiusList);
-        Genivi.poisearch_StartPoiSearch(dbusIf,keyboardArea.destination.text,Genivi.POISERVICE_SORT_BY_DISTANCE);
+        Genivi.poisearch_DeletePoiSearchHandle(dbusIf,dltIf)
+        Genivi.g_poisearch_handle[1]=0;
+        var res_poi=Genivi.poisearch_CreatePoiSearchHandle(dbusIf,dltIf)
+        Genivi.g_poisearch_handle[1]=res_poi[1];
+        Genivi.poisearch_SetCenter(dbusIf,dltIf,latitude,longitude,0);
+        Genivi.poisearch_SetCategories(dbusIf,dltIf,categoriesAndRadiusList);
+        Genivi.poisearch_StartPoiSearch(dbusIf,dltIf,keyboardArea.destination.text,Genivi.POISERVICE_SORT_BY_DISTANCE);
         var attributeList=[];
         attributeList[0]=0;
-        var res=Genivi.poisearch_RequestResultList(dbusIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
+        var res=Genivi.poisearch_RequestResultList(dbusIf,dltIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
         if(res[3]===0)
         {
             //no match
@@ -151,7 +161,7 @@ NavigationAppHMIMenu {
             Genivi.poi_data[id].category=Genivi.category_id;
             Genivi.poi_data[id].distance=res_win[i+1][3];
         }
-        var details=Genivi.poisearch_GetPoiDetails(dbusIf,ids);
+        var details=Genivi.poisearch_GetPoiDetails(dbusIf,dltIf,ids);
         for (i = 0 ; i < details[1].length ; i+=2) {
             var poi_details=details[1][i+1];
             id=poi_details[1][1];
@@ -364,7 +374,7 @@ NavigationAppHMIMenu {
                 Genivi.data['destination']=Genivi.poi_data[Genivi.poi_id];
                 Genivi.setLocationInputActivated(false);
                 Genivi.setRerouteRequested(true);
-                Genivi.guidance_StopGuidance(dbusIf);
+                Genivi.guidance_StopGuidance(dbusIf,dltIf);
                 pageOpen("NavigationAppSearch");
 			}
 		}
@@ -408,7 +418,7 @@ NavigationAppHMIMenu {
         connectSignals();
 
         var categoriesIdNameAndRadius=[];
-        var ret=Genivi.poisearch_GetAvailableCategories(dbusIf);
+        var ret=Genivi.poisearch_GetAvailableCategories(dbusIf,dltIf);
         Genivi.categoriesIdNameList=ret[1];
 
         if(Genivi.poi_id !== null){

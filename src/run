@@ -166,7 +166,7 @@ VEHICLE_GATEWAY_BIN_DIR=$BIN_DIR/$VEHICLE_GATEWAY
 devices="/dev/ttyUSB0 /dev/ttyACM0"
 
 # options analysis
-while getopts a:c:df:g:lnoprvx opt
+while getopts a:c:df:g:hlnoprvx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -226,13 +226,15 @@ do
 	x) #enable subprocess in a separate xterm
 		xterm=1
 		;;
-	\?)
+	h)
 		echo "Usage:"
-		echo "$0 [-a application][-c center][-glnoprvx]"
+		echo "$0 [-a application][-c center][-ghlnoprvx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
 		echo "-d: Run subprocesses within gdb (only with -x)"
+		echo "-f: Load another database (for poi)"
 		echo "-g: Run the vehicle gateway (only with -r) -g \"<ELM327device> <GNSSdevice>\""
+		echo "-h: Help"
 		echo "-l: Use layermanager"
 		echo "-n: Don't start enhanced positioning service"
 		echo "-o: Create log file of subprocess output"
