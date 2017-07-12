@@ -272,6 +272,11 @@ export LANGUAGE=en_US
 
 if [ "$persistent" = 0 ]
 then
+	if [ ! -d $HOME"/.config/navigation" ]
+	then
+		mkdir -p $HOME/.config
+		mkdir $HOME/.config/navigation
+	fi
 	# reinit the config file for Qt (persistent data)
 	cp $CONFIG_DIR/$config_file $HOME/.config/navigation/fsa.conf
 fi

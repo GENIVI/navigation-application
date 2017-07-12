@@ -674,13 +674,20 @@ NavigationAppHMIMenu {
     }
 
 	function toggleOrientation()
-	{
-        if (!orientation.status) {
+    { //N->D->B
+        if (orientation.status==0) {
             Genivi.mapviewer_SetCameraHeadingAngle(dbusIf,dltIf,0);
+            Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_2D);
             orientation.setState("D");
 		} else {
-            Genivi.mapviewer_SetCameraHeadingTrackUp(dbusIf,dltIf);
-            orientation.setState("N");
+            if (orientation.status==1) {
+                Genivi.mapviewer_SetCameraHeadingTrackUp(dbusIf,dltIf);
+                Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_3D);
+                orientation.setState("B");
+            } else{
+                Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_2D);
+                orientation.setState("N");
+            }
 		}
 	}
 
@@ -1189,19 +1196,30 @@ NavigationAppHMIMenu {
                 StdButton {
                     x:StyleSheetCompass.directiondestination[Constants.X]; y:StyleSheetCompass.directiondestination[Constants.Y]; width:StyleSheetCompass.directiondestination[Constants.WIDTH]; height:StyleSheetCompass.directiondestination[Constants.HEIGHT];
                     id:orientation; next:zoomin; prev:menub;  disabled:false;
-                    source:StyleSheetCompass.directiondestination[Constants.SOURCE]; //todo call get status
+                    source:StyleSheetCompass.directionnorth[Constants.SOURCE]; //todo call get status
                     property int status: 0;
                     function setState(name)
-                    {
-                        if (name=="D")
+                    { //the state displayed is the current state
+                        if (name=="N")
                         {
-                            status=1;
+                            status=0;
                             source=StyleSheetCompass.directionnorth[Constants.SOURCE];
                         }
                         else
                         {
-                            status=0;
-                            source=StyleSheetCompass.directiondestination[Constants.SOURCE];
+                            if (name=="D")
+                            {
+                                status=1;
+                                source=StyleSheetCompass.directiondestination[Constants.SOURCE];
+                            }
+                            else
+                            {
+                                if (name=="B")
+                                {
+                                    status=2;
+                                    source=StyleSheetCompass.directionThreeD[Constants.SOURCE];
+                                }
+                            }
                         }
                     }
                     onClicked:
