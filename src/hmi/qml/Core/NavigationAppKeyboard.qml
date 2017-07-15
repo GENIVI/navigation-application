@@ -64,13 +64,13 @@ Item {
 		if (secondLayout && !destination.text.length) {
 			shift(secondLayout);
 		}
-		keypress(what);
 		if (what == '\b') {
 			backspace();
 		} else {
 			destination.text+=what;
 		}
-	}
+        keypress(what);
+    }
 
 	function backspace() {
 		if (destination.text.length) {

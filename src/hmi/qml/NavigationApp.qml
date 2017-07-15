@@ -85,7 +85,9 @@ ApplicationWindow {
         Genivi.setlang(Settings.getValue("Locale/language"),Settings.getValue("Locale/country"),Settings.getValue("Locale/script"));
         Genivi.setDefaultPosition(Settings.getValue("DefaultPosition/latitude"),Settings.getValue("DefaultPosition/longitude"),Settings.getValue("DefaultPosition/altitude"));
         Genivi.setDefaultAddress(Settings.getValue("DefaultAddress/country"),Settings.getValue("DefaultAddress/city"),Settings.getValue("DefaultAddress/street"),Settings.getValue("DefaultAddress/number"));
-
+        Genivi.radius=Settings.getValue("Settings/radius");
+        Genivi.maxResultListSize=Settings.getValue("Settings/maxResultListSize");
+        Genivi.default_category_name=Settings.getValue("Settings/defaultCategoryName")
         if(Settings.getValue("Settings/simulationMode")==="true")
             Genivi.simulationMode=true;
         else

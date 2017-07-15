@@ -38,7 +38,6 @@ var g_mapviewer_session=["uint32",0];
 var g_mapviewer_handle=["uint32",0];
 var g_poisearch_handle=["uint32",0];
 var g_language,g_country,g_script; //initialized by conf file
-var g_default_category_name='fuel'
 
 var data=new Array;
 data['destination']=new Array; //the destination
@@ -54,11 +53,15 @@ var categoriesIdNameList;
 
 var translations=new Array;
 
-var simulationMode; //initialized by conf file
-var showroom; //initialized by conf file
-var autoguidance; //initialized by conf file
-var verbose; //initialized by conf file
-var dlt; //initialized by conf file
+//initialized by conf file
+var simulationMode;
+var showroom;
+var autoguidance;
+var verbose;
+var dlt;
+var radius=5000; //radius in m around the vehicle to search for the refill stations
+var maxResultListSize=50; //max size of elements to return as a result
+var default_category_name;
 
 var guidance_activated=false;
 var route_calculated=false;
@@ -162,9 +165,7 @@ var historyOfLastEnteredLat = new Array; //dirty but need to know how to do it i
 var historyOfLastEnteredLon = new Array; //dirty but need to know how to do it in qml
 var historyOfLastEnteredLocationIn=0; //next input
 var historyOfLastEnteredLocationOut=0; //first ouput
-var radius=5000; //radius in m around the vehicle to search for the refill stations
 var offset=0; //offset of the start record to get on the list of pois
-var maxResultListSize=50; //max size of elements to return as a result
 var fuelCategoryId; //unique id of fuel category
 var zoom_guidance=2; //zoom level when a guidance starts
 

@@ -144,10 +144,13 @@ NavigationAppHMIMenu {
         var attributeList=[];
         attributeList[0]=0;
         var res=Genivi.poisearch_RequestResultList(dbusIf,dltIf,Genivi.offset,Genivi.maxResultListSize,attributeList);
+        searchResultNumber.visible=true;
+        if(res[3]<Genivi.maxResultListSize)
+            searchResultNumber.text=res[3];
+        model.clear();
         if(res[3]===0)
         {
             //no match
-            //to do something to inform the user
             return
         }
 
@@ -169,7 +172,6 @@ NavigationAppHMIMenu {
             Genivi.poi_data[id].lat=poi_details[1][5][1];
             Genivi.poi_data[id].lon=poi_details[1][5][3];
         }
-        model.clear();
         for (i = 0 ; i < ids.length ; i+=1) {
             id=ids[i];
             var poi_data=Genivi.poi_data[id];
@@ -177,6 +179,33 @@ NavigationAppHMIMenu {
                 model.append({"name":poi_data.name,"number":id});
             }
         }
+        if(res[3]===1)
+            selectPoi(0);
+    }
+
+    function selectPoi(index)
+    {
+        Genivi.poi_id=index;
+        var poi_data=Genivi.poi_data[index];
+        poiName.text=poi_data.name;
+        poiName.visible=true;
+        selectedValue.text="Lat: "+poi_data.lat.toFixed(4)+"\nLon: "+poi_data.lon.toFixed(4)+"\nDist: "+poi_data.distance+" m";
+        searchResultNumber.visible=false;
+        selectedValueTitle.visible=true;
+        select_reroute.disabled=false;
+        select_display_on_map.disabled=false;
+    }
+
+    function clearSearch()
+    {
+        Genivi.poi_data=[];
+        poiName.text="";
+        poiName.visible=false;
+        selectedValue.text="Lat:\nLon:\nDist:\n";
+        searchResultNumber.visible=false;
+        selectedValueTitle.visible=false;
+        select_reroute.disabled=true;
+        select_display_on_map.disabled=true;
     }
 
     //------------------------------------------//
@@ -214,6 +243,7 @@ NavigationAppHMIMenu {
                 selectedValue.text="Lat:\nLon:\nDist:\n";
                 poiName.visible=false;
                 selectedValueTitle.visible=false;
+                searchResultNumber.visible=false;
                 categoryValue.text=poiCategoryName;
                 poiFrame.visible=false;
                 categoryFrame.visible=true;
@@ -284,9 +314,17 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             clip: true
-			text: " "
+            text: "Lat:\nLon:\nDist:\n"
         }
-		Component {
+        Text {
+            x:StyleSheet.searchResultNumber[Constants.X]; y:StyleSheet.searchResultNumber[Constants.Y]; width:StyleSheet.searchResultNumber[Constants.WIDTH]; height:StyleSheet.searchResultNumber[Constants.HEIGHT];color:StyleSheet.searchResultNumber[Constants.TEXTCOLOR];styleColor:StyleSheet.searchResultNumber[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultNumber[Constants.PIXELSIZE];
+            id:searchResultNumber
+            style: Text.Sunken;
+            smooth: true
+            clip: true
+            text: ""
+        }
+        Component {
             id: searchResultList
             Text {
                 width:StyleSheet.searchResultValue[Constants.WIDTH]; height:StyleSheet.searchResultValue[Constants.HEIGHT];color:StyleSheet.searchResultValue[Constants.TEXTCOLOR];styleColor:StyleSheet.searchResultValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.searchResultValue[Constants.PIXELSIZE];
@@ -308,18 +346,12 @@ NavigationAppHMIMenu {
                 if(keyboardArea.destination===poiValue)
                 {
                     if (what) {
-                        Genivi.poi_id=what.index;
-                        var poi_data=Genivi.poi_data[what.index];
-                        poiName.text=poi_data.name;
-                        poiName.visible=true;
-                        selectedValue.text="Lat: "+poi_data.lat.toFixed(4)+"\nLon: "+poi_data.lon.toFixed(4)+"\nDist: "+poi_data.distance+" m";
-                        selectedValueTitle.visible=true;
-                        select_reroute.disabled=false;
-                        select_display_on_map.disabled=false;
+                        selectPoi(what.index);
                     } else {
                         Genivi.poi_id=null;
                         poiName.visible=false;
-                        selectedValue.text="";
+                        selectedValue.text="Lat:\nLon:\nDist:\n";
+                        searchResultNumber.visible=false;
                         selectedValueTitle.visible=false;
                         select_reroute.disabled=true;
                         select_display_on_map.disabled=true;
@@ -353,7 +385,10 @@ NavigationAppHMIMenu {
             secondLayout: Genivi.kbdSecondLayout;
             next: select_search;
             prev: poiKeyboard;
-            onKeypress: { }
+            onKeypress: {
+                clearSearch();
+                searchPois();
+            }
         }
 
         StdButton {
@@ -361,6 +396,7 @@ NavigationAppHMIMenu {
             id:select_search
             disabled:!(vehicleLocated || Genivi.showroom );
             onClicked: {
+                clearSearch();
                 searchPois();
 			}
 		}
@@ -433,25 +469,27 @@ NavigationAppHMIMenu {
                 }
              }
             selectedValue.text="Lat: "+poi_data.lat.toFixed(4)+"\nLon: "+poi_data.lon.toFixed(4)+"\nDist: "+poi_data.distance+" m";
+            searchResultNumber.visible=false;
             selectedValueTitle.visible=true;
             select_reroute.disabled=false;
             select_display_on_map.disabled=false;
         }else{
-            Genivi.poi_data=[];
-            selectedValue.text="Lat:\nLon:\nDist:\n";
+            clearSearch();
             for (var j = 0 ; j < Genivi.categoriesIdNameList.length ; j+=2) {
-                if (Genivi.categoriesIdNameList[j+1][3] === Genivi.g_default_category_name) {
+                if (Genivi.categoriesIdNameList[j+1][3] === Genivi.default_category_name) {
                     Genivi.category_id=Genivi.categoriesIdNameList[j+1][1];
                     poiCategoryName=Genivi.categoriesIdNameList[j+1][3];
                 }
              }
         }
 
-
         categoryValue.text=poiCategoryName;
         keyboardArea.destination=poiValue; // by default
         keyboardArea.setactivekeys(Genivi.allKeys,true);
         poiFrame.visible=true;
+
+        //launch a search on the default category
+        searchPois();
 
         if(!Genivi.showroom) {
             updateCurrentPosition();
