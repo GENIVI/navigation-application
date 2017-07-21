@@ -433,7 +433,7 @@ NavigationAppHMIMenu {
         }
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back");  disabled:false; next:reset; prev:select_instant;
-            onClicked:{leave(); leaveMenu();}
+            onClicked:{leave(); leaveMenu(dltIf);}
         }
     }
     Component.onCompleted: {

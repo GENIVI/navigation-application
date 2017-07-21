@@ -141,7 +141,7 @@ NavigationAppHMIMenu {
         Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,language,country,script);
         Genivi.mapviewer_configuration_SetLocale(dbusIf,dltIf,language,country,script);
         Genivi.setlang(language,country,script);
-        pageOpen(menu.pagefile); //reload page because of texts...
+        pageOpen(dltIf,menu.pagefile); //reload page because of texts...
     }
 
     function setUnitsLength(units1,units2)
@@ -480,7 +480,7 @@ NavigationAppHMIMenu {
             onClicked:{
                 disconnectSignals();
                 saveSettings();
-                leaveMenu();
+                leaveMenu(dltIf);
             }
         }
 
@@ -511,7 +511,7 @@ NavigationAppHMIMenu {
             button.clicked.connect(
                 function(what) {
                     Genivi.routing_SetCostModel(dbusIf,dltIf,what.userdata);
-                    pageOpen(menu.pagefile); //reload the page
+                    pageOpen(dltIf,menu.pagefile); //reload the page
                 }
             );
         }

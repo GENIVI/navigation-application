@@ -87,6 +87,7 @@ translations["PredictiveTankDistance"]="予報した\n走行距離";
 translations["Reset"]="リセット";
 
 translations["Selected"]="選ばれた";
+translations["Restart"]="再スタート";
 
 translations["On"]="ON";
 translations["Off"]="OFF";

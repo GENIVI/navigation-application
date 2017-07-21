@@ -63,40 +63,58 @@ var radius=5000; //radius in m around the vehicle to search for the refill stati
 var maxResultListSize=50; //max size of elements to return as a result
 var default_category_name;
 
-var guidance_activated=false;
-var route_calculated=false;
-var reroute_requested=false;
-var location_input_activated=true;
+var guidance_activated;
+var route_calculated;
+var reroute_requested;
+var location_input_activated;
+var vehicle_located;
+var destination_defined;
 
-function setRouteCalculated(arg)
+function setDestinationDefined(dltInterface,arg)
+{
+    destination_defined=arg;
+    if(verbose===true){
+        hookMessage(dltInterface,"Destination defined",destination_defined);
+    }
+}
+
+function setVehicleLocated(dltInterface,arg)
+{
+    vehicle_located=arg;
+    if(verbose===true){
+        hookMessage(dltInterface,"Vehicle located",vehicle_located);
+    }
+}
+
+function setRouteCalculated(dltInterface,arg)
 {
     route_calculated=arg;
     if(verbose===true){
-        console.log("Routing: ",route_calculated);
+        hookMessage(dltInterface,"Route calculated",route_calculated);
     }
 }
 
-function setGuidanceActivated(arg)
+function setGuidanceActivated(dltInterface,arg)
 {
     guidance_activated=arg;
     if(verbose===true){
-        console.log(" Guidance: ",guidance_activated);
+        hookMessage(dltInterface,"Guidance activated",guidance_activated);
     }
 }
 
-function setLocationInputActivated(arg)
+function setLocationInputActivated(dltInterface,arg)
 {
     location_input_activated=arg;
     if(verbose===true){
-        console.log("Location input: ",location_input_activated);
+        hookMessage(dltInterface,"Location input activated",location_input_activated);
     }
 }
 
-function setRerouteRequested(arg)
+function setRerouteRequested(dltInterface,arg)
 {
     reroute_requested=arg;
     if(verbose===true){
-        console.log("Rerouting: ",reroute_requested);
+        hookMessage(dltInterface,"Reroute requested",reroute_requested);
     }
 }
 
@@ -410,6 +428,14 @@ function gettext(arg)
     } else {
         return translations[arg];
     }
+}
+
+function hookMessage(dltInterface,subject,arg)
+{
+    if(dlt===true)
+        dltInterface.log_info_msg(subject+": "+arg);
+    else
+        console.log(subject+": "+arg);
 }
 
 //----------------- Management of the DBus messages -----------------

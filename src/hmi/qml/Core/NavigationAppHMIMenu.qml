@@ -141,25 +141,27 @@ Rectangle {
         	}
 	}
 
-    function entryMenu(inmenu,outmenu)
+    function entryMenu(dltInterface,inmenu,outmenu)
     {
         Genivi.entrybackheapsize += 1;
+        Genivi.hookMessage(dltInterface,"Menu level",Genivi.entrybackheapsize);
         Genivi.entryback[Genivi.entrybackheapsize] = outmenu.pagefile;
         outmenu.state = "hidden";
         container.load(inmenu);
     }
 
-    function leaveMenu()
+    function leaveMenu(dltInterface)
     {
         var outmenu=Genivi.entryback[Genivi.entrybackheapsize];
         Genivi.entrybackheapsize -= 1;
+        Genivi.hookMessage(dltInterface,"Menu level",Genivi.entrybackheapsize);
         menu.state="hidden";
         container.load(outmenu);
     }
 
-	function pageOpen(command) {
+    function pageOpen(dltInterface,page) {
         menu.state="hidden";
-        container.load(command);
+        container.load(page);
 	}
 
     states: State {

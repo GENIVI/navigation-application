@@ -87,6 +87,7 @@ translations["PredictiveTankDistance"]="AUTONOMIE\nPREDICTIVE";
 translations["Reset"]="RAZ";
 
 translations["Selected"]="SELECTION";
+translations["Restart"]="REPRENDRE";
 
 translations["On"]="ON";
 translations["Off"]="OFF";

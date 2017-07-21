@@ -35,10 +35,7 @@ import lbs.plugin.dltif 1.0
 NavigationAppHMIMenu {
 	id: menu
     property string pagefile:"NavigationAppMain"
-    property bool vehicleLocated: false
     pageBack: Genivi.entryback[Genivi.entrybackheapsize]
-    next: navigation
-    prev: quit
 
     DLTIf {
         id:dltIf;
@@ -89,8 +86,8 @@ NavigationAppHMIMenu {
                 }
             }
         }
-        if ((oklat == 1) && (oklong == 1)) {vehicleLocated=true;}
-        else {vehicleLocated=false;}
+        if ((oklat == 1) && (oklong == 1)) {Genivi.setVehicleLocated(dltIf,true);}
+        else {Genivi.setVehicleLocated(dltIf,false);}
         mapview.update();
     }
 
@@ -109,13 +106,28 @@ NavigationAppHMIMenu {
             smooth: true
             text: Genivi.gettext("Navigation")
              }
-
         StdButton {
             source:StyleSheet.select_navigation[Constants.SOURCE]; x:StyleSheet.select_navigation[Constants.X]; y:StyleSheet.select_navigation[Constants.Y]; width:StyleSheet.select_navigation[Constants.WIDTH]; height:StyleSheet.select_navigation[Constants.HEIGHT];
-            id:navigation;  next:mapview; prev:quit; onClicked: {
-                Genivi.preloadMode=true;
-                Genivi.setRouteCalculated(false);
-                entryMenu("NavigationAppSearch",menu);
+            id:navigation;
+            onClicked: {
+                Genivi.setLocationInputActivated(dltIf,true);
+                entryMenu(dltIf,"NavigationAppSearch",menu);
+            }
+        }
+
+        Text {
+            x:StyleSheet.poiText[Constants.X]; y:StyleSheet.poiText[Constants.Y]; width:StyleSheet.poiText[Constants.WIDTH]; height:StyleSheet.poiText[Constants.HEIGHT];color:StyleSheet.poiText[Constants.TEXTCOLOR];styleColor:StyleSheet.poiText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.poiText[Constants.PIXELSIZE];
+            id:poiText;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("Poi")
+             }
+        StdButton {
+            source:StyleSheet.select_poi[Constants.SOURCE]; x:StyleSheet.select_poi[Constants.X]; y:StyleSheet.select_poi[Constants.Y]; width:StyleSheet.select_poi[Constants.WIDTH]; height:StyleSheet.select_poi[Constants.HEIGHT];
+            id:poi;
+            onClicked: {
+                Genivi.setLocationInputActivated(dltIf,false);
+                entryMenu(dltIf,"NavigationAppPOI",menu);
             }
         }
 
@@ -126,31 +138,16 @@ NavigationAppHMIMenu {
             smooth: true
             text: Genivi.gettext("Mapview")
              }
-
         StdButton {
             source:StyleSheet.select_mapview[Constants.SOURCE]; x:StyleSheet.select_mapview[Constants.X]; y:StyleSheet.select_mapview[Constants.Y]; width:StyleSheet.select_mapview[Constants.WIDTH]; height:StyleSheet.select_mapview[Constants.HEIGHT];
-            id:mapview;  next:poi; prev:navigation;
-            disabled: !(vehicleLocated|Genivi.showroom)
+            id:mapview;
+            disabled: !(Genivi.vehicle_located |Genivi.showroom)
             onClicked: {
                 Genivi.data['display_on_map']='show_current_position';
-                entryMenu("NavigationAppBrowseMap",menu);
+                Genivi.hookMessage(dltIf,'display_on_map',Genivi.data['display_on_map']);
+                entryMenu(dltIf,"NavigationAppBrowseMap",menu);
 			}
 		}
-
-        Text {
-            x:StyleSheet.poiText[Constants.X]; y:StyleSheet.poiText[Constants.Y]; width:StyleSheet.poiText[Constants.WIDTH]; height:StyleSheet.poiText[Constants.HEIGHT];color:StyleSheet.poiText[Constants.TEXTCOLOR];styleColor:StyleSheet.poiText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.poiText[Constants.PIXELSIZE];
-            id:poiText;
-            style: Text.Sunken;
-            smooth: true
-            text: Genivi.gettext("Poi")
-             }
-
-        StdButton {
-            source:StyleSheet.select_poi[Constants.SOURCE]; x:StyleSheet.select_poi[Constants.X]; y:StyleSheet.select_poi[Constants.Y]; width:StyleSheet.select_poi[Constants.WIDTH]; height:StyleSheet.select_poi[Constants.HEIGHT];
-            id:poi;  next:trip; prev:mapview; onClicked: {
-                entryMenu("NavigationAppPOI",menu);
-            }
-        }
 
         Text {
             x:StyleSheet.tripText[Constants.X]; y:StyleSheet.tripText[Constants.Y]; width:StyleSheet.tripText[Constants.WIDTH]; height:StyleSheet.tripText[Constants.HEIGHT];color:StyleSheet.tripText[Constants.TEXTCOLOR];styleColor:StyleSheet.tripText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tripText[Constants.PIXELSIZE];
@@ -159,11 +156,11 @@ NavigationAppHMIMenu {
             smooth: true
             text: Genivi.gettext("Trip")
              }
-
         StdButton {
             source:StyleSheet.select_trip[Constants.SOURCE]; x:StyleSheet.select_trip[Constants.X]; y:StyleSheet.select_trip[Constants.Y]; width:StyleSheet.select_trip[Constants.WIDTH]; height:StyleSheet.select_trip[Constants.HEIGHT];
-            id:trip;  next:settings; prev:poi;onClicked: {
-                entryMenu("NavigationAppTripComputer",menu);
+            id:trip;
+            onClicked: {
+                entryMenu(dltIf,"NavigationAppTripComputer",menu);
             }
         }
 
@@ -174,20 +171,18 @@ NavigationAppHMIMenu {
             smooth: true
             text: Genivi.gettext("Configuration")
              }
-
         StdButton {
             source:StyleSheet.select_settings[Constants.SOURCE]; x:StyleSheet.select_settings[Constants.X]; y:StyleSheet.select_settings[Constants.Y]; width:StyleSheet.select_settings[Constants.WIDTH]; height:StyleSheet.select_settings[Constants.HEIGHT];
-            id:settings;  next:quit; prev:trip;
+            id:settings;
             onClicked: {
                 disconnectSignals();
-                Genivi.preloadMode=true; //for the next call of this menu
-                entryMenu("NavigationAppSettings",menu);
+                entryMenu(dltIf,"NavigationAppSettings",menu);
             }
         }
 
         StdButton {
             source:StyleSheet.quit[Constants.SOURCE]; x:StyleSheet.quit[Constants.X]; y:StyleSheet.quit[Constants.Y]; width:StyleSheet.quit[Constants.WIDTH]; height:StyleSheet.quit[Constants.HEIGHT];textColor:StyleSheet.quitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.quitText[Constants.PIXELSIZE];
-            id:quit; text: Genivi.gettext("Quit");  next:navigation; prev:trip;
+            id:quit; text: Genivi.gettext("Quit");
             onClicked:{
                 disconnectSignals();
                 Qt.quit(); //for the time being quit
@@ -209,6 +204,9 @@ NavigationAppHMIMenu {
         }
 
         updateCurrentPosition();
+
+        //log status
+        Genivi.hookMessage(dltIf,'display_on_map',Genivi.data['display_on_map']);
     }
 
 }

@@ -36,10 +36,10 @@ import "../style-sheets/NavigationAppBrowseMapScroll-css.js" as StyleSheetScroll
 import "../style-sheets/NavigationAppBrowseMapSimulation-css.js" as StyleSheetSimulation
 import "../style-sheets/NavigationAppBrowseMapTop-css.js" as StyleSheetTop
 import "../style-sheets/NavigationAppBrowseMapManeuver-css.js" as StyleSheetManeuver
-import "../style-sheets/NavigationAppBrowseMapSettings-css.js" as StyleSheetSettings;
 import "../style-sheets/NavigationAppBrowseMapScale-css.js" as StyleSheetScale;
 import "../style-sheets/NavigationAppBrowseMapZoom-css.js" as StyleSheetZoom;
 import "../style-sheets/NavigationAppBrowseMapCompass-css.js" as StyleSheetCompass;
+import "../style-sheets/NavigationAppBrowseMapSettings-css.js" as StyleSheetSettings;
 
 
 import lbs.plugin.dbusif 1.0
@@ -50,7 +50,7 @@ NavigationAppHMIMenu {
     property string pagefile:"NavigationAppBrowseMap"
     next: scrollup
 	prev: menub
-	property bool north:false;
+    property int angle:0;
     property int speedValueSent: 0;
     property bool displayManeuvers:false; 
     property int currentZoomId;
@@ -74,7 +74,7 @@ NavigationAppHMIMenu {
         Genivi.hookSignal(dltIf,"guidanceStatusChanged");
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
-            Genivi.setGuidanceActivated(true);
+            Genivi.setGuidanceActivated(dltIf,true);
             showGuidance();
             showRoute();
             if (Genivi.simulationMode===true)
@@ -99,7 +99,7 @@ NavigationAppHMIMenu {
             else {
                 visible=false; //no route calculated
             }
-            Genivi.setGuidanceActivated(false);
+            Genivi.setGuidanceActivated(dltIf,false);
             //Guidance inactive, so inform the trip computer
             Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,0,0);
             maneuverIcon.source=StyleSheetGuidance.maneuverIcon[Constants.SOURCE]; //no icon by default
@@ -327,6 +327,42 @@ NavigationAppHMIMenu {
     // Map settings
     //------------------------------------------//
     Timer {
+        id:rotation_timer
+        repeat:true
+        triggeredOnStart: false
+        property bool clockwize;
+        property int increment:10;
+        property bool active;
+        onTriggered: {
+            if (active) {
+                if(clockwize)
+                {
+                    if(angle>=350) angle=0; else angle+=increment;
+                }else{
+                    if(angle<=0) angle=350; else angle-=increment;
+                }
+                set_angle(angle);
+                interval=50;
+                restart();
+                console.log(angle)
+            }
+        }
+    }
+
+    function rotation_start(clockwize)
+    {
+        rotation_timer.clockwize=clockwize;
+        rotation_timer.active=true;
+        rotation_timer.triggered();
+    }
+
+    function rotation_stop()
+    {
+        rotation_timer.active=false;
+        rotation_timer.stop();
+    }
+
+    Timer {
         id:camera_timer
         repeat:true
         triggeredOnStart:false
@@ -381,31 +417,9 @@ NavigationAppHMIMenu {
         Genivi.mapviewer_SetMapViewRotation(dbusIf,dltIf,angle);
     }
 
-    function toggleDayNight()
+    function showThreeDSettings()
     {
-        var res=Genivi.mapviewer_GetMapViewTheme(dbusIf,dltIf);
-        if (res[1] == Genivi.MAPVIEWER_THEME_1) {
-            Genivi.mapviewer_SetMapViewTheme(dbusIf,dltIf,Genivi.MAPVIEWER_THEME_2);
-            daynight.text=Genivi.gettext("Day");
-        } else {
-            Genivi.mapviewer_SetMapViewTheme(dbusIf,dltIf,Genivi.MAPVIEWER_THEME_1);
-            daynight.text=Genivi.gettext("Night");
-        }
-    }
-
-    function updateDayNight()
-    {
-        var res=Genivi.mapviewer_GetMapViewTheme(dbusIf,dltIf);
-        if (res[1] == Genivi.MAPVIEWER_THEME_1) {
-            daynight.text=Genivi.gettext("Night");
-        } else {
-            daynight.text=Genivi.gettext("Day");
-        }
-    }
-
-    function showMapSettings()
-    {
-        mapSettings.visible=true;
+        threeDSettings.visible=true;
         tiltText.visible=true;
         tiltp.visible=true;
         tiltp.disabled=false;
@@ -421,23 +435,12 @@ NavigationAppHMIMenu {
         distancep.disabled=false;
         distancem.visible=true;
         distancem.disabled=false;
-        north.visible=true;
-        north.disabled=false;
-        south.visible=true;
-        south.disabled=false;
-        east.visible=true;
-        east.disabled=false;
-        west.visible=true;
-        west.disabled=false;
-        exitSettings.visible=true;
-        exitSettings.disabled=false;
-        daynight.visible=true;
-        daynight.disabled=false;
     }
 
-    function hideMapSettings()
+    function hideThreeDSettings()
     {
-        mapSettings.visible=false;
+        camera_stop();
+        threeDSettings.visible=false;
         tiltText.visible=false;
         tiltp.visible=false;
         tiltp.disabled=true;
@@ -453,18 +456,6 @@ NavigationAppHMIMenu {
         distancep.disabled=true;
         distancem.visible=false;
         distancem.disabled=true;
-        north.visible=false;
-        north.disabled=true;
-        south.visible=false;
-        south.disabled=true;
-        east.visible=false;
-        east.disabled=true;
-        west.visible=false;
-        west.disabled=true;
-        exitSettings.visible=false;
-        exitSettings.disabled=true;
-        daynight.visible=false;
-        daynight.disabled=true;
     }
 
     //------------------------------------------//
@@ -625,9 +616,11 @@ NavigationAppHMIMenu {
                 Genivi.mapviewer_SetCameraHeadingTrackUp(dbusIf,dltIf);
                 Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_3D);
                 orientation.setState("B");
+                showThreeDSettings();
             } else{
                 Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_2D);
                 orientation.setState("N");
+                hideThreeDSettings();
             }
 		}
 	}
@@ -637,7 +630,6 @@ NavigationAppHMIMenu {
         if (exploration.status==0) {
             Genivi.mapviewer_SetFollowCarMode(dbusIf,dltIf, false);
             showScroll();
-            showSettings();
             exploration.setState("E");
         } else {
             if (exploration.status==1) {
@@ -651,8 +643,6 @@ NavigationAppHMIMenu {
                     }
                 }
                 hideScroll();
-                hideSettings();
-                hideMapSettings(); //in case of this panel has been launched by the user
                 exploration.setState("C");
             }
         }
@@ -829,6 +819,7 @@ NavigationAppHMIMenu {
 
     function showScroll()
     {
+        scroll.visible=true;
         scrollup.visible=true;
         scrollup.disabled=false;
         scrollleft.visible=true;
@@ -845,6 +836,7 @@ NavigationAppHMIMenu {
 
     function hideScroll()
     {
+        scroll.visible=false;
         scrollup.visible=false;
         scrollup.disabled=true;
         scrollleft.visible=false;
@@ -859,17 +851,40 @@ NavigationAppHMIMenu {
         rotateAntiClockwize.disabled=true;
     }
 
-    function showSettings()
+    function showMapSettings()
     {
-        settings.visible=true;
-        settings.disabled=false;
+        mapSettings.visible=true;
+        restartText.visible=true;
+        restartGuidance.visible=true;
+        restartGuidance.disabled=false;
+        cancelText.visible=true;
+        cancel.visible=true;
+        cancel.disabled=false;
+        exitSettings.visible=true;
+        exitSettings.disabled=false;
+        location_input.visible=true;
+        location_input.disabled=false;
+        poi.visible=true;
+        poi.disabled=false;
     }
 
-    function hideSettings()
+    function hideMapSettings()
     {
-        settings.visible=false;
-        settings.disabled=true;
+        mapSettings.visible=false;
+        restartText.visible=false;
+        restartGuidance.visible=false;
+        restartGuidance.disabled=true;
+        cancelText.visible=false;
+        cancel.visible=false;
+        cancel.disabled=true;
+        exitSettings.visible=false;
+        exitSettings.disabled=true;
+        location_input.visible=false;
+        location_input.disabled=true;
+        poi.visible=false;
+        poi.disabled=true;
     }
+
 
     //------------------------------------------//
     // Menu elements
@@ -911,7 +926,7 @@ NavigationAppHMIMenu {
                     visible:false
                     onClicked: {
                         disconnectSignals();
-                        entryMenu("NavigationAppPOI",menu);
+                        entryMenu(dltIf,"NavigationAppPOI",menu);
                                 }
                         }
 
@@ -950,8 +965,10 @@ NavigationAppHMIMenu {
                     id:menub; text:Genivi.gettext("Back"); next:orientation; prev:settings;
                     onClicked: {
                         disconnectSignals();
-                        Genivi.preloadMode=true;
-                        leaveMenu();
+                        if(Genivi.entrybackheapsize)
+                            leaveMenu(dltIf);
+                        else
+                            pageOpen(dltIf,"NavigationAppMain");
                     }
                 }
 
@@ -963,14 +980,11 @@ NavigationAppHMIMenu {
                 }
 
                 StdButton {
-                    source:StyleSheetBottom.mapsettings[Constants.SOURCE]; x:StyleSheetBottom.mapsettings[Constants.X]; y:StyleSheetBottom.mapsettings[Constants.Y]; width:StyleSheetBottom.mapsettings[Constants.WIDTH]; height:StyleSheetBottom.mapsettings[Constants.HEIGHT];
-                    id:settings;  next:menub; prev:zoomout;
+                    source:StyleSheetBottom.settings[Constants.SOURCE]; x:StyleSheetBottom.settings[Constants.X]; y:StyleSheetBottom.settings[Constants.Y]; width:StyleSheetBottom.settings[Constants.WIDTH]; height:StyleSheetBottom.settings[Constants.HEIGHT];
+                    id:settings;
                     onClicked: {
-                        if(mapSettings.visible===true) {
-                            hideMapSettings();
-                        } else {
-                            showMapSettings();
-                        }
+                        disconnectSignals();
+                        entryMenu(dltIf,"NavigationAppSettings",menu);
                     }
                 }
 
@@ -978,11 +992,28 @@ NavigationAppHMIMenu {
                     source:StyleSheetBottom.calculate_curr[Constants.SOURCE]; x:StyleSheetBottom.calculate_curr[Constants.X]; y:StyleSheetBottom.calculate_curr[Constants.Y]; width:StyleSheetBottom.calculate_curr[Constants.WIDTH]; height:StyleSheetBottom.calculate_curr[Constants.HEIGHT];
                     id:calculate_curr;
                     onClicked: {
-                        //todo something here
+                        if(Genivi.data['display_on_map']==='show_route')
+                        {
+                            // launch the guidance now !
+                            Genivi.guidance_StartGuidance(dbusIf,dltIf,Genivi.routing_handle());
+
+                        }else{
+                            if(Genivi.data['display_on_map']==='show_position')
+                            {
+                              // launch a route calculation now !
+                                disconnectSignals();
+                                Genivi.data['destination']=Genivi.data['position'];
+                                Genivi.setRerouteRequested(dltIf,true);
+                                Genivi.guidance_StopGuidance(dbusIf,dltIf);
+                                entryMenu(dltIf,"NavigationAppSearch",menu);
+                            }
+                            else{
+                                if(mapSettings.visible===true)
+                                    hideMapSettings();
+                                else showMapSettings();
+                            }
+                        }
                     }
-                    disabled:!(Genivi.route_calculated && !Genivi.guidance_activated);
-                    visible:(Genivi.route_calculated && !Genivi.guidance_activated);
-                    next:menub; prev:settings
                 }
 
                 StdButton {
@@ -991,18 +1022,18 @@ NavigationAppHMIMenu {
                     source:StyleSheetBottom.gobackCurrent[Constants.SOURCE]; //todo call get status
                     property int status: 0;
                     function setState(name)
-                    { //the icon displayed is the one of the next state
+                    { //the icon displayed is the one of the current state
                         if (name=="E")
                         {
                             status=1;
-                            source=StyleSheetBottom.gobackCurrent[Constants.SOURCE];
+                            source=StyleSheetBottom.mapExploration[Constants.SOURCE];
                         }
                         else
                         {
                             if (name=="C")
                             {
                                 status=0;
-                                source=StyleSheetBottom.mapExploration[Constants.SOURCE];
+                                source=StyleSheetBottom.gobackCurrent[Constants.SOURCE];
                             }
                         }
                     }
@@ -1033,7 +1064,6 @@ NavigationAppHMIMenu {
                         if(Genivi.guidance_activated)
                             showManeuversList();
                     }
-                    next:maneuverList; prev:maneuverList;
                 }
                 Text {
                     x:StyleSheetRoute.timetodestinationValue[Constants.X]; y:StyleSheetRoute.timetodestinationValue[Constants.Y]; width:StyleSheetRoute.timetodestinationValue[Constants.WIDTH]; height:StyleSheetRoute.timetodestinationValue[Constants.HEIGHT];color:StyleSheetRoute.timetodestinationValue[Constants.TEXTCOLOR];styleColor:StyleSheetRoute.timetodestinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetRoute.timetodestinationValue[Constants.PIXELSIZE];
@@ -1166,15 +1196,83 @@ NavigationAppHMIMenu {
                 StdButton {
                     source:StyleSheetScroll.rotateClockwize[Constants.SOURCE]; x:StyleSheetScroll.rotateClockwize[Constants.X]; y:StyleSheetScroll.rotateClockwize[Constants.Y]; width:StyleSheetScroll.rotateClockwize[Constants.WIDTH]; height:StyleSheetScroll.rotateClockwize[Constants.HEIGHT];
                     id:rotateClockwize;
-                    onClicked: {}
+                    onPressed: {rotation_start(false);}
+                    onReleased: {rotation_stop();}
                 }
 
                 StdButton {
                     source:StyleSheetScroll.rotateAntiClockwize[Constants.SOURCE]; x:StyleSheetScroll.rotateAntiClockwize[Constants.X]; y:StyleSheetScroll.rotateAntiClockwize[Constants.Y]; width:StyleSheetScroll.rotateAntiClockwize[Constants.WIDTH]; height:StyleSheetScroll.rotateAntiClockwize[Constants.HEIGHT];
                     id:rotateAntiClockwize;
-                    onClicked: {}
+                    onPressed: {rotation_start(true);}
+                    onReleased: {rotation_stop();}
                 }
 
+                BorderImage {
+                    id: threeDSettings
+                    source:StyleSheetScroll.threeDSettings[Constants.SOURCE]; x:StyleSheetScroll.threeDSettings[Constants.X]; y:StyleSheetScroll.threeDSettings[Constants.Y]; width:StyleSheetScroll.threeDSettings[Constants.WIDTH]; height:StyleSheetScroll.threeDSettings[Constants.HEIGHT];
+                    border.left: 0; border.top: 0
+                    border.right: 0; border.bottom: 0
+                }
+
+                Text {
+                    x:StyleSheetScroll.tiltText[StyleSheetScroll.X]; y:StyleSheetScroll.tiltText[StyleSheetScroll.Y]; width:StyleSheetScroll.tiltText[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.tiltText[StyleSheetScroll.HEIGHT];color:StyleSheetScroll.tiltText[StyleSheetScroll.TEXTCOLOR];styleColor:StyleSheetScroll.tiltText[StyleSheetScroll.STYLECOLOR]; font.pixelSize:StyleSheetScroll.tiltText[StyleSheetScroll.PIXELSIZE];
+                    id:tiltText;
+                    style: Text.Sunken;
+                    smooth: true
+                    text: Genivi.gettext("CameraTilt")
+                     }
+                StdButton {
+                    source:StyleSheetScroll.tiltp[Constants.SOURCE]; x:StyleSheetScroll.tiltp[StyleSheetScroll.X]; y:StyleSheetScroll.tiltp[StyleSheetScroll.Y]; width:StyleSheetScroll.tiltp[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.tiltp[StyleSheetScroll.HEIGHT];
+                           id:tiltp;
+                        onPressed: {camera_start_clamp("CameraTiltAngle",-10,0);}
+                        onReleased: {camera_stop();}
+                }
+                StdButton {
+                    source:StyleSheetScroll.tiltm[Constants.SOURCE]; x:StyleSheetScroll.tiltm[StyleSheetScroll.X]; y:StyleSheetScroll.tiltm[StyleSheetScroll.Y]; width:StyleSheetScroll.tiltm[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.tiltm[StyleSheetScroll.HEIGHT];
+                    id:tiltm;  next:heightp; prev:tiltp;
+                    onPressed: {camera_start_clamp("CameraTiltAngle",10,90);}
+                    onReleased: {camera_stop();}
+                }
+
+                Text {
+                    x:StyleSheetScroll.heightText[StyleSheetScroll.X]; y:StyleSheetScroll.heightText[StyleSheetScroll.Y]; width:StyleSheetScroll.heightText[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.heightText[StyleSheetScroll.HEIGHT];color:StyleSheetScroll.heightText[StyleSheetScroll.TEXTCOLOR];styleColor:StyleSheetScroll.heightText[StyleSheetScroll.STYLECOLOR]; font.pixelSize:StyleSheetScroll.heightText[StyleSheetScroll.PIXELSIZE];
+                    id:heightText;
+                    style: Text.Sunken;
+                    smooth: true
+                    text: Genivi.gettext("CameraHeight")
+                     }
+                StdButton {
+                    source:StyleSheetScroll.heightp[Constants.SOURCE]; x:StyleSheetScroll.heightp[StyleSheetScroll.X]; y:StyleSheetScroll.heightp[StyleSheetScroll.Y]; width:StyleSheetScroll.heightp[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.heightp[StyleSheetScroll.HEIGHT];
+                    id:heightp; next:heightm; prev:tiltm;
+                    onPressed: {camera_start("CameraHeight",10);}
+                    onReleased: {camera_stop();}
+                }
+                StdButton {
+                    source:StyleSheetScroll.heightm[Constants.SOURCE]; x:StyleSheetScroll.heightm[StyleSheetScroll.X]; y:StyleSheetScroll.heightm[StyleSheetScroll.Y]; width:StyleSheetScroll.heightm[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.heightm[StyleSheetScroll.HEIGHT];
+                    id:heightm;  next:distancep; prev:heightp;
+                    onPressed: {camera_start("CameraHeight",-10);}
+                    onReleased: {camera_stop();}
+                }
+
+                Text {
+                    x:StyleSheetScroll.distanceText[StyleSheetScroll.X]; y:StyleSheetScroll.distanceText[StyleSheetScroll.Y]; width:StyleSheetScroll.distanceText[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.distanceText[StyleSheetScroll.HEIGHT];color:StyleSheetScroll.distanceText[StyleSheetScroll.TEXTCOLOR];styleColor:StyleSheetScroll.distanceText[StyleSheetScroll.STYLECOLOR]; font.pixelSize:StyleSheetScroll.distanceText[StyleSheetScroll.PIXELSIZE];
+                    id:distanceText;
+                    style: Text.Sunken;
+                    smooth: true
+                    text: Genivi.gettext("CameraDistance")
+                     }
+                StdButton {
+                    source:StyleSheetScroll.distancep[Constants.SOURCE]; x:StyleSheetScroll.distancep[StyleSheetScroll.X]; y:StyleSheetScroll.distancep[StyleSheetScroll.Y]; width:StyleSheetScroll.distancep[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.distancep[StyleSheetScroll.HEIGHT];
+                    id:distancep;  next:distancem; prev:heightm;
+                    onPressed: {camera_start("CameraDistanceFromTargetPoint",10);}
+                    onReleased: {camera_stop();}
+                }
+                StdButton {
+                    source:StyleSheetScroll.distancem[Constants.SOURCE]; x:StyleSheetScroll.distancem[StyleSheetScroll.X]; y:StyleSheetScroll.distancem[StyleSheetScroll.Y]; width:StyleSheetScroll.distancem[StyleSheetScroll.WIDTH]; height:StyleSheetScroll.distancem[StyleSheetScroll.HEIGHT];
+                           id:distancem;
+                        onPressed: {camera_start("CameraDistanceFromTargetPoint",-10);}
+                        onReleased: {camera_stop();}
+                }
             }
         }
 
@@ -1371,8 +1469,8 @@ NavigationAppHMIMenu {
             color:"transparent"
             width: StyleSheetManeuver.navigation_app_browse_map_maneuver_background[Constants.WIDTH]
             height: StyleSheetManeuver.navigation_app_browse_map_maneuver_background[Constants.HEIGHT]
-            x: StyleSheetManeuver.maneuver_area[Constants.X]
-            y: StyleSheetManeuver.maneuver_area[Constants.Y]
+            x: StyleSheetMap.maneuver_area[Constants.X]
+            y: StyleSheetMap.maneuver_area[Constants.Y]
             NavigationAppHMIBgImage {
                 id: maneuver
                 opacity: 0.8
@@ -1381,7 +1479,7 @@ NavigationAppHMIMenu {
                 anchors { fill: parent; topMargin: parent.headlineHeight}
                 StdButton {
                     source:StyleSheetManeuver.exit[Constants.SOURCE]; x:StyleSheetManeuver.exit[StyleSheetManeuver.X]; y:StyleSheetManeuver.exit[StyleSheetManeuver.Y]; width:StyleSheetManeuver.exit[StyleSheetManeuver.WIDTH]; height:StyleSheetManeuver.exit[StyleSheetManeuver.HEIGHT];
-                    id:exit;  next:maneuverArea; prev:maneuverArea;
+                    id:exit;
                     onClicked: { hideManeuversList(); }
                 }
                 Component {
@@ -1399,124 +1497,8 @@ NavigationAppHMIMenu {
                     x:StyleSheetManeuver.maneuver_area[Constants.X]; y:StyleSheetManeuver.maneuver_area[Constants.Y]; width:StyleSheetManeuver.maneuver_area[Constants.WIDTH]; height:StyleSheetManeuver.maneuver_area[Constants.HEIGHT];
                     id:maneuverArea
                     delegate: maneuverDelegate
-                    next:exit
-                    prev:exit
                 }
             }
-        }
-
-        Rectangle {
-            color:"transparent"
-            width: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.WIDTH]
-            height: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.HEIGHT]
-            x: StyleSheetMap.settings_area[Constants.X]
-            y: StyleSheetMap.settings_area[Constants.Y]
-            NavigationAppHMIBgImage {
-                id: mapSettings
-                opacity: 0.8
-                image:StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.SOURCE];
-                anchors { fill: parent; topMargin: parent.headlineHeight}
-                 Text {
-                     x:StyleSheetSettings.tiltText[StyleSheetSettings.X]; y:StyleSheetSettings.tiltText[StyleSheetSettings.Y]; width:StyleSheetSettings.tiltText[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.tiltText[StyleSheetSettings.HEIGHT];color:StyleSheetSettings.tiltText[StyleSheetSettings.TEXTCOLOR];styleColor:StyleSheetSettings.tiltText[StyleSheetSettings.STYLECOLOR]; font.pixelSize:StyleSheetSettings.tiltText[StyleSheetSettings.PIXELSIZE];
-                     id:tiltText;
-                     style: Text.Sunken;
-                     smooth: true
-                     text: Genivi.gettext("CameraTilt")
-                      }
-                 StdButton {
-                     source:StyleSheetSettings.tiltp[Constants.SOURCE]; x:StyleSheetSettings.tiltp[StyleSheetSettings.X]; y:StyleSheetSettings.tiltp[StyleSheetSettings.Y]; width:StyleSheetSettings.tiltp[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.tiltp[StyleSheetSettings.HEIGHT];
-                            id:tiltp;  next:tiltm; prev:daynight;
-                         onPressed: {camera_start_clamp("CameraTiltAngle",-10,0);}
-                         onReleased: {camera_stop();}
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.tiltm[Constants.SOURCE]; x:StyleSheetSettings.tiltm[StyleSheetSettings.X]; y:StyleSheetSettings.tiltm[StyleSheetSettings.Y]; width:StyleSheetSettings.tiltm[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.tiltm[StyleSheetSettings.HEIGHT];
-                     id:tiltm;  next:heightp; prev:tiltp;
-                     onPressed: {camera_start_clamp("CameraTiltAngle",10,90);}
-                     onReleased: {camera_stop();}
-                 }
-                 Text {
-                     x:StyleSheetSettings.heightText[StyleSheetSettings.X]; y:StyleSheetSettings.heightText[StyleSheetSettings.Y]; width:StyleSheetSettings.heightText[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightText[StyleSheetSettings.HEIGHT];color:StyleSheetSettings.heightText[StyleSheetSettings.TEXTCOLOR];styleColor:StyleSheetSettings.heightText[StyleSheetSettings.STYLECOLOR]; font.pixelSize:StyleSheetSettings.heightText[StyleSheetSettings.PIXELSIZE];
-                     id:heightText;
-                     style: Text.Sunken;
-                     smooth: true
-                     text: Genivi.gettext("CameraHeight")
-                      }
-                 StdButton {
-                     source:StyleSheetSettings.heightp[Constants.SOURCE]; x:StyleSheetSettings.heightp[StyleSheetSettings.X]; y:StyleSheetSettings.heightp[StyleSheetSettings.Y]; width:StyleSheetSettings.heightp[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightp[StyleSheetSettings.HEIGHT];
-                     id:heightp; next:heightm; prev:tiltm;
-                     onPressed: {camera_start("CameraHeight",10);}
-                     onReleased: {camera_stop();}
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.heightm[Constants.SOURCE]; x:StyleSheetSettings.heightm[StyleSheetSettings.X]; y:StyleSheetSettings.heightm[StyleSheetSettings.Y]; width:StyleSheetSettings.heightm[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.heightm[StyleSheetSettings.HEIGHT];
-                     id:heightm;  next:distancep; prev:heightp;
-                     onPressed: {camera_start("CameraHeight",-10);}
-                     onReleased: {camera_stop();}
-                 }
-                 Text {
-                     x:StyleSheetSettings.distanceText[StyleSheetSettings.X]; y:StyleSheetSettings.distanceText[StyleSheetSettings.Y]; width:StyleSheetSettings.distanceText[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.distanceText[StyleSheetSettings.HEIGHT];color:StyleSheetSettings.distanceText[StyleSheetSettings.TEXTCOLOR];styleColor:StyleSheetSettings.distanceText[StyleSheetSettings.STYLECOLOR]; font.pixelSize:StyleSheetSettings.distanceText[StyleSheetSettings.PIXELSIZE];
-                     id:distanceText;
-                     style: Text.Sunken;
-                     smooth: true
-                     text: Genivi.gettext("CameraDistance")
-                      }
-                 StdButton {
-                     source:StyleSheetSettings.distancep[Constants.SOURCE]; x:StyleSheetSettings.distancep[StyleSheetSettings.X]; y:StyleSheetSettings.distancep[StyleSheetSettings.Y]; width:StyleSheetSettings.distancep[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.distancep[StyleSheetSettings.HEIGHT];
-                     id:distancep;  next:distancem; prev:heightm;
-                     onPressed: {camera_start("CameraDistanceFromTargetPoint",10);}
-                     onReleased: {camera_stop();}
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.distancem[Constants.SOURCE]; x:StyleSheetSettings.distancem[StyleSheetSettings.X]; y:StyleSheetSettings.distancem[StyleSheetSettings.Y]; width:StyleSheetSettings.distancem[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.distancem[StyleSheetSettings.HEIGHT];
-                            id:distancem;  next:exit; prev:distancep;
-                         onPressed: {camera_start("CameraDistanceFromTargetPoint",-10);}
-                         onReleased: {camera_stop();}
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.north[Constants.SOURCE]; x:StyleSheetSettings.north[StyleSheetSettings.X]; y:StyleSheetSettings.north[StyleSheetSettings.Y]; width:StyleSheetSettings.north[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.north[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.northText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.northText[StyleSheetSettings.PIXELSIZE];
-                            id:north; text: Genivi.gettext("North");  next:south; prev:exit;
-                     onClicked: {
-                         set_angle(0);
-                     }
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.south[Constants.SOURCE]; x:StyleSheetSettings.south[StyleSheetSettings.X]; y:StyleSheetSettings.south[StyleSheetSettings.Y]; width:StyleSheetSettings.south[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.south[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.southText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.southText[StyleSheetSettings.PIXELSIZE];
-                            id:south; text:Genivi.gettext("South");  next:east; prev:north;
-                     onClicked: {
-                         set_angle(180);
-                     }
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.east[Constants.SOURCE]; x:StyleSheetSettings.east[StyleSheetSettings.X]; y:StyleSheetSettings.east[StyleSheetSettings.Y]; width:StyleSheetSettings.east[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.east[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.eastText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.eastText[StyleSheetSettings.PIXELSIZE];
-                            id:east; text:Genivi.gettext("East");  next:west; prev:south;
-                     onClicked: {
-                         set_angle(90);
-                     }
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.west[Constants.SOURCE]; x:StyleSheetSettings.west[StyleSheetSettings.X]; y:StyleSheetSettings.west[StyleSheetSettings.Y]; width:StyleSheetSettings.west[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.west[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.westText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.westText[StyleSheetSettings.PIXELSIZE];
-                            id:west; text:Genivi.gettext("West");
-                     onClicked: {
-                         set_angle(270);
-                     }
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.exit[Constants.SOURCE]; x:StyleSheetSettings.exit[StyleSheetSettings.X]; y:StyleSheetSettings.exit[StyleSheetSettings.Y]; width:StyleSheetSettings.exit[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.exit[StyleSheetSettings.HEIGHT];
-                            id:exitSettings;  next:north; prev:west;
-                     onClicked: {
-                         camera_stop();
-                         hideMapSettings();
-                     }
-                 }
-                 StdButton {
-                     source:StyleSheetSettings.daynight[Constants.SOURCE]; x:StyleSheetSettings.daynight[StyleSheetSettings.X]; y:StyleSheetSettings.daynight[StyleSheetSettings.Y]; width:StyleSheetSettings.daynight[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.daynight[StyleSheetSettings.HEIGHT];textColor:StyleSheetSettings.daynightText[StyleSheetSettings.TEXTCOLOR]; pixelSize:StyleSheetSettings.daynightText[StyleSheetSettings.PIXELSIZE];
-                            id:daynight; text:Genivi.gettext("Day");
-                     onClicked: {
-                         toggleDayNight();
-                     }
-                 }
-             }
         }
 
         Rectangle {
@@ -1562,11 +1544,80 @@ NavigationAppHMIMenu {
             }
         }
 
+        Rectangle {
+            color:"transparent"
+            width: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.WIDTH]
+            height: StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.HEIGHT]
+            x: StyleSheetMap.settings_area[Constants.X]
+            y: StyleSheetMap.settings_area[Constants.Y]
+            NavigationAppHMIBgImage {
+                id: mapSettings
+                opacity: 0.8
+                image:StyleSheetSettings.navigation_app_browse_map_settings_background[Constants.SOURCE];
+                anchors { fill: parent; topMargin: parent.headlineHeight}
+                 Text {
+                     x:StyleSheetSettings.restartText[StyleSheetSettings.X]; y:StyleSheetSettings.restartText[StyleSheetSettings.Y]; width:StyleSheetSettings.restartText[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.restartText[StyleSheetSettings.HEIGHT];color:StyleSheetSettings.restartText[StyleSheetSettings.TEXTCOLOR];styleColor:StyleSheetSettings.restartText[StyleSheetSettings.STYLECOLOR]; font.pixelSize:StyleSheetSettings.restartText[StyleSheetSettings.PIXELSIZE];
+                     id:restartText;
+                     style: Text.Sunken;
+                     smooth: true
+                     text: Genivi.gettext("Restart")
+                      }
+                 StdButton {
+                     source:StyleSheetSettings.restart[Constants.SOURCE]; x:StyleSheetSettings.restart[StyleSheetSettings.X]; y:StyleSheetSettings.restart[StyleSheetSettings.Y]; width:StyleSheetSettings.restart[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.restart[StyleSheetSettings.HEIGHT];
+                     id:restartGuidance;
+                     disabled: (Genivi.guidance_activated || !Genivi.route_calculated)
+                     onPressed: {
+                         //restart guidance
+                         Genivi.guidance_StartGuidance(dbusIf,dltIf,Genivi.routing_handle());
+                     }
+                 }
+                 Text {
+                     x:StyleSheetSettings.cancelText[StyleSheetSettings.X]; y:StyleSheetSettings.cancelText[StyleSheetSettings.Y]; width:StyleSheetSettings.cancelText[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.cancelText[StyleSheetSettings.HEIGHT];color:StyleSheetSettings.cancelText[StyleSheetSettings.TEXTCOLOR];styleColor:StyleSheetSettings.cancelText[StyleSheetSettings.STYLECOLOR]; font.pixelSize:StyleSheetSettings.cancelText[StyleSheetSettings.PIXELSIZE];
+                     id:cancelText;
+                     style: Text.Sunken;
+                     smooth: true
+                     text: Genivi.gettext("Cancel")
+                      }
+                 StdButton {
+                     source:StyleSheetSettings.cancel[Constants.SOURCE]; x:StyleSheetSettings.cancel[StyleSheetSettings.X]; y:StyleSheetSettings.cancel[StyleSheetSettings.Y]; width:StyleSheetSettings.cancel[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.cancel[StyleSheetSettings.HEIGHT];
+                     id:cancel;
+                     disabled: !(Genivi.guidance_activated);
+                     onPressed: {
+                        //stop guidance
+                         Genivi.guidance_StopGuidance(dbusIf,dltIf);
+                     }
+                 }
+                 StdButton {
+                     source:StyleSheetSettings.location_input[Constants.SOURCE]; x:StyleSheetSettings.location_input[StyleSheetSettings.X]; y:StyleSheetSettings.location_input[StyleSheetSettings.Y]; width:StyleSheetSettings.location_input[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.location_input[StyleSheetSettings.HEIGHT];
+                     id:location_input;
+                     onPressed: {
+                         disconnectSignals();
+                         Genivi.setLocationInputActivated(dltIf,true);
+                         entryMenu(dltIf,"NavigationAppSearch",menu);
+                     }
+                 }
+                 StdButton {
+                     source:StyleSheetSettings.poi[Constants.SOURCE]; x:StyleSheetSettings.poi[StyleSheetSettings.X]; y:StyleSheetSettings.poi[StyleSheetSettings.Y]; width:StyleSheetSettings.poi[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.poi[StyleSheetSettings.HEIGHT];
+                     id:poi;
+                     onPressed: {
+                         disconnectSignals();
+                         Genivi.setLocationInputActivated(dltIf,false);
+                         entryMenu(dltIf,"NavigationAppPOI",menu);
+                     }
+                 }
+                 StdButton {
+                     source:StyleSheetSettings.exit[Constants.SOURCE]; x:StyleSheetSettings.exit[StyleSheetSettings.X]; y:StyleSheetSettings.exit[StyleSheetSettings.Y]; width:StyleSheetSettings.exit[StyleSheetSettings.WIDTH]; height:StyleSheetSettings.exit[StyleSheetSettings.HEIGHT];
+                     id:exitSettings;
+                     onPressed: {
+                        hideMapSettings();
+                     }
+                 }
+            }
+        }
     }
 
     Component.onCompleted: {
         connectSignals();
-        hideMapSettings();
 
         if (Genivi.data['display_on_map']==='show_route') {
             //display the route when it has been calculated
@@ -1629,10 +1680,10 @@ NavigationAppHMIMenu {
             }
         }
 
+        hideMapSettings();
         hideScroll();
-        hideSettings();
+        hideThreeDSettings();
         exploration.setState("C");
         showZoom();
-        updateDayNight();
 	}
 }

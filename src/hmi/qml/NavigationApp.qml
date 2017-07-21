@@ -84,7 +84,8 @@ ApplicationWindow {
         //NB: settings are stored as strings, so it may need some rework for persistent data that are not strings (to be improved ?)
         Genivi.setlang(Settings.getValue("Locale/language"),Settings.getValue("Locale/country"),Settings.getValue("Locale/script"));
         Genivi.setDefaultPosition(Settings.getValue("DefaultPosition/latitude"),Settings.getValue("DefaultPosition/longitude"),Settings.getValue("DefaultPosition/altitude"));
-        Genivi.setDefaultAddress(Settings.getValue("DefaultAddress/country"),Settings.getValue("DefaultAddress/city"),Settings.getValue("DefaultAddress/street"),Settings.getValue("DefaultAddress/number"));
+        Genivi.setDefaultAddress(Settings.getValue("DefaultAddress/country"),Settings.getValue("DefaultAddress/city"),Settings.getValue("DefaultAddress/street"),Settings.getValue("DefaultAddress/number"));        
+        Genivi.preloadMode=true; //default address loaded
         Genivi.radius=Settings.getValue("Settings/radius");
         Genivi.maxResultListSize=Settings.getValue("Settings/maxResultListSize");
         Genivi.default_category_name=Settings.getValue("Settings/defaultCategoryName")
@@ -125,8 +126,16 @@ ApplicationWindow {
         var res2=Genivi.routing_CreateRoute(dbusIf,dltIf);
         Genivi.g_routing_handle[1]=res2[3];
 
+        //default settings
+        Genivi.setGuidanceActivated(dltIf,false);
+        Genivi.setRouteCalculated(dltIf,false);
+        Genivi.setRerouteRequested(dltIf,false);
+        Genivi.setVehicleLocated(dltIf,false);
+        Genivi.setDestinationDefined(dltIf,false);
+
         //launch the HMI
-        load("NavigationAppMain");
+        Genivi.hookMessage(dltIf,"Menu level",Genivi.entrybackheapsize);
+        load("NavigationAppBrowseMap");
 	}
 
     Component.onDestruction:  {

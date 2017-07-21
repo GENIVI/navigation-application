@@ -87,6 +87,7 @@ translations["PredictiveTankDistance"]="PREDICTIVE\nTANK DISTANCE";
 translations["Reset"]="RESET";
 
 translations["Selected"]="SELECTED";
+translations["Restart"]="RESTART";
 
 translations["On"]="ON";
 translations["Off"]="OFF";
