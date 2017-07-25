@@ -159,6 +159,23 @@ Rectangle {
         container.load(outmenu);
     }
 
+    function rootMenu(dltInterface,menu)
+    {
+        Genivi.entrybackheapsize = 0;
+        Genivi.hookMessage(dltInterface,"Menu level",Genivi.entrybackheapsize);
+        menu.state="hidden";
+        container.load(menu);
+    }
+
+    function subMenu(dltInterface,inmenu,outmenu)
+    {
+        Genivi.entrybackheapsize = 1;
+        Genivi.hookMessage(dltInterface,"Menu level",Genivi.entrybackheapsize);
+        Genivi.entryback[Genivi.entrybackheapsize] = outmenu.pagefile;
+        outmenu.state = "hidden";
+        container.load(inmenu);
+    }
+
     function pageOpen(dltInterface,page) {
         menu.state="hidden";
         container.load(page);

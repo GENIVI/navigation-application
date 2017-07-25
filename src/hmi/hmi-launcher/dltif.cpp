@@ -53,7 +53,7 @@ void
 DLTIf::setName(const QString & name)
 {
     m_name = name;
-    LOG_INFO(gCtx,"Menu: %s",name.toStdString().c_str());
+    LOG_INFO(gCtx,"DLT activated for menu: %s",name.toStdString().c_str());
 }
 
 void DLTIf::log_info_msg(QString message)

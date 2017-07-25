@@ -408,6 +408,9 @@ NavigationAppHMIMenu {
                 Genivi.data['destination']=Genivi.poi_data[Genivi.poi_id];
                 Genivi.setRerouteRequested(dltIf,true);
                 Genivi.guidance_StopGuidance(dbusIf,dltIf);
+                //create a route
+                var res4=Genivi.routing_CreateRoute(dbusIf,dltIf);
+                Genivi.g_routing_handle[1]=res4[3];
                 pageOpen(dltIf,"NavigationAppSearch");
 			}
 		}
@@ -441,7 +444,7 @@ NavigationAppHMIMenu {
             onClicked: {
                 disconnectSignals();
                 Genivi.guidance_StopGuidance(dbusIf,dltIf);
-                leaveMenu(dltIf);
+                rootMenu(dltIf,"NavigationAppBrowseMap");
             }
 		}	
 	}
@@ -452,31 +455,13 @@ NavigationAppHMIMenu {
         var ret=Genivi.poisearch_GetAvailableCategories(dbusIf,dltIf);
         Genivi.categoriesIdNameList=ret[1];
 
-        if(Genivi.poi_id !== null){
-            //there's a selected poi
-            var poi_data=Genivi.poi_data[Genivi.poi_id];
-            poiName.text=poi_data.name;
-            poiName.visible=true;
-            for (var i = 0 ; i < Genivi.categoriesIdNameList.length ; i+=2) {
-                if (Genivi.categoriesIdNameList[i+1][1] === poi_data.category) {
-                    Genivi.category_id=poi_data.category;
-                    poiCategoryName=Genivi.categoriesIdNameList[i+1][3];
-                }
-             }
-            selectedValue.text="Lat: "+poi_data.lat.toFixed(4)+"\nLon: "+poi_data.lon.toFixed(4)+"\nDist: "+poi_data.distance+" m";
-            searchResultNumber.visible=false;
-            selectedValueTitle.visible=true;
-            select_reroute.disabled=false;
-            select_display_on_map.disabled=false;
-        }else{
-            clearSearch();
-            for (var j = 0 ; j < Genivi.categoriesIdNameList.length ; j+=2) {
-                if (Genivi.categoriesIdNameList[j+1][3] === Genivi.default_category_name) {
-                    Genivi.category_id=Genivi.categoriesIdNameList[j+1][1];
-                    poiCategoryName=Genivi.categoriesIdNameList[j+1][3];
-                }
-             }
-        }
+        clearSearch();
+        for (var j = 0 ; j < Genivi.categoriesIdNameList.length ; j+=2) {
+            if (Genivi.categoriesIdNameList[j+1][3] === Genivi.default_category_name) {
+                Genivi.category_id=Genivi.categoriesIdNameList[j+1][1];
+                poiCategoryName=Genivi.categoriesIdNameList[j+1][3];
+            }
+         }
 
         categoryValue.text=poiCategoryName;
         keyboardArea.destination=poiValue; // by default

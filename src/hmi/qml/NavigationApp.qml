@@ -37,7 +37,7 @@ import lbs.plugin.dltif 1.0
 
 ApplicationWindow {
 	id: container
-    property string pagefile:"NavigationAppBrowseMap"
+    property string pagefile:"NavigationApp"
     flags: Qt.FramelessWindowHint
     color: "transparent"
     visible: true
@@ -116,15 +116,17 @@ ApplicationWindow {
         Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
 
         //launch the map viewer and init the scale list
-        var res=Genivi.mapviewer_session_CreateSession(dbusIf,dltIf); //only one session managed
-        Genivi.g_mapviewer_session[1]=res[3];
+        var res0=Genivi.mapviewer_session_CreateSession(dbusIf,dltIf); //only one session managed
+        Genivi.g_mapviewer_session_handle[1]=res0[3];
         var res1=Genivi.mapviewer_CreateMapViewInstance(dbusIf,dltIf,width,height,Genivi.MAPVIEWER_MAIN_MAP);
-        Genivi.g_mapviewer_handle[1]=res[3];
+        Genivi.g_mapviewer_handle[1]=res1[3];
         Genivi.initScale(dbusIf,dltIf);
+        var res2=Genivi.mapviewer_GetMapViewScale(dbusIf,dltIf);
+        Genivi.currentZoomId=res2[1];
 
-        //create a route by default
-        var res2=Genivi.routing_CreateRoute(dbusIf,dltIf);
-        Genivi.g_routing_handle[1]=res2[3];
+        // create a session for navigation core
+        var res3=Genivi.navigationcore_session_CreateSession(dbusIf,dltIf);
+        Genivi.g_nav_session_handle[1]=res3[3];
 
         //default settings
         Genivi.setGuidanceActivated(dltIf,false);
@@ -145,8 +147,10 @@ ApplicationWindow {
         var res=Genivi.mapviewer_ReleaseMapViewInstance(dbusIf,dltIf);
         Genivi.g_mapviewer_handle[1]=0;
         var res1=Genivi.mapviewer_session_DeleteSession(dbusIf,dltIf);//only one session managed
-        Genivi.g_mapviewer_session[1]=0;
+        Genivi.g_mapviewer_session_handle[1]=0;
         var res2=Genivi.routing_DeleteRoute(dbusIf,dltIf);
         Genivi.g_routing_handle[1]=0;
+        var res3=Genivi.navigationcore_session_DeleteSession(dbusIf,dltIf);
+        Genivi.g_nav_session_handle[1]=0;
     }
 }

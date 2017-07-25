@@ -111,7 +111,7 @@ NavigationAppHMIMenu {
             id:navigation;
             onClicked: {
                 Genivi.setLocationInputActivated(dltIf,true);
-                entryMenu(dltIf,"NavigationAppSearch",menu);
+                subMenu(dltIf,"NavigationAppSearch","NavigationAppBrowseMap");
             }
         }
 
@@ -127,7 +127,7 @@ NavigationAppHMIMenu {
             id:poi;
             onClicked: {
                 Genivi.setLocationInputActivated(dltIf,false);
-                entryMenu(dltIf,"NavigationAppPOI",menu);
+                subMenu(dltIf,"NavigationAppPOI","NavigationAppBrowseMap");
             }
         }
 
@@ -145,7 +145,7 @@ NavigationAppHMIMenu {
             onClicked: {
                 Genivi.data['display_on_map']='show_current_position';
                 Genivi.hookMessage(dltIf,'display_on_map',Genivi.data['display_on_map']);
-                entryMenu(dltIf,"NavigationAppBrowseMap",menu);
+                leaveMenu(dltIf,"NavigationAppBrowseMap",menu);
 			}
 		}
 
@@ -197,7 +197,7 @@ NavigationAppHMIMenu {
         var res=Genivi.navigationcore_session_GetVersion(dbusIf,dltIf);
         if (res[0] != "error") {
             var res1=Genivi.navigationcore_session_CreateSession(dbusIf,dltIf);
-            Genivi.g_nav_session[1]=res1[3];
+            Genivi.g_nav_session_handle[1]=res1[3];
         } else {
             //to do something here
             Genivi.dump("",res);

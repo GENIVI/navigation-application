@@ -31,10 +31,10 @@
 Qt.include("resource.js")
 
 var dbusInterface;
-var g_nav_session=["uint32",0];
+var g_nav_session_handle=["uint32",0];
 var g_locationinput_handle=["uint32",0];
 var g_routing_handle=["uint32",0];
-var g_mapviewer_session=["uint32",0];
+var g_mapviewer_session_handle=["uint32",0];
 var g_mapviewer_handle=["uint32",0];
 var g_poisearch_handle=["uint32",0];
 var g_language,g_country,g_script; //initialized by conf file
@@ -121,6 +121,7 @@ function setRerouteRequested(dltInterface,arg)
 var scaleList;
 var minZoomId;
 var maxZoomId;
+var currentZoomId;
 
 var entryback = new Array;
 var entrybackheapsize=0;
@@ -609,12 +610,12 @@ function navigationcore_session_CreateSession(dbusInterface,dltInterface)
 
 function navigationcore_session_DeleteSession(dbusInterface,dltInterface)
 {
-    return navigationcore_session_message(dbusInterface,dltInterface,"deleteSession", g_nav_session);
+    return navigationcore_session_message(dbusInterface,dltInterface,"deleteSession", g_nav_session_handle);
 }
 
 // Create a new session or get the current session
 function navigationcore_session() {
-    return g_nav_session;
+    return g_nav_session_handle;
 }
 
 function navigationcore_session_GetVersion(dbusInterface,dltInterface)
@@ -658,7 +659,7 @@ function navigationcore_configuration_SetUnitsOfMeasurementLength(dbusInterface,
 //----------------- LocationInput messages -----------------
 function locationinput_CreateLocationInput(dbusInterface,dltInterface)
 {
-    return navigationcore_message(dbusInterface, dltInterface, "LocationInput","createLocationInput", g_nav_session);
+    return navigationcore_message(dbusInterface, dltInterface, "LocationInput","createLocationInput", g_nav_session_handle);
 }
 
 function locationinput_DeleteLocationInput(dbusInterface,dltInterface)
@@ -727,9 +728,9 @@ function routing_CreateRoute(dbusInterface,dltInterface)
     return navigationcore_message(dbusInterface, dltInterface, "Routing","createRoute", navigationcore_session(dbusInterface,dltInterface));
 }
 
-function routing_DeleteRoute(dbusInterface,dltInterface)
+function routing_DeleteRoute(dbusInterface,dltInterface,routeHandle)
 {
-    return routing_message(dbusInterface, dltInterface, "deleteRoute", []);
+    return routing_message(dbusInterface, dltInterface, "deleteRoute", routeHandle);
 }
 
 // Get the current handle
@@ -924,7 +925,7 @@ function mapviewer_session_CreateSession(dbusInterface,dltInterface)
 
 function mapviewer_session_DeleteSession(dbusInterface,dltInterface)
 {
-    return mapviewer_message(dbusInterface, dltInterface, "Session", "deleteSession", g_mapviewer_session);
+    return mapviewer_message(dbusInterface, dltInterface, "Session", "deleteSession", g_mapviewer_session_handle);
 }
 
 function mapviewer_CreateMapViewInstance(dbusInterface,dltInterface,width,height,type)
@@ -939,7 +940,7 @@ function mapviewer_ReleaseMapViewInstance(dbusInterface,dltInterface)
 
 // Get the current session
 function mapviewer_session() {
-    return g_mapviewer_session;
+    return g_mapviewer_session_handle;
 }
 
 // Create a new map handle or get the current handle
@@ -1015,6 +1016,13 @@ function mapviewer_DisplayRoute(dbusInterface,dltInterface,routeHandle,highlight
     var args=[];
     args=args.concat(routeHandle);
     mapviewercontrol_message(dbusInterface,dltInterface,"displayRoute", args.concat("boolean",highlighted));
+}
+
+function mapviewer_HideRoute(dbusInterface,dltInterface,routeHandle)
+{
+    var args=[];
+    args=args.concat(routeHandle);
+    mapviewercontrol_message(dbusInterface,dltInterface,"hideRoute", args);
 }
 
 function mapviewer_SetTargetPoint(dbusInterface,dltInterface,latitude,longitude,altitude)

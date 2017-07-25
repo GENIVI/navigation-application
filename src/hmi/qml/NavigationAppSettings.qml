@@ -475,11 +475,19 @@ NavigationAppHMIMenu {
         }
 
         StdButton {
+            source:StyleSheet.mapDataBase[Constants.SOURCE]; x:StyleSheet.mapDataBase[Constants.X]; y:StyleSheet.mapDataBase[Constants.Y]; width:StyleSheet.mapDataBase[Constants.WIDTH]; height:StyleSheet.mapDataBase[Constants.HEIGHT];textColor:StyleSheet.mapDataBaseText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.mapDataBaseText[Constants.PIXELSIZE];
+            id:mapDataBase; text: Genivi.gettext("Mapview"); disabled:false;
+            onClicked:{
+                disconnectSignals();
+                entryMenu(dltIf,"NavigationAppMap",menu);
+            }
+        }
+
+        StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back; text: Genivi.gettext("Back"); disabled:false; next:simu_mode; prev:showroom;
             onClicked:{
                 disconnectSignals();
-                saveSettings();
                 leaveMenu(dltIf);
             }
         }
