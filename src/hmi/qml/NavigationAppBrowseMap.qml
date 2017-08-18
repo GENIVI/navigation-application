@@ -154,8 +154,9 @@ NavigationAppHMIMenu {
     function guidanceWaypointReached(args)
     {
         Genivi.hookSignal(dltIf,"guidanceWaypointReached");
-        if (args[2]) {
-            // "Destination reached" TBD
+        if (args[1]) {
+            // "Destination reached"
+            stopGuidance();
         } else {
             // "Waypoint reached" TBD
         }
@@ -704,7 +705,10 @@ NavigationAppHMIMenu {
 
         var res1=Genivi.guidance_GetDestinationInformation(dbusIf,dltIf);
         distancetodestinationValue.text = Genivi.distance(res1[1]);
-        timetodestinationValue.text = Genivi.time(res1[3]);
+        var timetodestination = res1[3]; //in sec
+        //following stuff can be improved, it's a first attempt :-)
+        var dateTime = new Date();
+        timeofarrivalValue.text=Genivi.time(parseInt(Qt.formatTime(dateTime,"hh"),10)*3600+parseInt(Qt.formatTime(dateTime,"mm"),10)*60+parseInt(Qt.formatTime(dateTime,"ss"),10)+timetodestination);
 
         updateAddress();
     }
@@ -712,6 +716,7 @@ NavigationAppHMIMenu {
 	function stopGuidance()
 	{
         Genivi.guidance_StopGuidance(dbusIf,dltIf);
+        Genivi.mapviewer_HideRoute(dbusIf,dltIf,Genivi.g_routing_handle);
 	}
 
     function startGuidance()
@@ -841,7 +846,7 @@ NavigationAppHMIMenu {
         maneuverList.disabled=false;
         roadaftermaneuverValue.visible=true;
         distancetodestinationValue.visible=true;
-        timetodestinationValue.visible=true;
+        timeofarrivalValue.visible=true;
     }
 
     function hideRoutePanel()
@@ -850,7 +855,7 @@ NavigationAppHMIMenu {
         maneuverList.disabled=true;
         roadaftermaneuverValue.visible=false;
         distancetodestinationValue.visible=false;
-        timetodestinationValue.visible=false;
+        timeofarrivalValue.visible=false;
     }
 
     function showScrollPanel()
@@ -1108,11 +1113,11 @@ NavigationAppHMIMenu {
                     }
                 }
                 Text {
-                    x:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.X]; y:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.Y]; width:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.WIDTH]; height:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.HEIGHT];color:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.TEXTCOLOR];styleColor:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBrowseMapRoute.timetodestinationValue[Constants.PIXELSIZE];
+                    x:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.X]; y:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.Y]; width:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.WIDTH]; height:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.HEIGHT];color:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.TEXTCOLOR];styleColor:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBrowseMapRoute.timeofarrivalValue[Constants.PIXELSIZE];
                     visible: true
                     style: Text.Sunken;
                     smooth: true
-                    id:timetodestinationValue
+                    id:timeofarrivalValue
                     text: "-------"
                 }
                 Text {
@@ -1605,7 +1610,7 @@ NavigationAppHMIMenu {
                      text: Genivi.gettext("Restart")
                      disabled: (Genivi.guidance_activated || !Genivi.route_calculated);
                      onPressed: {
-                         //restart guidance
+                         //restart guidance (the route is displayed when the menu is reloaded due to guidance status changed)
                          startGuidance();
                      }
                  }
@@ -1617,6 +1622,7 @@ NavigationAppHMIMenu {
                      onPressed: {
                         //stop guidance
                          Genivi.guidance_StopGuidance(dbusIf,dltIf);
+                         Genivi.mapviewer_HideRoute(dbusIf,dltIf,Genivi.g_routing_handle);
                      }
                  }
                  StdButton {

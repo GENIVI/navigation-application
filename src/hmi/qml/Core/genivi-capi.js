@@ -247,14 +247,28 @@ function distance(meter)
 	}
 }
 
-// Give the formated time
+// Give the formated duration
+function duration(seconds)
+{
+    if (seconds >= 3600) {
+        return Math.floor(seconds/3600)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
+    } else {
+        return Math.floor(seconds/60)+":"+(seconds%60);
+    }
+}
+
+// Give the formated time (with reset of hours if >= 24, only 24h format is supported)
+// it supposes the time is less than 48 h
 function time(seconds)
 {
-	if (seconds >= 3600) {
-		return Math.floor(seconds/3600)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
-	} else {
-		return Math.floor(seconds/60)+":"+(seconds%60);
-	}
+    if (seconds >= 3600) {
+        if (Math.floor(seconds/3600) < 24)
+            return Math.floor(seconds/3600)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
+        else
+            return (Math.floor(seconds/3600)-24)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
+    } else {
+        return Math.floor(seconds/60)+":"+(seconds%60);
+    }
 }
 
 // Keyboard parameters

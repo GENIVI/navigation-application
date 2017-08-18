@@ -6,14 +6,11 @@ function get_window_id()
 	window_id=$(wmctrl -l | grep "$1" | tail -1 | cut -f1 -d" ")
 }
 
-get_window_id "hmi-launcher"
+get_window_id "fsa"
 wmctrl -i -r "$window_id" -e 0,100,100,800,480
 
 get_window_id "navit"
 wmctrl -i -r "$window_id" -e 0,100,72,800,480
 
-wmctrl -a "hmi-launcher"
-
-get_window_id "Simulation dashboard"
-wmctrl -i -r "$window_id" -e 0,100,600,800,480
+wmctrl -a "fsa"
 

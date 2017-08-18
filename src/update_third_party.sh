@@ -1,58 +1,18 @@
 #!/bin/bash
 
-navigation=0
-navit=0
-navigation_version='14e7e553b2391915b50b2b990bf0d5a959fd5d01'
+navigation_version='faed34d71ab44536cc077a6a6edf9e6903e40c1f'
 positioning_version='9725fe1f553197042d6445997690d452a73490c0'
-navit_version='1e71b5fd4c0bf5ac96e5207c51db7d17057ed798'
-
-if [ $# -lt 1 ] ; then 
-	echo "Argument required, please enter -h "
-	exit 1
-fi
-
-while getopts a:hn:d opt
-do
-	case $opt in
-	a)
-		navigation=1
-		navigation_version=$OPTARG
-		;;
-	n)
-		navit=1
-		navit_version=$OPTARG
-		;;
-	d)
-		navigation=1
-		navit=1
-		;;
-	h)
-		echo "Usage:"
-		echo "$0 [-ahnd]"
-		echo "-a <navigation version>: clean and load this version of navigation "
-		echo "-h: Help"
-		echo "-n <navit version>: clean and load this version of navit "
-		echo "-d clean and load all with default version "
-		exit 1
-	esac
-done
+navit_version='28478e7f26c1a0eedc06fb4765e2f736079c6f0c'
 
 echo "version of navigation is: $navigation_version"
 echo "version of positioning is: $positioning_version"
 echo "version of navit is: $navit_version"
 
-echo "This script deletes and reloads third party software"
-echo -n "So rebuild will be necessary, are you sure ? (y or n) "
-read input
+echo "This script deletes and reloads all the third party software"
+read -r -p "Are you sure ? [y/N] " input
 
-if [ "$input" != 'y' ]
-then
-	exit 1
-fi
-
-if [ "$navigation" = 1 ]
-then
-	#it's needed to reload everything
+case "$input" in
+	[y/Y])
 	rm -rf navigation
 	git clone https://github.com/GENIVI/navigation.git ./navigation
 	cd navigation
@@ -68,20 +28,13 @@ then
 	patch -p0 -i ../patches/search_list_get_unique.diff
 	patch -p0 -i ../patches/fsa_issue_padding.diff
 	cd ../
+	echo "Please rebuild with at least -c -n option"
+	;;
+	*)
+	exit 1
+	;;
+esac
 
-else
-	if [ "$navit" = 1 ]
-	then
-		#reload navit
-		cd navigation/src/navigation
-		git clone https://github.com/navit-gps/navit.git
-		cd navit
-		git checkout $navit_version
-		patch -p0 -i ../patches/search_list_get_unique.diff
-		patch -p0 -i ../patches/fsa_issue_padding.diff
-		cd ../../../../
-	fi
-fi
 
 
 

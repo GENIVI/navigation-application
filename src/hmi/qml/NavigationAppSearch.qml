@@ -699,7 +699,7 @@ NavigationAppHMIMenu {
         }
 
         distanceValue.text =Genivi.distance(distance);
-        timeValue.text= Genivi.time(time);
+        timeValue.text= Genivi.duration(time);
     }
 
     function showRoutePanel()
