@@ -608,6 +608,11 @@ function connect_mapViewScaleChangedSignal(interface,menu)
     return interface.connect("","/MapViewerControl","org.genivi.navigation.mapviewer.MapViewerControl.v4_0","mapViewScaleChanged",menu,"mapViewScaleChanged");
 }
 
+function connect_mapViewPerspectiveChangedSignal(interface,menu)
+{
+    return interface.connect("","/MapViewerControl","org.genivi.navigation.mapviewer.MapViewerControl.v4_0","mapViewPerspectiveChanged",menu,"mapViewPerspectiveChanged");
+}
+
 //----------------- NavigationCore dbus messages -----------------
 
 //----------------- Navigation core Session messages -----------------
@@ -922,6 +927,11 @@ function mapmatchedposition_GetSimulationSpeed(dbusInterface,dltInterface)
 function mapmatchedposition_SetSimulationSpeed(dbusInterface,dltInterface,speedFactor)
 {
     mapmatchedposition_message(dbusInterface,dltInterface,"setSimulationSpeed",["uint8",speedFactor]);
+}
+
+function mapmatchedposition_SetPosition(dbusInterface,dltInterface,position)
+{
+    mapmatchedposition_message(dbusInterface,dltInterface,"setPosition",["map",position]);
 }
 
 function mapmatchedposition_GetPosition(dbusInterface,dltInterface)

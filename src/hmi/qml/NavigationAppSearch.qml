@@ -48,6 +48,7 @@ NavigationAppHMIMenu {
     property real routeListSegments: 1000
     property bool vehicleLocated: false
     property real delayToGetManeuverList: 200 //in ms
+    property variant maneuverList: []
 
     DLTIf {
         id:dltIf;
@@ -80,6 +81,8 @@ NavigationAppHMIMenu {
         Genivi.hookSignal(dltIf,"guidanceStatusChanged");
         if(args[1]===Genivi.NAVIGATIONCORE_ACTIVE)
         {
+            Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
+            if(Genivi.simulationMode) Genivi.mapmatchedposition_PauseSimulation(dbusIf,dltIf);
             Genivi.setGuidanceActivated(dltIf,true);
             guidanceActive();
             //Guidance active, so inform the trip computer (refresh)
@@ -397,6 +400,7 @@ NavigationAppHMIMenu {
     function getManeuversList()
     {
         var res=Genivi.guidance_GetManeuversList(dbusIf,dltIf,0xffff,0);
+        //var error=res[1]
         var maneuversList=res[5];
         var model=maneuverArea.model;
         for (var i = 0 ; i < maneuversList.length ; i+=2) {
@@ -410,13 +414,17 @@ NavigationAppHMIMenu {
                 var direction=items[j+1][5];
                 var maneuver=items[j+1][7];
                 var maneuverData=items[j+1][9];
-                if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
+                if (maneuverData[1] === Genivi.NAVIGATIONCORE_DIRECTION)
                 {
-                   var text=Genivi.distance(offsetOfManeuver)+" "+Genivi.distance(offsetOfNextManeuver)+" "+Genivi.ManeuverType[maneuver]+":"+Genivi.ManeuverDirection[direction]+" "+roadNameAfterManeuver;
-                   model.append({"name":text,"number":i});
+                    var maneuverIcon=maneuverData[3][3][1];
+                    var text=Genivi.distance(offsetOfManeuver)+" "+Genivi.ManeuverType[maneuver]+" "+roadNameAfterManeuver;
+                    model.append({"name":text,"number":i});
                 }
             }
         }
+        //highlight first maneuver
+        maneuverArea.highlightFollowsCurrentItem=true;
+        maneuverArea.currentIndex=0;
     }
 
     function updateCurrentPosition()
@@ -780,6 +788,7 @@ NavigationAppHMIMenu {
         image:StyleSheet.navigation_app_search_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
         id: content
+        property int maneuverIndex: 0
 
         // name display
         Text {
@@ -1015,12 +1024,30 @@ NavigationAppHMIMenu {
             id:prev_maneuver;
             disabled:true;
             visible: false;
+            onClicked: {
+                var model=maneuverArea.model;
+                if(content.maneuverIndex > 0){
+                    content.maneuverIndex--;
+                    console.log(model.get(content.maneuverIndex).name)
+                    maneuverArea.highlightFollowsCurrentItem=true;
+                    maneuverArea.currentIndex=content.maneuverIndex;
+                }
+            }
         }
         StdButton {
             source:StyleSheet.next_maneuver[Constants.SOURCE]; x:StyleSheet.next_maneuver[Constants.X]; y:StyleSheet.next_maneuver[Constants.Y]; width:StyleSheet.next_maneuver[Constants.WIDTH]; height:StyleSheet.next_maneuver[Constants.HEIGHT];
             id:next_maneuver;
             disabled:true;
             visible: false;
+            onClicked: {
+                var model=maneuverArea.model;
+                if(content.maneuverIndex < (model.count-1)){
+                    content.maneuverIndex++;
+                    console.log(model.get(content.maneuverIndex).name)
+                    maneuverArea.highlightFollowsCurrentItem=true;
+                    maneuverArea.currentIndex=content.maneuverIndex;
+                }
+            }
         }
 
         // enter a location by the keyboard menu
@@ -1078,6 +1105,8 @@ NavigationAppHMIMenu {
             x:StyleSheet.maneuverArea[Constants.X]; y:StyleSheet.maneuverArea[Constants.Y]; width:StyleSheet.maneuverArea[Constants.WIDTH]; height:StyleSheet.maneuverArea[Constants.HEIGHT];
             id:maneuverArea
             visible: false;
+            interactive: false;
+            enabled: false;
             delegate: maneuverDelegate
         }
 

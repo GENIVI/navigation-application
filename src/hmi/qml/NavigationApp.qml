@@ -80,6 +80,7 @@ ApplicationWindow {
     }
 
 	Component.onCompleted: {
+
         //init persistent data
         //NB: settings are stored as strings, so it may need some rework for persistent data that are not strings (to be improved ?)
         Genivi.setlang(Settings.getValue("Locale/language"),Settings.getValue("Locale/country"),Settings.getValue("Locale/script"));
@@ -94,7 +95,10 @@ ApplicationWindow {
         else
             Genivi.simulationMode=false;
         if(Settings.getValue("Settings/showroom")==="true")
+        {
             Genivi.showroom=true;
+            Genivi.mapmatchedposition_SetPosition(dbusIf,dltIf,Genivi.latlon_to_map(Genivi.data['default_position']));
+        }
         else
             Genivi.showroom=false;
         if(Settings.getValue("Settings/autoguidance")==="true")
@@ -110,7 +114,6 @@ ApplicationWindow {
             Genivi.dlt=true;
         else
             Genivi.dlt=false;
-
 
         //configure the middleware
         Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
@@ -148,8 +151,6 @@ ApplicationWindow {
         Genivi.g_mapviewer_handle[1]=0;
         var res1=Genivi.mapviewer_session_DeleteSession(dbusIf,dltIf);//only one session managed
         Genivi.g_mapviewer_session_handle[1]=0;
-        var res2=Genivi.routing_DeleteRoute(dbusIf,dltIf);
-        Genivi.g_routing_handle[1]=0;
         var res3=Genivi.navigationcore_session_DeleteSession(dbusIf,dltIf);
         Genivi.g_nav_session_handle[1]=0;
     }

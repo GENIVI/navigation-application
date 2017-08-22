@@ -396,6 +396,7 @@ NavigationAppHMIMenu {
             onClicked: {
                 disconnectSignals();
                 Genivi.setLocationInputActivated(dltIf,true);
+                Genivi.preloadMode=true;
                 pageOpen(dltIf,"NavigationAppSearch");
             }
         }

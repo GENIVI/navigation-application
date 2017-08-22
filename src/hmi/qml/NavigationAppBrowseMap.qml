@@ -299,6 +299,26 @@ NavigationAppHMIMenu {
         setScale(Genivi.currentZoomId);
     }
 
+    property Item mapViewPerspectiveChangedSignal;
+    function mapViewPerspectiveChanged(args)
+    {
+        Genivi.hookSignal(dltIf,"mapViewPerspectiveChanged");
+        var perspective=args[3];
+        if(perspective===Genivi.MAPVIEWER_3D){
+            console.log("toto")
+            orientation.setState("B");
+            showThreeDSettingsPanel();
+        }else{
+            hideThreeDSettingsPanel();
+            if (orientation.status==0)
+                orientation.setState("D")
+            else{
+                if (orientation.status==2)
+                    orientation.setState("N");
+            }
+        }
+    }
+
     function connectSignals()
     {
         guidanceStatusChangedSignal=Genivi.connect_guidanceStatusChangedSignal(dbusIf,menu);
@@ -314,6 +334,7 @@ NavigationAppHMIMenu {
         routeCalculationProgressUpdateSignal=Genivi.connect_routeCalculationProgressUpdateSignal(dbusIf,menu);
         fuelStopAdvisorWarningSignal=Genivi.connect_fuelStopAdvisorWarningSignal(dbusIf,menu);
         mapViewScaleChangedSignal=Genivi.connect_mapViewScaleChangedSignal(dbusIf,menu)
+        mapViewPerspectiveChangedSignal=Genivi.connect_mapViewPerspectiveChangedSignal(dbusIf,menu)
     }
 
     function disconnectSignals()
@@ -331,6 +352,7 @@ NavigationAppHMIMenu {
         routeCalculationProgressUpdateSignal.destroy();
         fuelStopAdvisorWarningSignal.destroy();
         mapViewScaleChangedSignal.destroy();
+        mapViewPerspectiveChangedSignal.destroy();
     }
 
     //------------------------------------------//
@@ -630,17 +652,12 @@ NavigationAppHMIMenu {
         if (orientation.status==0) {
             Genivi.mapviewer_SetCameraHeadingAngle(dbusIf,dltIf,0);
             Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_2D);
-            orientation.setState("D");
 		} else {
             if (orientation.status==1) {
                 Genivi.mapviewer_SetCameraHeadingTrackUp(dbusIf,dltIf);
                 Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_3D);
-                orientation.setState("B");
-                showThreeDSettingsPanel();
             } else{
                 Genivi.mapviewer_SetMapViewPerspective(dbusIf,dltIf,Genivi.MAPVIEWER_2D);
-                orientation.setState("N");
-                hideThreeDSettingsPanel();
             }
 		}
 	}
@@ -1641,6 +1658,7 @@ NavigationAppHMIMenu {
                              Genivi.setRouteCalculated(dltIf,false);
                          }
                          Genivi.setLocationInputActivated(dltIf,true);
+                         Genivi.preloadMode=true;
                          entryMenu(dltIf,"NavigationAppSearch",menu);
                      }
                  }
@@ -1703,9 +1721,10 @@ NavigationAppHMIMenu {
                     showGuidancePanel();
                     showRoutePanel();
                     updateGuidance();
+                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
                     if (Genivi.simulationMode===true)
                     {
-                        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
+                        Genivi.mapmatchedposition_PauseSimulation(dbusIf,dltIf);
                         showSimulationPanel();
                         updateSimulation();
                     } else {
@@ -1717,6 +1736,11 @@ NavigationAppHMIMenu {
                     }
                     Genivi.mapviewer_SetTargetPoint(dbusIf,dltIf,Genivi.data['current_position']['lat'],Genivi.data['current_position']['lon'],Genivi.data['current_position']['alt']);
                     Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,0,50); //no advisor mode
+                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
+                    if (Genivi.simulationMode===true)
+                    {
+                        Genivi.mapmatchedposition_PauseSimulation(dbusIf,dltIf);
+                    }
                     hideGuidancePanel();
                     hideRoutePanel();
                     hideSimulationPanel();
@@ -1730,6 +1754,11 @@ NavigationAppHMIMenu {
                     Genivi.mapviewer_SetMapViewScale(dbusIf,dltIf,Genivi.zoom_guidance);
                     Genivi.mapviewer_SetTargetPoint(dbusIf,dltIf,Genivi.data['position']['lat'],Genivi.data['position']['lon'],Genivi.data['position']['alt']);
                     Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,0,50); //no advisor mode
+                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
+                    if (Genivi.simulationMode===true)
+                    {
+                        Genivi.mapmatchedposition_PauseSimulation(dbusIf,dltIf);
+                    }
                     hideGuidancePanel();
                     hideRoutePanel();
                     hideSimulationPanel();

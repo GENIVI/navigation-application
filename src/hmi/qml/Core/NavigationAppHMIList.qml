@@ -31,6 +31,9 @@ Rectangle {
 	property alias model: view.model
 	property alias next: view.next
 	property alias prev: view.prev
+    property alias interactive: view.interactive
+    property alias highlightFollowsCurrentItem: view.highlightFollowsCurrentItem
+    property alias currentIndex: view.currentIndex
 	signal selected(variant what)
 	color: "#141414"
 

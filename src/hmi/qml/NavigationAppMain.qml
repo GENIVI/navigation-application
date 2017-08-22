@@ -111,6 +111,7 @@ NavigationAppHMIMenu {
             id:navigation;
             onClicked: {
                 Genivi.setLocationInputActivated(dltIf,true);
+                Genivi.preloadMode=true;
                 subMenu(dltIf,"NavigationAppSearch","NavigationAppBrowseMap");
             }
         }
@@ -192,16 +193,6 @@ NavigationAppHMIMenu {
 
     Component.onCompleted: {
         connectSignals();
-
-        // Test if the navigation server is connected
-        var res=Genivi.navigationcore_session_GetVersion(dbusIf,dltIf);
-        if (res[0] != "error") {
-            var res1=Genivi.navigationcore_session_CreateSession(dbusIf,dltIf);
-            Genivi.g_nav_session_handle[1]=res1[3];
-        } else {
-            //to do something here
-            Genivi.dump("",res);
-        }
 
         updateCurrentPosition();
 

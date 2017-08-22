@@ -282,16 +282,16 @@ NavigationAppHMIMenu {
              }
         StdButton { objectName:"fra_FRA";
             source:StyleSheet.french_flag[Constants.SOURCE]; x:StyleSheet.french_flag[Constants.X]; y:StyleSheet.french_flag[Constants.Y]; width:StyleSheet.french_flag[Constants.WIDTH]; height:StyleSheet.french_flag[Constants.HEIGHT];
-            id:fra_FRA; disabled:false; next:deu_DEU; prev:back;  onClicked: {setLocale("fra","FRA","Latn");}}
+            id:fra_FRA; disabled:false;onClicked: {setLocale("fra","FRA","Latn");}}
         StdButton { objectName:"deu_DEU";
             source:StyleSheet.german_flag[Constants.SOURCE]; x:StyleSheet.german_flag[Constants.X]; y:StyleSheet.german_flag[Constants.Y]; width:StyleSheet.german_flag[Constants.WIDTH]; height:StyleSheet.german_flag[Constants.HEIGHT];
-             id:deu_DEU; disabled:false; next:eng_USA; prev:fra_FRA;  onClicked: {setLocale("deu","DEU","Latn");}}
+             id:deu_DEU; disabled:false;onClicked: {setLocale("deu","DEU","Latn");}}
         StdButton { objectName:"eng_USA";
             source:StyleSheet.usa_flag[Constants.SOURCE]; x:StyleSheet.usa_flag[Constants.X]; y:StyleSheet.usa_flag[Constants.Y]; width:StyleSheet.usa_flag[Constants.WIDTH]; height:StyleSheet.usa_flag[Constants.HEIGHT];
-            id:eng_USA; disabled:false; next:jpn_JPN; prev:deu_DEU;  onClicked: {setLocale("eng","USA","Latn");}}
+            id:eng_USA; disabled:false;onClicked: {setLocale("eng","USA","Latn");}}
         StdButton { objectName:"jpn_JPN";
             source:StyleSheet.japanese_flag[Constants.SOURCE]; x:StyleSheet.japanese_flag[Constants.X]; y:StyleSheet.japanese_flag[Constants.Y]; width:StyleSheet.japanese_flag[Constants.WIDTH]; height:StyleSheet.japanese_flag[Constants.HEIGHT];
-            id:jpn_JPN; disabled:false; next:back; prev:eng_USA;  onClicked: {setLocale("jpn","JPN","Hrkt");}}
+            id:jpn_JPN; disabled:false;onClicked: {setLocale("jpn","JPN","Hrkt");}}
 
         Text {
             x:StyleSheet.unitsTitle[Constants.X]; y:StyleSheet.unitsTitle[Constants.Y]; width:StyleSheet.unitsTitle[Constants.WIDTH]; height:StyleSheet.unitsTitle[Constants.HEIGHT];color:StyleSheet.unitsTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[Constants.PIXELSIZE];
@@ -301,12 +301,12 @@ NavigationAppHMIMenu {
             text: Genivi.gettext("Units")
              }
         StdButton { source:StyleSheet.unit_km[Constants.SOURCE]; x:StyleSheet.unit_km[Constants.X]; y:StyleSheet.unit_km[Constants.Y]; width:StyleSheet.unit_km[Constants.WIDTH]; height:StyleSheet.unit_km[Constants.HEIGHT];
-            id:unit_km;  disabled:false; next:back; prev:back;
+            id:unit_km;  disabled:false;
             onClicked: {
                 setUnitsLength(Genivi.NAVIGATIONCORE_KM,Genivi.MAPVIEWER_KM);}
         }
         StdButton { source:StyleSheet.unit_mile[Constants.SOURCE]; x:StyleSheet.unit_mile[Constants.X]; y:StyleSheet.unit_mile[Constants.Y]; width:StyleSheet.unit_mile[Constants.WIDTH]; height:StyleSheet.unit_mile[Constants.HEIGHT];
-            id:unit_mile;  disabled:false; next:back; prev:back;
+            id:unit_mile;  disabled:false;
             onClicked: {
                 setUnitsLength(Genivi.NAVIGATIONCORE_MILE,Genivi.MAPVIEWER_MILE);}
         }
@@ -335,9 +335,9 @@ NavigationAppHMIMenu {
             text: Genivi.gettext("Ferries")
         }
         StdButton { source:StyleSheet.allow_ferries[Constants.SOURCE]; x:StyleSheet.allow_ferries[Constants.X]; y:StyleSheet.allow_ferries[Constants.Y]; width:StyleSheet.allow_ferries[Constants.WIDTH]; height:StyleSheet.allow_ferries[Constants.HEIGHT];
-            id:ferries_yes; next:back; prev:back;  onClicked:{use(Genivi.NAVIGATIONCORE_FERRY)}}
+            id:ferries_yes;disabled: !Genivi.route_calculated;onClicked:{use(Genivi.NAVIGATIONCORE_FERRY)}}
         StdButton { source:StyleSheet.avoid_ferries[Constants.SOURCE]; x:StyleSheet.avoid_ferries[Constants.X]; y:StyleSheet.avoid_ferries[Constants.Y]; width:StyleSheet.avoid_ferries[Constants.WIDTH]; height:StyleSheet.avoid_ferries[Constants.HEIGHT];
-            id:ferries_no; next:back; prev:back;  onClicked:{avoid(Genivi.NAVIGATIONCORE_FERRY)}}
+            id:ferries_no;disabled: !Genivi.route_calculated;onClicked:{avoid(Genivi.NAVIGATIONCORE_FERRY)}}
 
         Text {
             x:StyleSheet.tollRoadsText[Constants.X]; y:StyleSheet.tollRoadsText[Constants.Y]; width:StyleSheet.tollRoadsText[Constants.WIDTH]; height:StyleSheet.tollRoadsText[Constants.HEIGHT];color:StyleSheet.tollRoadsText[Constants.TEXTCOLOR];styleColor:StyleSheet.tollRoadsText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tollRoadsText[Constants.PIXELSIZE];
@@ -347,9 +347,9 @@ NavigationAppHMIMenu {
             text: Genivi.gettext("TollRoads")
         }
         StdButton { source:StyleSheet.allow_tollRoads[Constants.SOURCE]; x:StyleSheet.allow_tollRoads[Constants.X]; y:StyleSheet.allow_tollRoads[Constants.Y]; width:StyleSheet.allow_tollRoads[Constants.WIDTH]; height:StyleSheet.allow_tollRoads[Constants.HEIGHT];
-            id:toll_roads_yes; next:back; prev:back;  onClicked:{use(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
+            id:toll_roads_yes;disabled: !Genivi.route_calculated;onClicked:{use(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
         StdButton { source:StyleSheet.avoid_tollRoads[Constants.SOURCE]; x:StyleSheet.avoid_tollRoads[Constants.X]; y:StyleSheet.avoid_tollRoads[Constants.Y]; width:StyleSheet.avoid_tollRoads[Constants.WIDTH]; height:StyleSheet.avoid_tollRoads[Constants.HEIGHT];
-            id:toll_roads_no;  next:back; prev:back;  onClicked:{avoid(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
+            id:toll_roads_no;disabled: !Genivi.route_calculated;onClicked:{avoid(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
 
         Text {
             x:StyleSheet.motorWaysText[Constants.X]; y:StyleSheet.motorWaysText[Constants.Y]; width:StyleSheet.motorWaysText[Constants.WIDTH]; height:StyleSheet.motorWaysText[Constants.HEIGHT];color:StyleSheet.motorWaysText[Constants.TEXTCOLOR];styleColor:StyleSheet.motorWaysText[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.motorWaysText[Constants.PIXELSIZE];
@@ -359,9 +359,9 @@ NavigationAppHMIMenu {
             text: Genivi.gettext("MotorWays")
         }
         StdButton { source:StyleSheet.allow_motorways[Constants.SOURCE]; x:StyleSheet.allow_motorways[Constants.X]; y:StyleSheet.allow_motorways[Constants.Y]; width:StyleSheet.allow_motorways[Constants.WIDTH]; height:StyleSheet.allow_motorways[Constants.HEIGHT];
-            id:motorways_yes; next:back; prev:back;  onClicked:{use(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
+            id:motorways_yes;disabled: !Genivi.route_calculated;onClicked:{use(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
         StdButton { source:StyleSheet.avoid_motorways[Constants.SOURCE]; x:StyleSheet.avoid_motorways[Constants.X]; y:StyleSheet.avoid_motorways[Constants.Y]; width:StyleSheet.avoid_motorways[Constants.WIDTH]; height:StyleSheet.avoid_motorways[Constants.HEIGHT];
-            id:motorways_no;  next:back; prev:back;  onClicked:{avoid(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
+            id:motorways_no;disabled: !Genivi.route_calculated;onClicked:{avoid(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
 
 		Text {
             x:StyleSheet.simulationTitle[Constants.X]; y:StyleSheet.simulationTitle[Constants.Y]; width:StyleSheet.simulationTitle[Constants.WIDTH]; height:StyleSheet.simulationTitle[Constants.HEIGHT];color:StyleSheet.simulationTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.simulationTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.simulationTitle[Constants.PIXELSIZE];
@@ -372,7 +372,7 @@ NavigationAppHMIMenu {
              }
         StdButton {
             x:StyleSheet.simu_mode_enable[Constants.X]; y:StyleSheet.simu_mode_enable[Constants.Y]; width:StyleSheet.simu_mode_enable[Constants.WIDTH]; height:StyleSheet.simu_mode_enable[Constants.HEIGHT];
-            id:simu_mode; next:back; prev:back;  disabled:false;
+            id:simu_mode;disabled:false;
             source:StyleSheet.simu_mode_enable[Constants.SOURCE];
             function setState(name)
             {
@@ -390,11 +390,13 @@ NavigationAppHMIMenu {
                 if (Genivi.simulationMode==true)
                 {
                     Genivi.simulationMode=false;
+                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,false);
                     simu_mode.setState("DISABLE");
                 }
                 else
                 {
                     Genivi.simulationMode=true;
+                    Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,true);
                     simu_mode.setState("ENABLE");
                 }
             }
@@ -432,6 +434,7 @@ NavigationAppHMIMenu {
                 else
                 {
                     Genivi.showroom=true;
+                    Genivi.mapmatchedposition_SetPosition(dbusIf,dltIf,Genivi.latlon_to_map(Genivi.data['default_position']));
                     showroom.setState("ENABLE");
                 }
             }
@@ -485,7 +488,7 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false; next:simu_mode; prev:showroom;
+            id:back; text: Genivi.gettext("Back"); disabled:false;
             onClicked:{
                 disconnectSignals();
                 leaveMenu(dltIf);
@@ -496,13 +499,11 @@ NavigationAppHMIMenu {
 
     Component.onCompleted: {
         connectSignals();
-        Genivi.mapmatchedposition_SetSimulationMode(dbusIf,dltIf,Genivi.simulationMode);
-        if(Genivi.simulationMode===true) {
-            Genivi.mapmatchedposition_PauseSimulation(dbusIf,dltIf);
-        }
 
-        var res=Genivi.routing_GetCostModel(dbusIf,dltIf);
-        var costmodel=res[1];
+        if(Genivi.route_calculated){
+            var res=Genivi.routing_GetCostModel(dbusIf,dltIf);
+            var costmodel=res[1];
+        }
         var costModelsList=Genivi.routing_GetSupportedCostModels(dbusIf,dltIf);
         for (var i = 0 ; i < costModelsList[1].length ; i+=2) {
             var button=Qt.createQmlObject('import QtQuick 2.1 ; import "Core"; StdButton { }',content,'dynamic');
@@ -515,7 +516,12 @@ NavigationAppHMIMenu {
             button.pixelSize=StyleSheet.costModelValue[Constants.PIXELSIZE];
             button.userdata=costModelsList[1][i+1];
             button.text=Genivi.CostModels[button.userdata];
-            button.disabled=button.userdata == costmodel;
+            if(Genivi.route_calculated){
+                button.disabled=button.userdata === costmodel;
+            }else{
+                button.disabled=true;
+            }
+
             button.clicked.connect(
                 function(what) {
                     Genivi.routing_SetCostModel(dbusIf,dltIf,what.userdata);
