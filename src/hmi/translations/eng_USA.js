@@ -52,6 +52,7 @@ translations["Simulation"]="SIMULATION";
 
 translations["RouteDistance"]="DISTANCE";
 translations["RouteTime"]="TIME";
+translations["RouteArrival"]="ARRIVAL";
 translations["Guidance"]="GUIDANCE";
 translations["DisplayRoute"]="DISPLAY";
 translations["StatusTitle"]="STATUS";

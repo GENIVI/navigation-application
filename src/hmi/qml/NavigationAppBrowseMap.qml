@@ -305,7 +305,6 @@ NavigationAppHMIMenu {
         Genivi.hookSignal(dltIf,"mapViewPerspectiveChanged");
         var perspective=args[3];
         if(perspective===Genivi.MAPVIEWER_3D){
-            console.log("toto")
             orientation.setState("B");
             showThreeDSettingsPanel();
         }else{
@@ -381,7 +380,7 @@ NavigationAppHMIMenu {
             if (active) {
                 if(clockwize)
                 {
-                    if(angle>=350) angle=0; else angle+=increment;
+                    if(angle>=360) angle=increment; else angle+=increment;
                 }else{
                     if(angle<=0) angle=350; else angle-=increment;
                 }

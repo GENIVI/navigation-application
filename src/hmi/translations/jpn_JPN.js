@@ -52,6 +52,7 @@ translations["Simulation"]="シミュレーション";
 
 translations["RouteDistance"]="距離";
 translations["RouteTime"]="時間";
+translations["RouteArrival"]="到着";
 translations["Guidance"]="ガイダンス";
 translations["DisplayRoute"]="ルート";
 translations["StatusTitle"]="ステータス";

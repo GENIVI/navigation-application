@@ -48,8 +48,8 @@ NavigationAppHMIMenu {
     property real routeListSegments: 1000
     property bool vehicleLocated: false
     property real delayToGetManeuverList: 200 //in ms
-    property variant maneuverList: []
-
+    property int maneuverIndex: 0
+    property var maneuverIconIDList: []
     DLTIf {
         id:dltIf;
         name: pagefile;
@@ -403,6 +403,7 @@ NavigationAppHMIMenu {
         //var error=res[1]
         var maneuversList=res[5];
         var model=maneuverArea.model;
+        maneuverIndex=0;
         for (var i = 0 ; i < maneuversList.length ; i+=2) {
             var roadNameAfterManeuver=maneuversList[i+1][9];
             var offsetOfNextManeuver=maneuversList[i+1][15];
@@ -416,15 +417,18 @@ NavigationAppHMIMenu {
                 var maneuverData=items[j+1][9];
                 if (maneuverData[1] === Genivi.NAVIGATIONCORE_DIRECTION)
                 {
-                    var maneuverIcon=maneuverData[3][3][1];
                     var text=Genivi.distance(offsetOfManeuver)+" "+Genivi.ManeuverType[maneuver]+" "+roadNameAfterManeuver;
-                    model.append({"name":text,"number":i});
+                    model.append({"name":text,"number":maneuverIndex});
+                    maneuverIconIDList[maneuverIndex]=maneuverData[3][3][1];
+                    maneuverIndex+=1;
                 }
             }
         }
         //highlight first maneuver
         maneuverArea.highlightFollowsCurrentItem=true;
         maneuverArea.currentIndex=0;
+        maneuverIndex=0;
+        maneuverIconPreview.source=Genivi.ManeuverDirectionIcon[maneuverIconIDList[maneuverIndex]];
     }
 
     function updateCurrentPosition()
@@ -690,12 +694,12 @@ NavigationAppHMIMenu {
 
         var res=Genivi.routing_GetRouteOverviewTimeAndDistance(dbusIf,dltIf);
 
-        var i, time = 0, distance = 0;
+        var i, timetodestination = 0, distance = 0;
         for (i=0;i<res[1].length;i+=4)
         {
             if (res[1][i+1] == Genivi.NAVIGATIONCORE_TOTAL_TIME)
             {
-                time = res[1][i+3][3][1];
+                timetodestination = res[1][i+3][3][1];
             }
             else
             {
@@ -707,7 +711,10 @@ NavigationAppHMIMenu {
         }
 
         distanceValue.text =Genivi.distance(distance);
-        timeValue.text= Genivi.duration(time);
+        timeValue.text= Genivi.duration(timetodestination);
+        //following stuff can be improved, it's a first attempt :-)
+        var dateTime = new Date();
+        arrivalValue.text=Genivi.time(parseInt(Qt.formatTime(dateTime,"hh"),10)*3600+parseInt(Qt.formatTime(dateTime,"mm"),10)*60+parseInt(Qt.formatTime(dateTime,"ss"),10)+timetodestination);
     }
 
     function showRoutePanel()
@@ -718,6 +725,8 @@ NavigationAppHMIMenu {
         distanceValue.visible=true;
         timeTitle.visible=true;
         timeValue.visible=true;
+        arrivalTitle.visible=true;
+        arrivalValue.visible=true;
         statusTitle.visible=true;
         statusValue.visible=true;
         show_route_on_map.visible=true;
@@ -731,6 +740,8 @@ NavigationAppHMIMenu {
         distanceValue.visible=false;
         timeTitle.visible=false;
         timeValue.visible=false;
+        arrivalTitle.visible=false;
+        arrivalValue.visible=false;
         statusTitle.visible=false;
         statusValue.visible=false;
         show_route_on_map.visible=false;
@@ -749,6 +760,7 @@ NavigationAppHMIMenu {
         maneuverArea.visible=true;
         maneuverArea.forceActiveFocus();
         crossroadZoom.visible=false;
+        maneuverIconPreview.visible=true;
         prev_maneuver.visible=true;
         prev_maneuver.disabled=false;
         next_maneuver.visible=true;
@@ -759,6 +771,7 @@ NavigationAppHMIMenu {
     {
         maneuverArea.visible=false;
         crossroadZoom.visible=true;
+        maneuverIconPreview.visible=false;
         prev_maneuver.visible=false;
         prev_maneuver.disabled=true;
         next_maneuver.visible=false;
@@ -788,7 +801,6 @@ NavigationAppHMIMenu {
         image:StyleSheet.navigation_app_search_background[Constants.SOURCE];
         anchors { fill: parent; topMargin: parent.headlineHeight}
         id: content
-        property int maneuverIndex: 0
 
         // name display
         Text {
@@ -963,6 +975,20 @@ NavigationAppHMIMenu {
             visible: false;
         }
         Text {
+            x:StyleSheet.arrivalTitle[Constants.X]; y:StyleSheet.arrivalTitle[Constants.Y]; width:StyleSheet.arrivalTitle[Constants.WIDTH]; height:StyleSheet.arrivalTitle[Constants.HEIGHT];color:StyleSheet.arrivalTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.arrivalTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.arrivalTitle[Constants.PIXELSIZE];
+            id:arrivalTitle;
+            style: Text.Sunken;
+            smooth: true
+            text: Genivi.gettext("RouteArrival")
+            visible: false;
+        }
+        SmartText {
+            x:StyleSheet.arrivalValue[Constants.X]; y:StyleSheet.arrivalValue[Constants.Y]; width:StyleSheet.arrivalValue[Constants.WIDTH]; height:StyleSheet.arrivalValue[Constants.HEIGHT];color:StyleSheet.arrivalValue[Constants.TEXTCOLOR];styleColor:StyleSheet.arrivalValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.arrivalValue[Constants.PIXELSIZE];
+            id:arrivalValue
+            text: ""
+            visible: false;
+        }
+        Text {
             x:StyleSheet.statusTitle[Constants.X]; y:StyleSheet.statusTitle[Constants.Y]; width:StyleSheet.statusTitle[Constants.WIDTH]; height:StyleSheet.statusTitle[Constants.HEIGHT];color:StyleSheet.statusTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.statusTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.statusTitle[Constants.PIXELSIZE];
             id:statusTitle;
             style: Text.Sunken;
@@ -1019,6 +1045,13 @@ NavigationAppHMIMenu {
             border.right: 0; border.bottom: 0
             visible: true;
         }
+        BorderImage {
+            id: maneuverIconPreview
+            source:StyleSheet.maneuverIconPreview[Constants.SOURCE]; x:StyleSheet.maneuverIconPreview[Constants.X]; y:StyleSheet.maneuverIconPreview[Constants.Y]; width:StyleSheet.maneuverIconPreview[Constants.WIDTH]; height:StyleSheet.maneuverIconPreview[Constants.HEIGHT];
+            border.left: 0; border.top: 0
+            border.right: 0; border.bottom: 0
+            visible: false;
+        }
         StdButton {
             source:StyleSheet.prev_maneuver[Constants.SOURCE]; x:StyleSheet.prev_maneuver[Constants.X]; y:StyleSheet.prev_maneuver[Constants.Y]; width:StyleSheet.prev_maneuver[Constants.WIDTH]; height:StyleSheet.prev_maneuver[Constants.HEIGHT];
             id:prev_maneuver;
@@ -1026,11 +1059,11 @@ NavigationAppHMIMenu {
             visible: false;
             onClicked: {
                 var model=maneuverArea.model;
-                if(content.maneuverIndex > 0){
-                    content.maneuverIndex--;
-                    console.log(model.get(content.maneuverIndex).name)
+                if(maneuverIndex > 0){
+                    maneuverIndex--;
                     maneuverArea.highlightFollowsCurrentItem=true;
-                    maneuverArea.currentIndex=content.maneuverIndex;
+                    maneuverArea.currentIndex=maneuverIndex;
+                    maneuverIconPreview.source=Genivi.ManeuverDirectionIcon[maneuverIconIDList[maneuverIndex]];
                 }
             }
         }
@@ -1041,11 +1074,11 @@ NavigationAppHMIMenu {
             visible: false;
             onClicked: {
                 var model=maneuverArea.model;
-                if(content.maneuverIndex < (model.count-1)){
-                    content.maneuverIndex++;
-                    console.log(model.get(content.maneuverIndex).name)
+                if(maneuverIndex < (model.count-1)){
+                    maneuverIndex++;
                     maneuverArea.highlightFollowsCurrentItem=true;
-                    maneuverArea.currentIndex=content.maneuverIndex;
+                    maneuverArea.currentIndex=maneuverIndex;
+                    maneuverIconPreview.source=Genivi.ManeuverDirectionIcon[maneuverIconIDList[maneuverIndex]];
                 }
             }
         }

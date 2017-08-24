@@ -30,7 +30,6 @@
 
 Qt.include("resource.js")
 
-var dbusInterface;
 var g_nav_session_handle=["uint32",0];
 var g_locationinput_handle=["uint32",0];
 var g_routing_handle=["uint32",0];
