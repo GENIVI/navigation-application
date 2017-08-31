@@ -18,6 +18,7 @@ cd navit
 git checkout $navit_version
 patch -p0 -i ../patches/search_list_get_unique.diff
 patch -p0 -i ../patches/fsa_issue_padding.diff
+patch -p0 -i ../patches/avoid-crash-on-guidance-when-delete-and-recreate-route.diff
 cd ../../../../
 
 

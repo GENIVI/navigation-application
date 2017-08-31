@@ -135,8 +135,6 @@ NavigationAppHMIMenu {
         categoriesAndRadius[1]=Genivi.radius;
         categoriesAndRadiusList.push(categoriesAndRadius);
 
-        Genivi.poisearch_DeletePoiSearchHandle(dbusIf,dltIf)
-        Genivi.g_poisearch_handle[1]=0;
         var res_poi=Genivi.poisearch_CreatePoiSearchHandle(dbusIf,dltIf)
         Genivi.g_poisearch_handle[1]=res_poi[1];
         Genivi.poisearch_SetCenter(dbusIf,dltIf,latitude,longitude,0);
@@ -210,6 +208,27 @@ NavigationAppHMIMenu {
         selectedValueTitle.visible=false;
         select_reroute.disabled=true;
         select_display_on_map.disabled=true;
+        if(Genivi.g_poisearch_handle[1]){
+            Genivi.poisearch_DeletePoiSearchHandle(dbusIf,dltIf)
+            Genivi.g_poisearch_handle[1]=0;
+        }
+    }
+
+    function exitRoute()
+    {
+        //if needed, reset the guidance and the routing to enter a new destination
+        if(Genivi.guidance_activated)
+        {
+            Genivi.setGuidanceActivated(dltIf,false);
+            Genivi.guidance_StopGuidance(dbusIf,dltIf);
+            //Guidance inactive, so inform the trip computer
+            Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,0,0);
+        }
+        if(Genivi.route_calculated)
+        {
+            Genivi.routing_DeleteRoute(dbusIf,dltIf,Genivi.g_routing_handle);
+            Genivi.setRouteCalculated(dltIf,false);
+        }
     }
 
     //------------------------------------------//
@@ -368,6 +387,8 @@ NavigationAppHMIMenu {
                        poiFrame.visible=true;
                        categoryFrame.visible=false;
                        view.model.clear();
+                       //launch a search on the selected category
+                       clearSearch();
                        searchPois();
                    } else {
                        keyboardArea.destination.text=""
@@ -385,6 +406,7 @@ NavigationAppHMIMenu {
             firstLayout: Genivi.kbdFirstLayout;
             secondLayout: Genivi.kbdSecondLayout;
             onKeypress: {
+                //launch a search on the selected category
                 clearSearch();
                 searchPois();
             }
@@ -395,6 +417,8 @@ NavigationAppHMIMenu {
             id:location_input;
             onClicked: {
                 disconnectSignals();
+                exitRoute();
+                //the location is entered by address
                 Genivi.setLocationInputActivated(dltIf,true);
                 Genivi.preloadMode=true;
                 pageOpen(dltIf,"NavigationAppSearch");
@@ -408,7 +432,6 @@ NavigationAppHMIMenu {
                 disconnectSignals();
                 Genivi.data['destination']=Genivi.poi_data[Genivi.poi_id];
                 Genivi.setRerouteRequested(dltIf,true);
-                Genivi.guidance_StopGuidance(dbusIf,dltIf);
                 //create a route
                 var res4=Genivi.routing_CreateRoute(dbusIf,dltIf);
                 Genivi.g_routing_handle[1]=res4[3];
@@ -444,7 +467,6 @@ NavigationAppHMIMenu {
 			text: Genivi.gettext("Back"); 
             onClicked: {
                 disconnectSignals();
-                Genivi.guidance_StopGuidance(dbusIf,dltIf);
                 rootMenu(dltIf,"NavigationAppBrowseMap");
             }
 		}	
@@ -456,7 +478,6 @@ NavigationAppHMIMenu {
         var ret=Genivi.poisearch_GetAvailableCategories(dbusIf,dltIf);
         Genivi.categoriesIdNameList=ret[1];
 
-        clearSearch();
         for (var j = 0 ; j < Genivi.categoriesIdNameList.length ; j+=2) {
             if (Genivi.categoriesIdNameList[j+1][3] === Genivi.default_category_name) {
                 Genivi.category_id=Genivi.categoriesIdNameList[j+1][1];
@@ -470,6 +491,7 @@ NavigationAppHMIMenu {
         poiFrame.visible=true;
 
         //launch a search on the default category
+        clearSearch();
         searchPois();
 
         if(!Genivi.showroom) {

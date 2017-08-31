@@ -130,20 +130,21 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal(dltIf,"guidanceManeuverChanged");
         var advice = Genivi.Maneuver[args[1]];
+        console.log(advice)
         maneuverBarCru.visible=false;
         maneuverBarApp.visible=false;
         maneuverBarPre.visible=false;
         maneuverBarAdv.visible=false;
-        if (advice=="CRU")
+        if (advice==="CRU" || advice==="PAS")
             maneuverBarCru.visible=true;
         else {
-            if (advice=="APP")
+            if (advice==="APP")
                 maneuverBarApp.visible=true;
             else {
-                if (advice=="PRE")
+                if (advice==="PRE")
                     maneuverBarPre.visible=true;
                 else {
-                    if (advice=="ADV")
+                    if (advice==="ADV")
                         maneuverBarAdv.visible=true;
                     }
             }
@@ -156,7 +157,7 @@ NavigationAppHMIMenu {
         Genivi.hookSignal(dltIf,"guidanceWaypointReached");
         if (args[1]) {
             // "Destination reached"
-            stopGuidance();
+            exitRoute();
         } else {
             // "Waypoint reached" TBD
         }
@@ -637,10 +638,10 @@ NavigationAppHMIMenu {
                 var direction=items[j+1][5];
                 var maneuver=items[j+1][7];
                 var maneuverData=items[j+1][9];
-                if (maneuverData[1] == Genivi.NAVIGATIONCORE_DIRECTION)
+                if (maneuverData[1] === Genivi.NAVIGATIONCORE_DIRECTION)
                 {
-                   var text=Genivi.distance(offsetOfManeuver)+" "+Genivi.distance(offsetOfNextManeuver)+" "+Genivi.ManeuverType[maneuver]+":"+Genivi.ManeuverDirection[direction]+" "+roadNameAfterManeuver;
-                   model.append({"name":text});
+                    var text=Genivi.distance(offsetOfManeuver)+" "+Genivi.ManeuverDirection[maneuverData[3][3][1]]+" "+roadNameAfterManeuver;
+                    model.append({"name":text});
                 }
             }
         }
@@ -724,16 +725,10 @@ NavigationAppHMIMenu {
         var timetodestination = res1[3]; //in sec
         //following stuff can be improved, it's a first attempt :-)
         var dateTime = new Date();
-        timeofarrivalValue.text=Genivi.time(parseInt(Qt.formatTime(dateTime,"hh"),10)*3600+parseInt(Qt.formatTime(dateTime,"mm"),10)*60+parseInt(Qt.formatTime(dateTime,"ss"),10)+timetodestination);
+        timeofarrivalValue.text=Genivi.time(parseInt(Qt.formatTime(dateTime,"hh"),10)*3600+parseInt(Qt.formatTime(dateTime,"mm"),10)*60+parseInt(Qt.formatTime(dateTime,"ss"),10)+timetodestination,false);
 
         updateAddress();
     }
-
-	function stopGuidance()
-	{
-        Genivi.guidance_StopGuidance(dbusIf,dltIf);
-        Genivi.mapviewer_HideRoute(dbusIf,dltIf,Genivi.g_routing_handle);
-	}
 
     function startGuidance()
     {
@@ -790,6 +785,23 @@ NavigationAppHMIMenu {
         Genivi.routing_CalculateRoute(dbusIf,dltIf);
     }
 
+    function exitRoute()
+    {
+        //if needed, reset the guidance and the routing to enter a new destination
+        if(Genivi.guidance_activated)
+        {
+            Genivi.setGuidanceActivated(dltIf,false);
+            Genivi.guidance_StopGuidance(dbusIf,dltIf);
+            //Guidance inactive, so inform the trip computer
+            Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,0,0);
+        }
+        if(Genivi.route_calculated)
+        {
+            Genivi.routing_DeleteRoute(dbusIf,dltIf,Genivi.g_routing_handle);
+            Genivi.setRouteCalculated(dltIf,false);
+        }
+    }
+
     function showManeuversListPanel()
     {
         displayManeuvers=true;
@@ -841,16 +853,16 @@ NavigationAppHMIMenu {
     function showGuidancePanel()
     {
         guidance.visible=true;
-        roadaftermaneuverBlock.visible=true;
         distancetomaneuverValue.visible=true;
+        roadaftermaneuverValue.visible=true;
         maneuverIcon.visible=true;
     }
 
     function hideGuidancePanel()
     {
         guidance.visible=false;
-        roadaftermaneuverBlock.visible=false;
         distancetomaneuverValue.visible=false;
+        roadaftermaneuverValue.visible=false;
         maneuverIcon.visible=false;
         select_search_for_refill_in_top.visible=false;
         select_search_for_refill_in_top.disabled=true;
@@ -860,7 +872,6 @@ NavigationAppHMIMenu {
     {
         route.visible=true;
         maneuverList.disabled=false;
-        roadaftermaneuverValue.visible=true;
         distancetodestinationValue.visible=true;
         timeofarrivalValue.visible=true;
     }
@@ -869,7 +880,6 @@ NavigationAppHMIMenu {
     {
         route.visible=false;
         maneuverList.disabled=true;
-        roadaftermaneuverValue.visible=false;
         distancetodestinationValue.visible=false;
         timeofarrivalValue.visible=false;
     }
@@ -983,21 +993,6 @@ NavigationAppHMIMenu {
                     }
                 }
 
-                BorderImage {
-                    id: roadaftermaneuverBlock
-                    source:StyleSheetBrowseMapTop.roadaftermaneuverBlock[Constants.SOURCE]; x:StyleSheetBrowseMapTop.roadaftermaneuverBlock[Constants.X]; y:StyleSheetBrowseMapTop.roadaftermaneuverBlock[Constants.Y]; width:StyleSheetBrowseMapTop.roadaftermaneuverBlock[Constants.WIDTH]; height:StyleSheetBrowseMapTop.roadaftermaneuverBlock[Constants.HEIGHT];
-                    border.left: 0; border.top: 0
-                    border.right: 0; border.bottom: 0
-                    visible: false;
-                }
-
-                SmartText {
-                    x:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.X]; y:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.Y]; width:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBrowseMapTop.roadaftermaneuverValue[Constants.PIXELSIZE];
-                    visible: true
-                    id:roadaftermaneuverValue
-                    text: " "
-                }
-
                 SmartText {
                     x:StyleSheetBrowseMapTop.statusValue[Constants.X]; y:StyleSheetBrowseMapTop.statusValue[Constants.Y]; width:StyleSheetBrowseMapTop.statusValue[Constants.WIDTH]; height:StyleSheetBrowseMapTop.statusValue[Constants.HEIGHT];color:StyleSheetBrowseMapTop.statusValue[Constants.TEXTCOLOR];styleColor:StyleSheetBrowseMapTop.statusValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBrowseMapTop.statusValue[Constants.PIXELSIZE];
                     id:statusValue
@@ -1024,8 +1019,10 @@ NavigationAppHMIMenu {
                     id:menub; text:Genivi.gettext("Back");
                     onClicked: {
                         disconnectSignals();
-                        if (Genivi.entrybackheapsize)
+                        if (Genivi.entrybackheapsize){
+                            Genivi.preloadMode=true;
                             leaveMenu(dltIf);
+                        }
                         else
                             entryMenu(dltIf,"NavigationAppMain",menu);
                     }
@@ -1173,6 +1170,13 @@ NavigationAppHMIMenu {
                     style: Text.Sunken;
                     smooth: true
                     id:distancetomaneuverValue
+                    text: " "
+                }
+
+                SmartText {
+                    x:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.X]; y:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.Y]; width:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.WIDTH]; height:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.HEIGHT];color:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.TEXTCOLOR];styleColor:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheetBrowseMapGuidance.roadaftermaneuverValue[Constants.PIXELSIZE];
+                    visible: true
+                    id:roadaftermaneuverValue
                     text: " "
                 }
 
@@ -1638,6 +1642,8 @@ NavigationAppHMIMenu {
                      onPressed: {
                         //stop guidance
                          Genivi.guidance_StopGuidance(dbusIf,dltIf);
+                         //Guidance inactive, so inform the trip computer
+                         Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,0,0);
                          Genivi.mapviewer_HideRoute(dbusIf,dltIf,Genivi.g_routing_handle);
                      }
                  }
@@ -1646,16 +1652,8 @@ NavigationAppHMIMenu {
                      id:location_input;
                      onPressed: {
                          disconnectSignals();
-                         //if needed, reset the guidance and the routing to enter a new destination
-                         if(Genivi.guidance_activated)
-                         {
-                            Genivi.setGuidanceActivated(dltIf,false);
-                         }
-                         if(Genivi.route_calculated)
-                         {
-                             Genivi.routing_DeleteRoute(dbusIf,dltIf,Genivi.g_routing_handle);
-                             Genivi.setRouteCalculated(dltIf,false);
-                         }
+                         exitRoute();
+                         //the location is entered by address
                          Genivi.setLocationInputActivated(dltIf,true);
                          Genivi.preloadMode=true;
                          entryMenu(dltIf,"NavigationAppSearch",menu);
@@ -1665,19 +1663,11 @@ NavigationAppHMIMenu {
                      source:StyleSheetBrowseMapSettings.poi[Constants.SOURCE]; x:StyleSheetBrowseMapSettings.poi[Constants.X]; y:StyleSheetBrowseMapSettings.poi[Constants.Y]; width:StyleSheetBrowseMapSettings.poi[Constants.WIDTH]; height:StyleSheetBrowseMapSettings.poi[Constants.HEIGHT];
                      id:poi;
                      onPressed: {
-                         disconnectSignals();
-                         //if needed, reset the guidance and the routing to enter a new destination
-                         if(Genivi.guidance_activated)
-                         {
-                            Genivi.setGuidanceActivated(dltIf,false);
-                         }
-                         if(Genivi.route_calculated)
-                         {
-                             Genivi.routing_DeleteRoute(dbusIf,dltIf,Genivi.g_routing_handle);
-                             Genivi.setRouteCalculated(dltIf,false);
-                         }
-                         Genivi.setLocationInputActivated(dltIf,false);
-                         entryMenu(dltIf,"NavigationAppPOI",menu);
+                        disconnectSignals();
+                        exitRoute();
+                        // the location is entered by poi
+                        Genivi.setLocationInputActivated(dltIf,false);
+                        entryMenu(dltIf,"NavigationAppPOI",menu);
                      }
                  }
                  StdButton {

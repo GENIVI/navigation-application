@@ -1,8 +1,8 @@
 #!/bin/bash
 
-navigation_version='58be072f387b9430944d7fd8d75900295ab53971'
+navigation_version='e31de24c6f882a41ed13086712e97539cbf7b1a2'
 positioning_version='9725fe1f553197042d6445997690d452a73490c0'
-navit_version='28478e7f26c1a0eedc06fb4765e2f736079c6f0c'
+navit_version='f5abdd317e10d56226300d001469595658a605e4'
 
 echo "version of navigation is: $navigation_version"
 echo "version of positioning is: $positioning_version"
@@ -27,6 +27,7 @@ case "$input" in
 	git checkout $navit_version
 	patch -p0 -i ../patches/search_list_get_unique.diff
 	patch -p0 -i ../patches/fsa_issue_padding.diff
+	patch -p0 -i ../patches/avoid-crash-on-guidance-when-delete-and-recreate-route.diff
 	cd ../
 	echo "Please rebuild with at least -c -n option"
 	;;

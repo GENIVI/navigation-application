@@ -257,16 +257,27 @@ function duration(seconds)
 }
 
 // Give the formated time (with reset of hours if >= 24, only 24h format is supported)
-// it supposes the time is less than 48 h
-function time(seconds)
+// it supposes the time is less than 48 h (to be improved)
+function time(seconds,displaySeconds)
 {
     if (seconds >= 3600) {
-        if (Math.floor(seconds/3600) < 24)
-            return Math.floor(seconds/3600)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
-        else
-            return (Math.floor(seconds/3600)-24)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
+        if (Math.floor(seconds/3600) < 24){
+            if(displaySeconds)
+                return Math.floor(seconds/3600)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
+            else
+                return Math.floor(seconds/3600)+":"+(Math.floor(seconds/60)%60);
+        }
+        else{
+            if(displaySeconds)
+                return (Math.floor(seconds/3600)-24)+":"+(Math.floor(seconds/60)%60)+":"+(seconds%60);
+            else
+                return (Math.floor(seconds/3600)-24)+":"+(Math.floor(seconds/60)%60);
+        }
     } else {
-        return Math.floor(seconds/60)+":"+(seconds%60);
+        if(displaySeconds)
+            return Math.floor(seconds/60)+":"+(seconds%60);
+        else
+            return Math.floor(seconds/60);
     }
 }
 
