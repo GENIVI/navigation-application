@@ -110,7 +110,6 @@ NavigationAppHMIMenu {
             Genivi.setGuidanceActivated(dltIf,true);
             Genivi.data['display_on_map']='show_current_position';
             Genivi.data['show_route_handle']=Genivi.routing_handle();
-            Genivi.data['zoom_route_handle']=Genivi.routing_handle();
             rootMenu(dltIf,pagefile); //reload the whole menu to init the guidance
         } else {
             Genivi.setGuidanceActivated(dltIf,false);
@@ -1686,10 +1685,10 @@ NavigationAppHMIMenu {
 
         if (Genivi.data['display_on_map']==='show_route') {
             //display the route when it has been calculated
-            var res=Genivi.routing_GetRouteBoundingBox(dbusIf,dltIf,Genivi.data['zoom_route_handle']);
+            Genivi.mapviewer_SetFollowCarMode(dbusIf,dltIf,false);
+            var res=Genivi.routing_GetRouteBoundingBox(dbusIf,dltIf,Genivi.data['show_route_handle']);
             Genivi.mapviewer_SetMapViewBoundingBox(dbusIf,dltIf,res);
-            Genivi.mapviewer_DisplayRoute(dbusIf,dltIf,Genivi.g_routing_handle,false);
-            Genivi.fuelstopadvisor_SetFuelAdvisorSettings(dbusIf,dltIf,1,50); //activate advisor mode
+            Genivi.mapviewer_DisplayRoute(dbusIf,dltIf,Genivi.g_routing_handle,true);
             hideGuidancePanel();
             hideRoutePanel();
             hideSimulationPanel();

@@ -90,6 +90,11 @@ ApplicationWindow {
         Genivi.radius=Settings.getValue("Settings/radius");
         Genivi.maxResultListSize=Settings.getValue("Settings/maxResultListSize");
         Genivi.default_category_name=Settings.getValue("Settings/defaultCategoryName")
+        if(Settings.getValue("Log/dlt")==="true")
+            Genivi.dlt=true;
+        else
+            Genivi.dlt=false;
+
         if(Settings.getValue("Settings/simulationMode")==="true")
             Genivi.simulationMode=true;
         else
@@ -110,10 +115,12 @@ ApplicationWindow {
         else
             Genivi.verbose=false;
 
-        if(Settings.getValue("Log/dlt")==="true")
-            Genivi.dlt=true;
-        else
-            Genivi.dlt=false;
+        //default settings
+        Genivi.setGuidanceActivated(dltIf,false);
+        Genivi.setRouteCalculated(dltIf,false);
+        Genivi.setRerouteRequested(dltIf,false);
+        Genivi.setVehicleLocated(dltIf,false);
+        Genivi.setDestinationDefined(dltIf,false);
 
         //configure the middleware
         Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,Genivi.g_language,Genivi.g_country,Genivi.g_script);
@@ -130,13 +137,6 @@ ApplicationWindow {
         // create a session for navigation core
         var res3=Genivi.navigationcore_session_CreateSession(dbusIf,dltIf);
         Genivi.g_nav_session_handle[1]=res3[3];
-
-        //default settings
-        Genivi.setGuidanceActivated(dltIf,false);
-        Genivi.setRouteCalculated(dltIf,false);
-        Genivi.setRerouteRequested(dltIf,false);
-        Genivi.setVehicleLocated(dltIf,false);
-        Genivi.setDestinationDefined(dltIf,false);
 
         //launch the HMI
         Genivi.hookMessage(dltIf,"Menu level",Genivi.entrybackheapsize);

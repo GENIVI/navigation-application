@@ -197,7 +197,7 @@ class FuelStopAdvisor
 		advisorMode=false;
 		distanceThreshold=0;
         destinationCantBeReached=false;
-		routeHandle=0;
+        m_routeHandle=0;
         initFlag=true;
         }
 
@@ -244,10 +244,10 @@ class FuelStopAdvisor
                 if (iter->first == CTripComputer::TRIPCOMPUTER_TANK_DISTANCE)
                 { //tank distance is valid, so it means that fuel level is valid too
                     ret[GENIVI_FUELSTOPADVISOR_TANK_DISTANCE]=variant_uint16(boost::get<uint16_t>(iter->second));
-                    ret[GENIVI_FUELSTOPADVISOR_FUEL_LEVEL]=variant_uint16(fuelLevel);
-                    if (this->routeHandle != 0)
+                    ret[GENIVI_FUELSTOPADVISOR_FUEL_LEVEL]=variant_uint16(m_fuelLevel);
+                    if (this->m_routeHandle != 0)
                     { // a route is valid so it makes sense to calculate enhanced tank distance
-                        ret[GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE]=variant_uint16(enhancedDistance(fuelLevel,remaining)+0.5);
+                        ret[GENIVI_FUELSTOPADVISOR_ENHANCED_TANK_DISTANCE]=variant_uint16(enhancedDistance(m_fuelLevel,remaining)+0.5);
                     }
                 }
             }
@@ -317,15 +317,15 @@ class FuelStopAdvisor
 	double enhancedDistance(double level, double &remaining)
 	{
 		double distance=0;
-        LOG_INFO(gCtx,"routeHandle %d",routeHandle);
-        if (routeHandle) {
+        LOG_INFO(gCtx,"routeHandle %d",m_routeHandle);
+        if (m_routeHandle) {
             std::vector< std::map< int32_t, ::DBus::Struct< uint8_t, ::DBus::Variant > > > RouteShape;
             std::vector< int32_t > valuesToReturn;
 			uint32_t totalNumberOfSegments;
 			valuesToReturn.push_back(GENIVI_NAVIGATIONCORE_DISTANCE);
 			valuesToReturn.push_back(GENIVI_NAVIGATIONCORE_SPEED);
 
-            routing->GetRouteSegments(routeHandle, 1, valuesToReturn, 0xffffffff, 0, totalNumberOfSegments, RouteShape);
+            routing->GetRouteSegments(m_routeHandle, 1, valuesToReturn, 0xffffffff, 0, totalNumberOfSegments, RouteShape);
 			for (int i=0 ; i < RouteShape.size(); i++) {
 				double seg_distance;
 				uint16_t seg_speed;
@@ -426,7 +426,7 @@ class FuelStopAdvisor
 
         mp_tripComputer->RefreshTripComputerInput(tripComputerInput);
 
-        fuelLevel = level; //to avoid re-ask it to amb
+        m_fuelLevel = level; //to avoid re-ask it to amb
 
         TripDataUpdated(0); //arg is for future use
 	}
@@ -435,10 +435,9 @@ class FuelStopAdvisor
     {
         double remaining;
         if (advisorMode) {
-            enhancedDistance(fuelLevel, remaining);
-            LOG_INFO(gCtx,"Advisor %f vs %d",remaining, distanceThreshold);
+            enhancedDistance(m_fuelLevel, remaining);
+            LOG_INFO(gCtx,"Advisor remaining: %f vs distanceThreshold: %d",remaining, distanceThreshold);
             if (remaining < distanceThreshold) {
-                LOG_INFO(gCtx,"Warning %f < %d",remaining, distanceThreshold);
                 destinationCantBeReached = true;
             }
             else
@@ -468,13 +467,13 @@ class FuelStopAdvisor
 
 	void SetRouteHandle(const uint32_t& routeHandle)
 	{
-        this->routeHandle=routeHandle;
+        this->m_routeHandle=routeHandle;
         updateEnhancedDistance();
 	}
 
     void ReleaseRouteHandle(const uint32_t& routeHandle)
     {
-        this->routeHandle=0;
+        this->m_routeHandle=0;
         updateEnhancedDistance();
     }
 
@@ -493,13 +492,13 @@ class FuelStopAdvisor
 	bool advisorMode;
 	uint8_t distanceThreshold;
     bool destinationCantBeReached;
-	uint32_t routeHandle;
+    uint32_t m_routeHandle;
     bool initFlag;
     double lastTime;
     uint16_t timeCounter;
     uint32_t lastOdometer;
     uint16_t distanceCounter;
-    uint16_t fuelLevel;
+    uint16_t m_fuelLevel;
 };
 
 static gboolean
