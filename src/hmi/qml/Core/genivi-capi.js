@@ -372,8 +372,6 @@ function setlang(language,country,script)
     g_language=language;
     g_country=country;
     g_script=script;
-    translations = new Array;
-    Qt.include("../../translations/"+g_language + "_" + g_country+".js");
     if(g_language==="eng"){
         keyboardLayout=englishLayout;
         allKeys=englishAllKeys;
@@ -417,6 +415,8 @@ function setlang(language,country,script)
                     //default
                     keyboardLayout=germanLayout;
                     allKeys=germanAllKeys;
+                    kbdFirstLayout="ABC";
+                    kbdSecondLayout="123";
                     kbdColumns=8; //number of rows per line
                     kbdColumnRatio=4; //size of row spacing (ratio)
                     kbdLines=4; //number of lines

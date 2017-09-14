@@ -271,7 +271,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             id:avg_speed_title
-            text: Genivi.gettext("AvgSpeed")
+            text: Translator.getEmptyString()+qsTr("AvgSpeed")
         }
         Text {
             x:StyleSheet.avg_fuel_value[Constants.X]; y:StyleSheet.avg_fuel_value[Constants.Y]; width:StyleSheet.avg_fuel_value[Constants.WIDTH]; height:StyleSheet.avg_fuel_value[Constants.HEIGHT];color:StyleSheet.avg_fuel_value[Constants.TEXTCOLOR];styleColor:StyleSheet.avg_fuel_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.avg_fuel_value[Constants.PIXELSIZE];
@@ -295,7 +295,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             id:avg_fuel_title
-            text: Genivi.gettext("AvgFuel")
+            text: Translator.getEmptyString()+qsTr("AvgFuel")
         }
         Text {
             x:StyleSheet.distance_value[Constants.X]; y:StyleSheet.distance_value[Constants.Y]; width:StyleSheet.distance_value[Constants.WIDTH]; height:StyleSheet.distance_value[Constants.HEIGHT];color:StyleSheet.distance_value[Constants.TEXTCOLOR];styleColor:StyleSheet.distance_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.distance_value[Constants.PIXELSIZE];
@@ -319,7 +319,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             id:distance_title
-            text: Genivi.gettext("Distance")
+            text: Translator.getEmptyString()+qsTr("Distance")
         }
         Text {
             x:StyleSheet.fuel_value[Constants.X]; y:StyleSheet.fuel_value[Constants.Y]; width:StyleSheet.fuel_value[Constants.WIDTH]; height:StyleSheet.fuel_value[Constants.HEIGHT];color:StyleSheet.fuel_value[Constants.TEXTCOLOR];styleColor:StyleSheet.fuel_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.fuel_value[Constants.PIXELSIZE];
@@ -343,7 +343,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             id:fuel_title
-            text: Genivi.gettext("FuelLevel")
+            text: Translator.getEmptyString()+qsTr("FuelLevel")
         }
         Text {
             x:StyleSheet.tank_distance_value[Constants.X]; y:StyleSheet.tank_distance_value[Constants.Y]; width:StyleSheet.tank_distance_value[Constants.WIDTH]; height:StyleSheet.tank_distance_value[Constants.HEIGHT];color:StyleSheet.tank_distance_value[Constants.TEXTCOLOR];styleColor:StyleSheet.tank_distance_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.tank_distance_value[Constants.PIXELSIZE];
@@ -367,7 +367,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             id:tank_distance_title
-            text: Genivi.gettext("TankDistance")
+            text: Translator.getEmptyString()+qsTr("TankDistance")
         }
         Text {
             x:StyleSheet.predictive_tank_distance_value[Constants.X]; y:StyleSheet.predictive_tank_distance_value[Constants.Y]; width:StyleSheet.predictive_tank_distance_value[Constants.WIDTH]; height:StyleSheet.predictive_tank_distance_value[Constants.HEIGHT];color:StyleSheet.predictive_tank_distance_value[Constants.TEXTCOLOR];styleColor:StyleSheet.predictive_tank_distance_value[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.predictive_tank_distance_value[Constants.PIXELSIZE];
@@ -391,12 +391,12 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true
             id:predictive_tank_distance_title
-            text: Genivi.gettext("PredictiveTankDistance")
+            text: Translator.getEmptyString()+qsTr("PredictiveTankDistance")
         }
 
         StdButton { source:StyleSheet.reset[Constants.SOURCE]; x:StyleSheet.reset[Constants.X]; y:StyleSheet.reset[Constants.Y]; width:StyleSheet.reset[Constants.WIDTH]; height:StyleSheet.reset[Constants.HEIGHT];textColor:StyleSheet.resetText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.resetText[Constants.PIXELSIZE];
             visible: false;
-            id:reset; text: Genivi.gettext("Reset");  disabled:false; next:select_trip1; prev:back;
+            id:reset; text: Translator.getEmptyString()+qsTr("Reset");  disabled:false; next:select_trip1; prev:back;
             onClicked:{
 		if (Genivi.tripMode == "TRIP_NUMBER1") {
             Genivi.fuelstopadvisor_ResetTripData(dbusIf,dltIf,0);
@@ -432,7 +432,7 @@ NavigationAppHMIMenu {
             }
         }
         StdButton { source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back");  disabled:false; next:reset; prev:select_instant;
+            id:back; text: Translator.getEmptyString()+qsTr("Back");  disabled:false; next:reset; prev:select_instant;
             onClicked:{leave(); leaveMenu(dltIf);}
         }
     }

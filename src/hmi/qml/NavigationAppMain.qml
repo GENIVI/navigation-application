@@ -104,7 +104,7 @@ NavigationAppHMIMenu {
             id:navigationText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Navigation")
+            text: Translator.getEmptyString()+qsTr("Navigation");
              }
         StdButton {
             source:StyleSheet.select_navigation[Constants.SOURCE]; x:StyleSheet.select_navigation[Constants.X]; y:StyleSheet.select_navigation[Constants.Y]; width:StyleSheet.select_navigation[Constants.WIDTH]; height:StyleSheet.select_navigation[Constants.HEIGHT];
@@ -121,7 +121,7 @@ NavigationAppHMIMenu {
             id:poiText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Poi")
+            text: Translator.getEmptyString()+qsTr("Poi")
              }
         StdButton {
             source:StyleSheet.select_poi[Constants.SOURCE]; x:StyleSheet.select_poi[Constants.X]; y:StyleSheet.select_poi[Constants.Y]; width:StyleSheet.select_poi[Constants.WIDTH]; height:StyleSheet.select_poi[Constants.HEIGHT];
@@ -137,7 +137,7 @@ NavigationAppHMIMenu {
             id:mapviewText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Mapview")
+            text: Translator.getEmptyString()+qsTr("Mapview")
              }
         StdButton {
             source:StyleSheet.select_mapview[Constants.SOURCE]; x:StyleSheet.select_mapview[Constants.X]; y:StyleSheet.select_mapview[Constants.Y]; width:StyleSheet.select_mapview[Constants.WIDTH]; height:StyleSheet.select_mapview[Constants.HEIGHT];
@@ -155,7 +155,7 @@ NavigationAppHMIMenu {
             id:tripText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Trip")
+            text: Translator.getEmptyString()+qsTr("Trip")
              }
         StdButton {
             source:StyleSheet.select_trip[Constants.SOURCE]; x:StyleSheet.select_trip[Constants.X]; y:StyleSheet.select_trip[Constants.Y]; width:StyleSheet.select_trip[Constants.WIDTH]; height:StyleSheet.select_trip[Constants.HEIGHT];
@@ -170,7 +170,7 @@ NavigationAppHMIMenu {
             id:settingsText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Configuration")
+            text: Translator.getEmptyString()+qsTr("Configuration")
              }
         StdButton {
             source:StyleSheet.select_settings[Constants.SOURCE]; x:StyleSheet.select_settings[Constants.X]; y:StyleSheet.select_settings[Constants.Y]; width:StyleSheet.select_settings[Constants.WIDTH]; height:StyleSheet.select_settings[Constants.HEIGHT];
@@ -183,7 +183,7 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.quit[Constants.SOURCE]; x:StyleSheet.quit[Constants.X]; y:StyleSheet.quit[Constants.Y]; width:StyleSheet.quit[Constants.WIDTH]; height:StyleSheet.quit[Constants.HEIGHT];textColor:StyleSheet.quitText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.quitText[Constants.PIXELSIZE];
-            id:quit; text: Genivi.gettext("Quit");
+            id:quit; text: Translator.getEmptyString()+qsTr("Quit");
             onClicked:{
                 disconnectSignals();
                 Qt.quit(); //for the time being quit

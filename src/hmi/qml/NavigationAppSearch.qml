@@ -341,7 +341,7 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal(dltIf,"routeCalculationFailed");
 
-        statusValue.text=Genivi.gettext("CalculatedRouteFailed");
+        statusValue.text=Translator.getEmptyString()+qsTr("CalculatedRouteFailed");
         Genivi.setRouteCalculated(dltIf,false);
         // Tell the FSA that there's no route available
         Genivi.fuelstopadvisor_ReleaseRouteHandle(dbusIf,dltIf,Genivi.g_routing_handle);
@@ -351,7 +351,7 @@ NavigationAppHMIMenu {
     function routeCalculationProgressUpdate(args)
     {
         Genivi.hookSignal(dltIf,"routeCalculationProgressUpdate");
-        statusValue.text=Genivi.gettext("CalculatedRouteInProgress");
+        statusValue.text=Translator.getEmptyString()+qsTr("CalculatedRouteInProgress");
         Genivi.setRouteCalculated(dltIf,false);
     }
 
@@ -725,7 +725,7 @@ NavigationAppHMIMenu {
     //------------------------------------------//
     function getRouteOverview()
     {
-        statusValue.text=Genivi.gettext("CalculatedRouteSuccess");
+        statusValue.text=Translator.getEmptyString()+qsTr("CalculatedRouteSuccess");
 
         var res=Genivi.routing_GetRouteOverviewTimeAndDistance(dbusIf,dltIf);
 
@@ -866,7 +866,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true;
             id: elementTitle
-            text: Genivi.gettext("Element");
+            text: Translator.getEmptyString()+qsTr("Element");
         }
         SmartText {
             x:StyleSheet.elementName[Constants.X]; y:StyleSheet.elementName[Constants.Y]; width:StyleSheet.elementName[Constants.WIDTH]; height:StyleSheet.elementName[Constants.HEIGHT];color:StyleSheet.elementName[Constants.TEXTCOLOR];styleColor:StyleSheet.elementName[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.elementName[Constants.PIXELSIZE];
@@ -889,7 +889,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true;
             id: countryTitle
-            text: Genivi.gettext("Country");
+            text: Translator.getEmptyString()+qsTr("Country");
         }
         StdButton {
             source:StyleSheet.countryKeyboard[Constants.SOURCE]; x:StyleSheet.countryKeyboard[Constants.X]; y:StyleSheet.countryKeyboard[Constants.Y]; width:StyleSheet.countryKeyboard[Constants.WIDTH]; height:StyleSheet.countryKeyboard[Constants.HEIGHT];
@@ -907,7 +907,7 @@ NavigationAppHMIMenu {
         }
         NavigationAppEntryField {
             x:StyleSheet.countryValue[Constants.X]; y:StyleSheet.countryValue[Constants.Y]; width: StyleSheet.countryValue[Constants.WIDTH]; height: StyleSheet.countryValue[Constants.HEIGHT];
-            id: countryValue
+            id: countryValue            
             criterion: Genivi.NAVIGATIONCORE_COUNTRY
             globaldata: 'countryValue'
             textfocus: true
@@ -918,7 +918,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true;
             id:cityTitle
-            text: Genivi.gettext("City");
+            text: Translator.getEmptyString()+qsTr("City");
         }
         StdButton {
             source:StyleSheet.cityKeyboard[Constants.SOURCE]; x:StyleSheet.cityKeyboard[Constants.X]; y:StyleSheet.cityKeyboard[Constants.Y]; width:StyleSheet.cityKeyboard[Constants.WIDTH]; height:StyleSheet.cityKeyboard[Constants.HEIGHT];
@@ -947,7 +947,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true;
             id:streetTitle
-            text: Genivi.gettext("Street");
+            text: Translator.getEmptyString()+qsTr("Street");
         }
         StdButton {
             source:StyleSheet.streetKeyboard[Constants.SOURCE]; x:StyleSheet.streetKeyboard[Constants.X]; y:StyleSheet.streetKeyboard[Constants.Y]; width:StyleSheet.streetKeyboard[Constants.WIDTH]; height:StyleSheet.streetKeyboard[Constants.HEIGHT];
@@ -973,7 +973,7 @@ NavigationAppHMIMenu {
             style: Text.Sunken;
             smooth: true;
             id:numberTitle
-            text: Genivi.gettext("Number");
+            text: Translator.getEmptyString()+qsTr("Number");
         }
         StdButton {
             source:StyleSheet.numberKeyboard[Constants.SOURCE]; x:StyleSheet.numberKeyboard[Constants.X]; y:StyleSheet.numberKeyboard[Constants.Y]; width:StyleSheet.numberKeyboard[Constants.WIDTH]; height:StyleSheet.numberKeyboard[Constants.HEIGHT];
@@ -999,7 +999,7 @@ NavigationAppHMIMenu {
             id:guidanceTitle;
             style: Text.Sunken;
             smooth: true;
-            text: Genivi.gettext("Guidance");
+            text: Translator.getEmptyString()+qsTr("Guidance");
             visible: false;
         }
         Text {
@@ -1007,7 +1007,7 @@ NavigationAppHMIMenu {
             id:displayRouteTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("DisplayRoute")
+            text: Translator.getEmptyString()+qsTr("DisplayRoute")
             visible: false;
         }
         Text {
@@ -1015,7 +1015,7 @@ NavigationAppHMIMenu {
             id:distanceTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("RouteDistance")
+            text: Translator.getEmptyString()+qsTr("RouteDistance")
             visible: false;
         }
         SmartText {
@@ -1029,7 +1029,7 @@ NavigationAppHMIMenu {
             id:timeTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("RouteTime")
+            text: Translator.getEmptyString()+qsTr("RouteTime")
             visible: false;
         }
         SmartText {
@@ -1043,7 +1043,7 @@ NavigationAppHMIMenu {
             id:arrivalTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("RouteArrival")
+            text: Translator.getEmptyString()+qsTr("RouteArrival")
             visible: false;
         }
         SmartText {
@@ -1057,7 +1057,7 @@ NavigationAppHMIMenu {
             id:statusTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("StatusTitle")
+            text: Translator.getEmptyString()+qsTr("StatusTitle")
             visible: false;
         }
         SmartText {
@@ -1087,7 +1087,7 @@ NavigationAppHMIMenu {
         }
         StdButton {
             source:StyleSheet.guidance_start[Constants.SOURCE]; x:StyleSheet.guidance_start[Constants.X]; y:StyleSheet.guidance_start[Constants.Y]; width:StyleSheet.guidance_start[Constants.WIDTH]; height:StyleSheet.guidance_start[Constants.HEIGHT];textColor:StyleSheet.startText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.startText[Constants.PIXELSIZE];
-            id:guidance_start; text: Genivi.gettext("On"); disabled:true;
+            id:guidance_start; text: Translator.getEmptyString()+qsTr("On"); disabled:true;
             visible: false;
             onClicked: {
                 Genivi.guidance_StartGuidance(dbusIf,dltIf,Genivi.routing_handle());
@@ -1095,7 +1095,7 @@ NavigationAppHMIMenu {
         }
         StdButton {
             source:StyleSheet.guidance_stop[Constants.SOURCE]; x:StyleSheet.guidance_stop[Constants.X]; y:StyleSheet.guidance_stop[Constants.Y]; width:StyleSheet.guidance_stop[Constants.WIDTH]; height:StyleSheet.guidance_stop[Constants.HEIGHT];textColor:StyleSheet.stopText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.stopText[Constants.PIXELSIZE];
-            id:guidance_stop;text: Genivi.gettext("Off"); disabled:true;
+            id:guidance_stop;text: Translator.getEmptyString()+qsTr("Off"); disabled:true;
             visible: false;
             onClicked: {
                 if(Genivi.location_input_activated){
@@ -1261,7 +1261,7 @@ NavigationAppHMIMenu {
         }
         StdButton {
             source:StyleSheet.cancel[Constants.SOURCE]; x:StyleSheet.cancel[Constants.X]; y:StyleSheet.cancel[Constants.Y]; width:StyleSheet.cancel[Constants.WIDTH]; height:StyleSheet.cancel[Constants.HEIGHT];textColor:StyleSheet.cancelText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.cancelText[Constants.PIXELSIZE];
-            id:cancel; text: Genivi.gettext("Cancel");
+            id:cancel; text: Translator.getEmptyString()+qsTr("Cancel");
             disabled: !(keyboardActivated);
             onClicked: {
                 Genivi.preloadMode=false;
@@ -1294,7 +1294,7 @@ NavigationAppHMIMenu {
         }
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back");
+            id:back; text: Translator.getEmptyString()+qsTr("Back");
             disabled: keyboardActivated;
             onClicked: {
                 disconnectSignals();

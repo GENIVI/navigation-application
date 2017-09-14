@@ -68,7 +68,7 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false;
+            id:back; text: Translator.getEmptyString()+qsTr("Back"); disabled:false;
             onClicked:{
                 disconnectSignals();
                 leaveMenu(dltIf);

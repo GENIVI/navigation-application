@@ -27,6 +27,9 @@ add_definitions("-fPIC")
 
 message(STATUS "hmi-launcher")
 find_program(XSLTPROC xsltproc REQUIRED)
+find_program(QTMOC moc REQUIRED)
+find_program(QTLRELEASE lrelease REQUIRED)
+find_program(QTLUPDATE lupdate REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
@@ -64,12 +67,13 @@ set(CMAKE_AUTOMOC ON)
 add_definitions(${QT5_CORE_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_NO_DEBUG)
-if(QT_MOC)
-    set(qt_moc ${QT_MOC} -o)
-else()
-    set(qt_moc moc -o)
-endif()
+
+set(qt_moc ${QTMOC} -o)
+set(qt_release ${QTLRELEASE})
+set(qt_update ${QTLUPDATE})
+
 set(MOC moc)
+
 set(MOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/${MOC})
 
 link_directories(
@@ -122,6 +126,31 @@ set(CONSTANTS_PATH ${CMAKE_CURRENT_BINARY_DIR})
 set(ICON_PATH ${NAVIT_PNG_BIN_DIR})
 configure_file(${FILE_RESOURCE_IN} ${FILE_RESOURCE_OUT} @ONLY)
 
+#generate or update ts files
+execute_process(
+    COMMAND ${qt_update} ${CMAKE_CURRENT_SOURCE_DIR}/../translations/translating-qml.pro
+)
+
+#generate qm files
+file (GLOB TS_TO_RELEASE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../translations/*.ts
+)
+
+foreach(RAW_FILE ${TS_TO_RELEASE})
+    get_filename_component(FILE ${RAW_FILE} NAME_WE)
+    if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm)
+        execute_process(
+            COMMAND ${qt_release} ${RAW_FILE} -qm ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm
+        )
+    else()
+        if(${RAW_FILE} IS_NEWER_THAN ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm)
+            execute_process(
+            COMMAND ${qt_release} ${RAW_FILE} -qm ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm
+            )
+        endif()
+    endif()
+endforeach()
+
 # for some reason, automoc doesn't run, so moc is made manually
 set (SRC_TO_MOC
     ${CMAKE_CURRENT_SOURCE_DIR}/dbusif.h
@@ -131,6 +160,7 @@ set (SRC_TO_MOC
     ${CMAKE_CURRENT_SOURCE_DIR}/wheelareaplugin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/preference.h
     ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/translator.h
 )
 execute_process(
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"

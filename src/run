@@ -186,6 +186,10 @@ do
 			center="-0.13 51.51"
 			config_file=fsa_london.conf
 			;;
+		seoul)
+			center="126.99 37.54"
+			config_file=fsa_seoul.conf
+			;;
 		[0-9-]*)
 			center=$OPTARG
 			;;
@@ -230,7 +234,7 @@ do
 		echo "Usage:"
 		echo "$0 [-a application][-c center][-ghlnoprvx]"
 		echo "-a: Set application (default application.qml)"
-		echo "-c: Set center (supported values: paris,tokyo,longitude latitude). Default is geneve"
+		echo "-c: Set center (supported values: paris,tokyo,london,seoul,longitude latitude). Default is geneve"
 		echo "-d: Run subprocesses within gdb (only with -x)"
 		echo "-f: Load another database (for poi)"
 		echo "-g: Run the vehicle gateway (only with -r) -g \"<ELM327device> <GNSSdevice>\""

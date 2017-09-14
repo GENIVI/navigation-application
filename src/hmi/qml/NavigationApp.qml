@@ -44,6 +44,7 @@ ApplicationWindow {
     width: StyleSheetMap.menu[Constants.WIDTH];
     height: StyleSheetMap.menu[Constants.HEIGHT];
 	property Item component;
+
 	function load(page)
 	{
 		if (component) {
@@ -77,6 +78,14 @@ ApplicationWindow {
     Preference {
         source: 0
         mode: 0
+    }
+
+    Connections {
+        target: Translator
+        onLanguageChanged: {
+            var translation = Translator.getCurrentTranslation();
+            Genivi.hookMessage(dltIf,"Language updated",translation);
+        }
     }
 
 	Component.onCompleted: {
@@ -137,6 +146,10 @@ ApplicationWindow {
         // create a session for navigation core
         var res3=Genivi.navigationcore_session_CreateSession(dbusIf,dltIf);
         Genivi.g_nav_session_handle[1]=res3[3];
+
+        // load the translation file
+        var fileName=Genivi.g_language+ "_"+Genivi.g_country+ "_"+Genivi.g_script;
+        Translator.setTranslation(fileName);
 
         //launch the HMI
         Genivi.hookMessage(dltIf,"Menu level",Genivi.entrybackheapsize);

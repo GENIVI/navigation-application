@@ -52,6 +52,14 @@ NavigationAppHMIMenu {
 		id:dbusIf;
 	}
 
+    Connections {
+        target: Translator
+        onLanguageChanged: {
+            var translation = Translator.getCurrentTranslation();
+            Genivi.hookMessage(dltIf,"Language updated",translation);
+        }
+    }
+
     property Item configurationChangedSignal;
     function configurationChanged(args)
     { //to be improved !
@@ -141,6 +149,8 @@ NavigationAppHMIMenu {
         Genivi.navigationcore_configuration_SetLocale(dbusIf,dltIf,language,country,script);
         Genivi.mapviewer_configuration_SetLocale(dbusIf,dltIf,language,country,script);
         Genivi.setlang(language,country,script);
+        var fileName=Genivi.g_language+ "_"+Genivi.g_country+ "_"+Genivi.g_script;
+        Translator.setTranslation(fileName);
         pageOpen(dltIf,menu.pagefile); //reload page because of texts...
     }
 
@@ -278,7 +288,7 @@ NavigationAppHMIMenu {
             id:languagesTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Language")
+            text: Translator.getEmptyString()+qsTr("Language")
              }
         StdButton { objectName:"fra_FRA";
             source:StyleSheet.french_flag[Constants.SOURCE]; x:StyleSheet.french_flag[Constants.X]; y:StyleSheet.french_flag[Constants.Y]; width:StyleSheet.french_flag[Constants.WIDTH]; height:StyleSheet.french_flag[Constants.HEIGHT];
@@ -292,13 +302,16 @@ NavigationAppHMIMenu {
         StdButton { objectName:"jpn_JPN";
             source:StyleSheet.japanese_flag[Constants.SOURCE]; x:StyleSheet.japanese_flag[Constants.X]; y:StyleSheet.japanese_flag[Constants.Y]; width:StyleSheet.japanese_flag[Constants.WIDTH]; height:StyleSheet.japanese_flag[Constants.HEIGHT];
             id:jpn_JPN; disabled:false;onClicked: {setLocale("jpn","JPN","Hrkt");}}
+        StdButton { objectName:"kor_KOR";
+            source:StyleSheet.korean_flag[Constants.SOURCE]; x:StyleSheet.korean_flag[Constants.X]; y:StyleSheet.korean_flag[Constants.Y]; width:StyleSheet.korean_flag[Constants.WIDTH]; height:StyleSheet.korean_flag[Constants.HEIGHT];
+            id:kor_KOR; disabled:false;onClicked: {setLocale("kor","KOR","Hang");}}
 
         Text {
             x:StyleSheet.unitsTitle[Constants.X]; y:StyleSheet.unitsTitle[Constants.Y]; width:StyleSheet.unitsTitle[Constants.WIDTH]; height:StyleSheet.unitsTitle[Constants.HEIGHT];color:StyleSheet.unitsTitle[Constants.TEXTCOLOR];styleColor:StyleSheet.unitsTitle[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.unitsTitle[Constants.PIXELSIZE];
             id:unitsTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Units")
+            text: Translator.getEmptyString()+qsTr("Units")
              }
         StdButton { source:StyleSheet.unit_km[Constants.SOURCE]; x:StyleSheet.unit_km[Constants.X]; y:StyleSheet.unit_km[Constants.Y]; width:StyleSheet.unit_km[Constants.WIDTH]; height:StyleSheet.unit_km[Constants.HEIGHT];
             id:unit_km;  disabled:false;
@@ -316,7 +329,7 @@ NavigationAppHMIMenu {
             id:costModelTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("CostModel")
+            text: Translator.getEmptyString()+qsTr("CostModel")
         }
 
         Text {
@@ -324,7 +337,7 @@ NavigationAppHMIMenu {
             id:routingPreferencesTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("RoutingPreferences")
+            text: Translator.getEmptyString()+qsTr("RoutingPreferences")
         }
 
         Text {
@@ -332,7 +345,7 @@ NavigationAppHMIMenu {
             id: ferriesText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Ferries")
+            text: Translator.getEmptyString()+qsTr("Ferries")
         }
         StdButton { source:StyleSheet.allow_ferries[Constants.SOURCE]; x:StyleSheet.allow_ferries[Constants.X]; y:StyleSheet.allow_ferries[Constants.Y]; width:StyleSheet.allow_ferries[Constants.WIDTH]; height:StyleSheet.allow_ferries[Constants.HEIGHT];
             id:ferries_yes;disabled: !Genivi.route_calculated;onClicked:{use(Genivi.NAVIGATIONCORE_FERRY)}}
@@ -344,7 +357,7 @@ NavigationAppHMIMenu {
             id: tollRoadsText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("TollRoads")
+            text: Translator.getEmptyString()+qsTr("TollRoads")
         }
         StdButton { source:StyleSheet.allow_tollRoads[Constants.SOURCE]; x:StyleSheet.allow_tollRoads[Constants.X]; y:StyleSheet.allow_tollRoads[Constants.Y]; width:StyleSheet.allow_tollRoads[Constants.WIDTH]; height:StyleSheet.allow_tollRoads[Constants.HEIGHT];
             id:toll_roads_yes;disabled: !Genivi.route_calculated;onClicked:{use(Genivi.NAVIGATIONCORE_TOLL_ROADS)}}
@@ -356,7 +369,7 @@ NavigationAppHMIMenu {
             id:motorWaysText;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("MotorWays")
+            text: Translator.getEmptyString()+qsTr("MotorWays")
         }
         StdButton { source:StyleSheet.allow_motorways[Constants.SOURCE]; x:StyleSheet.allow_motorways[Constants.X]; y:StyleSheet.allow_motorways[Constants.Y]; width:StyleSheet.allow_motorways[Constants.WIDTH]; height:StyleSheet.allow_motorways[Constants.HEIGHT];
             id:motorways_yes;disabled: !Genivi.route_calculated;onClicked:{use(Genivi.NAVIGATIONCORE_HIGHWAYS_MOTORWAYS)}}
@@ -368,7 +381,7 @@ NavigationAppHMIMenu {
             id:simulationTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Simulation")
+            text: Translator.getEmptyString()+qsTr("Simulation")
              }
         StdButton {
             x:StyleSheet.simu_mode_enable[Constants.X]; y:StyleSheet.simu_mode_enable[Constants.Y]; width:StyleSheet.simu_mode_enable[Constants.WIDTH]; height:StyleSheet.simu_mode_enable[Constants.HEIGHT];
@@ -407,7 +420,7 @@ NavigationAppHMIMenu {
             id:showroomTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Showroom")
+            text: Translator.getEmptyString()+qsTr("Showroom")
              }
         StdButton {
             x:StyleSheet.showroom_enable[Constants.X]; y:StyleSheet.showroom_enable[Constants.Y]; width:StyleSheet.showroom_enable[Constants.WIDTH]; height:StyleSheet.showroom_enable[Constants.HEIGHT];
@@ -445,7 +458,7 @@ NavigationAppHMIMenu {
             id:autoguidanceTitle;
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Autoguidance")
+            text: Translator.getEmptyString()+qsTr("Autoguidance")
              }
         StdButton {
             x:StyleSheet.autoguidance_enable[Constants.X]; y:StyleSheet.autoguidance_enable[Constants.Y]; width:StyleSheet.autoguidance_enable[Constants.WIDTH]; height:StyleSheet.autoguidance_enable[Constants.HEIGHT];
@@ -479,7 +492,7 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.mapDataBase[Constants.SOURCE]; x:StyleSheet.mapDataBase[Constants.X]; y:StyleSheet.mapDataBase[Constants.Y]; width:StyleSheet.mapDataBase[Constants.WIDTH]; height:StyleSheet.mapDataBase[Constants.HEIGHT];textColor:StyleSheet.mapDataBaseText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.mapDataBaseText[Constants.PIXELSIZE];
-            id:mapDataBase; text: Genivi.gettext("Mapview"); disabled:false;
+            id:mapDataBase; text: Translator.getEmptyString()+qsTr("Mapview"); disabled:false;
             onClicked:{
                 disconnectSignals();
                 entryMenu(dltIf,"NavigationAppMap",menu);
@@ -488,7 +501,7 @@ NavigationAppHMIMenu {
 
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
-            id:back; text: Genivi.gettext("Back"); disabled:false;
+            id:back; text: Translator.getEmptyString()+qsTr("Back"); disabled:false;
             onClicked:{
                 disconnectSignals();
                 leaveMenu(dltIf);

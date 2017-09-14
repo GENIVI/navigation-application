@@ -86,7 +86,7 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal(dltIf,"routeCalculationFailed");
         statusValue.visible=true;
-        statusValue.text=Genivi.gettext("CalculatedRouteFailed");
+        statusValue.text=Translator.getEmptyString()+qsTr("CalculatedRouteFailed");
         Genivi.setRouteCalculated(dltIf,false);
         // Tell the FSA that there's no route available
         Genivi.fuelstopadvisor_ReleaseRouteHandle(dbusIf,dltIf,Genivi.g_routing_handle);
@@ -97,7 +97,7 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal(dltIf,"routeCalculationProgressUpdate");
         statusValue.visible=true;
-        statusValue.text=Genivi.gettext("CalculatedRouteInProgress");
+        statusValue.text=Translator.getEmptyString()+qsTr("CalculatedRouteInProgress");
         Genivi.setRouteCalculated(dltIf,false);
     }
 
@@ -1015,7 +1015,7 @@ NavigationAppHMIMenu {
 
                 StdButton {
                     source:StyleSheetBrowseMapBottom.menub[Constants.SOURCE]; x:StyleSheetBrowseMapBottom.menub[Constants.X]; y:StyleSheetBrowseMapBottom.menub[Constants.Y]; width:StyleSheetBrowseMapBottom.menub[Constants.WIDTH]; height:StyleSheetBrowseMapBottom.menub[Constants.HEIGHT];textColor:StyleSheetBrowseMapBottom.menubText[Constants.TEXTCOLOR]; pixelSize:StyleSheetBrowseMapBottom.menubText[Constants.PIXELSIZE];
-                    id:menub; text:Genivi.gettext("Back");
+                    id:menub; text:Translator.getEmptyString()+qsTr("Back");
                     onClicked: {
                         disconnectSignals();
                         if (Genivi.entrybackheapsize){
@@ -1285,7 +1285,7 @@ NavigationAppHMIMenu {
                     id:tiltText;
                     style: Text.Sunken;
                     smooth: true
-                    text: Genivi.gettext("CameraTilt")
+                    text: Translator.getEmptyString()+qsTr("CameraTilt")
                      }
                 StdButton {
                     source:StyleSheetBrowseMapScroll.tiltp[Constants.SOURCE]; x:StyleSheetBrowseMapScroll.tiltp[Constants.X]; y:StyleSheetBrowseMapScroll.tiltp[Constants.Y]; width:StyleSheetBrowseMapScroll.tiltp[Constants.WIDTH]; height:StyleSheetBrowseMapScroll.tiltp[Constants.HEIGHT];
@@ -1305,7 +1305,7 @@ NavigationAppHMIMenu {
                     id:heightText;
                     style: Text.Sunken;
                     smooth: true
-                    text: Genivi.gettext("CameraHeight")
+                    text: Translator.getEmptyString()+qsTr("CameraHeight")
                      }
                 StdButton {
                     source:StyleSheetBrowseMapScroll.heightp[Constants.SOURCE]; x:StyleSheetBrowseMapScroll.heightp[Constants.X]; y:StyleSheetBrowseMapScroll.heightp[Constants.Y]; width:StyleSheetBrowseMapScroll.heightp[Constants.WIDTH]; height:StyleSheetBrowseMapScroll.heightp[Constants.HEIGHT];
@@ -1325,7 +1325,7 @@ NavigationAppHMIMenu {
                     id:distanceText;
                     style: Text.Sunken;
                     smooth: true
-                    text: Genivi.gettext("CameraDistance")
+                    text: Translator.getEmptyString()+qsTr("CameraDistance")
                      }
                 StdButton {
                     source:StyleSheetBrowseMapScroll.distancep[Constants.SOURCE]; x:StyleSheetBrowseMapScroll.distancep[Constants.X]; y:StyleSheetBrowseMapScroll.distancep[Constants.Y]; width:StyleSheetBrowseMapScroll.distancep[Constants.WIDTH]; height:StyleSheetBrowseMapScroll.distancep[Constants.HEIGHT];
@@ -1626,7 +1626,7 @@ NavigationAppHMIMenu {
                  StdButton {
                      source:StyleSheetBrowseMapSettings.restart[Constants.SOURCE]; x:StyleSheetBrowseMapSettings.restart[Constants.X]; y:StyleSheetBrowseMapSettings.restart[Constants.Y]; width:StyleSheetBrowseMapSettings.restart[Constants.WIDTH]; height:StyleSheetBrowseMapSettings.restart[Constants.HEIGHT];textColor:StyleSheetBrowseMapSettings.restartText[Constants.TEXTCOLOR]; pixelSize:StyleSheetBrowseMapSettings.restartText[Constants.PIXELSIZE];
                      id:restartGuidance;
-                     text: Genivi.gettext("Restart")
+                     text: Translator.getEmptyString()+qsTr("Restart")
                      disabled: (Genivi.guidance_activated || !Genivi.route_calculated);
                      onPressed: {
                          //restart guidance (the route is displayed when the menu is reloaded due to guidance status changed)
@@ -1636,7 +1636,7 @@ NavigationAppHMIMenu {
                  StdButton {
                      source:StyleSheetBrowseMapSettings.cancel[Constants.SOURCE]; x:StyleSheetBrowseMapSettings.cancel[Constants.X]; y:StyleSheetBrowseMapSettings.cancel[Constants.Y]; width:StyleSheetBrowseMapSettings.cancel[Constants.WIDTH]; height:StyleSheetBrowseMapSettings.cancel[Constants.HEIGHT];textColor:StyleSheetBrowseMapSettings.cancelText[Constants.TEXTCOLOR]; pixelSize:StyleSheetBrowseMapSettings.cancelText[Constants.PIXELSIZE];
                      id:cancel;
-                     text: Genivi.gettext("Cancel")
+                     text: Translator.getEmptyString()+qsTr("Cancel")
                      disabled: !(Genivi.guidance_activated);
                      onPressed: {
                         //stop guidance

@@ -128,6 +128,11 @@ then
 		rm -f ./build/CMakeCache.txt
 		rm -f ./build/cmake_install.cmake
 		rm -f ./build/Makefile
+		rm -f ./build/hmi/cmake_install.cmake
+		rm -f ./build/hmi/Makefile
+		rm -f ./build/hmi/hmi-launcher/cmake_install.cmake
+		rm -f ./build/hmi/hmi-launcher/Makefile
+		rm -rf ./build/hmi/hmi-launcher/moc
 	fi
 fi
 
@@ -161,9 +166,9 @@ echo 'build fsa'
 if [ "$clean" = 1 ]
 then
 	cmake -DWITH_DLT=$dlt_option $commonapi_tools_option -DWITH_DEBUG=$debug -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html  ../
-	echo 'replace a missing font in the configuration file of navit instances'
-	sed -i -e 's/Liberation Sans/TakaoPGothic/' ./navigation/navit/navit/navit_genivi_mapviewer.xml
-	sed -i -e 's/Liberation Sans/TakaoPGothic/' ./navigation/navit/navit/navit_genivi_navigationcore.xml
+	echo 'Allow to display Korean and Japanese by replacing a font in the configuration file of navit instances'
+	sed -i -e 's/Liberation Sans/NanumGothic/' ./navigation/navit/navit/navit_genivi_mapviewer.xml
+	sed -i -e 's/Liberation Sans/NanumGothic/' ./navigation/navit/navit/navit_genivi_navigationcore.xml
 fi
 make
 cd ../

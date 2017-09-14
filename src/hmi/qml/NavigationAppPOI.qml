@@ -325,7 +325,7 @@ NavigationAppHMIMenu {
             visible: false
             style: Text.Sunken;
             smooth: true
-            text: Genivi.gettext("Selected")
+            text: Translator.getEmptyString()+qsTr("Selected")
 	   	}
 		Text {
             x:StyleSheet.selectedValue[Constants.X]; y:StyleSheet.selectedValue[Constants.Y]; width:StyleSheet.selectedValue[Constants.WIDTH]; height:StyleSheet.selectedValue[Constants.HEIGHT];color:StyleSheet.selectedValue[Constants.TEXTCOLOR];styleColor:StyleSheet.selectedValue[Constants.STYLECOLOR]; font.pixelSize:StyleSheet.selectedValue[Constants.PIXELSIZE];
@@ -464,7 +464,7 @@ NavigationAppHMIMenu {
         StdButton {
             source:StyleSheet.back[Constants.SOURCE]; x:StyleSheet.back[Constants.X]; y:StyleSheet.back[Constants.Y]; width:StyleSheet.back[Constants.WIDTH]; height:StyleSheet.back[Constants.HEIGHT];textColor:StyleSheet.backText[Constants.TEXTCOLOR]; pixelSize:StyleSheet.backText[Constants.PIXELSIZE];
             id:back;
-			text: Genivi.gettext("Back"); 
+			text: Translator.getEmptyString()+qsTr("Back"); 
             onClicked: {
                 disconnectSignals();
                 rootMenu(dltIf,"NavigationAppBrowseMap");

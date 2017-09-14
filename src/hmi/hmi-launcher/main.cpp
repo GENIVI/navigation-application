@@ -40,6 +40,7 @@
 #include "wheelarea.h"
 #include "preference.h"
 #include "settings.h"
+#include "translator.h"
 
 int main(int argc, char ** argv)
 {
@@ -59,10 +60,13 @@ int main(int argc, char ** argv)
     Settings* settings=new Settings;
     settings->setIniCodec("UTF-8");
 
+    Translator* translator=new Translator();
+
     int rc = 0;
 
     QQmlEngine engine;
     engine.rootContext()->setContextProperty("Settings",settings);
+    engine.rootContext()->setContextProperty("Translator",translator);
 
     QQmlComponent *component = new QQmlComponent(&engine);
 
