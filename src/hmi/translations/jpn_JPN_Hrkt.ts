@@ -128,17 +128,17 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="921"/>
         <source>City</source>
-        <translation>町</translation>
+        <translation>都市</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="950"/>
         <source>Street</source>
-        <translation>道</translation>
+        <translation>通り</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="976"/>
         <source>Number</source>
-        <translation>番号</translation>
+        <translation>番地</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1002"/>
@@ -173,12 +173,12 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1090"/>
         <source>On</source>
-        <translation>ON</translation>
+        <translation>オン</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1098"/>
         <source>Off</source>
-        <translation>OFF</translation>
+        <translation>オフ</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1264"/>

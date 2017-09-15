@@ -69,7 +69,7 @@ add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_NO_DEBUG)
 
 set(qt_moc ${QTMOC} -o)
-set(qt_release ${QTLRELEASE})
+set(qt_release ${QTLRELEASE} -markuntranslated ?)
 set(qt_update ${QTLUPDATE})
 
 set(MOC moc)

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="de_DE">
 <context>
     <name>NavigationAppBrowseMap</name>
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="89"/>
         <source>CalculatedRouteFailed</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="100"/>
@@ -16,7 +16,7 @@
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="1018"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="1288"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="1639"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -49,7 +49,7 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="107"/>
         <source>Navigation</source>
-        <translation type="unfinished"></translation>
+        <translation>NAVI</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="124"/>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="140"/>
         <source>Mapview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karte</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="158"/>
@@ -69,12 +69,12 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="173"/>
         <source>Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurier</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="186"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Beenden</translation>
     </message>
 </context>
 <context>
@@ -82,7 +82,7 @@
     <message>
         <location filename="../qml/NavigationAppMap.qml" line="71"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -95,7 +95,7 @@
     <message>
         <location filename="../qml/NavigationAppPOI.qml" line="467"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -103,7 +103,7 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="344"/>
         <source>CalculatedRouteFailed</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="354"/>
@@ -128,17 +128,17 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="921"/>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation>Stadt</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="950"/>
         <source>Street</source>
-        <translation type="unfinished"></translation>
+        <translation>Straße</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="976"/>
         <source>Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Hausnummer</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1002"/>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1018"/>
         <source>RouteDistance</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernung</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1032"/>
@@ -173,22 +173,22 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1090"/>
         <source>On</source>
-        <translation type="unfinished"></translation>
+        <translation>An</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1098"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1264"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abbrechen</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1297"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -196,12 +196,12 @@
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="291"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprachen</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="314"/>
         <source>Units</source>
-        <translation type="unfinished"></translation>
+        <translation>Maßeinheiten</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="332"/>
@@ -246,12 +246,12 @@
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="495"/>
         <source>Mapview</source>
-        <translation type="unfinished"></translation>
+        <translation>Karte</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="504"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../qml/NavigationAppTripComputer.qml" line="435"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 </TS>

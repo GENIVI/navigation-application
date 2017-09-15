@@ -69,12 +69,12 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="173"/>
         <source>Configuration</source>
-        <translation>CONFIG</translation>
+        <translation>SET UP</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="186"/>
         <source>Quit</source>
-        <translation>QUIT</translation>
+        <translation>EXIT</translation>
     </message>
 </context>
 <context>

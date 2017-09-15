@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="ko_KR">
 <context>
     <name>NavigationAppBrowseMap</name>
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="89"/>
         <source>CalculatedRouteFailed</source>
-        <translation type="unfinished"></translation>
+        <translation>실패함</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="100"/>
@@ -16,7 +16,7 @@
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="1018"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="1288"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../qml/NavigationAppBrowseMap.qml" line="1639"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>취소하기</translation>
     </message>
 </context>
 <context>
@@ -49,7 +49,7 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="107"/>
         <source>Navigation</source>
-        <translation type="unfinished"></translation>
+        <translation>네비</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="124"/>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="140"/>
         <source>Mapview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">지도</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="158"/>
@@ -69,12 +69,12 @@
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="173"/>
         <source>Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>설정</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppMain.qml" line="186"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>끝내기</translation>
     </message>
 </context>
 <context>
@@ -82,7 +82,7 @@
     <message>
         <location filename="../qml/NavigationAppMap.qml" line="71"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
 </context>
 <context>
@@ -95,7 +95,7 @@
     <message>
         <location filename="../qml/NavigationAppPOI.qml" line="467"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
 </context>
 <context>
@@ -103,7 +103,7 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="344"/>
         <source>CalculatedRouteFailed</source>
-        <translation type="unfinished"></translation>
+        <translation>실패함</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="354"/>
@@ -128,17 +128,17 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="921"/>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation>도시</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="950"/>
         <source>Street</source>
-        <translation type="unfinished"></translation>
+        <translation>거리</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="976"/>
         <source>Number</source>
-        <translation type="unfinished"></translation>
+        <translation>집 번호</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1002"/>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1018"/>
         <source>RouteDistance</source>
-        <translation type="unfinished"></translation>
+        <translation>거리</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1032"/>
@@ -173,22 +173,22 @@
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1090"/>
         <source>On</source>
-        <translation type="unfinished"></translation>
+        <translation>켜기</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1098"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>끄기</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1264"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">취소하기</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSearch.qml" line="1297"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
 </context>
 <context>
@@ -196,12 +196,12 @@
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="291"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>언어</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="314"/>
         <source>Units</source>
-        <translation type="unfinished"></translation>
+        <translation>단위</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="332"/>
@@ -246,12 +246,12 @@
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="495"/>
         <source>Mapview</source>
-        <translation type="unfinished"></translation>
+        <translation>지도</translation>
     </message>
     <message>
         <location filename="../qml/NavigationAppSettings.qml" line="504"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
 </context>
 <context>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../qml/NavigationAppTripComputer.qml" line="435"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
 </context>
 </TS>
