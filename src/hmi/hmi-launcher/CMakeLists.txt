@@ -27,9 +27,9 @@ add_definitions("-fPIC")
 
 message(STATUS "hmi-launcher")
 find_program(XSLTPROC xsltproc REQUIRED)
-find_program(QTMOC moc REQUIRED)
-find_program(QTLRELEASE lrelease REQUIRED)
-find_program(QTLUPDATE lupdate REQUIRED)
+find_program(QT_MOC_EXECUTABLE moc)
+find_program(QT_LRELEASE lrelease)
+find_program(QT_LUPDATE lupdate)
 
 find_package(PkgConfig REQUIRED)
 
@@ -55,8 +55,6 @@ include_directories(
     ${NAVIGATION_COMMON_DIR}
 )
 
-message(STATUS "${DBUS_INCLUDE_DIRS}")
-
 set(cmake_create_dir cmake -E make_directory)
 
 # settings for Qt
@@ -68,9 +66,22 @@ add_definitions(${QT5_CORE_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_NO_DEBUG)
 
-set(qt_moc ${QTMOC} -o)
-set(qt_release ${QTLRELEASE} -markuntranslated ?)
-set(qt_update ${QTLUPDATE})
+if(QT_MOC_EXECUTABLE)
+    set(qt_moc ${QT_MOC_EXECUTABLE} -o)
+else()
+    set(qt_moc moc -o)
+endif()
+
+if(QT_LRELEASE)
+    set(qt_release ${QT_LRELEASE} -markuntranslated ?)
+else()
+    set(qt_release lrelease -markuntranslated ?)
+endif()
+if(QT_LUPDATE)
+    set(qt_update ${QT_LUPDATE})
+else()
+    set(qt_update lupdate)
+endif()
 
 set(MOC moc)
 

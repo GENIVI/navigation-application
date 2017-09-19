@@ -66,7 +66,7 @@ function check_path_for_capi
 	commonapi_tools_option="-DDBUS_LIB_PATH="$DBUS_LIB_PATH" -DCOMMONAPI_DBUS_TOOL_DIR="$COMMONAPI_DBUS_TOOL_DIR" -DCOMMONAPI_TOOL_DIR="$COMMONAPI_TOOL_DIR""
 }
 
-while getopts cdghlmntw opt
+while getopts cdghlmnptw opt
 do
 	case $opt in
 	c)
