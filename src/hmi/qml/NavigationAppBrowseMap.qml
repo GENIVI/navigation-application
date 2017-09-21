@@ -129,7 +129,7 @@ NavigationAppHMIMenu {
     {
         Genivi.hookSignal(dltIf,"guidanceManeuverChanged");
         var advice = Genivi.Maneuver[args[1]];
-        console.log(advice)
+        Genivi.hookMessage(dltIf,"Advice: ",advice)
         maneuverBarCru.visible=false;
         maneuverBarApp.visible=false;
         maneuverBarPre.visible=false;

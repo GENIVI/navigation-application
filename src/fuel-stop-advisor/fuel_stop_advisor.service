@@ -3,8 +3,8 @@
 
 [Unit]
 Description=Fuel Stop Advisor Service for FSA configuration file
-Requires=dbus.service ambd_fsa.service
-After=ambd_fsa.service
+Requires=dbus.service
+After=enhanced-position-service.service
 
 [Service]
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/dbus/user_bus_socket
