@@ -109,6 +109,7 @@ verbose=0 #no debug or log messages displayed
 center="4612 N 0608 E" #geneva
 config_file=fsa_switzerland.conf #switzerland settings
 persistent=0 #reuse of persistent data disabled
+speech=0
 
 CUR_DIR=$PWD
 BIN_DIR=$CUR_DIR/build
@@ -165,8 +166,11 @@ VEHICLE_GATEWAY_SRC_DIR=$SRC_DIR/$VEHICLE_GATEWAY
 VEHICLE_GATEWAY_BIN_DIR=$BIN_DIR/$VEHICLE_GATEWAY
 devices="/dev/ttyUSB0 /dev/ttyACM0"
 
+SPEECH_SERVER=speech-server
+SPEECH_OUTPUT_BIN_DIR=$SRC_DIR/$NAVIGATION/src/speech-service/bin/
+
 # options analysis
-while getopts a:c:df:g:hlnoprvx opt
+while getopts a:c:df:g:hlnoprsvx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -224,6 +228,9 @@ do
 	r) #disable the log replayer
 		replayer=0
 		;;
+	s)
+		speech=1
+		;;
 	v) #enable log messages
 		verbose=1
 		;;
@@ -232,7 +239,7 @@ do
 		;;
 	h)
 		echo "Usage:"
-		echo "$0 [-a application][-c center][-ghlnoprvx]"
+		echo "$0 [-a application][-c center][-ghlnoprsvx]"
 		echo "-a: Set application (default application.qml)"
 		echo "-c: Set center (supported values: paris,tokyo,london,seoul,longitude latitude). Default is geneve"
 		echo "-d: Run subprocesses within gdb (only with -x)"
@@ -244,6 +251,7 @@ do
 		echo "-o: Create log file of subprocess output"
 		echo "-p: Reuse of persistent data (i.e. in $HOME, so don't reinit it with default file)"
 		echo "-r: Don't start replayer"
+		echo "-s: Launch the speech server"
 		echo "-v: Enable the output of log or debug messages"
 		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
 		exit 1
@@ -343,6 +351,12 @@ else
 	then
 		run "Vehicle gateway" $VEHICLE_GATEWAY_BIN_DIR/$VEHICLE_GATEWAY $devices
 	fi
+fi
+
+if [ "$speech" = 1 ]
+then
+	# start the speech server 
+	run "Speech service" $SPEECH_OUTPUT_BIN_DIR/$SPEECH_SERVER 
 fi
 
 sleep 3 # need a sleep here (to be improved)

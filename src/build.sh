@@ -38,7 +38,8 @@ gateway="OFF" #no vehicle gateway -> -g option
 theme_option="OFF" #no HMI theme -> -t option
 pack_for_gdp=0 #no tar generated
 html="OFF" #no html interface (draft)
-
+speech=0 #no build of speech -> -s option
+speech_option="OFF"
 
 function check_path_for_capi
 {
@@ -66,7 +67,7 @@ function check_path_for_capi
 	commonapi_tools_option="-DDBUS_LIB_PATH="$DBUS_LIB_PATH" -DCOMMONAPI_DBUS_TOOL_DIR="$COMMONAPI_DBUS_TOOL_DIR" -DCOMMONAPI_TOOL_DIR="$COMMONAPI_TOOL_DIR""
 }
 
-while getopts cdghlmnptw opt
+while getopts cdghlmnpstw opt
 do
 	case $opt in
 	c)
@@ -92,6 +93,10 @@ do
 	p)
 		pack_for_gdp=1
 		;;
+	s)
+		speech=1
+		speech_option="ON"
+		;;
 	t)
 		theme_option="ON"
 		;;
@@ -100,7 +105,7 @@ do
 		;;
 	h)
 		echo "Usage:"
-		echo "$0 [-cdghlmnptw]"
+		echo "$0 [-cdghlmnpstw]"
 		echo "-c: Rebuild with clean"
 		echo "-d: Enable the debug messages"
 		echo "-g: Build the vehicle gateway"
@@ -109,6 +114,7 @@ do
 		echo "-m: Build with commonAPI plugins (only with -c)"
 		echo "-n: Build navit"
 		echo "-p: Pack the hmi (for GDP)"
+		echo "-s: Build with speech"
 		echo "-t: Generate the HMI theme (only with -c)"
 		echo "-w: Enable migration to the html based hmi"
 		exit 1
@@ -159,13 +165,27 @@ else
 		make
 	fi
 fi
-cd ../../
+
+if [ "$speech" = 1 ]
+then
+	cd ../../
+	mkdir -p speech-service
+	cd speech-service
+	echo 'build speech'
+	if [ "$clean" = 1 ]
+	then
+		cmake -DWITH_DLT=$dlt_option -DWITH_DEBUG=$debug ../../navigation/src/speech-service
+	fi
+	make
+fi
+
+cd ../
 
 echo 'build fsa'
 
 if [ "$clean" = 1 ]
 then
-	cmake -DWITH_DLT=$dlt_option $commonapi_tools_option -DWITH_DEBUG=$debug -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html  ../
+	cmake -DWITH_DLT=$dlt_option $commonapi_tools_option -DWITH_DEBUG=$debug -DWITH_SPEECH=$speech_option -DWITH_STYLESHEET=$theme_option -DWITH_VEHICLE_GATEWAY=$gateway -DWITH_HTML_MIGRATION=$html  ../
 	echo 'Allow to display Korean and Japanese by replacing a font in the configuration file of navit instances'
 	sed -i -e 's/Liberation Sans/NanumGothic/' ./navigation/navit/navit/navit_genivi_mapviewer.xml
 	sed -i -e 's/Liberation Sans/NanumGothic/' ./navigation/navit/navit/navit_genivi_navigationcore.xml
