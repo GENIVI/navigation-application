@@ -275,19 +275,16 @@ def mapMatchedPositionSimulationStatusHandler(arg):
 # Main program begins here
 parser = argparse.ArgumentParser(description='Simulation dashboard for navigation PoC and FSA.')
 parser.add_argument('-v','--ver',action='store_true', help='Print log messages')
-parser.add_argument('-r','--rem',action='store', dest='host', help='Set remote host address')
+parser.add_argument('-a','--address',action='store', dest='host', help='Set remote host address')
+parser.add_argument('-p','--prt',action='store', dest='portSession', help='Set remote port number for session')
+parser.add_argument('-P','--PRT',action='store', dest='portSystem', help='Set remote port number for system')
 args = parser.parse_args()
-
-if args.host != None:
-	host = args.host
-else:
-	host = LOCAL_HOST
 
 # Initialize the game engine	
 pygame.init()
 
 # Initialize the screen
-background = pygame.image.load("dashboard.png")
+background = pygame.image.load("dashboard.bmp")
 backgroundRect = background.get_rect()
 size = (width, height) = background.get_size()
 screen = pygame.display.set_mode( size )
@@ -301,14 +298,20 @@ DBusGMainLoop(set_as_default=True)
 
 # Connect on the bus
 dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-if host == LOCAL_HOST:
-	dbusConnectionBus = dbus.SessionBus()
+
+# connect to session and system bus (remote or local)
+if args.host != None:
+	busSession = dbus.bus.BusConnection("tcp:host=" + args.host +",port="+args.portSession)
+	busSystem = dbus.bus.BusConnection("tcp:host=" + args.host +",port="+args.portSystem)
+	host = args.host
 else:
-	dbusConnectionBus = dbus.bus.BusConnection("tcp:host=" + host +",port=4000")
+    busSession = dbus.SessionBus()
+    busSystem=dbus.SessionBus()
+    host=LOCAL_HOST
 
 # Automotive message broker
 try:
-	ambObject = dbusConnectionBus.get_object("org.automotive.message.broker", "/")
+	ambObject = busSystem.get_object("org.automotive.message.broker", "/")
 except dbus.DBusException:
 	print ("connection to Automotive message broker failed")
 	print_exc()
@@ -317,58 +320,58 @@ ambInterface = dbus.Interface(ambObject, "org.automotive.Manager")
 
 # Get the object path to retrieve Engine Speed
 engineSpeedPath = ambInterface.FindObject("EngineSpeed");
-ambEngineSpeed = dbusConnectionBus.get_object("org.automotive.message.broker", engineSpeedPath[0])
+ambEngineSpeed = busSystem.get_object("org.automotive.message.broker", engineSpeedPath[0])
 ambEngineSpeedInterface = dbus.Interface(ambEngineSpeed, "org.automotive.EngineSpeed")
 
 # Get the object path to retrieve Fuel Level and Instant consumption
 fuelPath = ambInterface.FindObject("Fuel");
-ambFuel = dbusConnectionBus.get_object("org.automotive.message.broker", fuelPath[0])
+ambFuel = busSystem.get_object("org.automotive.message.broker", fuelPath[0])
 ambFuelInterface = dbus.Interface(ambFuel, "org.automotive.Fuel")
 
 # Get the object path to retrieve Odometer
 odometerPath = ambInterface.FindObject("Odometer");
-ambOdometer = dbusConnectionBus.get_object("org.automotive.message.broker", odometerPath[0])
+ambOdometer = busSystem.get_object("org.automotive.message.broker", odometerPath[0])
 ambOdometerInterface = dbus.Interface(ambOdometer, "org.automotive.Odometer")
 
 # Fuel Stop Advisor
 try:
-	fuelStopAdvisorObject = dbusConnectionBus.get_object("org.genivi.demonstrator.FuelStopAdvisor","/org/genivi/demonstrator/FuelStopAdvisor")
+	fuelStopAdvisorObject = busSession.get_object("org.genivi.demonstrator.FuelStopAdvisor","/org/genivi/demonstrator/FuelStopAdvisor")
 except dbus.DBusException:
 	print ("connection to Fuel Stop Advisor failed")
 	print_exc()
 	sys.exit(1)
 fuelStopAdvisorInterface = dbus.Interface(fuelStopAdvisorObject, "org.genivi.demonstrator.FuelStopAdvisor")
-dbusConnectionBus.add_signal_receiver(fuelStopAdvisorWarningHandler, dbus_interface = "org.genivi.demonstrator.FuelStopAdvisor", signal_name = "FuelStopAdvisorWarning")
+busSession.add_signal_receiver(fuelStopAdvisorWarningHandler, dbus_interface = "org.genivi.demonstrator.FuelStopAdvisor", signal_name = "FuelStopAdvisorWarning")
 
 # Enhanced position
 try:
-	enhancedPositionObject = dbusConnectionBus.get_object("org.genivi.positioning.EnhancedPosition", "/org/genivi/positioning/EnhancedPosition")
+	enhancedPositionObject = busSession.get_object("org.genivi.positioning.EnhancedPosition", "/org/genivi/positioning/EnhancedPosition")
 except dbus.DBusException:
 	print ("connection to Enhanced position failed")
 	print_exc()
 	sys.exit(1)
 enhancedPositionInterface = dbus.Interface(enhancedPositionObject, "org.genivi.positioning.EnhancedPosition")
-dbusConnectionBus.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.positioning.EnhancedPosition", signal_name = "PositionUpdate")
+busSession.add_signal_receiver(enhancedPositionPositionUpdateHandler, dbus_interface = "org.genivi.positioning.EnhancedPosition", signal_name = "PositionUpdate")
 
 # Guidance
 try:
-	guidanceObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.Guidance","/org/genivi/navigationcore")
+	guidanceObject = busSession.get_object("org.genivi.navigation.navigationcore.Guidance","/org/genivi/navigationcore")
 except dbus.DBusException:
 	print ("connection to Guidance failed")
 	print_exc()
 	sys.exit(1)
 guidanceInterface = dbus.Interface(guidanceObject, "org.genivi.navigation.navigationcore.Guidance")
-dbusConnectionBus.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.Guidance", signal_name = "GuidanceStatusChanged")
+busSession.add_signal_receiver(guidanceStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.Guidance", signal_name = "GuidanceStatusChanged")
 
 # Map matched position
 try:
-	mapMatchedPositionObject = dbusConnectionBus.get_object("org.genivi.navigation.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
+	mapMatchedPositionObject = busSession.get_object("org.genivi.navigation.navigationcore.MapMatchedPosition","/org/genivi/navigationcore")
 except dbus.DBusException:
 	print ("connection to Map matched position failed")
 	print_exc()
 	sys.exit(1)
 mapMatchedPositionInterface = dbus.Interface(mapMatchedPositionObject, "org.genivi.navigation.navigationcore.MapMatchedPosition")
-dbusConnectionBus.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
+busSession.add_signal_receiver(mapMatchedPositionSimulationStatusHandler, dbus_interface = "org.genivi.navigation.navigationcore.MapMatchedPosition", signal_name = "SimulationStatusChanged")
 
 displayStatus( 'Start simulation' )
 
