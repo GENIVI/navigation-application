@@ -19,6 +19,11 @@
 #define INCLUDE_COMMON
 #include <inttypes.h>
 
+#define CR '\r'
+#define CR_LF "\r\n"
+#define EOS '\0'
+#define SPACE ' '
+
 uint64_t get_timestamp();
 
 #endif

@@ -45,6 +45,7 @@
 
 #include <obd2.h>
 #include <common.h>
+#include <can.h>
 
 /* baudrate settings are defined in <asm/termbits.h>, which is
 included by <termios.h> */
@@ -53,10 +54,10 @@ included by <termios.h> */
 
 #define OBD_HEADER_LENGTH 5 //41 0C for instance
 
-#define OBD_FUEL_TANK_PID "012F\r\n"
-#define OBD_FUEL_TANK_MESSAGE_HEADER "41 2F"
-#define OBD_FUEL_TANK_MESSAGE_DATA_LENGTH 1
-#define OBD_FUEL_TANK_MESSAGE_LENGTH OBD_HEADER_LENGTH+3*OBD_FUEL_TANK_MESSAGE_DATA_LENGTH //41 2F 00
+#define OBD_FUEL_LEVEL_PID "012F\r\n"
+#define OBD_FUEL_LEVEL_MESSAGE_HEADER "41 2F"
+#define OBD_FUEL_LEVEL_MESSAGE_DATA_LENGTH 1
+#define OBD_FUEL_LEVEL_MESSAGE_LENGTH OBD_HEADER_LENGTH+3*OBD_FUEL_LEVEL_MESSAGE_DATA_LENGTH //41 2F 00
 
 #define OBD_RPM_PID "010C\r\n"
 #define OBD_RPM_MESSAGE_HEADER "41 0C"
@@ -79,10 +80,6 @@ included by <termios.h> */
 #define ELM_SET_CAN_ID_FILTER "AT CF"
 #define ELM_SET_CAN_ID_FILTER_LENGTH 12
 
-#define CR '\r'
-#define CR_LF "\r\n"
-#define EOS '\0'
-#define SPACE ' '
 #define BUFFER_MAX_LENGTH 512
 
 
@@ -143,7 +140,7 @@ int obd2_open_device(char* obd2_device, unsigned int baudrate)
    newtio.c_cc[VKILL]    = 0;     /* @ */
    newtio.c_cc[VEOF]     = 4;     /* Ctrl-d */
    newtio.c_cc[VTIME]    = 0;     /* inter-character timer unused */
-   newtio.c_cc[VMIN]     = 1;     /* blocking read until 1 character arrives */
+   newtio.c_cc[VMIN]     = 0;     /* non blocking read */
    newtio.c_cc[VSWTC]    = 0;     /* '\0' */
    newtio.c_cc[VSTART]   = 0;     /* Ctrl-q */
    newtio.c_cc[VSTOP]    = 0;     /* Ctrl-s */
@@ -164,9 +161,10 @@ int obd2_open_device(char* obd2_device, unsigned int baudrate)
    return fd;
 }
 
-bool obd2_read_answer(char*& ans,size_t& length,uint64_t& timestamp)
-{ //ans is allocated dynamically
+bool obd2_read(char*& data,size_t& length,uint64_t& timestamp)
+{ //data is allocated dynamically
     bool isRead=false;
+    bool isBufferOverflow=false;
     char buf=EOS;
     ssize_t read_result;
     size_t buf_length=0;
@@ -183,18 +181,20 @@ bool obd2_read_answer(char*& ans,size_t& length,uint64_t& timestamp)
                 if(buf_length>BUFFER_MAX_LENGTH)
                 {
                     printf("%s\n","buffer overflow");
+                    isBufferOverflow=true;
+                    delete tmp; //free the buffer
                     break;
                 }else{
                     if(buf==ELM_PROMPT){
                         isRead=true;
                         *(tmp+buf_length)=buf;
-                        ans = tmp;
+                        data = tmp; //copy the pointer, so it'll be freed into the caller
                         length=buf_length;
                     }
                     else{
                         if(buf==CR)
                             buf=SPACE;
-                        *(tmp+buf_length)=buf;
+                        *(tmp+buf_length)=buf; //push back char
                     }
                     buf_length++;
                 }
@@ -202,7 +202,7 @@ bool obd2_read_answer(char*& ans,size_t& length,uint64_t& timestamp)
         }
         usleep(ELM_READ_LOOP);
         timeout+=ELM_READ_LOOP;
-    }while((isRead==false)&&(timeout<ELM_READ_TIMEOUT));
+    }while((isRead==false)&&(timeout<ELM_READ_TIMEOUT)&&(isBufferOverflow==false));
 
     timestamp=get_timestamp();
     return isRead;
@@ -235,8 +235,10 @@ bool obd2_reset(uint64_t& timestamp)
     size_t answer_length;
     if (obd2_send_command(ELM_RESET_ALL)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
+        }else{
+            delete answer;
         }
     }else{
         return false;
@@ -250,47 +252,20 @@ bool obd2_config(uint64_t& timestamp)
     size_t answer_length;
     if (obd2_send_command(ELM_ECHO_OFF)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
+        }else{
+            delete answer;
         }
     }else{
         return false;
     }
     if (obd2_send_command(OBD_GET_PID_LIST)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
-        }
-    }else{
-        return false;
-    }
-    return true;
-}
-
-bool obd2_config_can_reader(uint64_t& timestamp)
-{
-    char* answer;
-    size_t answer_length;
-    if (obd2_send_command(ELM_HEADER_ON)){
-        answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
-            return false;
-        }
-    }else{
-        return false;
-    }
-    if (obd2_send_command(ELM_CAN_FORMAT_OFF)){
-        answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
-            return false;
-        }
-    }else{
-        return false;
-    }
-    if (obd2_send_command(ELM_MONITOR_ALL)){
-        answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
-            return false;
+        }else{
+            delete answer;
         }
     }else{
         return false;
@@ -307,18 +282,20 @@ bool obd2_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
     size_t answer_length;
     if (obd2_send_command(OBD_RPM_PID)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
         }
     }else{
         return false;
     }
     if(answer_length!=OBD_RPM_MESSAGE_LENGTH){
+        delete answer;
         return false;
     }else{
         strncpy(header,answer,OBD_HEADER_LENGTH);
         header[OBD_HEADER_LENGTH]=EOS;
         if(strcmp(header,OBD_RPM_MESSAGE_HEADER)!=0){
+            delete answer;
             return false;
         }else{
             value[0]=answer[OBD_HEADER_LENGTH+1];
@@ -327,51 +304,45 @@ bool obd2_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
             value[3]=answer[OBD_HEADER_LENGTH+5];
             value[4]=EOS;
             rpm=atoi(value)/4;
+            delete answer;
         }
     }
     return true;
 }
 
-bool can_read_engine_rpm(uint16_t& rpm,uint64_t& timestamp)
-{
-    return false;
-}
-
-bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp)
+bool obd2_read_fuel_level(uint8_t& level,uint64_t& timestamp)
 {
     //`012F` Fuel Tank Level Input: returns 1 byte: level in %
     char* answer;
     char header[OBD_HEADER_LENGTH+1];
-    char value[OBD_FUEL_TANK_MESSAGE_DATA_LENGTH*2+1];
+    char value[OBD_FUEL_LEVEL_MESSAGE_DATA_LENGTH*2+1];
     size_t answer_length;
-    if (obd2_send_command(OBD_FUEL_TANK_PID)){
+    if (obd2_send_command(OBD_FUEL_LEVEL_PID)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
         }
     }else{
         return false;
     }
-    if(answer_length!=OBD_FUEL_TANK_MESSAGE_LENGTH){
+    if(answer_length!=OBD_FUEL_LEVEL_MESSAGE_LENGTH){
+        delete answer;
         return false;
     }else{
         strncpy(header,answer,OBD_HEADER_LENGTH);
         header[OBD_HEADER_LENGTH]=EOS;
-        if(strcmp(header,OBD_FUEL_TANK_MESSAGE_HEADER)!=0){
+        if(strcmp(header,OBD_FUEL_LEVEL_MESSAGE_HEADER)!=0){
+            delete answer;
             return false;
         }else{
             value[0]=answer[OBD_HEADER_LENGTH+1];
             value[1]=answer[OBD_HEADER_LENGTH+2];
             value[3]=EOS;
             level=atoi(value);
+            delete answer;
         }
     }
     return true;
-}
-
-bool can_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp)
-{
-    return false;
 }
 
 bool obd2_set_filter(uint16_t filter,uint16_t mask,uint64_t& timestamp)
@@ -386,19 +357,123 @@ bool obd2_set_filter(uint16_t filter,uint16_t mask,uint64_t& timestamp)
 
     if (obd2_send_command(filterBuffer)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
+        }else{
+            delete answer;
         }
     }else{
         return false;
     }
     if (obd2_send_command(maskBuffer)){
         answer=NULL;
-        if(obd2_read_answer(answer,answer_length,timestamp)!=true){
+        if(obd2_read(answer,answer_length,timestamp)!=true){
             return false;
+        }else{
+            delete answer;
         }
     }else{
         return false;
     }
     return true;
 }
+
+bool obd2_config_can_reader(uint64_t& timestamp)
+{
+    char* answer;
+    size_t answer_length;
+    if (obd2_send_command(ELM_HEADER_ON)){
+        answer=NULL;
+        if(obd2_read(answer,answer_length,timestamp)!=true){
+            return false;
+        }else{
+            delete answer;
+        }
+    }else{
+        return false;
+    }
+    if (obd2_send_command(ELM_CAN_FORMAT_OFF)){
+        answer=NULL;
+        if(obd2_read(answer,answer_length,timestamp)!=true){
+            return false;
+        }else{
+            delete answer;
+        }
+    }else{
+        return false;
+    }
+    if (obd2_send_command(ELM_MONITOR_ALL)){
+        answer=NULL;
+        if(obd2_read(answer,answer_length,timestamp)!=true){
+            return false;
+        }else{
+            delete answer;
+        }
+    }else{
+        return false;
+    }
+    return true;
+}
+
+can_message_id_t can_read(char*& data,uint64_t& timestamp)
+{
+    bool isRead=false;
+    bool isBufferOverflow=false;
+    can_message_id_t ret=NO_MESSAGE;
+    char buf=EOS;
+    ssize_t read_result;
+    size_t buf_length=0;
+    useconds_t timeout=0;
+    char* tmp = new char[BUFFER_MAX_LENGTH];
+    do{
+        read_result=read(g_obd2_fd,&buf,1);
+        if(read_result==(-1))
+            isRead=false;
+        else{
+            if(read_result>0)
+            {
+                timeout=0; //data received so reset the time out
+                if(buf_length>BUFFER_MAX_LENGTH)
+                {
+                    printf("%s\n","buffer overflow");
+                    isBufferOverflow=true;
+                    delete tmp; //free the buffer
+                    break;
+                }else{
+                    if(buf==CR){
+                        isRead=true;
+                        *(tmp+buf_length)=EOS;
+                        timestamp=get_timestamp();
+                        // analyze content now
+                        if (strncmp(tmp,CAN_MESSAGE_ENGINE_SPEED_ID_AND_DATA_SIZE,CAN_ID_AND_DATA_SIZE_LENGTH)==0)
+                        {
+                            data=tmp; //copy the pointer, so it'll be freed into the caller
+                            ret=MESSAGE_ENGINE_SPEED;
+                        }else{
+                            if (strncmp(tmp,CAN_MESSAGE_FUEL_LEVEL_ID_AND_DATA_SIZE,CAN_ID_AND_DATA_SIZE_LENGTH)==0)
+                            {
+                                data=tmp; //copy the pointer, so it'll be freed into the caller
+                                ret=MESSAGE_FUEL_LEVEL;
+                            }else{
+                                if (strncmp(tmp,CAN_MESSAGE_WHEEL_TICK_ID_AND_DATA_SIZE,CAN_ID_AND_DATA_SIZE_LENGTH)==0)
+                                {
+                                    data=tmp; //copy the pointer, so it'll be freed into the caller
+                                    ret=MESSAGE_WHEEL_TICK;
+                                }else{
+                                    delete tmp; //free the buffer
+                                }
+                            }
+                        }
+                    }else{
+                        *(tmp+buf_length)=buf; //push back char
+                    }
+                    buf_length++;
+                }
+            }
+        }
+        usleep(ELM_READ_LOOP);
+        timeout+=ELM_READ_LOOP;
+    }while((isRead==false)&&(timeout<ELM_READ_TIMEOUT)&&(isBufferOverflow==false));
+    return ret;
+}
+

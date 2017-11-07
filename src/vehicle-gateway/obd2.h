@@ -42,6 +42,7 @@ extern "C" {
 #include <stdint.h>
 #include <math.h>
 #include <sys/types.h>
+#include <can.h>
 
 bool obd2_init(char* obd2_device, unsigned int baudrate);
 
@@ -51,15 +52,13 @@ bool obd2_config(uint64_t& timestamp);
 
 bool obd2_read_engine_rpm(uint16_t& rpm, uint64_t &timestamp);
 
-bool can_read_engine_rpm(uint16_t& rpm, uint64_t &timestamp);
-
-bool obd2_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp);
-
-bool can_read_fuel_tank_level(uint8_t& level,uint64_t& timestamp);
+bool obd2_read_fuel_level(uint8_t& level,uint64_t& timestamp);
 
 bool obd2_config_can_reader(uint64_t& timestamp);
 
 bool obd2_set_filter(uint16_t filter, uint16_t mask, uint64_t& timestamp);
+
+can_message_id_t can_read(char*& data, uint64_t &timestamp);
 
 #ifdef __cplusplus
 }
