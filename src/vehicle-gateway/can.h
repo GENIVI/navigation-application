@@ -19,8 +19,9 @@
 #ifndef INCLUDE_CAN
 #define INCLUDE_CAN
 
-#define CAN_MESSAGE_FILTER 0x123
-#define CAN_MESSAGE_MASK 0x7FF
+#define CAN_PROTOCOL_11_BIT_ID_500KBITS 6
+#define CAN_MESSAGE_FILTER "612"
+#define CAN_MESSAGE_MASK "0E0"
 #define CAN_MESSAGE_MAX_DATA_LENGTH 8
 //index is the index in the data frame, format is the length (ex: engine speed is 1758, index is 4 and format is 4
 //Engine speed frame: 20881758330040FFFF22
@@ -30,7 +31,7 @@
 #define CAN_MESSAGE_ENGINE_SPEED_FORMAT 4
 //Fuel level frame: 61267321013C0000
 // => 0x3C*0.5 = 60*0.5 = 30l
-#define CAN_MESSAGE_FUEL_LEVEL_ID_AND_DATA_SIZE "6126"
+#define CAN_MESSAGE_FUEL_LEVEL_ID_AND_DATA_SIZE "6128"
 #define CAN_MESSAGE_FUEL_LEVEL_INDEX 10
 #define CAN_MESSAGE_FUEL_LEVEL_FORMAT 2
 //Wheel ticks frame: 50D700091508EC8E90

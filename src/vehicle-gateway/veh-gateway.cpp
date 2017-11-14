@@ -305,6 +305,8 @@ int main(int argc, char* argv[])
     if(!obd2_reset(stop)){
         LOG_DEBUG(gContext,"RESET OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
         return(-1);
+    }else{
+        LOG_DEBUG(gContext,"RESET OBD2 OK [DURATION = %" PRIu64 " ms]", stop-start);
     }
 
     if(can_reader_mode){
@@ -312,11 +314,6 @@ int main(int argc, char* argv[])
         start = get_timestamp();
         if(!obd2_config_can_reader(stop)){
             LOG_DEBUG(gContext,"CAN READER MODE OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
-            return(-1);
-        }
-        start = get_timestamp();
-        if(!obd2_set_filter(CAN_MESSAGE_FILTER,CAN_MESSAGE_MASK,stop)){
-            LOG_DEBUG(gContext,"SET FILTER OBD2 FAILURE [DURATION = %" PRIu64 " ms]", stop-start);
             return(-1);
         }
     }else{

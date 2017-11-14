@@ -56,8 +56,6 @@ bool obd2_read_fuel_level(uint8_t& level,uint64_t& timestamp);
 
 bool obd2_config_can_reader(uint64_t& timestamp);
 
-bool obd2_set_filter(uint16_t filter, uint16_t mask, uint64_t& timestamp);
-
 can_message_id_t can_read(char*& data, uint64_t &timestamp);
 
 #ifdef __cplusplus

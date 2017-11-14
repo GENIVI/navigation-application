@@ -20,6 +20,7 @@
 #include <inttypes.h>
 
 #define CR '\r'
+#define LF '\n'
 #define CR_LF "\r\n"
 #define EOS '\0'
 #define SPACE ' '

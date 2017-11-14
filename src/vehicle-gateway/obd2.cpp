@@ -71,14 +71,20 @@ included by <termios.h> */
 #define ELM_GET_ID "AT I\r\n"
 #define ELM_PROMPT '>'
 #define ELM_READ_LOOP 5000 //5 ms
-#define ELM_READ_TIMEOUT 1000000 //100 ms
+#define ELM_READ_TIMEOUT 100000 //100 ms
 #define ELM_HEADER_ON "AT H1\r\n"
 #define ELM_CAN_FORMAT_OFF "AT CAF0\r\n"
 #define ELM_MONITOR_ALL "AT MA\r\n"
+#define ELM_SET_PROTOCOL "AT SP"
+#define ELM_SET_PROTOCOL_LENGTH 10
 #define ELM_SET_CAN_ID_MASK "AT CM"
 #define ELM_SET_CAN_ID_MASK_LENGTH 12
 #define ELM_SET_CAN_ID_FILTER "AT CF"
 #define ELM_SET_CAN_ID_FILTER_LENGTH 12
+#define ELM_LINEFEEDS_ON "AT L1\r\n"
+#define ELM_PRINTING_SPACES_OFF "AT S0\r\n"
+#define ELM_ALLOW_LONG_MESSAGES "AT AL\r\n"
+#define ELM_DISPLAY_DLC_ON "AT D1\r\n"
 
 #define BUFFER_MAX_LENGTH 512
 
@@ -216,6 +222,23 @@ bool obd2_send_command(const char* cmd)
         return false;
 }
 
+bool obd2_command(const char* cmd, uint64_t& timestamp)
+{
+    char* answer;
+    size_t answer_length;
+    if (obd2_send_command(cmd)){
+        answer=NULL;
+        if(obd2_read(answer,answer_length,timestamp)!=true){
+            return false;
+        }else{
+            delete answer;
+        }
+    }else{
+        return false;
+    }
+    return true;
+}
+
 bool obd2_init(char* obd2_device, unsigned int baudrate)
 {
     bool retval = false;
@@ -345,73 +368,38 @@ bool obd2_read_fuel_level(uint8_t& level,uint64_t& timestamp)
     return true;
 }
 
-bool obd2_set_filter(uint16_t filter,uint16_t mask,uint64_t& timestamp)
-{
-    char* answer;
-    size_t answer_length;
-    char filterBuffer[ELM_SET_CAN_ID_FILTER_LENGTH];
-    char maskBuffer[ELM_SET_CAN_ID_MASK_LENGTH];
-
-    sprintf(filterBuffer,ELM_SET_CAN_ID_FILTER " %x" CR_LF,filter);
-    sprintf(maskBuffer,ELM_SET_CAN_ID_MASK " %x" CR_LF,mask);
-
-    if (obd2_send_command(filterBuffer)){
-        answer=NULL;
-        if(obd2_read(answer,answer_length,timestamp)!=true){
-            return false;
-        }else{
-            delete answer;
-        }
-    }else{
-        return false;
-    }
-    if (obd2_send_command(maskBuffer)){
-        answer=NULL;
-        if(obd2_read(answer,answer_length,timestamp)!=true){
-            return false;
-        }else{
-            delete answer;
-        }
-    }else{
-        return false;
-    }
-    return true;
-}
-
 bool obd2_config_can_reader(uint64_t& timestamp)
 {
-    char* answer;
-    size_t answer_length;
-    if (obd2_send_command(ELM_HEADER_ON)){
-        answer=NULL;
-        if(obd2_read(answer,answer_length,timestamp)!=true){
-            return false;
-        }else{
-            delete answer;
-        }
-    }else{
+    char filterBuffer[ELM_SET_CAN_ID_FILTER_LENGTH];
+    char maskBuffer[ELM_SET_CAN_ID_MASK_LENGTH];
+    char protocolBuffer[ELM_SET_PROTOCOL_LENGTH];
+
+    sprintf(filterBuffer,ELM_SET_CAN_ID_FILTER " %s" CR_LF,CAN_MESSAGE_FILTER);
+    sprintf(maskBuffer,ELM_SET_CAN_ID_MASK " %s" CR_LF,CAN_MESSAGE_MASK);
+    sprintf(protocolBuffer,ELM_SET_PROTOCOL " %d" CR_LF,CAN_PROTOCOL_11_BIT_ID_500KBITS);
+
+    if(!obd2_command(ELM_GET_ID,timestamp))
         return false;
-    }
-    if (obd2_send_command(ELM_CAN_FORMAT_OFF)){
-        answer=NULL;
-        if(obd2_read(answer,answer_length,timestamp)!=true){
-            return false;
-        }else{
-            delete answer;
-        }
-    }else{
+    if(!obd2_command(ELM_LINEFEEDS_ON,timestamp))
         return false;
-    }
-    if (obd2_send_command(ELM_MONITOR_ALL)){
-        answer=NULL;
-        if(obd2_read(answer,answer_length,timestamp)!=true){
-            return false;
-        }else{
-            delete answer;
-        }
-    }else{
+    if(!obd2_command(ELM_HEADER_ON,timestamp))
         return false;
-    }
+    if(!obd2_command(ELM_PRINTING_SPACES_OFF,timestamp))
+        return false;
+    if(!obd2_command(ELM_ALLOW_LONG_MESSAGES,timestamp))
+        return false;
+    if(!obd2_command(protocolBuffer,timestamp))
+        return false;
+    if(!obd2_command(ELM_DISPLAY_DLC_ON,timestamp))
+        return false;
+    if(!obd2_command(ELM_CAN_FORMAT_OFF,timestamp))
+        return false;
+    if(!obd2_command(maskBuffer,timestamp))
+        return false;
+    if(!obd2_command(filterBuffer,timestamp))
+        return false;
+    if(!obd2_send_command(ELM_MONITOR_ALL))
+        return false;
     return true;
 }
 
@@ -440,7 +428,7 @@ can_message_id_t can_read(char*& data,uint64_t& timestamp)
                     delete tmp; //free the buffer
                     break;
                 }else{
-                    if(buf==CR){
+                    if(buf==LF){
                         isRead=true;
                         *(tmp+buf_length)=EOS;
                         timestamp=get_timestamp();
