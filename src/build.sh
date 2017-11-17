@@ -142,33 +142,28 @@ then
 	fi
 fi
 
+#prepare directory structure for build
 mkdir -p build
 cd build
 mkdir -p navigation
 cd navigation
 mkdir -p navit
-cd navit
+cd ../
 
 if [ "$navit" = 1 ]
 then
+        cd navigation/navit
 	echo 'build navit'
 	if [ "$clean" = 1 ]
 	then
 		cmake -DDISABLE_QT=1 -DSAMPLE_MAP=0 -DBUILD_MAPTOOL=0 -Dvehicle/null=1 -Dgraphics/qt_qpainter=0 ../../../navigation/src/navigation/navit/
 	fi
 	make
-else
-	if [ "$clean" = 1 ]
-	then
-		echo 'build navit'
-		cmake -DDISABLE_QT=1 -DSAMPLE_MAP=0 -DBUILD_MAPTOOL=0 -Dvehicle/null=1 -Dgraphics/qt_qpainter=0 ../../../navigation/src/navigation/navit/
-		make
-	fi
+	cd ../../
 fi
 
 if [ "$speech" = 1 ]
 then
-	cd ../../
 	mkdir -p speech-service
 	cd speech-service
 	echo 'build speech'
@@ -177,9 +172,9 @@ then
 		cmake -DWITH_DLT=$dlt_option -DWITH_DEBUG=$debug ../../navigation/src/speech-service
 	fi
 	make
+	cd ../
 fi
 
-cd ../
 
 echo 'build fsa'
 
