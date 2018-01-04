@@ -1226,7 +1226,7 @@ function poisearch_GetPoiDetails(dbusInterface,dltInterface,ids)
     var value=[];
     for(var i=0;i<ids.length;i+=1)
     {
-        value=value.concat(["uint32",ids[i]]);
+        value=value.concat(["uint64",ids[i]]);
     }
     return poisearch_message_get(dbusInterface,dltInterface,"GetPoiDetails",["array",value]);
 }

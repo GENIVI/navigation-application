@@ -13,3 +13,5 @@ bin/
 *.user*
 *.txt.user*
 /.project
+*.qmlc
+*.jsc

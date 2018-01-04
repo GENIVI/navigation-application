@@ -85,7 +85,9 @@ dbus_from_qml(QVariant v)
 		return QVariant(l[1].toInt());
 	} else if (type == "uint32" || type == "byte") {
 		return QVariant(l[1].toUInt());
-	} else if (type == "string") {
+    } else if (type == "uint64") {
+        return QVariant(l[1].toULongLong());
+    } else if (type == "string") {
 		return QVariant(l[1].toString());
 	} else {
 		qDebug() << "Unknown type" << type;
@@ -119,7 +121,11 @@ qml_from_dbus(QVariant v)
 	QVariantList r;
 	const char *type=v.typeName();
 	switch (v.type()) {
-	case QVariant::UInt:
+    case QVariant::ULongLong:
+        r.append("uint64");
+        r.append(v.toULongLong());
+        break;
+    case QVariant::UInt:
 		r.append("uint32");
 		r.append(v.toUInt());
 		break;
@@ -313,10 +319,18 @@ qml_from_dbus_iter(DBusMessageIter *iter)
 			r.append(v);
 		}
 		break;
-	case DBUS_TYPE_UINT32:
+    case DBUS_TYPE_UINT32:
+        {
+            dbus_uint32_t v;
+            r.append("uint32");
+            dbus_message_iter_get_basic(iter, &v);
+            r.append(v);
+        }
+        break;
+    case DBUS_TYPE_UINT64:
 		{
-			dbus_uint32_t v;
-			r.append("uint32");
+            qulonglong v;
+            r.append("uint64");
 			dbus_message_iter_get_basic(iter, &v);
 			r.append(v);
 		}
@@ -385,7 +399,9 @@ signature_from_qml(QVariant t, QVariant v)
 		return QString(DBUS_TYPE_UINT16);
 	} else if (type == "uint32") {
 		return QString(DBUS_TYPE_UINT32);
-	} else if (type == "string") {
+    } else if (type == "uint64") {
+        return QString(DBUS_TYPE_UINT64);
+    } else if (type == "string") {
 		return QString(DBUS_TYPE_STRING);
 	} else if (type == "variant") {
 		return QString(DBUS_TYPE_VARIANT);
@@ -453,10 +469,14 @@ dbus_iter_append_from_qml(DBusMessageIter *iter, QVariant t, QVariant v)
 		if (!dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT16, &val))
 			return false;
 	} else if (type == "uint32") {
-		dbus_uint32_t val=v.toUInt();
+        dbus_uint32_t val=v.toUInt();
 		if (!dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT32, &val))
 			return false;
-	} else if (type == "variant") {
+    } else if (type == "uint64") {
+        dbus_uint64_t val=v.toULongLong();
+        if (!dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT64, &val))
+            return false;
+    } else if (type == "variant") {
 		QVariantList va=v.value <QVariantList>();
 		if (va.size() != 2)  {
 			qDebug() << "variant must have 2 elements, not " << va.size();
