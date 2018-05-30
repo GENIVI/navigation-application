@@ -7,10 +7,10 @@ function get_window_id()
 }
 
 get_window_id "fsa"
-wmctrl -i -r "$window_id" -e 0,100,100,800,480
+wmctrl -i -r "$window_id" -e 0,50,50,800,480
 
 get_window_id "navit"
-wmctrl -i -r "$window_id" -e 0,100,72,800,480
+wmctrl -i -r "$window_id" -e 0,50,22,800,480
 
 wmctrl -a "fsa"
 

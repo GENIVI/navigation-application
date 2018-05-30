@@ -19,19 +19,24 @@
 # @licence end@
 ###########################################################################
 project(hmi-launcher)
+
+message(STATUS ${PROJECT_NAME})
+
 cmake_minimum_required(VERSION 2.8.11)
 
 add_definitions("-std=gnu++11")
 
 add_definitions("-fPIC")
 
-message(STATUS "hmi-launcher")
 find_program(XSLTPROC xsltproc REQUIRED)
 find_program(QT_MOC_EXECUTABLE moc)
 find_program(QT_LRELEASE lrelease)
 find_program(QT_LUPDATE lupdate)
 
 find_package(PkgConfig REQUIRED)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TOP_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${TOP_DIR}/bin)
 
 pkg_check_modules(DBUS dbus-1)
 pkg_check_modules(QT5_CORE REQUIRED Qt5Core)
@@ -204,7 +209,7 @@ if(${WITH_DLT})
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
 endif()
 
-add_executable(hmi-launcher
+add_executable(${PROJECT_NAME}
     ${MOC_SOURCES}
     main.cpp
     dltif.cpp
@@ -213,7 +218,9 @@ add_executable(hmi-launcher
     preference.cpp
 )
 
-target_link_libraries(hmi-launcher ${LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 
 

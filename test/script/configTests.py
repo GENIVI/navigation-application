@@ -29,12 +29,12 @@
 import subprocess,os
 from subprocess import call 
 
-PATH_LOGREPLAYER='../../src/navigation/src/navigation/bin/'
+PATH_LOGREPLAYER='../../src/log-replayer-server/bin/'
 PATH_LOGFILES='../resource/'
 
 def launch(file,host): 
 	FNULL = open(os.devnull,'w')
-	logreplayer=PATH_LOGREPLAYER + 'log-replayer'
+	logreplayer=PATH_LOGREPLAYER + 'log-replayer-server'
 	file=PATH_LOGFILES + file
 	call([logreplayer, file, host])
 

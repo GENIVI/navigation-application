@@ -7,7 +7,8 @@
 # Author: Philippe Colliot
 #
 # Copyright (C) 2014, PCA Peugeot Citroën
-# 
+# Copyright (C) 2018, PSA Groupe
+#
 # License:
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
@@ -42,6 +43,7 @@ message(STATUS "WITH_HTML_MIGRATION = ${WITH_HTML_MIGRATION}")
 message(STATUS "WITH_VEHICLE_GATEWAY = ${WITH_VEHICLE_GATEWAY}")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
 
+set(TOP_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(NAVIGATION_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/api")
 set(POSITIONING_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/navigation/src/navigation/positioning/enhanced-position-service/dbus/api")
 set(FUEL_STOP_ADVISOR_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fuel-stop-advisor")
@@ -96,6 +98,22 @@ if (WITH_PLUGIN_MIGRATION)
 else()
     add_subdirectory(fuel-stop-advisor)
 endif()
+
+set(ENHANCED_POSITION_SERVICE_GEN_DIR "${CMAKE_BINARY_DIR}/enhanced-position-service/dbus/api")
+set(GNSS_SERVICE_API_DIR "${PROJECT_SOURCE_DIR}/navigation/src/navigation/positioning/gnss-service/api")
+set(GNSS_SERVICE_LIBRARY_DIR "${TOP_DIR}/lib")
+set(GNSS_SERVICE_LIBRARIES "gnss-service")
+set(SENSORS_SERVICE_API_DIR "${PROJECT_SOURCE_DIR}/navigation/src/navigation/positioning/sensors-service/api")
+set(SENSORS_SERVICE_LIBRARY_DIR "${TOP_DIR}/lib")
+set(SENSORS_SERVICE_LIBRARIES "sensors-service")
+
+add_subdirectory(sensors-service)
+
+add_subdirectory(gnss-service)
+
+add_subdirectory(dead-reckoning)
+
+add_subdirectory(log-replayer-server)
 
 add_subdirectory(genivilogreplayer)
 

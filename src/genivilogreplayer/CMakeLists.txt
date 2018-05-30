@@ -15,6 +15,10 @@
 #
 # @licence end@
 ###########################################################################
+project(genivilogreplayerplugin)
+
+message(STATUS ${PROJECT_NAME})
+
 cmake_minimum_required(VERSION 2.8)
 
 add_definitions("-std=gnu++11")
@@ -25,9 +29,9 @@ pkg_search_module(GLIB glib-2.0)
 set(genivilogreplayer_headers genivilogreplayerplugin.h)
 set(genivilogreplayer_sources genivilogreplayerplugin.cpp)
 
-add_library(genivilogreplayerplugin MODULE ${genivilogreplayer_sources})
-set_target_properties(genivilogreplayerplugin PROPERTIES PREFIX "")
+add_library(${PROJECT_NAME} MODULE ${genivilogreplayer_sources})
+set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 include_directories(${AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR}/lib ${GLIB_INCLUDE_DIRS})
-target_link_libraries(genivilogreplayerplugin amb -L${AUTOMOTIVE_MESSAGE_BROKER_LIB_DIR})
+target_link_libraries(${PROJECT_NAME} amb -L${AUTOMOTIVE_MESSAGE_BROKER_LIB_DIR})
 
-install(TARGETS genivilogreplayerplugin LIBRARY DESTINATION lib/automotive-message-broker)
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/automotive-message-broker)

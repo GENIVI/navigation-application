@@ -101,7 +101,7 @@ gdb=0 #no debug
 xterm=0 #no subprocess into a separate xterm
 log=0 #no log file 
 enhpos=1 #enhanced position server enabled 
-replayer=1 #replayer enabled
+replayer=0 #replayer disabled
 gateway=0 #vehicle gateway disabled
 lm=0 #layer manager disabled
 wm="" #to store the current window manager (in case of start with the layer manager)
@@ -113,11 +113,12 @@ speech=0
 
 CUR_DIR=$PWD
 BIN_DIR=$CUR_DIR/build
-SRC_DIR=$CUR_DIR
+TOP_DIR=$CUR_DIR
 
-SCRIPT_DIR=$SRC_DIR/script
-HMI_DIR=$SRC_DIR/hmi
+SCRIPT_DIR=$TOP_DIR/script
+HMI_DIR=$TOP_DIR/hmi
 app=$HMI_DIR/qml/NavigationApp.qml # hmi panel launched by default
+repl=""
 STYLE_SHEETS_GENERATED_INDICATOR=$HMI_DIR/style-sheets/the-style-sheets-have-been-generated-css.js
 CONFIG_DIR=$HMI_DIR/config
 REPLAYER_LOG_FILE=none
@@ -125,52 +126,52 @@ export REPLAYER_LOG_FILE
 
 # location of exe, lib and config files
 AUTOMOTIVE_MESSAGE_BROKER=automotive-message-broker
-AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR=$SRC_DIR/$AUTOMOTIVE_MESSAGE_BROKER
+AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR=$TOP_DIR/$AUTOMOTIVE_MESSAGE_BROKER
 AUTOMOTIVE_MESSAGE_BROKER_BIN_DIR=$AUTOMOTIVE_MESSAGE_BROKER_SRC_DIR/src/$AUTOMOTIVE_MESSAGE_BROKER-build
 GENIVI_LOGREPLAYER=genivilogreplayer
-GENIVI_LOGREPLAYER_SRC_DIR=$SRC_DIR/$GENIVI_LOGREPLAYER
+GENIVI_LOGREPLAYER_SRC_DIR=$TOP_DIR/$GENIVI_LOGREPLAYER
 GENIVI_LOGREPLAYER_BIN_DIR=$BIN_DIR/$GENIVI_LOGREPLAYER
 
 NAVIGATION=navigation
-NAVIGATION_SRC_DIR=$SRC_DIR/$NAVIGATION/src/navigation
+NAVIGATION_SRC_DIR=$TOP_DIR/$NAVIGATION/src/navigation
 NAVIGATION_BIN_DIR=$BIN_DIR/$NAVIGATION
 
 NAVIT=navit
 NAVIT_BIN_DIR=$NAVIGATION_BIN_DIR/navit/navit
 
 POI_SERVER=poi-server
-POI_SERVER_SRC_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/$POI_SERVER
-POI_SERVER_BIN_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/bin
-POI_SERVER_RESOURCE_DIR=$SRC_DIR/$NAVIGATION/src/poi-service/resource
+POI_SERVER_SRC_DIR=$TOP_DIR/$NAVIGATION/src/poi-service/$POI_SERVER
+POI_SERVER_BIN_DIR=$TOP_DIR/$NAVIGATION/src/poi-service/bin
+POI_SERVER_RESOURCE_DIR=$TOP_DIR/$NAVIGATION/src/poi-service/resource
 
 poidatabase=$POI_SERVER_RESOURCE_DIR/empty.db # empty poi database by default
 
-LOG_REPLAYER=log-replayer
-LOG_REPLAYER_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$LOG_REPLAYER
-LOG_REPLAYER_BIN_DIR=$NAVIGATION_SRC_DIR/bin
+LOG_REPLAYER=log-replayer-server
+LOG_REPLAYER_SRC_DIR=$TOP_DIR/$LOG_REPLAYER
+LOG_REPLAYER_BIN_DIR=$TOP_DIR/bin
 
-ENHANCED_POSITION_SERVICE=enhanced-position-service
-ENHANCED_POSITION_SERVICE_SRC_DIR=$NAVIGATION_SRC_DIR/positioning/$ENHANCED_POSITION_SERVICE
-ENHANCED_POSITION_SERVICE_BIN_DIR=$NAVIGATION_SRC_DIR/bin
+ENHANCED_POSITION_SERVICE=dead-reckoning
+ENHANCED_POSITION_SERVICE_SRC_DIR=$TOP_DIR/$ENHANCED_POSITION_SERVICE
+ENHANCED_POSITION_SERVICE_BIN_DIR=$TOP_DIR/bin
 
 FUEL_STOP_ADVISOR=fuel-stop-advisor
-FUEL_STOP_ADVISOR_SRC_DIR=$SRC_DIR/$FUEL_STOP_ADVISOR
+FUEL_STOP_ADVISOR_SRC_DIR=$TOP_DIR/$FUEL_STOP_ADVISOR
 FUEL_STOP_ADVISOR_BIN_DIR=$BIN_DIR/$FUEL_STOP_ADVISOR
 
 HMI_LAUNCHER=hmi-launcher
-HMI_LAUNCHER_SRC_DIR=$SRC_DIR/hmi/$HMI_LAUNCHER
-HMI_LAUNCHER_BIN_DIR=$BIN_DIR/hmi/$HMI_LAUNCHER
+HMI_LAUNCHER_SRC_DIR=$TOP_DIR/hmi/$HMI_LAUNCHER
+HMI_LAUNCHER_BIN_DIR=$TOP_DIR/bin
 
 VEHICLE_GATEWAY=vehicle-gateway
-VEHICLE_GATEWAY_SRC_DIR=$SRC_DIR/$VEHICLE_GATEWAY
+VEHICLE_GATEWAY_SRC_DIR=$TOP_DIR/$VEHICLE_GATEWAY
 VEHICLE_GATEWAY_BIN_DIR=$BIN_DIR/$VEHICLE_GATEWAY
 devices="/dev/ttyUSB0 /dev/ttyACM0"
 
 SPEECH_SERVER=speech-server
-SPEECH_OUTPUT_BIN_DIR=$SRC_DIR/$NAVIGATION/src/speech-service/bin/
+SPEECH_OUTPUT_BIN_DIR=$TOP_DIR/$NAVIGATION/src/speech-service/bin/
 
 # options analysis
-while getopts a:c:df:g:hlnoprsvx opt
+while getopts a:c:df:g:hlnopr:svx opt
 do
 	case $opt in
 	a) #select another hmi panel
@@ -193,6 +194,10 @@ do
 		seoul)
 			center="126.99 37.54"
 			config_file=fsa_seoul.conf
+			;;
+		giromagny)
+			center="47.74 6.83"
+			config_file=fsa_giromagny.conf
 			;;
 		[0-9-]*)
 			center=$OPTARG
@@ -225,8 +230,9 @@ do
 	p) #enable the reuse of persistent data
 		persistent=1
 		;;
-	r) #disable the log replayer
-		replayer=0
+	r) #enable the log replayer and set the file
+		replayer=1
+		repl=$(readlink -f $OPTARG) 
 		;;
 	s)
 		speech=1
@@ -239,9 +245,9 @@ do
 		;;
 	h)
 		echo "Usage:"
-		echo "$0 [-a application][-c center][-ghlnoprsvx]"
+		echo "$0 [-a application][-c center][-r replayerfile][-ghlnopsvx]"
 		echo "-a: Set application (default application.qml)"
-		echo "-c: Set center (supported values: paris,tokyo,london,seoul,longitude latitude). Default is geneve"
+		echo "-c: Set center (supported values: paris,tokyo,london,seoul,giromagny longitude latitude). Default is geneve"
 		echo "-d: Run subprocesses within gdb (only with -x)"
 		echo "-f: Load another database (for poi)"
 		echo "-g: Run the vehicle gateway (only with -r) -g \"<ELM327device> <GNSSdevice>\""
@@ -250,7 +256,7 @@ do
 		echo "-n: Don't start enhanced positioning service"
 		echo "-o: Create log file of subprocess output"
 		echo "-p: Reuse of persistent data (i.e. in $HOME, so don't reinit it with default file)"
-		echo "-r: Don't start replayer"
+		echo "-r: Start replayer"
 		echo "-s: Launch the speech server"
 		echo "-v: Enable the output of log or debug messages"
 		echo "-x: Run subprocesses in own xterm to get separated log messages (doesn't make sense with -l)"
@@ -344,8 +350,9 @@ wait_for_service org.genivi.navigationcore.Routing /org/genivi/navigationcore
 wait_for_service org.genivi.navigationcore.Session /org/genivi/navigationcore
 
 if [ "$replayer" = 1 ]
-then # start the log replayer (of the fsa) with a sample log file
-	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER  $LOG_REPLAYER_SRC_DIR/logs/geneve-cologny.log
+then # start the log replayer (of the fsa) with the log file
+echo "$repl"
+	run "Log Replayer" $LOG_REPLAYER_BIN_DIR/$LOG_REPLAYER  $repl
 else
 	if [ "$gateway" = 1 ]
 	then
