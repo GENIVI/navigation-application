@@ -194,62 +194,62 @@
 <context>
     <name>NavigationAppSettings</name>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="291"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="292"/>
         <source>Language</source>
         <translation>Langues</translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="314"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="315"/>
         <source>Units</source>
         <translation>Unités</translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="332"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="333"/>
         <source>CostModel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="340"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="341"/>
         <source>RoutingPreferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="348"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="349"/>
         <source>Ferries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="360"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="361"/>
         <source>TollRoads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="372"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="373"/>
         <source>MotorWays</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="384"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="385"/>
         <source>Simulation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="423"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="424"/>
         <source>Showroom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="461"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="462"/>
         <source>Autoguidance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="495"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="496"/>
         <source>Mapview</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../qml/NavigationAppSettings.qml" line="504"/>
+        <location filename="../qml/NavigationAppSettings.qml" line="505"/>
         <source>Back</source>
         <translation>Retour</translation>
     </message>

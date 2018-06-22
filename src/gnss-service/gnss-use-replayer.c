@@ -171,46 +171,6 @@ static bool processGVGNSPOS(const char* data)
         &pos.validityBits
         );
 
-    if (n != 27) //27 fields to parse
-    {
-        //try old version without correctionAge
-        n = sscanf(data, 
-            "%"SCNu64",%"SCNu16",$GVGNSPOS,%"SCNu64",%lf,%lf,%f,%f,%f,%f,%f,%f,%f,%f,%"SCNu16",%"SCNu16",%"SCNu16",%f,%f,%f,%f,%f,%u,%x,%x,%x,%x",
-            &timestamp,
-            &countdown,
-            &pos.timestamp,
-            &pos.latitude,
-            &pos.longitude,
-            &pos.altitudeMSL,
-            &pos.altitudeEll,
-            &pos.hSpeed,
-            &pos.vSpeed,
-            &pos.heading,
-            &pos.pdop,
-            &pos.hdop,
-            &pos.vdop,
-            &pos.usedSatellites,
-            &pos.trackedSatellites,
-            &pos.visibleSatellites,
-            &pos.sigmaHPosition,
-            &pos.sigmaAltitude,
-            &pos.sigmaHSpeed,
-            &pos.sigmaVSpeed,
-            &pos.sigmaHeading,
-            &pos.fixStatus,
-            &pos.fixTypeBits,
-            &pos.activatedSystems,
-            &pos.usedSystems,
-            &pos.validityBits
-            );
-        pos.validityBits &= ~GNSS_POSITION_CORRAGE_VALID; //just to be safe
-        if (n != 26) //26 fields to parse
-        {
-            LOG_ERROR_MSG(gContext,"replayer: processGVGNSPOS failed!");
-            return false;
-        }
-    }
-
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
     {

@@ -67,10 +67,10 @@ NavigationAppHMIMenu {
         for (var i=0; i < args[1].length;i+=2) {
             switch (args[1][i+1]) {
             case Genivi.NAVIGATIONCORE_LOCALE:
-                update();
+                updateLanguageAndUnits();
                 break;
             case Genivi.NAVIGATIONCORE_UNITS_OF_MEASUREMENT:
-                update();
+                updateLanguageAndUnits();
                 break;
             }
         }
@@ -126,6 +126,7 @@ NavigationAppHMIMenu {
             }
         }
 
+        Genivi.dump("lang",current_nav);
         Genivi.setlang(current_nav[1],current_nav[3],current_nav[5]);
 
         var units1,units2;

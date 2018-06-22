@@ -154,14 +154,14 @@ file (GLOB TS_TO_RELEASE
 
 foreach(RAW_FILE ${TS_TO_RELEASE})
     get_filename_component(FILE ${RAW_FILE} NAME_WE)
-    if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm)
+    if(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FILE}.qm)
         execute_process(
-            COMMAND ${qt_release} ${RAW_FILE} -qm ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm
+            COMMAND ${qt_release} ${RAW_FILE} -qm ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FILE}.qm
         )
     else()
-        if(${RAW_FILE} IS_NEWER_THAN ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm)
+        if(${RAW_FILE} IS_NEWER_THAN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FILE}.qm)
             execute_process(
-            COMMAND ${qt_release} ${RAW_FILE} -qm ${CMAKE_CURRENT_BINARY_DIR}/${FILE}.qm
+            COMMAND ${qt_release} ${RAW_FILE} -qm ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FILE}.qm
             )
         endif()
     endif()
