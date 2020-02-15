@@ -7,6 +7,7 @@ The GENIVI APIs are implemented into Navit plugins, running on DBus. The HMI is 
 
 ##Tested targets
 Desktop: Tested under Ubuntu 16.04 LTS 64 bits
+		 Tested under MX Linux 19 64 bits
 Hardware: Code is running on the [Genivi Demo Platform](https://github.com/GENIVI/genivi-dev-platform)  (Yocto based)
 
 ## Third parties software
@@ -20,7 +21,7 @@ NB: The code of positioning and navit is regularly aligned with the latest versi
 
 ## Prerequisites
 Under Ubuntu, some packets are needed to be installed:
-sudo apt-get install xsltproc libdbus-cpp-dev libdbus-c++-dev libglib2.0-dev gtk+-2.0 libglibmm-2.4-dev libxml++2.6-dev libgtk-3-dev libdbus-1-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev inkscape qt5-qmake qtbase5-dev-tools qtbase5-dev qttools5-dev-tools qtdeclarative5-dev qtdeclarative5-dialogs-plugin libboost-all-dev uuid-dev qtquick1.5-dev qtdeclarative5-qtquick2-plugin qt4-qmlviewer sqlite3 libsqlite3-dev
+sudo apt-get install xsltproc libdbus-cpp-dev libdbus-c++-dev libglib2.0-dev gtk+-2.0 libglibmm-2.4-dev libxml++2.6-dev libgtk-3-dev libdbus-1-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev inkscape qt5-qmake qtbase5-dev-tools qtbase5-dev  libboost-all-dev uuid-dev qtquick1.5-dev qtdeclarative5-qtquick2-plugin qt4-qmlviewer sqlite3 libsqlite3-dev qml-module-qtquick-dialogs
 
 export QT_SELECT=5
 Set language for the address list:
@@ -28,15 +29,17 @@ Set language for the address list:
 
 ## How to build
 ### From scratch
-A script allows to clone the third parties code (i.e. positioning, navigation, navit and amb) and rebuild all
-./clone_and_build.sh
+First add the gimp Python add-on
+go to ./hmi/gimp and follow README.md hints
+Clone the third parties code (i.e. positioning, navigation, navit and amb) and rebuild all
+./update_third_party.sh
 ### Build
 A script allows either:
 to clean and rebuild all (invoking cmake) , including the HMI
-./build.sh -c -t
+./build.sh -ctnd
 or to build updated parts
 ./build.sh
-NB: with -t option a tarball is also generated (used by the GDP)
+NB: with -p option a tarball is also generated (used by the GDP)
 ## How to test
 There's a file that contains some test case and the reminding issues (bug list)
 
